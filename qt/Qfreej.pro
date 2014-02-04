@@ -1,10 +1,7 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-10-04T17:27:39
 # -------------------------------------------------
-#QT += network
- #   opengl \
- #   phonon \
- #   multimedia
+
 TARGET = qfreej
 TEMPLATE = app
 SOURCES += main.cpp \
@@ -16,13 +13,13 @@ SOURCES += main.cpp \
     specialeventget.cpp \
     FakeWindow.cpp \
     QqTabWidget.cpp \
-	qJackClient.cpp \
+    qJackClient.cpp \
     qOpacity.cpp \
-	qEncoder.cpp \
-	qLogging.cpp \
+    qEncoder.cpp \
+    qLogging.cpp \
     qqcombores.cpp
 
-    HEADERS += qfreej.h \
+HEADERS += qfreej.h \
     QqComboBlit.h \
     QqWidget.h \
     QqComboFilter.h \
@@ -30,16 +27,19 @@ SOURCES += main.cpp \
     specialeventget.h \
     FakeWindow.h \
     QqTabWidget.h \
-	qJackClient.h \
+    qJackClient.h \
     qOpacity.h \
-	qEncoder.h \
-	qLogging.h \
+    qEncoder.h \
+    qLogging.h \
     qqcombores.h
-#FORMS += qfreej.ui
+
+FORMS += qfreej.ui
 CONFIG += qt debug
+
 LIBS += ../src/.libs/libfreej.a ../lib/javascript/libmozjs.a \
- `pkg-config --libs sdl cairo cwiid libavcodec libavformat libavutil libswscale \
-                    shout jack fftw3 samplerate liblo` -lSDL_gfx -lSDL_ttf -lSDL_image
+    `pkg-config --libs theoraenc vorbisenc fontconfig x11 alsa sdl cairo cwiid libavcodec libavformat libavutil libswscale \
+     shout jack fftw3 samplerate liblo` -lSDL_gfx -lSDL_ttf -lSDL_image -ldl
+
 INCLUDEPATH += ../ \
     /usr/include/SDL \
     ../lib/sdl_ttf \
