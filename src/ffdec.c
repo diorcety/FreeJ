@@ -125,7 +125,7 @@ int open_movie(ffdec_t ** ffpx, char* movie_url) {
   ff->videoStream=-1;
   ff->fFirstTime=1;
   
-  if(av_open_input_file(&ff->pFormatCtx, movie_url, NULL, 0, NULL)!=0) {
+  if(avformat_open_input(&ff->pFormatCtx, movie_url, NULL, 0, NULL)!=0) {
     fprintf( stderr, "Cannot open video file: '%s'\n", movie_url);
     ff->pt_status=0;
     return -1;
@@ -210,7 +210,7 @@ int open_camera(ffdec_t ** ffpx, char* device) {
   vp->channel = 0;
   vp->standard = NULL; 
   vp->pix_fmt = PIX_FMT_NONE;
-  if (av_open_input_file(&ff->pFormatCtx, device, fmt1, 0, vp) < 0) {
+  if (avformat_open_input(&ff->pFormatCtx, device, fmt1, 0, vp) < 0) {
     fprintf(stderr, "Could not find video grab device\n");
     return(-1);
   }

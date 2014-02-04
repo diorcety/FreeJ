@@ -140,13 +140,6 @@ bool VideoLayer::open(const char *file) {
 
 
   AVInputFormat *av_input_format = NULL;
-  AVFormatParameters avp, *av_format_par = NULL;
-  av_format_par = &avp;
-  memset (av_format_par, 0, sizeof (*av_format_par));
-  av_format_par->width=0;
-  av_format_par->width=0;
-  av_format_par->time_base  = (AVRational){1, 25};
-  av_format_par->pix_fmt=PIX_FMT_RGB32;
 
   /* handle firewire cam */
   if( strncasecmp (file, "/dev/ieee1394/",14) == 0) {
@@ -154,20 +147,6 @@ bool VideoLayer::open(const char *file) {
     grab_dv = true;
     av_input_format = av_find_input_format("dv1394");
 
-    /** shit XXX */
-    av_format_par -> width             = 720;
-    av_format_par -> height            = 576;
-#if LIBAVCODEC_BUILD  >=     4754
-    av_format_par -> time_base.num   = 25;
-    av_format_par -> time_base.den   = 1;
-#else
-    av_format_par -> frame_rate      = 25;
-    av_format_par -> frame_rate_base = 1;
-#endif
-    // field removed in recent ffmpeg API (todo: check LIBAVCODEC_BUILD)
-    //    av_format_par -> device          = file;
-    av_format_par -> standard        = "pal";
-    //	av_format_par->channel=0;
     file="";
   }
 
@@ -177,13 +156,12 @@ bool VideoLayer::open(const char *file) {
    * case by the interrupted function. 'NULL' means no interrupt
    * callback is given.  
    */
-  url_set_interrupt_cb(NULL);
-
+  avformat_context->interrupt_callback.callback = NULL;
 
   /**
    * Open media with libavformat
    */
-  err = av_open_input_file (&avformat_context, file, av_input_format, 0, av_format_par);
+  err = avformat_open_input(&avformat_context, file, av_input_format, 0);
   if (err < 0) {
     error("VideoLayer :: open(%s) - can't open. Error %d", file, err);
     return false;
@@ -193,7 +171,7 @@ bool VideoLayer::open(const char *file) {
   /**
    * Find info with libavformat
    */
-  err = av_find_stream_info(avformat_context);
+  err = avformat_find_stream_info(avformat_context, NULL);
   if (err < 0) {
     error("VideoLayer :: could not find stream info");
     return false;
@@ -228,7 +206,7 @@ bool VideoLayer::open(const char *file) {
 	return false;
       }
       
-      if (avcodec_open(video_codec_ctx, video_codec) < 0) {
+      if (avcodec_open2(video_codec_ctx, video_codec, NULL) < 0) {
 	error("VideoLayer :: Could not open codec");
 	return false;
 	
@@ -271,7 +249,7 @@ bool VideoLayer::open(const char *file) {
 	error("VideoLayer :: Could not find a suitable codec for audio");
 	return false;
       }
-      if (avcodec_open(audio_codec_ctx, audio_codec) < 0) {
+      if (avcodec_open2(audio_codec_ctx, audio_codec, NULL) < 0) {
 	error("VideoLayer :: Could not open codec for audio");
 	return false;
 	
@@ -668,9 +646,9 @@ int VideoLayer::decode_video_packet(int *got_picture) {
 	/* Debug pts code */
 	{
 		int ftype;
-		if (av_frame.pict_type == FF_B_TYPE)
+		if (av_frame.pict_type == AV_PICTURE_TYPE_B)
 			ftype = 'B';
-		else if (av_frame.pict_type == FF_I_TYPE)
+		else if (av_frame.pict_type == AV_PICTURE_TYPE_I)
 			ftype = 'I';
 		else
 			ftype = 'P';
@@ -707,7 +685,7 @@ void VideoLayer::close() {
 #endif
   
   if(avformat_context) {
-    av_close_input_file(avformat_context);
+    avformat_close_input(&avformat_context);
   }
 //  free_fifo();
   if(rgba_picture) free_picture(rgba_picture);

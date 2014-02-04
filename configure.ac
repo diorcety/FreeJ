@@ -160,7 +160,7 @@ AC_SUBST(FREEJ_VERSION_INFO)
 dnl ==============================================================
 dnl check for swig and whether to enable bindings
 dnl ==============================================================
-AC_PROG_SWIG([1.3])
+AC_PROG_SWIG([2.0.6])
 SWIG_ENABLE_CXX
 
 if test -z "$SWIG_LIB"; then
