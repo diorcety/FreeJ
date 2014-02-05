@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2010 Denis Roio <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -35,7 +35,7 @@ class Context;
 /**
    This class implements the object storing all available filter
    instances and dispatching them for FreeJ operations.
-   
+
    It reads thru paths ($(prefix)/lib/freej and ~/.freej) looking for
    valid plugins and creates instances of them which are ready to be
    returned upon request to the host application of FreeJ controllers.
@@ -43,33 +43,37 @@ class Context;
    @brief Collects DLO plugins that can be used as Effect or Layer
 */
 class Plugger {
- public:
-  Plugger(); ///< Plugger onstructor
-  ~Plugger(); ///< Plugger destructor
+public:
+    Plugger(); ///< Plugger onstructor
+    ~Plugger(); ///< Plugger destructor
 
-  /**
-     Tell the Plugger to read again thru configured paths and updates
-     the plugin table.
-     @param env the context environment where to save found plugins
-     @param type the type name of the plugins to look for (ie. "filters")
-     @return number of valid plugins found
-  */
-  int refresh(Context *env);
+    /**
+       Tell the Plugger to read again thru configured paths and updates
+       the plugin table.
+       @param env the context environment where to save found plugins
+       @param type the type name of the plugins to look for (ie. "filters")
+       @return number of valid plugins found
+    */
+    int refresh(Context *env);
 
 
 
- private:
+private:
 
-  bool open(Context *env, char *file);
+    bool open(Context *env, char *file);
 
-  /* checks if file/directory exist */
-  void addsearchdir(const char *dir);
-  void _setsearchpath(const char *path) {
-    if(_searchpath) free(_searchpath); _searchpath = strdup(path); };
-  char *_getsearchpath() { return(_searchpath); };
+    /* checks if file/directory exist */
+    void addsearchdir(const char *dir);
+    void _setsearchpath(const char *path) {
+        if(_searchpath) free(_searchpath);
+        _searchpath = strdup(path);
+    };
+    char *_getsearchpath() {
+        return(_searchpath);
+    };
 
-  char *_searchpath;
+    char *_searchpath;
 
-};  
+};
 
 #endif

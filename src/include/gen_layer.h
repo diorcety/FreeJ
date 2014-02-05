@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2007 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -28,48 +28,50 @@
 #define PRIMES 11
 
 class GenLayer: public Layer {
- private:
+private:
 
-  /* blossom vars */
-  double blossom_count;
-  double blossom_m;
-  double blossom_n;
-  double blossom_i;
-  double blossom_j;
-  double blossom_k;
-  double blossom_l;
-  float blossom_r;
-  float blossom_a;
+    /* blossom vars */
+    double blossom_count;
+    double blossom_m;
+    double blossom_n;
+    double blossom_i;
+    double blossom_j;
+    double blossom_k;
+    double blossom_l;
+    float blossom_r;
+    float blossom_a;
 
-  /* primes */
-  int prime[PRIMES];
-  void blossom();
+    /* primes */
+    int prime[PRIMES];
+    void blossom();
 
-  float pi2;
-  double wd, hd;
+    float pi2;
+    double wd, hd;
 
-  /* surface buffer */
-  //  uint32_t rmask,gmask,bmask,amask;
-  uint32_t *pixels;
+    /* surface buffer */
+    //  uint32_t rmask,gmask,bmask,amask;
+    uint32_t *pixels;
 
-  /* blob drawing */
-  void blob_init(int ray);
-  void blob(int x, int y);
-  uint32_t *blob_buf;
-  int blob_size;
+    /* blob drawing */
+    void blob_init(int ray);
+    void blob(int x, int y);
+    uint32_t *blob_buf;
+    int blob_size;
 
- public:
-  GenLayer();
-  ~GenLayer();
-  
-  bool init(Context *freej);
-  bool init(Context *freej, int w, int h) { return init(freej); };
+public:
+    GenLayer();
+    ~GenLayer();
 
-  bool open(char *file);
-  void *feed();
-  void close();
+    bool init(Context *freej);
+    bool init(Context *freej, int w, int h) {
+        return init(freej);
+    };
 
-  void blossom_recal(bool r);
+    bool open(char *file);
+    void *feed();
+    void close();
+
+    void blossom_recal(bool r);
 };
 
 #endif

@@ -21,11 +21,13 @@
 #include <stdexcept>
 
 class FreejError : public std::runtime_error {
-  public:
+public:
     FreejError(const std::string& msg = "", int rv = 0)
-      : std::runtime_error(msg), rv(rv) { }
-    int retval() { return rv; }
-  private:
+        : std::runtime_error(msg), rv(rv) { }
+    int retval() {
+        return rv;
+    }
+private:
     int rv;
 };
 

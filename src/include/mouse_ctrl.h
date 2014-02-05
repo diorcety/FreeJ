@@ -24,22 +24,22 @@
 #include <factory.h>
 
 class MouseController : public SdlController {
-  
- public:
-  MouseController();
-  virtual ~MouseController();
-  
-  int  poll();
-  virtual int dispatch();
 
-  virtual int motion(int state, int x, int y, int xrel, int yrel);
-  virtual int button(int button, int state, int x, int y);
-  
-  void grab(bool state);
+public:
+    MouseController();
+    virtual ~MouseController();
 
- private:
+    int  poll();
+    virtual int dispatch();
 
-  FACTORY_ALLOWED;
+    virtual int motion(int state, int x, int y, int xrel, int yrel);
+    virtual int button(int button, int state, int x, int y);
+
+    void grab(bool state);
+
+private:
+
+    FACTORY_ALLOWED;
 };
 
 #endif

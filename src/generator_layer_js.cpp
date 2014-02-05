@@ -25,39 +25,39 @@
 
 
 DECLARE_CLASS_GC("GeneratorLayer",
-		 generator_layer_class,
-		 generator_layer_constructor,
-		 js_layer_gc);
+                 generator_layer_class,
+                 generator_layer_constructor,
+                 js_layer_gc);
 
 
 JSFunctionSpec generator_layer_methods[] = {
-  ENTRY_METHODS,
-  {0}
+    ENTRY_METHODS,
+    {0}
 };
 
 
 JS(generator_layer_constructor) {
-  func("%s",__PRETTY_FUNCTION__);
-  GeneratorLayer *layer = NULL;
-  char excp_msg[MAX_ERR_MSG + 1];                                           
-  layer = (GeneratorLayer *)Factory<Layer>::new_instance( "GeneratorLayer" );
-  if(!layer) {
-    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-                         JSSMSG_FJ_CANT_CREATE, __func__,
-			 "cannot create GeneratorLayer");
-    return JS_FALSE;
-  }
-  layer->register_generators(&global_environment->generators);
-  rval = (jsval*)layer->js_constructor(global_environment,
-				       cx, obj, argc, argv, excp_msg);
-  if(!rval) {
-    delete layer;
-    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-                         JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
-    return JS_FALSE;
-  }
-  layer->data = (void*)rval;
-  return JS_TRUE;							     
+    func("%s",__PRETTY_FUNCTION__);
+    GeneratorLayer *layer = NULL;
+    char excp_msg[MAX_ERR_MSG + 1];
+    layer = (GeneratorLayer *)Factory<Layer>::new_instance( "GeneratorLayer" );
+    if(!layer) {
+        JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
+                             JSSMSG_FJ_CANT_CREATE, __func__,
+                             "cannot create GeneratorLayer");
+        return JS_FALSE;
+    }
+    layer->register_generators(&global_environment->generators);
+    rval = (jsval*)layer->js_constructor(global_environment,
+                                         cx, obj, argc, argv, excp_msg);
+    if(!rval) {
+        delete layer;
+        JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
+                             JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
+        return JS_FALSE;
+    }
+    layer->data = (void*)rval;
+    return JS_TRUE;
 }
-  
+
 

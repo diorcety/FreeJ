@@ -1,16 +1,16 @@
 YuvScreen() : public ViewPort() {
-  
- public:
-  YuvScreen();
-  ~YuvScreen();
 
-  bool init(int w, int h);
+public:
+    YuvScreen();
+    ~YuvScreen();
 
-  struct SwsContext *sws_ctx;
-  AVFrame *yuv_frame;
-  AVFrame *rgb_frame;
+    bool init(int w, int h);
 
-  AVStream *avstream;
+    struct SwsContext *sws_ctx;
+    AVFrame *yuv_frame;
+    AVFrame *rgb_frame;
+
+    AVStream *avstream;
 
 };
 

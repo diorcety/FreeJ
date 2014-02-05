@@ -22,32 +22,36 @@
 #include <color.h>
 
 Color::Color() {
-  // defaults to white
-  r = 256.;
-  g = 256.;
-  b = 256.;
-  a = 256.;
-  //set();
+    // defaults to white
+    r = 256.;
+    g = 256.;
+    b = 256.;
+    a = 256.;
+    //set();
 }
 
 Color::~Color() { }
 
 
 void Color::set_rgb(double nr, double ng, double nb) {
-  r = nr;
-  g = ng;
-  b = nb;
-  a = 256.;
-  set();
+    r = nr;
+    g = ng;
+    b = nb;
+    a = 256.;
+    set();
 }
 
 void Color::set_rgba(double nr, double ng, double nb, double na) {
-  r = nr;
-  g = ng;
-  b = nb;
-  a = na;
-  set();
+    r = nr;
+    g = ng;
+    b = nb;
+    a = na;
+    set();
 }
 
-void Color::set_gray(double g) { set_rgb(g, g, g); }
-void Color::set_gray_alpha(double g, double a) { set_rgba(g, g, g, a); }
+void Color::set_gray(double g) {
+    set_rgb(g, g, g);
+}
+void Color::set_gray_alpha(double g, double a) {
+    set_rgba(g, g, g, a);
+}

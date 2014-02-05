@@ -46,8 +46,7 @@
 #define FISBONE_MESSAGE_HEADER_OFFSET 44
 #define INDEX_IDENTIFIER "index\0"
 
-typedef struct
-{
+typedef struct {
 #ifdef HAVE_KATE
     kate_state k;
     kate_info ki;
@@ -65,11 +64,10 @@ oggmux_kate_stream;
 
 typedef void TIMER;
 
-typedef struct
-{
+typedef struct {
     /* the file the mixed ogg stream is written to */
-	ringbuffer_t *ringbuffer;
-	int bytes_encoded;
+    ringbuffer_t *ringbuffer;
+    int bytes_encoded;
     FILE *outfile;
 
     int audio_only;
@@ -82,7 +80,7 @@ typedef struct
     double vorbis_quality;
     int vorbis_bitrate;
     long aveVorBitRate;	  // average audio bit rate seted by oggmux_init function
-	char status[512]; // status string line
+    char status[512]; // status string line
 
     vorbis_info vi;       /* struct that stores all the static vorbis bitstream settings */
     vorbis_comment vc;    /* struct that stores all the user comments */

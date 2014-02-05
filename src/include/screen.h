@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 - 2010 Denis Roio <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -90,74 +90,78 @@ class VideoEncoder;
 */
 
 class ViewPort : public Entry {
-  friend class Layer;
- public:
-  ViewPort();
-  virtual ~ViewPort();
+    friend class Layer;
+public:
+    ViewPort();
+    virtual ~ViewPort();
 
-  bool init(int w = 0, int h = 0, int bpp = 0); ///< general initialization
+    bool init(int w = 0, int h = 0, int bpp = 0); ///< general initialization
 
-  bool initialized;
+    bool initialized;
 
-  enum fourcc { RGBA32, BGRA32, ARGB32 }; ///< pixel formats understood
-  virtual fourcc get_pixel_format() =0; ///< return the pixel format
+    enum fourcc { RGBA32, BGRA32, ARGB32 }; ///< pixel formats understood
+    virtual fourcc get_pixel_format() =0; ///< return the pixel format
 
-  virtual void *get_surface() =0; ///< returns direct pointer to video memory
+    virtual void *get_surface() =0; ///< returns direct pointer to video memory
 
-  virtual void *coords(int x, int y) =0;
-  ///< returns pointer to pixel (slow! use it once and then move around)
+    virtual void *coords(int x, int y) =0;
+    ///< returns pointer to pixel (slow! use it once and then move around)
 
-  virtual void blit(Layer *src) =0; ///< operate the blit
+    virtual void blit(Layer *src) =0; ///< operate the blit
 
-  virtual void setup_blits(Layer *lay) =0; ///< setup available blits on added layer
+    virtual void setup_blits(Layer *lay) =0; ///< setup available blits on added layer
 
-  void blit_layers();
+    void blit_layers();
 
-  virtual bool add_layer(Layer *lay); ///< add a new layer to the screen
+    virtual bool add_layer(Layer *lay); ///< add a new layer to the screen
 #ifdef WITH_AUDIO
-  virtual bool add_audio(JackClient *jcl); ///< connect layer to audio output
+    virtual bool add_audio(JackClient *jcl); ///< connect layer to audio output
 #endif
-  virtual void rem_layer(Layer *lay); ///< remove a layer from the screen
-    
-  Linklist<Layer> layers; ///< linked list of registered layers
+    virtual void rem_layer(Layer *lay); ///< remove a layer from the screen
 
-  bool add_encoder(VideoEncoder *enc); ///< add a new encoder for the screen
+    Linklist<Layer> layers; ///< linked list of registered layers
 
-  Linklist<VideoEncoder> encoders; ///< linked list of registered encoders
+    bool add_encoder(VideoEncoder *enc); ///< add a new encoder for the screen
+
+    Linklist<VideoEncoder> encoders; ///< linked list of registered encoders
 
 #ifdef WITH_GD
-  void save_frame(char *file); ///< save a screenshot of the current frame into file
+    void save_frame(char *file); ///< save a screenshot of the current frame into file
 #endif
 
-  void handle_resize();
+    void handle_resize();
 
-  virtual void resize(int resize_w, int resize_h);
-  virtual void show();
-  virtual void clear();
+    virtual void resize(int resize_w, int resize_h);
+    virtual void show();
+    virtual void clear();
 
-  virtual void fullscreen();
-  virtual bool lock() { return(true); };
-  virtual bool unlock() { return(true); };
+    virtual void fullscreen();
+    virtual bool lock() {
+        return(true);
+    };
+    virtual bool unlock() {
+        return(true);
+    };
 
-  void reset();
+    void reset();
 
-  Geometry geo;
+    Geometry geo;
 
-  ringbuffer_t *audio; ///< FIFO ringbuffer for audio
+    ringbuffer_t *audio; ///< FIFO ringbuffer for audio
 
-  bool changeres;
-  bool resizing;
-  int resize_w;
-  int resize_h;
-  
-  long unsigned int  *m_SampleRate; // pointer to JACKd's SampleRate (add_audio)
+    bool changeres;
+    bool resizing;
+    int resize_w;
+    int resize_h;
 
-  // opengl special blit
-  bool opengl;
+    long unsigned int  *m_SampleRate; // pointer to JACKd's SampleRate (add_audio)
 
-  bool indestructible;
- protected:
-  virtual bool _init() = 0; ///< implemented initialization
+    // opengl special blit
+    bool opengl;
+
+    bool indestructible;
+protected:
+    virtual bool _init() = 0; ///< implemented initialization
 
 };
 

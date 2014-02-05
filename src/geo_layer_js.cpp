@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2005 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -31,36 +31,36 @@ DECLARE_CLASS_GC("GeometryLayer",geometry_layer_class,geometry_layer_constructor
 // Geometry Layer methods
 
 JSFunctionSpec geometry_layer_methods[] = {
-  ENTRY_METHODS  ,
-  { "clear",          geometry_layer_clear,          0 },
-  { "color",          geometry_layer_color,          4 },
-  { "pixel",          geometry_layer_pixel,          2 },
-  { "hline",          geometry_layer_hline,          3 },
-  { "vline",          geometry_layer_vline,          3 },
-  { "rectangle",      geometry_layer_rectangle,      4 },
-  { "rectangle_fill", geometry_layer_rectangle_fill, 4 },
-  { "line",           geometry_layer_line,           4 },
-  { "aaline",         geometry_layer_aaline,         4 },
-  { "circle",         geometry_layer_circle,         3 },
-  { "aacircle",       geometry_layer_aacircle,       3 },
-  { "circle_fill",    geometry_layer_circle_fill,    3 },
-  { "ellipse",        geometry_layer_ellipse,        4 },
-  { "aaellipse",      geometry_layer_aaellipse,      4 },
-  { "ellipse_fill",   geometry_layer_ellipse_fill,   4 },
-  { "pie",            geometry_layer_pie,            5 },
-  { "pie_fill",       geometry_layer_pie_fill,       5 },
-  { "trigon",         geometry_layer_trigon,         6 },
-  { "aatrigon",       geometry_layer_aatrigon,       6 },
-  { "trigon_fill",    geometry_layer_trigon_fill,    6 },
-  //  { "polygon", geometry_layer_polygon, 4},
-  //  { "aapolygon", geometry_layer_aapolygon, 4},
-  //  { "polygon_fill", geometry_layer_polygon_fill, 4},
-  //  { "bezier", geometry_layer_bezier, 5},
-  {0}
+    ENTRY_METHODS  ,
+    { "clear",          geometry_layer_clear,          0 },
+    { "color",          geometry_layer_color,          4 },
+    { "pixel",          geometry_layer_pixel,          2 },
+    { "hline",          geometry_layer_hline,          3 },
+    { "vline",          geometry_layer_vline,          3 },
+    { "rectangle",      geometry_layer_rectangle,      4 },
+    { "rectangle_fill", geometry_layer_rectangle_fill, 4 },
+    { "line",           geometry_layer_line,           4 },
+    { "aaline",         geometry_layer_aaline,         4 },
+    { "circle",         geometry_layer_circle,         3 },
+    { "aacircle",       geometry_layer_aacircle,       3 },
+    { "circle_fill",    geometry_layer_circle_fill,    3 },
+    { "ellipse",        geometry_layer_ellipse,        4 },
+    { "aaellipse",      geometry_layer_aaellipse,      4 },
+    { "ellipse_fill",   geometry_layer_ellipse_fill,   4 },
+    { "pie",            geometry_layer_pie,            5 },
+    { "pie_fill",       geometry_layer_pie_fill,       5 },
+    { "trigon",         geometry_layer_trigon,         6 },
+    { "aatrigon",       geometry_layer_aatrigon,       6 },
+    { "trigon_fill",    geometry_layer_trigon_fill,    6 },
+    //  { "polygon", geometry_layer_polygon, 4},
+    //  { "aapolygon", geometry_layer_aapolygon, 4},
+    //  { "polygon_fill", geometry_layer_polygon_fill, 4},
+    //  { "bezier", geometry_layer_bezier, 5},
+    {0}
 };
 
 // JSBool fun(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
-JS_CONSTRUCTOR("GeometryLayer",geometry_layer_constructor,GeoLayer);  
+JS_CONSTRUCTOR("GeometryLayer",geometry_layer_constructor,GeoLayer);
 
 /// color handling, a macro and some overloading tricks
 #define OPTIONAL_COLOR_ARG(num) \
@@ -74,460 +74,460 @@ JS_CONSTRUCTOR("GeometryLayer",geometry_layer_constructor,GeoLayer);
     color = lay->get_color();
 
 JS(geometry_layer_clear) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);  
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GeoLayer);
-  lay->clear();
+    GET_LAYER(GeoLayer);
+    lay->clear();
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 
 
 
 JS(geometry_layer_color) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(1);
-  
-  GET_LAYER(GeoLayer);
+    JS_CHECK_ARGC(1);
 
-  // color accepts arguments in many ways
-  // R,G,B,A or R,G,B or the whole 32bit value
-  uint16_t r,g,b,a;
+    GET_LAYER(GeoLayer);
 
-  if(argc == 1) {
+    // color accepts arguments in many ways
+    // R,G,B,A or R,G,B or the whole 32bit value
+    uint16_t r,g,b,a;
 
-    jsint hex = js_get_int(argv[0]);
-    lay->set_color(hex);
-    
-  } else {
-      JS_ValueToUint16(cx, argv[0], &r);
-      JS_ValueToUint16(cx, argv[1], &g);
-      JS_ValueToUint16(cx, argv[2], &b);
-      if (argc == 4) 
-          JS_ValueToUint16(cx, argv[3], &a);
-      else
-        a = 0xff;
-  }
-  
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->set_color(r, g, b, a);
+    if(argc == 1) {
 
-  return JS_TRUE;
+        jsint hex = js_get_int(argv[0]);
+        lay->set_color(hex);
+
+    } else {
+        JS_ValueToUint16(cx, argv[0], &r);
+        JS_ValueToUint16(cx, argv[1], &g);
+        JS_ValueToUint16(cx, argv[2], &b);
+        if (argc == 4)
+            JS_ValueToUint16(cx, argv[3], &a);
+        else
+            a = 0xff;
+    }
+
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->set_color(r, g, b, a);
+
+    return JS_TRUE;
 }
 
 JS(geometry_layer_pixel) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);  
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
-  JS_CHECK_ARGC(2);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
+    JS_CHECK_ARGC(2);
 
-  GET_LAYER(GeoLayer);
-  
-  uint16_t x,y;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
+    GET_LAYER(GeoLayer);
 
-  OPTIONAL_COLOR_ARG(2);
+    uint16_t x,y;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
 
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
+    OPTIONAL_COLOR_ARG(2);
 
-  lay->pixel(x, y, color);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
 
-  return JS_TRUE;
+    lay->pixel(x, y, color);
+
+    return JS_TRUE;
 }
 JS(geometry_layer_hline) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);  
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
-  
-  JS_CHECK_ARGC(3);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  GET_LAYER(GeoLayer);
+    JS_CHECK_ARGC(3);
 
-  uint16_t x1,x2,y;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &x2);
-  JS_ValueToUint16(cx, argv[2], &y);
+    GET_LAYER(GeoLayer);
 
-  OPTIONAL_COLOR_ARG(3);
+    uint16_t x1,x2,y;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &x2);
+    JS_ValueToUint16(cx, argv[2], &y);
 
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->hline(x1, x2, y, color);
+    OPTIONAL_COLOR_ARG(3);
 
-  return JS_TRUE;
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->hline(x1, x2, y, color);
+
+    return JS_TRUE;
 }
 JS(geometry_layer_vline) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
-  JS_CHECK_ARGC(3);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
+    JS_CHECK_ARGC(3);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y1,y2;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y1);
-  JS_ValueToUint16(cx, argv[2], &y2);
+    uint16_t x,y1,y2;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y1);
+    JS_ValueToUint16(cx, argv[2], &y2);
 
-  OPTIONAL_COLOR_ARG(3);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  
-  lay->vline(x, y1, y2, color);
+    OPTIONAL_COLOR_ARG(3);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
 
-  return JS_TRUE;
+    lay->vline(x, y1, y2, color);
+
+    return JS_TRUE;
 }
 
 JS(geometry_layer_rectangle) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
-  JS_CHECK_ARGC(4);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
+    JS_CHECK_ARGC(4);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x1,x2,y1,y2;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &y1);
+    uint16_t x1,x2,y1,y2;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &y1);
 
-  JS_ValueToUint16(cx, argv[2], &x2);
-  JS_ValueToUint16(cx, argv[3], &y2);
+    JS_ValueToUint16(cx, argv[2], &x2);
+    JS_ValueToUint16(cx, argv[3], &y2);
 
 //uint32_t col;
-  OPTIONAL_COLOR_ARG(4);
-  
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
+    OPTIONAL_COLOR_ARG(4);
 
-  lay->rectangle(x1, y1, x2, y2, color);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
 
-  return JS_TRUE;
+    lay->rectangle(x1, y1, x2, y2, color);
+
+    return JS_TRUE;
 }
 
 JS(geometry_layer_rectangle_fill) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
-  JS_CHECK_ARGC(4);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
+    JS_CHECK_ARGC(4);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x1,x2,y1,y2;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &y1);
+    uint16_t x1,x2,y1,y2;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &y1);
 
-  JS_ValueToUint16(cx, argv[2], &x2);
-  JS_ValueToUint16(cx, argv[3], &y2);
+    JS_ValueToUint16(cx, argv[2], &x2);
+    JS_ValueToUint16(cx, argv[3], &y2);
 
 //uint32_t col;
-  OPTIONAL_COLOR_ARG(4);
+    OPTIONAL_COLOR_ARG(4);
 
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->rectangle_fill(x1, y1, x2, y2, color);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->rectangle_fill(x1, y1, x2, y2, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 
 JS(geometry_layer_line) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
-  JS_CHECK_ARGC(4);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
+    JS_CHECK_ARGC(4);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x1,x2,y1,y2;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &y1);
+    uint16_t x1,x2,y1,y2;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &y1);
 
-  JS_ValueToUint16(cx, argv[2], &x2);
-  JS_ValueToUint16(cx, argv[3], &y2);
+    JS_ValueToUint16(cx, argv[2], &x2);
+    JS_ValueToUint16(cx, argv[3], &y2);
 
-  OPTIONAL_COLOR_ARG(4);
+    OPTIONAL_COLOR_ARG(4);
 
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->line(x1, y1, x2, y2, color);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->line(x1, y1, x2, y2, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 JS(geometry_layer_aaline) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(4);
+    JS_CHECK_ARGC(4);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x1,x2,y1,y2;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &y1);
+    uint16_t x1,x2,y1,y2;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &y1);
 
-  JS_ValueToUint16(cx, argv[2], &x2);
-  JS_ValueToUint16(cx, argv[3], &y2);
+    JS_ValueToUint16(cx, argv[2], &x2);
+    JS_ValueToUint16(cx, argv[3], &y2);
 
-  OPTIONAL_COLOR_ARG(4);
-  
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
+    OPTIONAL_COLOR_ARG(4);
 
-  lay->aaline(x1, y1, x2, y2, color);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
 
-  return JS_TRUE;
+    lay->aaline(x1, y1, x2, y2, color);
+
+    return JS_TRUE;
 }
 JS(geometry_layer_circle) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__); 
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(3); 
+    JS_CHECK_ARGC(3);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,r;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &r);
+    uint16_t x,y,r;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &r);
 
-  OPTIONAL_COLOR_ARG(3);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->circle(x, y, r, color);
-  return JS_TRUE;
+    OPTIONAL_COLOR_ARG(3);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->circle(x, y, r, color);
+    return JS_TRUE;
 }
 JS(geometry_layer_aacircle) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(3);
+    JS_CHECK_ARGC(3);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,r;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &r);
+    uint16_t x,y,r;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &r);
 
-  OPTIONAL_COLOR_ARG(3);
+    OPTIONAL_COLOR_ARG(3);
 
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->aacircle(x, y, r, color);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->aacircle(x, y, r, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 JS(geometry_layer_circle_fill) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(3);
+    JS_CHECK_ARGC(3);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,r;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &r);
+    uint16_t x,y,r;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &r);
 
-  OPTIONAL_COLOR_ARG(3);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->circle_fill(x, y, r, color);
+    OPTIONAL_COLOR_ARG(3);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->circle_fill(x, y, r, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 
 JS(geometry_layer_ellipse) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(4);
+    JS_CHECK_ARGC(4);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,rx,ry;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &rx);
-  JS_ValueToUint16(cx, argv[3], &ry);
+    uint16_t x,y,rx,ry;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &rx);
+    JS_ValueToUint16(cx, argv[3], &ry);
 
-  OPTIONAL_COLOR_ARG(4);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->ellipse(x, y, rx, ry, color);
-  return JS_TRUE;
+    OPTIONAL_COLOR_ARG(4);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->ellipse(x, y, rx, ry, color);
+    return JS_TRUE;
 }
 JS(geometry_layer_aaellipse) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(4);
+    JS_CHECK_ARGC(4);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,rx,ry;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &rx);
-  JS_ValueToUint16(cx, argv[3], &ry);
+    uint16_t x,y,rx,ry;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &rx);
+    JS_ValueToUint16(cx, argv[3], &ry);
 
-  OPTIONAL_COLOR_ARG(4);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->aaellipse(x, y, rx, ry, color);
-  return JS_TRUE;
+    OPTIONAL_COLOR_ARG(4);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->aaellipse(x, y, rx, ry, color);
+    return JS_TRUE;
 }
 JS(geometry_layer_ellipse_fill) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(4);
+    JS_CHECK_ARGC(4);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,rx,ry;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &rx);
-  JS_ValueToUint16(cx, argv[3], &ry);
+    uint16_t x,y,rx,ry;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &rx);
+    JS_ValueToUint16(cx, argv[3], &ry);
 
-  OPTIONAL_COLOR_ARG(4);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->ellipse_fill(x, y, rx, ry, color);
+    OPTIONAL_COLOR_ARG(4);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->ellipse_fill(x, y, rx, ry, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 JS(geometry_layer_pie) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(5);
+    JS_CHECK_ARGC(5);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,rad,start,end;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &rad);
-  JS_ValueToUint16(cx, argv[3], &start);
-  JS_ValueToUint16(cx, argv[4], &end);
+    uint16_t x,y,rad,start,end;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &rad);
+    JS_ValueToUint16(cx, argv[3], &start);
+    JS_ValueToUint16(cx, argv[4], &end);
 
-  OPTIONAL_COLOR_ARG(5);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->pie(x, y, rad, start, end, color);
+    OPTIONAL_COLOR_ARG(5);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->pie(x, y, rad, start, end, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 JS(geometry_layer_pie_fill) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(5);
+    JS_CHECK_ARGC(5);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x,y,rad,start,end;
-  JS_ValueToUint16(cx, argv[0], &x);
-  JS_ValueToUint16(cx, argv[1], &y);
-  JS_ValueToUint16(cx, argv[2], &rad);
-  JS_ValueToUint16(cx, argv[3], &start);
-  JS_ValueToUint16(cx, argv[4], &end);
+    uint16_t x,y,rad,start,end;
+    JS_ValueToUint16(cx, argv[0], &x);
+    JS_ValueToUint16(cx, argv[1], &y);
+    JS_ValueToUint16(cx, argv[2], &rad);
+    JS_ValueToUint16(cx, argv[3], &start);
+    JS_ValueToUint16(cx, argv[4], &end);
 
-  OPTIONAL_COLOR_ARG(5);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->pie_fill(x, y, rad, start, end, color);
+    OPTIONAL_COLOR_ARG(5);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->pie_fill(x, y, rad, start, end, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 JS(geometry_layer_trigon) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(6);
+    JS_CHECK_ARGC(6);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x1,y1,x2,y2,x3,y3;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &y1);
-  JS_ValueToUint16(cx, argv[2], &x2);
-  JS_ValueToUint16(cx, argv[3], &y2);
-  JS_ValueToUint16(cx, argv[4], &x3);
-  JS_ValueToUint16(cx, argv[5], &y3);
+    uint16_t x1,y1,x2,y2,x3,y3;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &y1);
+    JS_ValueToUint16(cx, argv[2], &x2);
+    JS_ValueToUint16(cx, argv[3], &y2);
+    JS_ValueToUint16(cx, argv[4], &x3);
+    JS_ValueToUint16(cx, argv[5], &y3);
 
-  OPTIONAL_COLOR_ARG(6);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->trigon(x1, y1, x2, y2, x3, y3, color);
+    OPTIONAL_COLOR_ARG(6);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->trigon(x1, y1, x2, y2, x3, y3, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 JS(geometry_layer_aatrigon) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(6);
+    JS_CHECK_ARGC(6);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x1,y1,x2,y2,x3,y3;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &y1);
-  JS_ValueToUint16(cx, argv[2], &x2);
-  JS_ValueToUint16(cx, argv[3], &y2);
-  JS_ValueToUint16(cx, argv[4], &x3);
-  JS_ValueToUint16(cx, argv[5], &y3);
+    uint16_t x1,y1,x2,y2,x3,y3;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &y1);
+    JS_ValueToUint16(cx, argv[2], &x2);
+    JS_ValueToUint16(cx, argv[3], &y2);
+    JS_ValueToUint16(cx, argv[4], &x3);
+    JS_ValueToUint16(cx, argv[5], &y3);
 
-  OPTIONAL_COLOR_ARG(6);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->aatrigon(x1, y1, x2, y2, x3, y3, color);
+    OPTIONAL_COLOR_ARG(6);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->aatrigon(x1, y1, x2, y2, x3, y3, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 JS(geometry_layer_trigon_fill) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  //JS_SetContextThread(cx);
-  //JS_BeginRequest(cx);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //JS_SetContextThread(cx);
+    //JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(6);
+    JS_CHECK_ARGC(6);
 
-  GET_LAYER(GeoLayer);
+    GET_LAYER(GeoLayer);
 
-  uint16_t x1,y1,x2,y2,x3,y3;
-  JS_ValueToUint16(cx, argv[0], &x1);
-  JS_ValueToUint16(cx, argv[1], &y1);
-  JS_ValueToUint16(cx, argv[2], &x2);
-  JS_ValueToUint16(cx, argv[3], &y2);
-  JS_ValueToUint16(cx, argv[4], &x3);
-  JS_ValueToUint16(cx, argv[5], &y3);
+    uint16_t x1,y1,x2,y2,x3,y3;
+    JS_ValueToUint16(cx, argv[0], &x1);
+    JS_ValueToUint16(cx, argv[1], &y1);
+    JS_ValueToUint16(cx, argv[2], &x2);
+    JS_ValueToUint16(cx, argv[3], &y2);
+    JS_ValueToUint16(cx, argv[4], &x3);
+    JS_ValueToUint16(cx, argv[5], &y3);
 
-  OPTIONAL_COLOR_ARG(6);
-  //JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  lay->trigon_fill(x1, y1, x2, y2, x3, y3, color);
+    OPTIONAL_COLOR_ARG(6);
+    //JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    lay->trigon_fill(x1, y1, x2, y2, x3, y3, color);
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 /// TODO: polygon and bezier
 

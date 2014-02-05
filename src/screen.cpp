@@ -35,136 +35,134 @@
 #endif
 
 ViewPort::ViewPort()
-  : Entry() {
+    : Entry() {
 
-  opengl = false;
+    opengl = false;
 
-  changeres       = false;
+    changeres       = false;
 
-  resize_w = 0;
-  resize_h = 0;
+    resize_w = 0;
+    resize_h = 0;
 
-  jsclass = NULL;
-  jsobj = NULL;
+    jsclass = NULL;
+    jsobj = NULL;
 
-  audio = NULL;
-  m_SampleRate=NULL;
-  indestructible = false;
+    audio = NULL;
+    m_SampleRate=NULL;
+    indestructible = false;
 #ifdef WITH_AUDIO
-  // if compiled with audio initialize the audio data pipe
+    // if compiled with audio initialize the audio data pipe
 //   audio = ringbuffer_create(1024 * 512);
-  audio = ringbuffer_create(4096 * 512 * 8);
+    audio = ringbuffer_create(4096 * 512 * 8);
 #endif
 }
 
 ViewPort::~ViewPort() {
 
-  func("screen %s deleting %u layers", name, layers.len() );
-  Layer *lay;
-  lay = layers.begin();
-  while(lay) {
-      lay->stop();
-      lay->lock();
-      lay->rem();
-      // deleting layers crashes
-      //    delete(lay);
-      // XXX - you don't create layers... so you don't have to delete them as well!!!
-      //       symmetry is of primary importance and we should care about that.
-      //       layers should be freed by who created them. Perhaps we could extend 
-      //       the Layer api to allow notifications when a layer is removed from a screen
-      lay = layers.begin();
-  }
+    func("screen %s deleting %u layers", name, layers.len() );
+    Layer *lay;
+    lay = layers.begin();
+    while(lay) {
+        lay->stop();
+        lay->lock();
+        lay->rem();
+        // deleting layers crashes
+        //    delete(lay);
+        // XXX - you don't create layers... so you don't have to delete them as well!!!
+        //       symmetry is of primary importance and we should care about that.
+        //       layers should be freed by who created them. Perhaps we could extend
+        //       the Layer api to allow notifications when a layer is removed from a screen
+        lay = layers.begin();
+    }
 
-  if(audio) ringbuffer_free(audio);
+    if(audio) ringbuffer_free(audio);
 
-  func("screen %s deleting %u encoders", name, encoders.len() );
-  VideoEncoder *enc;
-  enc = encoders.begin();
-  while(enc) {
-    enc->stop();
-    enc->rem();
-    delete(enc);
+    func("screen %s deleting %u encoders", name, encoders.len() );
+    VideoEncoder *enc;
     enc = encoders.begin();
-  }
+    while(enc) {
+        enc->stop();
+        enc->rem();
+        delete(enc);
+        enc = encoders.begin();
+    }
 
 }
 
 bool ViewPort::init(int w, int h, int bpp) {
 
-  if(bpp!=32) {
-    warning("FreeJ is forced to use 32bit pixel formats, hardcoded internally");
-    warning("you are initializing a ViewPort with a different bpp value");
-    warning("please submit a patch if you can make it :)");
-    return false;
-  }
+    if(bpp!=32) {
+        warning("FreeJ is forced to use 32bit pixel formats, hardcoded internally");
+        warning("you are initializing a ViewPort with a different bpp value");
+        warning("please submit a patch if you can make it :)");
+        return false;
+    }
 
-  geo.init(w,h,bpp);
-  initialized = _init();
-  act("screen %s initialized with size %ux%u",
-      name, geo.w, geo.h);
+    geo.init(w,h,bpp);
+    initialized = _init();
+    act("screen %s initialized with size %ux%u",
+        name, geo.w, geo.h);
 
-  return initialized;
+    return initialized;
 
 }
 
 bool ViewPort::add_layer(Layer *lay) {
-  func("%s",__PRETTY_FUNCTION__);
+    func("%s",__PRETTY_FUNCTION__);
 
-  if(lay->list) {
-    warning("passing a layer from a screen to another is not (yet) supported");
-    return(false);
-  }
+    if(lay->list) {
+        warning("passing a layer from a screen to another is not (yet) supported");
+        return(false);
+    }
 
-  if(!lay->opened) {
-    error("layer %s is not yet opened, can't add it");
-    return(false);
-  }
+    if(!lay->opened) {
+        error("layer %s is not yet opened, can't add it");
+        return(false);
+    }
 
-  lay->screen = this;
-  
-  setup_blits( lay );
+    lay->screen = this;
 
-  // setup default blit (if any)
-  if (lay->blitter) {
-    lay->current_blit =
-      (Blit*)lay->blitter->default_blit;
-    lay->blitter->blitlist.sel(0);
-    lay->current_blit->sel(true);
-  } 
-  // center the position
-  //lay->geo.x = (screen->w - lay->geo.w)/2;
-  //lay->geo.y = (screen->h - lay->geo.h)/2;
-  //  screen->blitter->crop( lay, screen );
-  layers.prepend(lay);
-  layers.sel(0);
-  lay->sel(true);
-  lay->active = true;
-  func("layer %s added to screen %s",lay->name, name);
-  return(true);
+    setup_blits( lay );
+
+    // setup default blit (if any)
+    if (lay->blitter) {
+        lay->current_blit =
+            (Blit*)lay->blitter->default_blit;
+        lay->blitter->blitlist.sel(0);
+        lay->current_blit->sel(true);
+    }
+    // center the position
+    //lay->geo.x = (screen->w - lay->geo.w)/2;
+    //lay->geo.y = (screen->h - lay->geo.h)/2;
+    //  screen->blitter->crop( lay, screen );
+    layers.prepend(lay);
+    layers.sel(0);
+    lay->sel(true);
+    lay->active = true;
+    func("layer %s added to screen %s",lay->name, name);
+    return(true);
 }
 
 #ifdef WITH_AUDIO
 bool ViewPort::add_audio(JackClient *jcl) {
- 	if (layers.len() == 0 ) return false;	
+    if (layers.len() == 0 ) return false;
 
-	jcl->SetRingbufferPtr(audio, (int) ((VideoLayer*) layers.begin())->audio_samplerate, (int) ((VideoLayer*) layers.begin())->audio_channels);
-std::cerr << "------ audio_samplerate :" << ((VideoLayer*) layers.begin())->audio_samplerate \
-    << " audio_channels :" << ((VideoLayer*) layers.begin())->audio_channels << std::endl;
-	m_SampleRate = &jcl->m_SampleRate;
-	long unsigned int  m_SampleRate;
-	return (true);
+    jcl->SetRingbufferPtr(audio, (int) ((VideoLayer*) layers.begin())->audio_samplerate, (int) ((VideoLayer*) layers.begin())->audio_channels);
+    std::cerr << "------ audio_samplerate :" << ((VideoLayer*) layers.begin())->audio_samplerate \
+              << " audio_channels :" << ((VideoLayer*) layers.begin())->audio_channels << std::endl;
+    m_SampleRate = &jcl->m_SampleRate;
+    long unsigned int  m_SampleRate;
+    return (true);
 }
 #endif
 
-void ViewPort::rem_layer(Layer *lay)
-{
+void ViewPort::rem_layer(Layer *lay) {
     lay->screen = NULL; // symmetry
     lay->rem();
     notice("removed layer %s (but still present as an instance)", lay->name);
 }
 
-void ViewPort::reset()
-{
+void ViewPort::reset() {
     Layer *lay;
     lay = layers.begin();
     while(lay) {
@@ -172,110 +170,111 @@ void ViewPort::reset()
         lay->rem();
         lay = layers.begin();
     }
-    
+
 }
 
 bool ViewPort::add_encoder(VideoEncoder *enc) {
-  func("%s",__PRETTY_FUNCTION__);
- 
-  if(enc->list) {
-    error("moving an encoder from one screen to another is not supported");
-    return(false);
-  }
+    func("%s",__PRETTY_FUNCTION__);
 
-  func("initializing encoder %s",enc->name);
-  if(!enc->init(this)) {
-    error("%s : failed initialization", __PRETTY_FUNCTION__);
-    return(false);
-  }
-  func("initialization done");
+    if(enc->list) {
+        error("moving an encoder from one screen to another is not supported");
+        return(false);
+    }
 
-  enc->start();
+    func("initializing encoder %s",enc->name);
+    if(!enc->init(this)) {
+        error("%s : failed initialization", __PRETTY_FUNCTION__);
+        return(false);
+    }
+    func("initialization done");
 
-  enc->active = true;
+    enc->start();
 
-  encoders.append(enc);
+    enc->active = true;
 
-  encoders.sel(0);
+    encoders.append(enc);
 
-  enc->sel(true);
+    encoders.sel(0);
 
-  act("encoder %s added to screen %s", enc->name, name);
-  return true;
+    enc->sel(true);
+
+    act("encoder %s added to screen %s", enc->name, name);
+    return true;
 }
 
 #ifdef WITH_GD
 void ViewPort::save_frame(char *file) {
-  FILE *fp;
-  gdImagePtr im;
-  int *src;
-  int x,y;
+    FILE *fp;
+    gdImagePtr im;
+    int *src;
+    int x,y;
 
-  im = gdImageCreateTrueColor(geo.w, geo.h);
-  src = (int*)coords(0,0);
-  for(y=0; y < geo.h; y++) {
-    for (x=0; x < geo.w; x++) {
-      gdImageSetPixel(im, x, y, src[x] & 0x00FFFFFF);
-      //im->tpixels[y][x] = src[x] & 0x00FFFFFF;
+    im = gdImageCreateTrueColor(geo.w, geo.h);
+    src = (int*)coords(0,0);
+    for(y=0; y < geo.h; y++) {
+        for (x=0; x < geo.w; x++) {
+            gdImageSetPixel(im, x, y, src[x] & 0x00FFFFFF);
+            //im->tpixels[y][x] = src[x] & 0x00FFFFFF;
+        }
+        src += geo.w;
     }
-    src += geo.w;
-  }
-  fp = fopen(file, "wb");
-  gdImagePng(im,fp);
-  fclose(fp);
+    fp = fopen(file, "wb");
+    gdImagePng(im,fp);
+    fclose(fp);
 }
 #endif
 
 
 void ViewPort::blit_layers() {
-  Layer *lay;
+    Layer *lay;
 
-  lay = layers.end();
-  if (lay) {
-    layers.lock ();
-    while (lay) {
+    lay = layers.end();
+    if (lay) {
+        layers.lock ();
+        while (lay) {
 
-      if(lay->buffer) {
+            if(lay->buffer) {
 
-	if (lay->active & lay->opened) {
+                if (lay->active & lay->opened) {
 
-	  lay->lock();
-	  lock();
-	  blit(lay);
-	  unlock();
-	  lay->unlock();
-	  
-	}
-      }
-      lay = (Layer *)lay->prev;
+                    lay->lock();
+                    lock();
+                    blit(lay);
+                    unlock();
+                    lay->unlock();
+
+                }
+            }
+            lay = (Layer *)lay->prev;
+        }
+        layers.unlock ();
     }
-    layers.unlock ();
-  }
-  /////////// finish processing layers
+    /////////// finish processing layers
 
 }
 
 
 void ViewPort::handle_resize() {
-  lock ();
-  if(resizing) {
-    resize (resize_w, resize_h);
-    resizing = false;
-  }
-  unlock();
-  
-  /* crop all layers to new screen size */
-  Layer *lay = layers.begin ();
-  while (lay) {
-    lay -> lock ();
-    lay -> blitter->crop(lay, this);
-    lay -> unlock ();
-    lay = (Layer*) lay -> next;
-  } 
+    lock ();
+    if(resizing) {
+        resize (resize_w, resize_h);
+        resizing = false;
+    }
+    unlock();
+
+    /* crop all layers to new screen size */
+    Layer *lay = layers.begin ();
+    while (lay) {
+        lay -> lock ();
+        lay -> blitter->crop(lay, this);
+        lay -> unlock ();
+        lay = (Layer*) lay -> next;
+    }
 }
 
 void ViewPort::resize(int resize_w, int resize_h) {  // nop
-  resize_w = 0; resize_h = 0;
+    resize_w = 0;
+    resize_h = 0;
 };
 
 void ViewPort::show() { };

@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2007 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -27,16 +27,16 @@
 
 class TriggerController : public Controller {
 
- public:
-  TriggerController();
-  ~TriggerController();
+public:
+    TriggerController();
+    ~TriggerController();
 
-  int  poll();
-  virtual int dispatch();
-	
- private:
+    int  poll();
+    virtual int dispatch();
 
-  FACTORY_ALLOWED
+private:
+
+    FACTORY_ALLOWED
 
 };
 

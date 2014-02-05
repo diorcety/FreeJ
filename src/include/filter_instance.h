@@ -4,7 +4,7 @@
  *  Copyright (C) 2010    Andrea Guzzo <xant@xant.net>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -31,43 +31,43 @@
 class Filter;
 
 class FilterInstance : public Entry {
-  friend class Filter;
+    friend class Filter;
 
- public:
-  FilterInstance();
-  FilterInstance(Filter *fr);
-  virtual ~FilterInstance();
+public:
+    FilterInstance();
+    FilterInstance(Filter *fr);
+    virtual ~FilterInstance();
 
-  virtual void init(Filter *fr);
-  virtual uint32_t *process(float fps, uint32_t *inframe);
+    virtual void init(Filter *fr);
+    virtual uint32_t *process(float fps, uint32_t *inframe);
 
-  virtual bool set_parameter(int idx); ///< apply the parameter value
-  virtual bool get_parameter(int idx); ///< get the parameter value
-  virtual bool apply(Layer *lay);
+    virtual bool set_parameter(int idx); ///< apply the parameter value
+    virtual bool get_parameter(int idx); ///< get the parameter value
+    virtual bool apply(Layer *lay);
 
-  virtual bool inuse();
+    virtual bool inuse();
 
-  Layer *get_layer();
+    Layer *get_layer();
 
-  // XXX - most of this stuff should be private or protected
-  Filter *proto;
+    // XXX - most of this stuff should be private or protected
+    Filter *proto;
 
-  bool active;
+    bool active;
 
-  unsigned intcore;
-  void *core;
-    
-  uint32_t *outframe;
+    unsigned intcore;
+    void *core;
 
-  Linklist<Parameter> parameters;
+    uint32_t *outframe;
 
- protected:
-  void set_layer(Layer *lay);
+    Linklist<Parameter> parameters;
 
- private:
-  Layer *layer;
+protected:
+    void set_layer(Layer *lay);
 
-  FACTORY_ALLOWED
+private:
+    Layer *layer;
+
+    FACTORY_ALLOWED
 };
 
 #endif

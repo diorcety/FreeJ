@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -24,51 +24,65 @@
 #include <jutils.h>
 
 class Plugin {
-  typedef int (t_init)(Geometry*);
-  typedef int (t_clean)(void);
-  typedef void* (t_process)(void*);
-  typedef int (t_kbdin)(int);
- public:
-  Plugin();
-  ~Plugin();
-  
-  bool open(const char *path);
-  void *operator[](const char *);
+    typedef int (t_init)(Geometry*);
+    typedef int (t_clean)(void);
+    typedef void* (t_process)(void*);
+    typedef int (t_kbdin)(int);
+public:
+    Plugin();
+    ~Plugin();
 
-  int init(Geometry *sg) { 
+    bool open(const char *path);
+    void *operator[](const char *);
+
+    int init(Geometry *sg) {
 //    func("plugin %s::init",getname());
-    return (*__init)(sg); };
+        return (*__init)(sg);
+    };
 
-  int clean() {
+    int clean() {
 //    func("plugin %s::clean", getname());
-    return (*__clean)(); };
+        return (*__clean)();
+    };
 
-  void *process(void *buffo) { return (*__process)(buffo); };
+    void *process(void *buffo) {
+        return (*__process)(buffo);
+    };
 
-  int kbd_input(int key) { return (*__kbd_input)(key); };
+    int kbd_input(int key) {
+        return (*__kbd_input)(key);
+    };
 
-  char *getname() { return _name; };
-  char *getauthor() { return _author; };
-  char *getinfo() { return _info; };
-  int getversion() { return _version; };
+    char *getname() {
+        return _name;
+    };
+    char *getauthor() {
+        return _author;
+    };
+    char *getinfo() {
+        return _info;
+    };
+    int getversion() {
+        return _version;
+    };
 
 private:
-  void _delete();
-  
-  t_init *__init;
-  t_clean *__clean;
-  t_process *__process;
-  t_kbdin *__kbd_input;
+    void _delete();
 
-  void *_handle;
+    t_init *__init;
+    t_clean *__clean;
+    t_process *__process;
+    t_kbdin *__kbd_input;
 
-  /* plugin informations */
-  char *_name;
-  char *_author;
-  char *_info;
-  int _version;
-  //  int _bpp;
-  char *_path;
+    void *_handle;
+
+    /* plugin informations */
+    char *_name;
+    char *_author;
+    char *_info;
+    int _version;
+    //  int _bpp;
+    char *_path;
 };
 
 #endif

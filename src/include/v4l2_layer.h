@@ -28,63 +28,63 @@
 
 class Res {
 public:
-  Res(int sz);
-  ~Res();
-  bool addRes(int, int, int);
-  int getNb();
-  int getX(int);
-  int getY(int);
-  void setsX(int);
-  int getCurIdx();
-  
+    Res(int sz);
+    ~Res();
+    bool addRes(int, int, int);
+    int getNb();
+    int getX(int);
+    int getY(int);
+    void setsX(int);
+    int getCurIdx();
+
 private:
-  int m_idx, m_curIdx, m_size, m_fd;
-  int (*m_sizes)[2];
-  bool m_dec;
-  struct v4l2_format m_format;
+    int m_idx, m_curIdx, m_size, m_fd;
+    int (*m_sizes)[2];
+    bool m_dec;
+    struct v4l2_format m_format;
 };
 
 class V4L2CamLayer: public Layer {
- public:
-  V4L2CamLayer();
-  ~V4L2CamLayer();
+public:
+    V4L2CamLayer();
+    ~V4L2CamLayer();
 
-  bool open(const char *devfile);
-  void *feed();
-  void close();
-  Res *getRes();
-  void chgRes(int, Res *);
+    bool open(const char *devfile);
+    void *feed();
+    void close();
+    Res *getRes();
+    void chgRes(int, Res *);
 
- protected:
-  bool _init();
+protected:
+    bool _init();
 
 
- private:
+private:
 
-  int fd;  ///< filedescriptor for video device
-  int buftype;
-  int renderhop; ///< renderhop is how many frames to guzzle before rendering
-  int framenum; 
-  void *frame;
+    int fd;  ///< filedescriptor for video device
+    int buftype;
+    int renderhop; ///< renderhop is how many frames to guzzle before rendering
+    int framenum;
+    void *frame;
 
-  int	nb_sizes;
-  Res	*m_res;
-  struct v4l2_frmsizeenum framesize;
-  struct v4l2_capability capability;
-  struct v4l2_fmtdesc fmtdesc;
-  struct v4l2_input input; ///< info about current video input
-  struct v4l2_standard standard;
-  struct v4l2_format format; ///< Need to find out (request?) specific data format (sec 1.10.1)
-  struct v4l2_requestbuffers reqbuf;
-  struct v4l2_buffer buffer;
-  struct bufs {
-    void *start;
-    size_t length;
-  } *buffers;
-  char m_devfile[2048];
+    int	nb_sizes;
+    Res	*m_res;
+    struct v4l2_frmsizeenum framesize;
+    struct v4l2_capability capability;
+    struct v4l2_fmtdesc fmtdesc;
+    struct v4l2_input input; ///< info about current video input
+    struct v4l2_standard standard;
+    struct v4l2_format format; ///< Need to find out (request?) specific data format (sec 1.10.1)
+    struct v4l2_requestbuffers reqbuf;
+    struct v4l2_buffer buffer;
+    struct bufs {
+        void *start;
+        size_t length;
+    } *buffers;
+    char m_devfile[2048];
 
-  // allow to use Factory on this class
-  FACTORY_ALLOWED;
+    // allow to use Factory on this class
+    FACTORY_ALLOWED;
 };
 
 #endif

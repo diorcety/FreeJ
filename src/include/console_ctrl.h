@@ -26,27 +26,27 @@
 
 
 class ConsoleController: public Controller {
- public:
-  
-  ConsoleController() : Controller() {};
-  virtual ~ConsoleController() {};
-  virtual bool console_init() = 0;
+public:
 
-  virtual int poll() = 0;
-  virtual int dispatch() = 0;
-  virtual void close() = 0;
+    ConsoleController() : Controller() {};
+    virtual ~ConsoleController() {};
+    virtual bool console_init() = 0;
 
-  virtual void notice(const char *msg) = 0;
-  virtual void error(const char *msg) = 0;
-  virtual void warning(const char *msg) = 0;
-  virtual void act(const char *msg) = 0;
-  virtual void func(const char *msg) = 0;
-  virtual void old_printlog(const char *msg) = 0;
-  
+    virtual int poll() = 0;
+    virtual int dispatch() = 0;
+    virtual void close() = 0;
 
-  virtual void refresh() = 0;
+    virtual void notice(const char *msg) = 0;
+    virtual void error(const char *msg) = 0;
+    virtual void warning(const char *msg) = 0;
+    virtual void act(const char *msg) = 0;
+    virtual void func(const char *msg) = 0;
+    virtual void old_printlog(const char *msg) = 0;
 
-  bool active;
+
+    virtual void refresh() = 0;
+
+    bool active;
 };
 
 

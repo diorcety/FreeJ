@@ -27,40 +27,40 @@
 
 class XScreenSaverLayer: public Layer {
 
- public:
-  XScreenSaverLayer();
-  ~XScreenSaverLayer();
+public:
+    XScreenSaverLayer();
+    ~XScreenSaverLayer();
 
 
-  bool open(const char *file);
-  void *feed();
-  void close();
-  void pause(bool paused);
+    bool open(const char *file);
+    void *feed();
+    void close();
+    void pause(bool paused);
 
- // extern char *progclass;
- // void xhacks_handle_events(int);
+// extern char *progclass;
+// void xhacks_handle_events(int);
 
- protected:
-  bool _init();
+protected:
+    bool _init();
 
-  void *output;
+    void *output;
 
- private:
+private:
 
-  Display *dpy;
-  Window back_win;
-  //Pixmap back_win;
-  XImage *img;
-  GC gc;
-  bool paused;
+    Display *dpy;
+    Window back_win;
+    //Pixmap back_win;
+    XImage *img;
+    GC gc;
+    bool paused;
 
-  int x_pid;
-  char *_name;
-  char *_author;
-  char *_info;
-  int _version;
-  //  int _bpp;
-  char *_path;
+    int x_pid;
+    char *_name;
+    char *_author;
+    char *_info;
+    int _version;
+    //  int _bpp;
+    char *_path;
 
 };
 

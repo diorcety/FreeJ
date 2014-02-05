@@ -2,7 +2,7 @@
  *  (c) Copyright 2004 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -37,10 +37,10 @@
 
 /* The SLscroll routines will use this structure. */
 typedef struct _File_Line_Type {
-  struct _File_Line_Type *next;
-  struct _File_Line_Type *prev;
-  char *data;			       /* pointer to line data */
-  int color; // line color
+    struct _File_Line_Type *next;
+    struct _File_Line_Type *prev;
+    char *data;			       /* pointer to line data */
+    int color; // line color
 } File_Line_Type;
 
 /* callback functions for console input modes */
@@ -55,86 +55,87 @@ class FilterInstance;
 
 
 class Console {
- public:
-  
-  Console();
-  ~Console();
-  
-  bool init(Context *freej);
-  void close();
-  void cafudda();
+public:
 
-  void notice(const char *msg);
-  void error(const char *msg);
-  void warning(const char *msg);
-  void act(const char *msg);
-  void func(const char *msg);
-  
-  /* takes a pointer to the function which will be
-     in charge of processing the input collected */
-  int readline(const char *msg, cmd_process_t *proc, cmd_complete_t *comp);  
+    Console();
+    ~Console();
 
-  void refresh();
+    bool init(Context *freej);
+    void close();
+    void cafudda();
 
-  bool active;
+    void notice(const char *msg);
+    void error(const char *msg);
+    void warning(const char *msg);
+    void act(const char *msg);
+    void func(const char *msg);
 
-  Linklist<Entry> history;
+    /* takes a pointer to the function which will be
+       in charge of processing the input collected */
+    int readline(const char *msg, cmd_process_t *proc, cmd_complete_t *comp);
 
- private:
-  int x,y;
+    void refresh();
 
-  void canvas();
+    bool active;
 
-  void layerprint();
-  void layerlist();
-  int layercol;
+    Linklist<Entry> history;
 
-  void filterprint();
-  void filterlist();
-  int paramsel;
+private:
+    int x,y;
 
-  void speedmeter();
+    void canvas();
 
-  void statusline(char *msg);
+    void layerprint();
+    void layerlist();
+    int layercol;
 
-  void print_help();
+    void filterprint();
+    void filterlist();
+    int paramsel;
 
-  void getkey();
+    void speedmeter();
 
-  void scroll(const char *msg,int color);
-  void update_scroll();
-  bool do_update_scroll;
+    void statusline(char *msg);
 
-  /* input console command */
-  bool commandline;
-  int cursor;
-  char command[MAX_CMDLINE];
-  cmd_process_t *cmd_process;
-  cmd_complete_t *cmd_complete;
+    void print_help();
 
-  enum parser_t { DEFAULT,
-		  COMMANDLINE,
-		  MOVELAYER,
-		  JAZZ } parser; // which parser to use for keys
+    void getkey();
 
-  void parser_default(int key);
-  void parser_commandline(int key);
-  void parser_movelayer(int key);
-  void parser_jazz(int key);
+    void scroll(const char *msg,int color);
+    void update_scroll();
+    bool do_update_scroll;
 
-  int movestep;
-  int jazzstep;
-  int jazzvalue;
+    /* input console command */
+    bool commandline;
+    int cursor;
+    char command[MAX_CMDLINE];
+    cmd_process_t *cmd_process;
+    cmd_complete_t *cmd_complete;
 
-  /* The SLscroll routines will use this structure. */
-  void free_lines(File_Line_Type *line);
-  File_Line_Type *create_line(const char *buf);
-  File_Line_Type *File_Lines;  
-  SLscroll_Window_Type Line_Window;
-  File_Line_Type *line, *last_line;
-  unsigned int num_lines;
+    enum parser_t { DEFAULT,
+                    COMMANDLINE,
+                    MOVELAYER,
+                    JAZZ
+                  } parser; // which parser to use for keys
 
-  Entry *entr;
+    void parser_default(int key);
+    void parser_commandline(int key);
+    void parser_movelayer(int key);
+    void parser_jazz(int key);
+
+    int movestep;
+    int jazzstep;
+    int jazzvalue;
+
+    /* The SLscroll routines will use this structure. */
+    void free_lines(File_Line_Type *line);
+    File_Line_Type *create_line(const char *buf);
+    File_Line_Type *File_Lines;
+    SLscroll_Window_Type Line_Window;
+    File_Line_Type *line, *last_line;
+    unsigned int num_lines;
+
+    Entry *entr;
 };
 
 

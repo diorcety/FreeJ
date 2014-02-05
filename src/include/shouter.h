@@ -2,7 +2,7 @@
  * Copyright (C) 2000-2002 Denis Rojo aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -37,9 +37,9 @@ template <class T> class Linklist;
 #define RETRY_DELAY 60 /* time to retry connect on broken icecasts, in seconds */
 #define MAX_VALUE_SIZE 512
 
-  /**
-     Macro declaration of parameters 
-  */
+/**
+   Macro declaration of parameters
+*/
 #define CHAR_SET(func,var) \
 char var[MAX_VALUE_SIZE]; \
 void func(char *in) { \
@@ -65,48 +65,48 @@ else var=in; \
 float func() { return var; };
 
 class Shouter : public Entry {
- private:
-  shout_t *ice;
+private:
+    shout_t *ice;
 
-  int errors;
-  void run(); ///< Main thread loop
-  
- public:
-  Shouter();
-  ~Shouter();
+    int errors;
+    void run(); ///< Main thread loop
 
-  /* ======= GUI SETTINGS HERE
-     the following macros declare two functions for each variable:
-     set_variable(value); assign value to variable
-     get_variable(); returns value of variable */
-  CHAR_SET(ip,_ip);
-  CHAR_SET(host,_host);
-  char streamurl[MAX_VALUE_SIZE];
-  INT_SET(port,_port);
-  CHAR_SET(user,_user);
-  CHAR_SET(pass,_pass);
-  CHAR_SET(mount,_mount);
-  
-  /* setted by the encoder */
-  CHAR_SET(bps,_bps);
-  CHAR_SET(freq,_freq);
-  CHAR_SET(channels,_channels);
+public:
+    Shouter();
+    ~Shouter();
 
-  INT_SET(login,_login);
-  CHAR_SET(name,_name);
-  CHAR_SET(url,_url);
-  CHAR_SET(desc,_desc);
-  int format;
-  
-  bool start();
-  bool stop();
-  int send (unsigned char *buf, unsigned int enc);
-  
-  bool running;
-  time_t retry;
+    /* ======= GUI SETTINGS HERE
+       the following macros declare two functions for each variable:
+       set_variable(value); assign value to variable
+       get_variable(); returns value of variable */
+    CHAR_SET(ip,_ip);
+    CHAR_SET(host,_host);
+    char streamurl[MAX_VALUE_SIZE];
+    INT_SET(port,_port);
+    CHAR_SET(user,_user);
+    CHAR_SET(pass,_pass);
+    CHAR_SET(mount,_mount);
 
-  bool apply_profile();
-  bool profile_changed;
+    /* setted by the encoder */
+    CHAR_SET(bps,_bps);
+    CHAR_SET(freq,_freq);
+    CHAR_SET(channels,_channels);
+
+    INT_SET(login,_login);
+    CHAR_SET(name,_name);
+    CHAR_SET(url,_url);
+    CHAR_SET(desc,_desc);
+    int format;
+
+    bool start();
+    bool stop();
+    int send (unsigned char *buf, unsigned int enc);
+
+    bool running;
+    time_t retry;
+
+    bool apply_profile();
+    bool profile_changed;
 
 };
 

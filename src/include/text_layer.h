@@ -2,7 +2,7 @@
  *  (c) Copyright 2005 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -32,43 +32,43 @@
 
 class TextLayer: public Layer {
 
- public:
-  TextLayer();
-  ~TextLayer();
+public:
+    TextLayer();
+    ~TextLayer();
 
-  bool open(const char *file);
-  void *feed();
-  void close();
+    bool open(const char *file);
+    void *feed();
+    void close();
 
-  void calculate_string_size(char *text, int *w, int *h);
-  // calculates the width and height of a string if it would be printed with
-  // current settings
+    void calculate_string_size(char *text, int *w, int *h);
+    // calculates the width and height of a string if it would be printed with
+    // current settings
 
-  void write(const char *str);
-  void set_fgcolor(int r, int g, int b);
-  void set_bgcolor(int r, int g, int b);
-  bool set_font(const char *path, int sz);
-  bool set_font(const char *path);
-  bool set_fontsize(int sz);
+    void write(const char *str);
+    void set_fgcolor(int r, int g, int b);
+    void set_bgcolor(int r, int g, int b);
+    bool set_font(const char *path, int sz);
+    bool set_font(const char *path);
+    bool set_fontsize(int sz);
 
- protected:
-  bool _init();
+protected:
+    bool _init();
 
- private:
-  SDL_Color bgcolor;
-  SDL_Color fgcolor;
-  int size;
+private:
+    SDL_Color bgcolor;
+    SDL_Color fgcolor;
+    int size;
 
-  TTF_Font *font;
-  char *fontfile;
-  char *fontname;
-  SDL_Surface *surf;
+    TTF_Font *font;
+    char *fontfile;
+    char *fontname;
+    SDL_Surface *surf;
 
-  void _display_text(SDL_Surface *newsurf);
-  char *_get_fontfile(const char *name);
+    void _display_text(SDL_Surface *newsurf);
+    char *_get_fontfile(const char *name);
 
-   // allow to use Factory on this class
-  FACTORY_ALLOWED
+    // allow to use Factory on this class
+    FACTORY_ALLOWED
 };
 
 #endif

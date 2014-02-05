@@ -3,7 +3,7 @@
  *  Copyright (C) 2010    Andrea Guzzo   <xant@xant.net>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -37,45 +37,45 @@ class Freeframe;
 template <class T> class Linklist;
 
 class Filter : public Entry {
-  friend class FilterInstance;
- public:
-  // supported filter types
-  enum Type {
+    friend class FilterInstance;
+public:
+    // supported filter types
+    enum Type {
 #ifdef WITH_FREI0R
-    FREIOR=0,
+        FREIOR=0,
 #endif
 #ifdef WITH_COCOA
-    COREIMAGE=1,
+        COREIMAGE=1,
 #endif
-    FREEFRAME=2
-  };
-  Filter();
-  virtual ~Filter();
-    
-  virtual FilterInstance *new_instance();
-    
-  virtual FilterInstance *apply(Layer *lay);
-  virtual bool apply(Layer *lay, FilterInstance *instance);
-  
-  virtual const char *description();
-  virtual const char *author();
+        FREEFRAME=2
+    };
+    Filter();
+    virtual ~Filter();
 
-  virtual int get_parameter_type(int i);
+    virtual FilterInstance *new_instance();
 
-  virtual char *get_parameter_description(int i);
+    virtual FilterInstance *apply(Layer *lay);
+    virtual bool apply(Layer *lay, FilterInstance *instance);
 
-  virtual int type()=0;
-    
-  bool initialized;
-  bool active;
-  bool inuse;
+    virtual const char *description();
+    virtual const char *author();
 
- protected:
-  virtual void destruct(FilterInstance *inst);
-  virtual void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
-  virtual void apply_parameters(FilterInstance *inst);
-  virtual void init_parameters(Linklist<Parameter> &parameters)=0;
-  int bytesize;
+    virtual int get_parameter_type(int i);
+
+    virtual char *get_parameter_description(int i);
+
+    virtual int type()=0;
+
+    bool initialized;
+    bool active;
+    bool inuse;
+
+protected:
+    virtual void destruct(FilterInstance *inst);
+    virtual void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
+    virtual void apply_parameters(FilterInstance *inst);
+    virtual void init_parameters(Linklist<Parameter> &parameters)=0;
+    int bytesize;
 
 };
 

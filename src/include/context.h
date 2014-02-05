@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2007 Denis Rojo aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -58,122 +58,122 @@ class VideoEncoder;
 class FreejDaemon;
 
 template <class T> class Linklist;
-    
+
 /* maximum height & width supported by context */
 #define MAX_HEIGHT 1024
 #define MAX_WIDTH 768
 
 class Context {
- private:
-  static bool factory_initialized;
-  /* doublesize calculation */
-  uint64_t **doubletab;
-  Uint8 *doublebuf;
-  int dcy, cy, cx;
-  uint64_t eax;
-  /* ---------------------- */
+private:
+    static bool factory_initialized;
+    /* doublesize calculation */
+    uint64_t **doubletab;
+    Uint8 *doublebuf;
+    int dcy, cy, cx;
+    uint64_t eax;
+    /* ---------------------- */
 
-  // parts of the cafudda process
-  void handle_resize();
-  void handle_controllers();
+    // parts of the cafudda process
+    void handle_resize();
+    void handle_controllers();
 
-  pthread_t cafudda_thread;
-  bool running;
+    pthread_t cafudda_thread;
+    bool running;
 
-  // Factories 
-  //static Factory<Layer> layer_factory; // Layer Factory
-  // Default layer types
-  /*
-  inline void default_layertypes()
-  {
-    default_layertypes_map.insert(FIdPair("GeometryLayer", "basic"));
-  }
+    // Factories
+    //static Factory<Layer> layer_factory; // Layer Factory
+    // Default layer types
+    /*
+    inline void default_layertypes()
+    {
+      default_layertypes_map.insert(FIdPair("GeometryLayer", "basic"));
+    }
 
-  //static Factory<Controller> controller_factory; // Controller Factory
-  // Default controller types
-  inline void default_controllertypes()
-  {
-    default_controllertypes_map.insert(FIdPair("KeyboardController", "sdl"));
-  }
-  */
-    
- public:
+    //static Factory<Controller> controller_factory; // Controller Factory
+    // Default controller types
+    inline void default_controllertypes()
+    {
+      default_controllertypes_map.insert(FIdPair("KeyboardController", "sdl"));
+    }
+    */
 
-  Context();
-  ~Context();
+public:
 
-  bool init(); ///< initialise the engine
+    Context();
+    ~Context();
 
-  //  void close();
-  void cafudda(double secs); ///< run the engine for seconds or one single frame pass
+    bool init(); ///< initialise the engine
 
-  void start(); ///< start the engine and loop until quit is false
-  void start_threaded(); ///< start the engine in a thread, looping until quit is false
+    //  void close();
+    void cafudda(double secs); ///< run the engine for seconds or one single frame pass
 
-  bool register_controller(Controller *ctrl);
-  bool rem_controller(Controller *ctrl);
+    void start(); ///< start the engine and loop until quit is false
+    void start_threaded(); ///< start the engine in a thread, looping until quit is false
 
-  bool add_layer(Layer *lay); ///< add a layer to the screen and engine
-  void rem_layer(Layer *lay);
+    bool register_controller(Controller *ctrl);
+    bool rem_controller(Controller *ctrl);
 
-  bool add_encoder(VideoEncoder *enc); ///< add an encoder to the engine
+    bool add_layer(Layer *lay); ///< add a layer to the screen and engine
+    void rem_layer(Layer *lay);
 
-  void *coords(int x, int y); ///< returns an offset to currently selected screen
+    bool add_encoder(VideoEncoder *enc); ///< add an encoder to the engine
 
-  int parse_js_cmd(const char *cmd);
+    void *coords(int x, int y); ///< returns an offset to currently selected screen
 
-  int open_script(char *filename);
+    int parse_js_cmd(const char *cmd);
 
-  int reset(); ///< clear the engine and deletes all registered objects
+    int open_script(char *filename);
 
-  bool config_check(const char *filename);
+    int reset(); ///< clear the engine and deletes all registered objects
 
-  void resize(int w, int h);
+    bool config_check(const char *filename);
 
-  bool quit;
-  
-  bool pause;
+    void resize(int w, int h);
 
-  bool save_to_file;
+    bool quit;
 
-  bool interactive;
+    bool pause;
 
-  //  Osd osd; ///< On Screen Display
+    bool save_to_file;
 
-  SDL_Event event;
-  bool poll_events;
+    bool interactive;
 
-  bool add_screen(ViewPort *scr); ///< add a new screen
-  Linklist<ViewPort> screens; ///< linked list of registered screens
-  ViewPort *screen; ///< pointer to the first screen on top of the list (auxiliary)
+    //  Osd osd; ///< On Screen Display
 
-  Linklist<Controller> controllers; ///< linked list of registered interactive controllers
+    SDL_Event event;
+    bool poll_events;
 
-  Linklist<Filter> filters; ///< linked list of registered filters
+    bool add_screen(ViewPort *scr); ///< add a new screen
+    Linklist<ViewPort> screens; ///< linked list of registered screens
+    ViewPort *screen; ///< pointer to the first screen on top of the list (auxiliary)
 
-  Linklist<Filter> generators; ///< linked list of registered generators
+    Linklist<Controller> controllers; ///< linked list of registered interactive controllers
 
-  //AudioCollector *audio; ///< audio device recording input (PortAudio)
+    Linklist<Filter> filters; ///< linked list of registered filters
 
-  Plugger plugger; ///< filter plugins host
+    Linklist<Filter> generators; ///< linked list of registered generators
 
-  JsParser *js; ///< javascript parser object
+    //AudioCollector *audio; ///< audio device recording input (PortAudio)
 
-  char main_javascript[512]; ///< if started with a javascript, save the filename here (used by reset)
+    Plugger plugger; ///< filter plugins host
 
-  /* Set the interval (in frames) after
-     the fps counter is updated */
-  FPS fps;
-  double fps_speed;
+    JsParser *js; ///< javascript parser object
 
-  bool clear_all;
-  bool start_running;
+    char main_javascript[512]; ///< if started with a javascript, save the filename here (used by reset)
 
-  char *layers_description; ///< string describing available layer types
-  char *screens_description; ///< string describing available screen types
+    /* Set the interval (in frames) after
+       the fps counter is updated */
+    FPS fps;
+    double fps_speed;
 
-  Layer *open(char *file, int w = 0, int h = 0); ///< creates a layer from a filename, detecting its type
- 
+    bool clear_all;
+    bool start_running;
+
+    char *layers_description; ///< string describing available layer types
+    char *screens_description; ///< string describing available screen types
+
+    Layer *open(char *file, int w = 0, int h = 0); ///< creates a layer from a filename, detecting its type
+
 };
 
 #endif

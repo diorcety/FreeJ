@@ -2,7 +2,7 @@
  *  (c) Copyright 2005 Silvano Galliani aka kysucix <kysucix@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -27,30 +27,32 @@
 
 class ImageLayer: public Layer {
 
-    public:
-	ImageLayer();
-	~ImageLayer();
-	
-	bool open(const char *file);
-	void *feed();
+public:
+    ImageLayer();
+    ~ImageLayer();
 
-	void close();
+    bool open(const char *file);
+    void *feed();
 
- protected:
-	bool _init() { return true; };
-	// no specific init for implementation 
-	// most happens in open (when we have the file and know the size..)
+    void close();
 
-    private:
+protected:
+    bool _init() {
+        return true;
+    };
+    // no specific init for implementation
+    // most happens in open (when we have the file and know the size..)
 
-	SDL_Surface *image;
-	SDL_Surface *surf;
-	SDL_Surface *tmpImage;
+private:
 
-	void *black_image;
+    SDL_Surface *image;
+    SDL_Surface *surf;
+    SDL_Surface *tmpImage;
 
-   // allow to use Factory on this class
-  FACTORY_ALLOWED
+    void *black_image;
+
+    // allow to use Factory on this class
+    FACTORY_ALLOWED
 
 };
 

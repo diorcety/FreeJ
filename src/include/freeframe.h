@@ -5,26 +5,26 @@
 extern "C" {
 #endif
 
-/* 
+/*
  *  FreeFrame.h
- * 
+ *
  *  FreeFrame Open Video Plugin Prototype
  *  C Version
- * 
+ *
  *  www.freeframe.org
  *  marcus@freeframe.org
- * 
- * 	
- * 
+ *
+ *
+ *
  * Copyright (c) 2002, Marcus Clements www.freeframe.org
  * All rights reserved.
- * 
+ *
  * FreeFrame 1.0 upgrade by Pete Warden
  * www.petewarden.com
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  *    * Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
  *    * Redistributions in binary form must reproduce the above copyright
@@ -34,7 +34,7 @@ extern "C" {
  *    * Neither the name of FreeFrame nor the names of its
  *      contributors may be used to endorse or promote products derived
  *      from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -112,9 +112,9 @@ typedef unsigned char BYTE;
 #define FF_CAP_PREFER_COPY		2
 #define	FF_CAP_PREFER_BOTH		3
 
-#define FF_TYPE_BOOLEAN			0    
+#define FF_TYPE_BOOLEAN			0
 #define FF_TYPE_EVENT			1
-#define FF_TYPE_RED			2 
+#define FF_TYPE_RED			2
 #define FF_TYPE_GREEN			3
 #define FF_TYPE_BLUE			4
 #define FF_TYPE_XPOS			5
@@ -127,55 +127,55 @@ typedef unsigned char BYTE;
  */
 
 typedef struct PlugInfoStructTag {
-	DWORD	APIMajorVersion;
-	DWORD	APIMinorVersion;
-	BYTE	uniqueID[4];			/* 4 chars uniqueID - not null terminated */
-	BYTE	pluginName[16];			/* 16 chars plugin friendly name - not null terminated */
-	DWORD	pluginType;			/* Effect or source */
+    DWORD	APIMajorVersion;
+    DWORD	APIMinorVersion;
+    BYTE	uniqueID[4];			/* 4 chars uniqueID - not null terminated */
+    BYTE	pluginName[16];			/* 16 chars plugin friendly name - not null terminated */
+    DWORD	pluginType;			/* Effect or source */
 } PlugInfoStruct;
 
 typedef struct PlugExtendedInfoStructTag {
-	DWORD PluginMajorVersion;
-	DWORD PluginMinorVersion;
-	char* Description;
-	char* About;
-	DWORD FreeFrameExtendedDataSize;
-	void* FreeFrameExtendedDataBlock;
+    DWORD PluginMajorVersion;
+    DWORD PluginMinorVersion;
+    char* Description;
+    char* About;
+    DWORD FreeFrameExtendedDataSize;
+    void* FreeFrameExtendedDataBlock;
 } PlugExtendedInfoStruct;
 
 typedef struct VideoInfoStructTag {
-	DWORD frameWidth;			/* width of frame in pixels */
-	DWORD frameHeight;			/* height of frame in pixels */
-	DWORD bitDepth;				/* enumerated indicator of bit depth of video */
-						/* 0 = 16 bit 5-6-5   1 = 24bit packed   2 = 32bit */
-	DWORD orientation;			/* video frame orientation meaningful values:
+    DWORD frameWidth;			/* width of frame in pixels */
+    DWORD frameHeight;			/* height of frame in pixels */
+    DWORD bitDepth;				/* enumerated indicator of bit depth of video */
+    /* 0 = 16 bit 5-6-5   1 = 24bit packed   2 = 32bit */
+    DWORD orientation;			/* video frame orientation meaningful values:
 						   1 = origin at top left 2 = origin at bottom left */
-	
+
 } VideoInfoStruct;
 
 typedef struct ProcessFrameCopyStructTag {
-	DWORD numInputFrames;
-	void** InputFrames;
-	void* OutputFrame;
+    DWORD numInputFrames;
+    void** InputFrames;
+    void* OutputFrame;
 } ProcessFrameCopyStruct;
 
 typedef struct SetParameterStructTag {
-	DWORD index;
-	float value;
+    DWORD index;
+    float value;
 } SetParameterStruct;
 
 typedef union {
-	DWORD ivalue;
-	float fvalue;
-	char *svalue;
+    DWORD ivalue;
+    float fvalue;
+    char *svalue;
 } ParameterValue;
 
 typedef union plugMainUnionTag {
-	DWORD ivalue;
-	float fvalue;
-	VideoInfoStruct *VISvalue;
-	PlugInfoStruct *PISvalue;
-	char *svalue;
+    DWORD ivalue;
+    float fvalue;
+    VideoInfoStruct *VISvalue;
+    PlugInfoStruct *PISvalue;
+    char *svalue;
 } plugMainUnion;
 
 typedef plugMainUnion plugMainType(DWORD, LPVOID, DWORD);
@@ -186,7 +186,7 @@ typedef plugMainUnion plugMainType(DWORD, LPVOID, DWORD);
 
 /*
  * plugMain - The one and only exposed function
- * parameters: 
+ * parameters:
  *	functionCode - tells the plugin which function is being called
  *  pParam - 32-bit parameter or 32-bit pointer to parameter structure
  *
@@ -194,8 +194,8 @@ typedef plugMainUnion plugMainType(DWORD, LPVOID, DWORD);
  *
  * All parameters are cast as 32-bit untyped pointers and cast to appropriate
  * types here
- * 
- * All return values are cast to 32-bit untyped pointers here before return to 
+ *
+ * All return values are cast to 32-bit untyped pointers here before return to
  * the host
  *
  *

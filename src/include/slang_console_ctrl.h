@@ -58,46 +58,46 @@ class SlwReadline;
 
 
 class SlwConsole: public ConsoleController {
- public:
-  
-  SlwConsole();
-  ~SlwConsole();
-  
-  int poll();
-  int dispatch();
+public:
 
-  bool console_init();
+    SlwConsole();
+    ~SlwConsole();
 
-  bool slw_init();
+    int poll();
+    int dispatch();
 
-  void close() {};
+    bool console_init();
 
-  void notice(const char *msg);
-  void error(const char *msg);
-  void warning(const char *msg);
-  void act(const char *msg);
-  void func(const char *msg);
-  void old_printlog(const char *msg);
-  
+    bool slw_init();
 
-  void refresh();
+    void close() {};
 
-  bool active;
+    void notice(const char *msg);
+    void error(const char *msg);
+    void warning(const char *msg);
+    void act(const char *msg);
+    void func(const char *msg);
+    void old_printlog(const char *msg);
 
 
- private:
+    void refresh();
 
-  SLangConsole *slw;
-  SlwSelector *sel;
-  SlwTitle *tit;
-  SLW_Log *log;
-  SlwReadline *rdl;
+    bool active;
 
-  int x,y;
 
-  int paramsel;
+private:
 
-  int movestep;
+    SLangConsole *slw;
+    SlwSelector *sel;
+    SlwTitle *tit;
+    SLW_Log *log;
+    SlwReadline *rdl;
+
+    int x,y;
+
+    int paramsel;
+
+    int movestep;
 
 
 };

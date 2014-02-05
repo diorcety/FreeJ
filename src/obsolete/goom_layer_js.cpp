@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2005 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -32,149 +32,149 @@ DECLARE_CLASS_GC("GoomLayer",goom_layer_class,goom_layer_constructor,js_layer_gc
 ////////////////////////////////
 // Goom Layer methods
 JSFunctionSpec goom_layer_methods[] = {
-  ENTRY_METHODS  ,
-  //    name		native		        nargs
-  {     "mode",         goom_layer_mode,        1  },
-  {     "middle",      goom_layer_middle,       2  },
-  {     "reverse",     goom_layer_reverse,      1  },
-  {     "speed",      goom_layer_speed,         1  },
-  {     "plane",    goom_layer_plane,           2  },
-  {     "wave",         goom_layer_wave,        1  },
-  {     "hypercos",     goom_layer_hypercos,    1  },
-  {     "noise",    goom_layer_noise,           1  },
-  {0}
+    ENTRY_METHODS  ,
+    //    name		native		        nargs
+    {     "mode",         goom_layer_mode,        1  },
+    {     "middle",      goom_layer_middle,       2  },
+    {     "reverse",     goom_layer_reverse,      1  },
+    {     "speed",      goom_layer_speed,         1  },
+    {     "plane",    goom_layer_plane,           2  },
+    {     "wave",         goom_layer_wave,        1  },
+    {     "hypercos",     goom_layer_hypercos,    1  },
+    {     "noise",    goom_layer_noise,           1  },
+    {0}
 };
 
 JS_CONSTRUCTOR("GoomLayer", goom_layer_constructor, GoomLayer);
 
 JS(goom_layer_mode) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(1);
 
-  jsint mod = js_get_int(argv[0]);
-  if(mod>9)
-    mod = 9;
-  else if(mod<0)
-    mod = 0;
+    GET_LAYER(GoomLayer);
 
-  lay->goom->update.zoomFilterData.mode = mod;
+    jsint mod = js_get_int(argv[0]);
+    if(mod>9)
+        mod = 9;
+    else if(mod<0)
+        mod = 0;
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.mode = mod;
+
+    return JS_TRUE;
 }
 
 
 JS(goom_layer_speed) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(1);
 
-  jsint spd = js_get_int(argv[0]);
+    GET_LAYER(GoomLayer);
 
-  if(spd>256)
-    spd = 256;
-  else if(spd<0)
-    spd = 0;
+    jsint spd = js_get_int(argv[0]);
 
-  lay->goom->update.zoomFilterData.vitesse = spd;
+    if(spd>256)
+        spd = 256;
+    else if(spd<0)
+        spd = 0;
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.vitesse = spd;
+
+    return JS_TRUE;
 }
 
 
 JS(goom_layer_middle) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(2);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(2);
 
-  jsint x = js_get_int(argv[0]);
-  jsint y = js_get_int(argv[1]);
+    GET_LAYER(GoomLayer);
 
-  lay->goom->update.zoomFilterData.middleX = x;
-  lay->goom->update.zoomFilterData.middleY = y;
+    jsint x = js_get_int(argv[0]);
+    jsint y = js_get_int(argv[1]);
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.middleX = x;
+    lay->goom->update.zoomFilterData.middleY = y;
+
+    return JS_TRUE;
 }
 
 
 JS(goom_layer_plane) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(2);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(2);
 
-  jsint h = js_get_int(argv[0]);
-  jsint v = js_get_int(argv[1]);
+    GET_LAYER(GoomLayer);
 
-  lay->goom->update.zoomFilterData.hPlaneEffect = h;
-  lay->goom->update.zoomFilterData.vPlaneEffect = v;
+    jsint h = js_get_int(argv[0]);
+    jsint v = js_get_int(argv[1]);
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.hPlaneEffect = h;
+    lay->goom->update.zoomFilterData.vPlaneEffect = v;
+
+    return JS_TRUE;
 }
 
 
 JS(goom_layer_reverse) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(1);
 
-  jsint rev = js_get_int(argv[0]);
+    GET_LAYER(GoomLayer);
 
-  lay->goom->update.zoomFilterData.reverse = (char)rev;
+    jsint rev = js_get_int(argv[0]);
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.reverse = (char)rev;
+
+    return JS_TRUE;
 }
 
 JS(goom_layer_noise) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(1);
 
-  jsint noi = js_get_int(argv[0]);
+    GET_LAYER(GoomLayer);
 
-  lay->goom->update.zoomFilterData.noisify = (char)noi;
+    jsint noi = js_get_int(argv[0]);
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.noisify = (char)noi;
+
+    return JS_TRUE;
 }
 
 JS(goom_layer_hypercos) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(1);
 
-  jsdouble = js_get_double(argv[0]);
+    GET_LAYER(GoomLayer);
 
-  lay->goom->update.zoomFilterData.hypercosEffect = hyp;
-  // TODO
+    jsdouble = js_get_double(argv[0]);
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.hypercosEffect = hyp;
+    // TODO
+
+    return JS_TRUE;
 }
 JS(goom_layer_wave) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(GoomLayer);
+    JS_CHECK_ARGC(1);
 
-  jsdouble = js_get_double(argv[0]);
+    GET_LAYER(GoomLayer);
 
-  lay->goom->update.zoomFilterData.waveEffect = wav;
-  // TODO
+    jsdouble = js_get_double(argv[0]);
 
-  return JS_TRUE;
+    lay->goom->update.zoomFilterData.waveEffect = wav;
+    // TODO
+
+    return JS_TRUE;
 }
 
 #endif

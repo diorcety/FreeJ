@@ -25,86 +25,86 @@
 DECLARE_CLASS("Parameter", parameter_class, parameter_constructor);
 
 JSFunctionSpec parameter_methods[] = {
-  // TODO
-  {0}
+    // TODO
+    {0}
 };
 
 JSPropertySpec parameter_properties[] = {
-  { "name",        0,  JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, parameter_get_name, NULL },
-  { "description", 0,  JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, parameter_get_desc, NULL },
-  { "type",        0,  JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, parameter_get_type, NULL },
-  {0}
+    { "name",        0,  JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, parameter_get_name, NULL },
+    { "description", 0,  JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, parameter_get_desc, NULL },
+    { "type",        0,  JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, parameter_get_type, NULL },
+    {0}
 };
 
 JS(parameter_constructor) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  // nop
+    // nop
 
-  *rval = OBJECT_TO_JSVAL(obj);
-  return JS_TRUE;
+    *rval = OBJECT_TO_JSVAL(obj);
+    return JS_TRUE;
 }
 
 // TODO
-JSP(parameter_get_name) { 
-  Parameter *param = (Parameter*)JS_GetPrivate(cx, obj);
-  JSString *str;
+JSP(parameter_get_name) {
+    Parameter *param = (Parameter*)JS_GetPrivate(cx, obj);
+    JSString *str;
 
-  if(!param) {
-      JS_ERROR("Parameter used has no internal data");
-  } else {
-    JS_BeginRequest(cx);
-    str  = JS_NewStringCopyZ(cx, param->name);
-    *vp = STRING_TO_JSVAL(str);
-    JS_EndRequest(cx);
-  }
-  return JS_TRUE;
-}
-
-JSP(parameter_get_desc) { 
-  Parameter *param = (Parameter*)JS_GetPrivate(cx, obj);
-  JSString *str;
-
-  if(!param) { 
-      JS_ERROR("Parameter used has no internal data");
-  } else {
-    JS_BeginRequest(cx);
-    str  = JS_NewStringCopyZ(cx, param->description);
-    *vp = STRING_TO_JSVAL(str);
-    JS_EndRequest(cx);
-  }
-  return JS_TRUE;
-}
-
-JSP(parameter_get_type) { 
-  Parameter *param = (Parameter*)JS_GetPrivate(cx, obj);
-  JSString *str;
-  JS_BeginRequest(cx);
-  if(!param) { 
-      JS_ERROR("Parameter used has no internal data");
-  } else {
-    switch(param->type) {
-    case Parameter::BOOL:
-      str  = JS_NewStringCopyZ(cx,"Boolean");
-      break;
-    case Parameter::NUMBER:
-      str  = JS_NewStringCopyZ(cx,"Number");
-      break;
-    case Parameter::COLOR:
-      str  = JS_NewStringCopyZ(cx,"Color");
-      break;
-    case Parameter::POSITION: 
-      str  = JS_NewStringCopyZ(cx, "Position");
-      break;
-    case Parameter::STRING:
-      str  = JS_NewStringCopyZ(cx, "String");
-      break;
-    default:
-      str  = JS_NewStringCopyZ(cx, "Unknown");
-      break;
+    if(!param) {
+        JS_ERROR("Parameter used has no internal data");
+    } else {
+        JS_BeginRequest(cx);
+        str  = JS_NewStringCopyZ(cx, param->name);
+        *vp = STRING_TO_JSVAL(str);
+        JS_EndRequest(cx);
     }
-    *vp = STRING_TO_JSVAL(str);
-  }
-  JS_EndRequest(cx);
-  return JS_TRUE;
+    return JS_TRUE;
+}
+
+JSP(parameter_get_desc) {
+    Parameter *param = (Parameter*)JS_GetPrivate(cx, obj);
+    JSString *str;
+
+    if(!param) {
+        JS_ERROR("Parameter used has no internal data");
+    } else {
+        JS_BeginRequest(cx);
+        str  = JS_NewStringCopyZ(cx, param->description);
+        *vp = STRING_TO_JSVAL(str);
+        JS_EndRequest(cx);
+    }
+    return JS_TRUE;
+}
+
+JSP(parameter_get_type) {
+    Parameter *param = (Parameter*)JS_GetPrivate(cx, obj);
+    JSString *str;
+    JS_BeginRequest(cx);
+    if(!param) {
+        JS_ERROR("Parameter used has no internal data");
+    } else {
+        switch(param->type) {
+        case Parameter::BOOL:
+            str  = JS_NewStringCopyZ(cx,"Boolean");
+            break;
+        case Parameter::NUMBER:
+            str  = JS_NewStringCopyZ(cx,"Number");
+            break;
+        case Parameter::COLOR:
+            str  = JS_NewStringCopyZ(cx,"Color");
+            break;
+        case Parameter::POSITION:
+            str  = JS_NewStringCopyZ(cx, "Position");
+            break;
+        case Parameter::STRING:
+            str  = JS_NewStringCopyZ(cx, "String");
+            break;
+        default:
+            str  = JS_NewStringCopyZ(cx, "Unknown");
+            break;
+        }
+        *vp = STRING_TO_JSVAL(str);
+    }
+    JS_EndRequest(cx);
+    return JS_TRUE;
 }

@@ -2,7 +2,7 @@
  *  (c) Copyright 2008 Denis Rojo <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -30,48 +30,48 @@
 class Context;
 
 class OscCommand: public Entry {
- public:
-  // osc_cmd is Entry::name
-  char proto_cmd[128];
-  char js_cmd[512];
+public:
+    // osc_cmd is Entry::name
+    char proto_cmd[128];
+    char js_cmd[512];
 };
 
 class JsCommand: public Entry {
- public:
-  // name is function
-  jsval function;
-  char *format;
-  int argc;
-  jsval *argv;
+public:
+    // name is function
+    jsval function;
+    char *format;
+    int argc;
+    jsval *argv;
 
 };
 
 class OscController: public Controller {
 
- public:
-  OscController();
-  ~OscController();
+public:
+    OscController();
+    ~OscController();
 
-  virtual int dispatch();
-  int poll();
+    virtual int dispatch();
+    int poll();
 
-  bool start(int port);
-  void stop();
+    bool start(int port);
+    void stop();
 
-  Context *freej;
+    Context *freej;
 
-  lo_server_thread srv;
+    lo_server_thread srv;
 
-  lo_address sendto;
+    lo_address sendto;
 
-  lo_message outmsg;
+    lo_message outmsg;
 
-  char port[64];
+    char port[64];
 
-  Linklist<Entry> commands_handled;
-  Linklist<Entry> commands_pending;
+    Linklist<Entry> commands_handled;
+    Linklist<Entry> commands_pending;
 
-  FACTORY_ALLOWED;
+    FACTORY_ALLOWED;
 };
 
 #endif

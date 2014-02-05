@@ -5,7 +5,7 @@
  *  Denis Rojo aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -52,7 +52,7 @@ public:
 private:
     void init_class();
     void gc();
-    
+
     JsParser  *parser;
     JSContext *cx;
     JSRuntime *rt;
@@ -60,37 +60,37 @@ private:
 };
 
 class JsParser {
-    public:
-	JsParser(Context *_env);
-	~JsParser();
-	int include(JSContext *cx, const char* jscript);
-	///< include javascript libraries from known path (current or PREFIX)
-	int open(const char* script_file);
-	int use(JSContext *cx, JSObject *obj, const char* script_file);
+public:
+    JsParser(Context *_env);
+    ~JsParser();
+    int include(JSContext *cx, const char* jscript);
+    ///< include javascript libraries from known path (current or PREFIX)
+    int open(const char* script_file);
+    int use(JSContext *cx, JSObject *obj, const char* script_file);
 
-	int parse(const char *command);
-	void stop();
-	void gc();
-	char* readFile(FILE *file,int *len);
-	int reset();
+    int parse(const char *command);
+    void stop();
+    void gc();
+    char* readFile(FILE *file,int *len);
+    int reset();
 
-	JSBool branch_callback(JSContext* Context, JSScript* Script);
+    JSBool branch_callback(JSContext* Context, JSScript* Script);
 
     /* DEPRECATED!! here for retrocompatibility */
-	JSContext *global_context;
-	JSObject *global_object;
-	JSRuntime *js_runtime;
+    JSContext *global_context;
+    JSObject *global_object;
+    JSRuntime *js_runtime;
     /** **/
-    
+
     JsExecutionContext *global_runtime;
     Linklist<JsExecutionContext> runtimes;
-    
- private:
+
+private:
     void init();
     void init_class(JSContext *cx, JSObject *obj);
     int open(JSContext *cx, JSObject *obj, const char* script_file);
     int evaluate(JSContext *cx, JSObject *obj, const char *name, const char *buf, unsigned int len);
-    
+
 };
 #endif
 

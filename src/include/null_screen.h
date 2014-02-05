@@ -2,7 +2,7 @@
  *  (c) Copyright 2008 Denis Roio <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -29,21 +29,23 @@
 
 
 class NullScreen : public ViewPort {
- public:
-  NullScreen();
-  ~NullScreen();
+public:
+    NullScreen();
+    ~NullScreen();
 
-  bool init(int width, int height);
-  void resize(int resize_w, int resize_h);
-  void show();
-  void clear();
-  void *get_surface();
-  fourcc get_pixel_format() { return RGBA32 };
-  void fullscreen();
-  bool lock();
-  bool unlock();
+    bool init(int width, int height);
+    void resize(int resize_w, int resize_h);
+    void show();
+    void clear();
+    void *get_surface();
+    fourcc get_pixel_format() {
+        return RGBA32
+    };
+    void fullscreen();
+    bool lock();
+    bool unlock();
 
-  void *coords(int x, int y);
+    void *coords(int x, int y);
 
 };
 

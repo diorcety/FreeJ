@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -16,7 +16,7 @@
  * Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __OSD_H__ 
+#ifndef __OSD_H__
 #define __OSD_H__
 
 #include <context.h>
@@ -29,77 +29,77 @@ typedef void (write_routine)(char*, int, int, int, int);
 //class Context;
 
 class Osd {
- private:
-  int _hbound, _vbound;
-  int _layersel, _filtersel;
-  uint32_t newline;
+private:
+    int _hbound, _vbound;
+    int _layersel, _filtersel;
+    uint32_t newline;
 
-  uint32_t *fps_offset;
+    uint32_t *fps_offset;
 
-  void _selection();
-  uint32_t *selection_offset;
+    void _selection();
+    uint32_t *selection_offset;
 
-  void _filterlist();
-  uint32_t *filter_offset;
+    void _filterlist();
+    uint32_t *filter_offset;
 
-  void _layerlist();
-  uint32_t *layer_offset;
+    void _layerlist();
+    uint32_t *layer_offset;
 
-  void draw_credits();
-  uint32_t *hicredits_offset;
-  uint32_t *locredits_offset1;
-  uint32_t *locredits_offset2;
-  uint32_t *hilogo_offset;
+    void draw_credits();
+    uint32_t *hicredits_offset;
+    uint32_t *locredits_offset1;
+    uint32_t *locredits_offset2;
+    uint32_t *hilogo_offset;
 
-  void _print_status();
-  uint32_t *status_offset;
-  void _set_color(colors col);
+    void _print_status();
+    uint32_t *status_offset;
+    void _set_color(colors col);
 
-  uint64_t *topclean_offset;
-  uint64_t *downclean_offset;
+    uint64_t *topclean_offset;
+    uint64_t *downclean_offset;
 
-  uint32_t _color32;
+    uint32_t _color32;
 
-  char title[64];
+    char title[64];
 
-  bool _calibrate;
-  bool _credits;
-  bool _fps;
+    bool _calibrate;
+    bool _credits;
+    bool _fps;
 
-  Layer *ipernaut;
-  Filter *osd_vertigo;
+    Layer *ipernaut;
+    Filter *osd_vertigo;
 
-  /* used by the font renderer */
-  int y,x,i,len,f,v,ch,cv;
-  uint32_t *ptr;
+    /* used by the font renderer */
+    int y,x,i,len,f,v,ch,cv;
+    uint32_t *ptr;
 
-  /* used to clear the osd */
-  uint32_t osd_jump;
+    /* used to clear the osd */
+    uint32_t osd_jump;
 
- public:
-  Osd();
-  ~Osd();
+public:
+    Osd();
+    ~Osd();
 
-  void init(Context *screen);
-  void resize();
-  void print();
-  //  void statusmsg(char *format,...);
-  bool calibrate();
-  bool credits(bool s);
-  bool credits();
-  bool fps();
-  void clean();
+    void init(Context *screen);
+    void resize();
+    void print();
+    //  void statusmsg(char *format,...);
+    bool calibrate();
+    bool credits(bool s);
+    bool credits();
+    bool fps();
+    void clean();
 
-  void _print_credits();
-  void _show_fps();
+    void _print_credits();
+    void _show_fps();
 
-  Context *env;
+    Context *env;
 
-  uint32_t *print(const char *text, uint32_t* pos, int hsize, int vsize);
+    uint32_t *print(const char *text, uint32_t* pos, int hsize, int vsize);
 
-  bool active;
-  char status_msg[50];
-  char input_line[100];
+    bool active;
+    char status_msg[50];
+    char input_line[100];
 };
 
 #endif

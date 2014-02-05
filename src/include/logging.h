@@ -46,19 +46,19 @@
 #define MAX_LOG_MSG 1024
 
 enum LogLevel { // ordered by increasing verbosity
-  QUIET,
-  ERROR,
-  NOTICE,
-  INFO,
-  WARNING,
-  DEBUG
+    QUIET,
+    ERROR,
+    NOTICE,
+    INFO,
+    WARNING,
+    DEBUG
 };
 
 class ConsoleController;
 
 // Base class to implement for providing a logging service
 class Logger {
-  public:
+public:
     virtual int printlog(LogLevel level, const char *format, ...);
     virtual int vprintlog(LogLevel level, const char *format, va_list arg);
 };
@@ -66,25 +66,29 @@ class Logger {
 // This class has to be inherited by all the classes which expect to print on a
 // Logger
 class Loggable {
-  public:
+public:
     class Error : public FreejError {
-      public:
+    public:
         Error(const std::string& msg, int rv)
-          : FreejError(msg, rv) { }
+            : FreejError(msg, rv) { }
     };
 
     Loggable();
     virtual ~Loggable();
     bool register_logger(Logger *l);
     bool unregister_logger(Logger *l);
-    LogLevel get_loglevel() { return loglevel_; }
-    void set_loglevel(LogLevel level) { loglevel_ = level; }
+    LogLevel get_loglevel() {
+        return loglevel_;
+    }
+    void set_loglevel(LogLevel level) {
+        loglevel_ = level;
+    }
 
-  protected:
+protected:
     int log(LogLevel level, const char *format, ...);
     int vlog(LogLevel level, const char *format, va_list arg);
 
-  private:
+private:
     Logger *logger_;
     LogLevel loglevel_;
     pthread_mutex_t logger_mutex_;
@@ -92,7 +96,7 @@ class Loggable {
 
 // Static log system. Allowing ConsoleController for backward compatibility.
 class GlobalLogger {
-  public:
+public:
     static int printlog(LogLevel level, const char *format, ...);
     static int vprintlog(LogLevel level, const char *format, va_list arg);
     static bool register_logger(Logger *l);
@@ -100,7 +104,7 @@ class GlobalLogger {
     static LogLevel get_loglevel();
     static void set_loglevel(LogLevel level);
     static void set_console(ConsoleController *c);
-  private:
+private:
     static LogLevel loglevel_;
     static Logger *logger_;
     static pthread_mutex_t logger_mutex_;
@@ -111,18 +115,18 @@ class GlobalLogger {
 // Basic Logger implementation compatible with dynamic languages bindings,
 // subclasses in other languages should implement logmsg()
 class WrapperLogger : public Logger {
-  public:
+public:
     class Error : public FreejError {
-      public:
+    public:
         Error(const std::string& msg, int rv)
-          : FreejError(msg, rv) { }
+            : FreejError(msg, rv) { }
     };
 
     WrapperLogger();
     virtual ~WrapperLogger();
     int vprintlog(LogLevel level, const char *format, va_list arg);
     virtual void logmsg(LogLevel level, const char *msg);
-  private:
+private:
     char *logbuf_;
     pthread_mutex_t logbuf_mutex_;
 };

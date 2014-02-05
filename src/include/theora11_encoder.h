@@ -34,66 +34,66 @@
 class Context;
 
 class Theora11Encoder: public Videoencoder {
-  
-
- public:
-
-  Theora11Encoder();
-  ~Theora11Encoder();
 
 
-  bool init(Context *_env);
-  
-  bool feed_video();
-  
-  int encode_frame();
+public:
 
- private:
+    Theora11Encoder();
+    ~Theora11Encoder();
 
-  int encode_video(int end_of_stream);
-  int encode_audio(int end_of_stream);
 
-  /* ogg_stream_state takes physical pages, weld into a logical stream
-    of packets, used for skeleton stream */
+    bool init(Context *_env);
 
-  ogg_stream_state vo; ///< logical stream
-  ogg_stream_state to; ///< logical stream
-  ogg_stream_state so; ///< logical stream
+    bool feed_video();
 
-  ogg_page         og; ///< one Ogg bitstream page.  Vorbis packets are inside
-  ogg_packet       op; ///< one raw packet of data for decode
+    int encode_frame();
 
-  th_enc_ctx      *td; ///< Theora encoder context
-  th_info          ti; ///< Theora info (video bitstream settings)
-  th_comment       tc; ///< Theora comment
+private:
 
-  vorbis_info      vi; ///< Vorbis info (audio bitstream settings)
-  vorbis_comment   vc; ///< comments
+    int encode_video(int end_of_stream);
+    int encode_audio(int end_of_stream);
 
-  vorbis_dsp_state vd; ///< central working state for the packet->PCM decoder
-  vorbis_block     vb; ///< local working space for packet->PCM decode
+    /* ogg_stream_state takes physical pages, weld into a logical stream
+      of packets, used for skeleton stream */
 
-  int rand_serial; ///< serial number for logical bitstreams
+    ogg_stream_state vo; ///< logical stream
+    ogg_stream_state to; ///< logical stream
+    ogg_stream_state so; ///< logical stream
 
-  int frame_w;
-  int frame_h;
-  int pic_w;
-  int pic_h;
-  int pic_x;
-  int pic_y;
-  int video_fps_n;
-  int video_fps_d;
-  int video_par_n;
-  int video_par_d;
-  
-  /* video size */
-/*   int video_x; */
-/*   int video_y; */
-/*   /\* offsets for theora size constraints *\/ */
-/*   int frame_x_offset;  */
-/*   int frame_y_offset; */
-  
-  unsigned char *yuvframe[2]; /* yuv 420 */
+    ogg_page         og; ///< one Ogg bitstream page.  Vorbis packets are inside
+    ogg_packet       op; ///< one raw packet of data for decode
+
+    th_enc_ctx      *td; ///< Theora encoder context
+    th_info          ti; ///< Theora info (video bitstream settings)
+    th_comment       tc; ///< Theora comment
+
+    vorbis_info      vi; ///< Vorbis info (audio bitstream settings)
+    vorbis_comment   vc; ///< comments
+
+    vorbis_dsp_state vd; ///< central working state for the packet->PCM decoder
+    vorbis_block     vb; ///< local working space for packet->PCM decode
+
+    int rand_serial; ///< serial number for logical bitstreams
+
+    int frame_w;
+    int frame_h;
+    int pic_w;
+    int pic_h;
+    int pic_x;
+    int pic_y;
+    int video_fps_n;
+    int video_fps_d;
+    int video_par_n;
+    int video_par_d;
+
+    /* video size */
+    /*   int video_x; */
+    /*   int video_y; */
+    /*   /\* offsets for theora size constraints *\/ */
+    /*   int frame_x_offset;  */
+    /*   int frame_y_offset; */
+
+    unsigned char *yuvframe[2]; /* yuv 420 */
 
 };
 

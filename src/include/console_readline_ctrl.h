@@ -32,44 +32,45 @@ typedef int (cmd_complete_t)(Context *env, char *cmd);
 class Context;
 
 class SlwReadline : public SLangWidget {
- public:
-  SlwReadline();
-  ~SlwReadline();
+public:
+    SlwReadline();
+    ~SlwReadline();
 
-  bool init();
-  bool feed(int key);
-  bool refresh();
-  
-  enum parser_t { DEFAULT,
-		  COMMANDLINE,
-		  MOVELAYER } parser; // which parser to use for keys
-  void set_parser(parser_t parser);
+    bool init();
+    bool feed(int key);
+    bool refresh();
 
-  /* takes a pointer to the function which will be
-     in charge of processing the input collected */
-  int readline(const char *msg, cmd_process_t *proc, cmd_complete_t *comp);  
+    enum parser_t { DEFAULT,
+                    COMMANDLINE,
+                    MOVELAYER
+                  } parser; // which parser to use for keys
+    void set_parser(parser_t parser);
 
-  int movestep;
+    /* takes a pointer to the function which will be
+       in charge of processing the input collected */
+    int readline(const char *msg, cmd_process_t *proc, cmd_complete_t *comp);
 
-  Context *env;
+    int movestep;
+
+    Context *env;
 
 
 
- private:
+private:
 
-  Linklist<Entry> history;
-  
-  /* input console command */
-  bool commandline;
-  int cursor;
-  char command[MAX_CMDLINE];
-  cmd_process_t *cmd_process;
-  cmd_complete_t *cmd_complete;
+    Linklist<Entry> history;
 
-  bool parser_default(int key);
-  bool parser_commandline(int key);
-  bool parser_movelayer(int key);
-  
+    /* input console command */
+    bool commandline;
+    int cursor;
+    char command[MAX_CMDLINE];
+    cmd_process_t *cmd_process;
+    cmd_complete_t *cmd_complete;
+
+    bool parser_default(int key);
+    bool parser_commandline(int key);
+    bool parser_movelayer(int key);
+
 };
 
 #endif

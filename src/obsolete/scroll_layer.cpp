@@ -3,7 +3,7 @@
  *  (c) Copyright 2004 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -34,111 +34,112 @@
 #include <jsparser_data.h>
 
 ScrollLayer::ScrollLayer()
-  :Layer() {
+    :Layer() {
 
-  first = last = NULL;
-  procbuf = NULL;
-  path[0] = (char)NULL;
+    first = last = NULL;
+    procbuf = NULL;
+    path[0] = (char)NULL;
 
-  set_name("SCR");
-  jsclass = &vscroll_layer_class;
+    set_name("SCR");
+    jsclass = &vscroll_layer_class;
 }
 
 ScrollLayer::~ScrollLayer() {
-  close();
+    close();
 }
 
 
 
 int ScrollLayer::streol(char *line) {
-  // trova newline alla fine della linea
-  int c;
-  char *p = line;
-  if(!p) return 0;
-  for(c=0;c<512;c++) {
-    if(*p == '\n'
-       || *p == '\0')
-      break;
-    else p++;
-  }
-  return c;
+    // trova newline alla fine della linea
+    int c;
+    char *p = line;
+    if(!p) return 0;
+    for(c=0; c<512; c++) {
+        if(*p == '\n'
+                || *p == '\0')
+            break;
+        else p++;
+    }
+    return c;
 }
-			  
+
 
 bool ScrollLayer::init(Context *freej) {
-  int width  = freej->screen->w;
-  int height = freej->screen->h;
+    int width  = freej->screen->w;
+    int height = freej->screen->h;
 
-  _init(width,height);
-  
-  if(procbuf) free(procbuf);
-  procbuf = malloc(geo.size);
+    _init(width,height);
 
-  border = 10;
-  wmax = (geo.w/(CHAR_WIDTH+1))-1; // max strings in a line
-  step = 1;
-  line_space = 2;
-  kerning = 1;
-  length = 0;
-  
-  if(filename[0])
-    _open(filename);
-  
-  return true;
+    if(procbuf) free(procbuf);
+    procbuf = malloc(geo.size);
+
+    border = 10;
+    wmax = (geo.w/(CHAR_WIDTH+1))-1; // max strings in a line
+    step = 1;
+    line_space = 2;
+    kerning = 1;
+    length = 0;
+
+    if(filename[0])
+        _open(filename);
+
+    return true;
 }
 
 void ScrollLayer::close() {
-  struct txtline *l, *tmp;
-  l = first;
+    struct txtline *l, *tmp;
+    l = first;
 
-  // cleanup all the line buffers
-  while(l) {
-    if(l->buf) free(l->buf);
-    if(l->txt) free(l->txt);
-    tmp = l->next;
-    free(l);
-    l = tmp;
-  }
+    // cleanup all the line buffers
+    while(l) {
+        if(l->buf) free(l->buf);
+        if(l->txt) free(l->txt);
+        tmp = l->next;
+        free(l);
+        l = tmp;
+    }
 
-  if(procbuf) free(procbuf);
-  procbuf = NULL;
-  first = NULL; last = NULL;
+    if(procbuf) free(procbuf);
+    procbuf = NULL;
+    first = NULL;
+    last = NULL;
 }
 
 void ScrollLayer::render(struct txtline *l) {
-  // raster textline rendering
-  // TODO: truetype font rendering
-  int x,y,i,f;
-  uint32_t *dst;
+    // raster textline rendering
+    // TODO: truetype font rendering
+    int x,y,i,f;
+    uint32_t *dst;
 
-  if(!l->txt) { // we don't render blank lines
-    l->rendered = true;
-    return;
-  }
-
-  // allocate 32bit render buffer:
-  // horizontal screen stripe of font's height
-  // here we calcolate the size: be CAREFUL
-  l->buf = calloc ( geo.pitch, CHAR_HEIGHT );
-  if(!l->buf) {
-    error("ScrollLayer::render can't allocate buffer");
-    return;
-  }
-  l->size = geo.pitch*CHAR_HEIGHT;
-		     
-  for (y=0; y<CHAR_HEIGHT; y++) {
-    dst = (uint32_t*)l->buf + y*geo.w + border;
-    for(x=0;x<l->len;x++) {
-      f = fontdata[l->txt[x] * CHAR_HEIGHT + y];
-      for (i = CHAR_WIDTH-1; i >= 0; i--) {
-	if (f & (CHAR_START << i))
-	  *dst = 0xffffffff;
-	dst++; 
-      }
-      dst += kerning;
+    if(!l->txt) { // we don't render blank lines
+        l->rendered = true;
+        return;
     }
-  }
-  l->rendered = true;
+
+    // allocate 32bit render buffer:
+    // horizontal screen stripe of font's height
+    // here we calcolate the size: be CAREFUL
+    l->buf = calloc ( geo.pitch, CHAR_HEIGHT );
+    if(!l->buf) {
+        error("ScrollLayer::render can't allocate buffer");
+        return;
+    }
+    l->size = geo.pitch*CHAR_HEIGHT;
+
+    for (y=0; y<CHAR_HEIGHT; y++) {
+        dst = (uint32_t*)l->buf + y*geo.w + border;
+        for(x=0; x<l->len; x++) {
+            f = fontdata[l->txt[x] * CHAR_HEIGHT + y];
+            for (i = CHAR_WIDTH-1; i >= 0; i--) {
+                if (f & (CHAR_START << i))
+                    *dst = 0xffffffff;
+                dst++;
+            }
+            dst += kerning;
+        }
+    }
+    l->rendered = true;
 }
 
 /* this open wrapper is necessary because in freej you
@@ -146,134 +147,134 @@ void ScrollLayer::render(struct txtline *l) {
    function needs the screen to be initialized in order
    to know the maximum lenght for the text lines */
 bool ScrollLayer::open(const char *file) {
-  FILE *fd;
-  fd = fopen(file,"r");
-  if(!fd) {
-    error("ScrollLayer::open : error opening %s : %s",
-	  file, strerror(errno));
-    return false;
-  }
-  strncpy(path,file,512);
-  set_filename(file);
-  fclose(fd);
-  return true;
+    FILE *fd;
+    fd = fopen(file,"r");
+    if(!fd) {
+        error("ScrollLayer::open : error opening %s : %s",
+              file, strerror(errno));
+        return false;
+    }
+    strncpy(path,file,512);
+    set_filename(file);
+    fclose(fd);
+    return true;
 }
 
 bool ScrollLayer::_open(char *file) {
-  FILE *fd;
-  char str[512]; // 4096 width resolution is bound here
-  if(!path[0]) return false;
-  fd = fopen(path,"r");
-  if(!fd) {
-    error("ScrollLayer::open : error opening %s : %s",
-	  file, strerror(errno));
-     return false;
-  }
-  while(!feof(fd)) {
-    if(fgets(str,511,fd) <0) {
-      error("ScrollLayer::open : error reading %s : %s",
-	    file, strerror(errno));
-      break;
+    FILE *fd;
+    char str[512]; // 4096 width resolution is bound here
+    if(!path[0]) return false;
+    fd = fopen(path,"r");
+    if(!fd) {
+        error("ScrollLayer::open : error opening %s : %s",
+              file, strerror(errno));
+        return false;
     }
-    append(str);
-  }
-  fclose(fd);
-  set_filename(file);
-  func("ScrollLayer read %u lines, maximum length is %u bytes",
-       length, wmax);
-  return true;
+    while(!feof(fd)) {
+        if(fgets(str,511,fd) <0) {
+            error("ScrollLayer::open : error reading %s : %s",
+                  file, strerror(errno));
+            break;
+        }
+        append(str);
+    }
+    fclose(fd);
+    set_filename(file);
+    func("ScrollLayer read %u lines, maximum length is %u bytes",
+         length, wmax);
+    return true;
 }
 
 void ScrollLayer::append(char *txt) {
-  struct txtline *l;
+    struct txtline *l;
 
-  // allocate structure and set all to 0
-  l = (struct txtline*)calloc( 1, sizeof( struct txtline ) );
+    // allocate structure and set all to 0
+    l = (struct txtline*)calloc( 1, sizeof( struct txtline ) );
 
-  // check length
-  l->len = streol(txt);
-  if(l->len) { // blank line?!
-    l->len = (l->len>wmax) ? wmax : l->len;
-    
-    // make a copy of the string
-    l->txt = (char*)calloc(l->len,sizeof(char));
-    memcpy(l->txt, txt, l->len * sizeof(char));
-  }
+    // check length
+    l->len = streol(txt);
+    if(l->len) { // blank line?!
+        l->len = (l->len>wmax) ? wmax : l->len;
 
-  // put it last
-  if(last) last->next = l;
-  if(!first) first = l;
-  last = l;
+        // make a copy of the string
+        l->txt = (char*)calloc(l->len,sizeof(char));
+        memcpy(l->txt, txt, l->len * sizeof(char));
+    }
 
-  // put it bottom
-  l->y = 0;
+    // put it last
+    if(last) last->next = l;
+    if(!first) first = l;
+    last = l;
 
-  if(!first) first = last;
-  length++;
+    // put it bottom
+    l->y = 0;
+
+    if(!first) first = last;
+    length++;
 
 }
 
 
 bool ScrollLayer::keypress(int key) {
-  return false;
+    return false;
 }
 
 
 void *ScrollLayer::feed() {
 
-  if(!first) // there is no line to process
+    if(!first) // there is no line to process
+        return procbuf;
+    else // update is needed: blank the layer
+        memset(procbuf,0,geo.size);
+
+    struct txtline *l, *tmp;
+
+    l = first;
+
+    while(l) {
+        l->y+=step;
+
+        // check if it needs to be rendered
+        if( !l->rendered ) {
+            // yes, this is the last entry we process!
+            render(l);
+            break;
+        }
+
+        // check if it flowed out of screen
+        if( l->y >= geo.h ) {
+            // yes, delete the line!
+            tmp = l->next;
+            if(tmp) { // it is not the last line
+                tmp->prev = l->prev;
+                if(first==l) first = tmp;
+                else l->prev->next = tmp;
+                if(last==l) last = tmp;
+            } else { // there are no more lines
+                if(l==first) first = NULL;
+                if(l==last) last = NULL;
+                memset(procbuf,0,geo.size);
+            }
+            if(l->buf) free(l->buf);
+            if(l->txt) free(l->txt);
+            free(l);
+            l = tmp;
+            continue;
+        }
+
+        // make space in between
+        if(l->y < CHAR_HEIGHT+line_space) break;
+
+        if(l->buf) {
+            // blit to the buffer
+            jmemcpy( ((uint32_t*)procbuf)
+                     + geo.w*(geo.h-l->y),
+                     l->buf, l->size );
+        }
+
+        l = l->next;
+    }
+
     return procbuf;
-  else // update is needed: blank the layer
-    memset(procbuf,0,geo.size);
-
-  struct txtline *l, *tmp;
-
-  l = first;
-  
-  while(l) {
-    l->y+=step;
-
-    // check if it needs to be rendered
-    if( !l->rendered ) {
-      // yes, this is the last entry we process!
-      render(l);
-      break;
-    }
-
-    // check if it flowed out of screen
-    if( l->y >= geo.h ) {
-      // yes, delete the line!
-      tmp = l->next;
-      if(tmp) { // it is not the last line
-	tmp->prev = l->prev;
-	if(first==l) first = tmp;
-	else l->prev->next = tmp;
-	if(last==l) last = tmp;
-      } else { // there are no more lines
-	if(l==first) first = NULL;
-	if(l==last) last = NULL;
-	memset(procbuf,0,geo.size);
-      }
-      if(l->buf) free(l->buf);
-      if(l->txt) free(l->txt);
-      free(l);
-      l = tmp;
-      continue;
-    }
-
-    // make space in between
-    if(l->y < CHAR_HEIGHT+line_space) break;
-
-    if(l->buf) {
-      // blit to the buffer
-      jmemcpy( ((uint32_t*)procbuf) 
-	       + geo.w*(geo.h-l->y),
-	       l->buf, l->size );
-    }
-
-    l = l->next;
-  }
-
-  return procbuf;
 }
-  
+

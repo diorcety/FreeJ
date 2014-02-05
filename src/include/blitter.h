@@ -2,7 +2,7 @@
  *  (c) Copyright 2004 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -35,8 +35,8 @@
 typedef void (blit_f)(void *src, void *dst, int len, Linklist<Parameter> *params);
 
 typedef void (blit_sdl_f)(void *src, SDL_Rect *src_rect,
-			  SDL_Surface *dst, SDL_Rect *dst_rect,
-			  Geometry *geo, Linklist<Parameter> *params);
+                          SDL_Surface *dst, SDL_Rect *dst_rect,
+                          Geometry *geo, Linklist<Parameter> *params);
 
 typedef void (blit_past_f)(void *src, void *past, void *dst, int len);
 
@@ -56,102 +56,102 @@ void setup_linear_blits(Blitter *blitter);
 
 
 class Blit: public Entry {
-  friend class Blitter;
-  friend class ViewPort;
+    friend class Blitter;
+    friend class ViewPort;
 
- public:
+public:
 
-  Blit();
-  ~Blit();
+    Blit();
+    ~Blit();
 
-  char desc[512];    ///< long description
-  float value;    ///< parameter value
+    char desc[512];    ///< long description
+    float value;    ///< parameter value
 
-  Linklist<Parameter> parameters; ///< linklist of blit parameters
+    Linklist<Parameter> parameters; ///< linklist of blit parameters
 
-  blit_f *fun; ///< pointer to linear blit function
-  blit_sdl_f *sdl_fun; ///< pointer to sdl blit function
-  blit_past_f *past_fun; ///< pointer to past blit function
+    blit_f *fun; ///< pointer to linear blit function
+    blit_sdl_f *sdl_fun; ///< pointer to sdl blit function
+    blit_past_f *past_fun; ///< pointer to past blit function
 
-  enum BlitType {
-	  NONE = 0,
-	  LINEAR = 1,
-	  SDL = 2,
-	  PAST = 3
-  };
+    enum BlitType {
+        NONE = 0,
+        LINEAR = 1,
+        SDL = 2,
+        PAST = 3
+    };
 
 //#define LINEAR_BLIT 1
 //#define SDL_BLIT 2
 //#define PAST_BLIT 3
-  BlitType type; ///< LINEAR|SDL|PAST type
+    BlitType type; ///< LINEAR|SDL|PAST type
 
-  //  char *get_name();
+    //  char *get_name();
 
 
-  int32_t scr_stride_dx;
-  int32_t scr_stride_sx;
-  int32_t scr_stride_up;
-  int32_t scr_stride;
-  uint32_t scr_offset;
+    int32_t scr_stride_dx;
+    int32_t scr_stride_sx;
+    int32_t scr_stride_up;
+    int32_t scr_stride;
+    uint32_t scr_offset;
 
-  int32_t lay_pitch;
-  int32_t lay_bytepitch;
-  int32_t lay_stride;
-  int32_t lay_stride_sx;
-  int32_t lay_stride_dx;
-  int32_t lay_stride_up;
-  int32_t lay_height;
-  uint32_t lay_offset;
+    int32_t lay_pitch;
+    int32_t lay_bytepitch;
+    int32_t lay_stride;
+    int32_t lay_stride_sx;
+    int32_t lay_stride_dx;
+    int32_t lay_stride_up;
+    int32_t lay_height;
+    uint32_t lay_offset;
 
-  SDL_Rect sdl_rect; // sdl crop rectangle
+    SDL_Rect sdl_rect; // sdl crop rectangle
 
- private:
-  // parameters for linear crop
-  
-
+private:
+    // parameters for linear crop
 
 
 
-  // past blit buffer
-  void *past_frame;
 
-/*   /\* small vars used in blits *\/ */
-/*   int chan, c, cc; */
-/*   uint32_t *scr, *pscr, *off, *poff, *pastoff, *ppastoff; */
+
+    // past blit buffer
+    void *past_frame;
+
+    /*   /\* small vars used in blits *\/ */
+    /*   int chan, c, cc; */
+    /*   uint32_t *scr, *pscr, *off, *poff, *pastoff, *ppastoff; */
 
 };
 
 
 
 class Blitter {
- public:
-  Blitter();
-  ~Blitter();
+public:
+    Blitter();
+    ~Blitter();
 
 
-  Linklist<Blit> blitlist; ///< list of available blits
+    Linklist<Blit> blitlist; ///< list of available blits
 
-  /* ==== CROP */
-  /** @param force crop even if nothing changed */
-  void crop(Layer *lay, ViewPort *scr);
-  ///< crop to fit in the ViewPort
-  
-  ViewPort *screen; ///< the layer on which is applied the blitter
+    /* ==== CROP */
+    /** @param force crop even if nothing changed */
+    void crop(Layer *lay, ViewPort *scr);
+    ///< crop to fit in the ViewPort
 
-  Blit *default_blit;
+    ViewPort *screen; ///< the layer on which is applied the blitter
 
-  Geometry *geo;
-  
- private:
-  int16_t old_lay_x;
-  int16_t old_lay_y;
-  uint16_t old_lay_w;
-  uint16_t old_lay_h;
+    Blit *default_blit;
 
-  int16_t old_scr_x;
-  int16_t old_scr_y;
-  uint16_t old_scr_w;
-  uint16_t old_scr_h;
+    Geometry *geo;
+
+private:
+    int16_t old_lay_x;
+    int16_t old_lay_y;
+    uint16_t old_lay_w;
+    uint16_t old_lay_h;
+
+    int16_t old_scr_x;
+    int16_t old_scr_y;
+    uint16_t old_scr_w;
+    uint16_t old_scr_h;
 
 
 };

@@ -2,7 +2,7 @@
  *  (c) Copyright 2007 Denis Rojo <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -31,58 +31,58 @@
 #include <factory.h>
 
 class Freior: public Filter {
-  friend class GenF0rLayer;
+    friend class GenF0rLayer;
 #ifdef WITH_COCOA
-  friend class CVF0rLayer;
+    friend class CVF0rLayer;
 #endif
- public:
+public:
 
-  Freior();
-  virtual ~Freior();
+    Freior();
+    virtual ~Freior();
 
-  int type();
-  int open(char *file);
-  bool apply(Layer *lay, FilterInstance *instance);
-  const char *description();
-  const char *author();
-  void print_info();
-  int  get_parameter_type(int i);
-  char *get_parameter_description(int i);
+    int type();
+    int open(char *file);
+    bool apply(Layer *lay, FilterInstance *instance);
+    const char *description();
+    const char *author();
+    void print_info();
+    int  get_parameter_type(int i);
+    char *get_parameter_description(int i);
 
-  f0r_plugin_info_t info;
+    f0r_plugin_info_t info;
 
-  bool opened;
+    bool opened;
 
-  // parameter map
-  std::vector<f0r_param_info_t> param_infos;
-  void (*f0r_set_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);
-  void (*f0r_get_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);
+    // parameter map
+    std::vector<f0r_param_info_t> param_infos;
+    void (*f0r_set_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);
+    void (*f0r_get_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);
 
-  f0r_instance_t (*f0r_construct)(unsigned int width, unsigned int height);
+    f0r_instance_t (*f0r_construct)(unsigned int width, unsigned int height);
 
- protected:
-  void destruct(FilterInstance *inst);
-  void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
-  // Interface function pointers.
-  int (*f0r_init)();
-  void (*f0r_get_plugin_info)(f0r_plugin_info_t* pluginInfo);
-  void (*f0r_get_param_info)(f0r_param_info_t* info, int param_index);
-  void (*f0r_destruct)(f0r_instance_t instance);
+protected:
+    void destruct(FilterInstance *inst);
+    void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
+    // Interface function pointers.
+    int (*f0r_init)();
+    void (*f0r_get_plugin_info)(f0r_plugin_info_t* pluginInfo);
+    void (*f0r_get_param_info)(f0r_param_info_t* info, int param_index);
+    void (*f0r_destruct)(f0r_instance_t instance);
 
-  void (*f0r_update)(f0r_instance_t instance, double time,
-		     const uint32_t* inframe, uint32_t* outframe);
-  void (*f0r_update2)(f0r_instance_t instance, double time,
-                      const uint32_t* inframe1, const uint32_t* inframe2,
-		      const uint32_t* inframe3, uint32_t* outframe);
-  
-  void init_parameters(Linklist<Parameter> &parameters);  
-  private:
-    
+    void (*f0r_update)(f0r_instance_t instance, double time,
+                       const uint32_t* inframe, uint32_t* outframe);
+    void (*f0r_update2)(f0r_instance_t instance, double time,
+                        const uint32_t* inframe1, const uint32_t* inframe2,
+                        const uint32_t* inframe3, uint32_t* outframe);
+
+    void init_parameters(Linklist<Parameter> &parameters);
+private:
+
     // dlopen handle
     void *handle;
     // full .so file path
     char filename[512];
-    
+
     FACTORY_ALLOWED
 };
 

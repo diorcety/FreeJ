@@ -2,7 +2,7 @@
  *  (c) Copyright 2007 C. Rudorff aka MrGoil <goil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -33,74 +33,74 @@
 //#include <X11/extensions/Xvlib.h>
 
 class XGrabLayer: public Layer {
- protected:
-  bool _init();
+protected:
+    bool _init();
 
-	private:
-		//void run(); ///< Main Layer thread loop
-		//bool cafudda();
-		void resize();
-		bool autosize, mapped, unobscured;
-		Geometry crop;
-		struct crop {
-			uint16_t x;
-			uint16_t y;
-			int16_t w; // =<0 = from right
-			int16_t h; // =<0 = from bottom
-		};
-		// X stuff
-		Display *display;
-		int screen_num;
-		Window win;
-		XWindowAttributes wa;
-		//XSetWindowAttributes win_sattr;
-		XImage *ximage;
-		//XImage *ximage_new;
-		// OLD
-		//int screen_num;
-		//GC gc;
-		//unsigned int border_width;
-		//char *pixbuffer;
-		//XvPortID xv_port;
+private:
+    //void run(); ///< Main Layer thread loop
+    //bool cafudda();
+    void resize();
+    bool autosize, mapped, unobscured;
+    Geometry crop;
+    struct crop {
+        uint16_t x;
+        uint16_t y;
+        int16_t w; // =<0 = from right
+        int16_t h; // =<0 = from bottom
+    };
+    // X stuff
+    Display *display;
+    int screen_num;
+    Window win;
+    XWindowAttributes wa;
+    //XSetWindowAttributes win_sattr;
+    XImage *ximage;
+    //XImage *ximage_new;
+    // OLD
+    //int screen_num;
+    //GC gc;
+    //unsigned int border_width;
+    //char *pixbuffer;
+    //XvPortID xv_port;
 
-		// SDL
-		//SDL_Surface *sdlimage;
-		//SDL_Rect sdl_rect_src;
+    // SDL
+    //SDL_Surface *sdlimage;
+    //SDL_Rect sdl_rect_src;
 
-	public:
-		XGrabLayer();
-		~XGrabLayer();
+public:
+    XGrabLayer();
+    ~XGrabLayer();
 
-		bool open();
-		bool open(uint32_t win_id);
-		bool open(const char *);
+    bool open();
+    bool open(uint32_t win_id);
+    bool open(const char *);
 
-		//void *feed();
-		void close();
+    //void *feed();
+    void close();
 
-		void *feed();
+    void *feed();
 };
 #endif // WITH_XGRAB
 
 
 #if 0
-       SDL_Surface *SDL_GetVideoSurface(void);
+SDL_Surface *SDL_GetVideoSurface(void);
 
-       typedef struct SDL_Surface {
-               Uint32 flags;                           /* Read-only */
-               SDL_PixelFormat *format;                /* Read-only */
-               int w, h;                               /* Read-only */
-               Uint16 pitch;                           /* Read-only */
-               void *pixels;                           /* Read-write */
+typedef struct SDL_Surface {
+    Uint32 flags;                           /* Read-only */
+    SDL_PixelFormat *format;                /* Read-only */
+    int w, h;                               /* Read-only */
+    Uint16 pitch;                           /* Read-only */
+    void *pixels;                           /* Read-write */
 
-               /* clipping information */
-               SDL_Rect clip_rect;                     /* Read-only */
+    /* clipping information */
+    SDL_Rect clip_rect;                     /* Read-only */
 
-               /* Reference count -- used when freeing surface */
-               int refcount;                           /* Read-mostly */
+    /* Reference count -- used when freeing surface */
+    int refcount;                           /* Read-mostly */
 
-            /* This structure also contains private fields not shown here */
-       } SDL_Surface;
+    /* This structure also contains private fields not shown here */
+} SDL_Surface;
 
 
 #endif

@@ -31,78 +31,93 @@ typedef jack_default_audio_sample_t sample_t;
 const int MAX_INPUTPORTS = 256;
 const int MAX_OUTPUTPORTS = 256;
 
-class JackClient
-{
+class JackClient {
 public:
-	static JackClient *Get()      { if(!m_Singleton) m_Singleton=new JackClient; return m_Singleton; }
-	static void PackUpAndGoHome() { if(m_Singleton)  { delete m_Singleton; m_Singleton=NULL; } }
-	
-	bool   Attach(const std::string &ClientName);
-	void   Detach();
-	bool   IsAttached()                   { return m_Attached; }
-	void   SetCallback(void(*Run)(void*, unsigned int),void *Context) { RunCallback=Run; RunContext=Context; }					
-	void   GetPortNames(std::vector<std::string> &InputNames,std::vector<std::string> &OutputNames);
-	void   ConnectInput(int n, const std::string &JackPort);
-	void   ConnectOutput(int n, const std::string &JackPort);
-	void   DisconnectInput(int n);
-	void   DisconnectOutput(int n);
-	std::string GetInputName(int ID)           { return m_InputPortMap[ID]->Name; }
-	std::string GetOutputName(int ID)          { return m_OutputPortMap[ID]->Name; }
-	void   SetInputBuf(int ID, float* s);
-	void   SetOutputBuf(int ID, float* s);
-         int 	 AddInputPort();
-         int 	 AddOutputPort();
-	
-	int SetRingbufferPtr(ringbuffer_t *rb, int samplerate, int channels); ///< connect a rinbuffer to JACK out
-	static long unsigned int  m_BufferSize;
-	static long unsigned int  m_SampleRate;	
-	static bool               m_Attached;
-	ringbuffer_t *audio_mix_ring;	//ringbuffer to be streamed
-	ringbuffer_t *first;
-	int 		   m_ringbufferchannels;
-	void	isEncoded(bool isEnc);
-	
-protected:
-	JackClient();
-	~JackClient();
+    static JackClient *Get()      {
+        if(!m_Singleton) m_Singleton=new JackClient;
+        return m_Singleton;
+    }
+    static void PackUpAndGoHome() {
+        if(m_Singleton)  {
+            delete m_Singleton;
+            m_Singleton=NULL;
+        }
+    }
 
-	static int  Process(jack_nframes_t nframes, void *o);
-	static int  OnSRateChange(jack_nframes_t n, void *o);
-	static void OnJackShutdown(void *o);
+    bool   Attach(const std::string &ClientName);
+    void   Detach();
+    bool   IsAttached()                   {
+        return m_Attached;
+    }
+    void   SetCallback(void(*Run)(void*, unsigned int),void *Context) {
+        RunCallback=Run;
+        RunContext=Context;
+    }
+    void   GetPortNames(std::vector<std::string> &InputNames,std::vector<std::string> &OutputNames);
+    void   ConnectInput(int n, const std::string &JackPort);
+    void   ConnectOutput(int n, const std::string &JackPort);
+    void   DisconnectInput(int n);
+    void   DisconnectOutput(int n);
+    std::string GetInputName(int ID)           {
+        return m_InputPortMap[ID]->Name;
+    }
+    std::string GetOutputName(int ID)          {
+        return m_OutputPortMap[ID]->Name;
+    }
+    void   SetInputBuf(int ID, float* s);
+    void   SetOutputBuf(int ID, float* s);
+    int 	 AddInputPort();
+    int 	 AddOutputPort();
+
+    int SetRingbufferPtr(ringbuffer_t *rb, int samplerate, int channels); ///< connect a rinbuffer to JACK out
+    static long unsigned int  m_BufferSize;
+    static long unsigned int  m_SampleRate;
+    static bool               m_Attached;
+    ringbuffer_t *audio_mix_ring;	//ringbuffer to be streamed
+    ringbuffer_t *first;
+    int 		   m_ringbufferchannels;
+    void	isEncoded(bool isEnc);
+
+protected:
+    JackClient();
+    ~JackClient();
+
+    static int  Process(jack_nframes_t nframes, void *o);
+    static int  OnSRateChange(jack_nframes_t n, void *o);
+    static void OnJackShutdown(void *o);
 
 private:
 
 
-	class JackPort
-	{		
-		public:
-		JackPort() :
-			Connected(false),Buf(NULL),Port(NULL) {}
-		
-		std::string         Name;
-		bool           Connected;
-		float*         Buf;
-		jack_port_t*   Port;
-		std::string         ConnectedTo;
-		ringbuffer_t *in_ring;
-		bool	connected;	//setted in ::Process
-	};
+    class JackPort {
+    public:
+        JackPort() :
+            Connected(false),Buf(NULL),Port(NULL) {}
 
-	ringbuffer_t*      m_ringbuffer;
+        std::string         Name;
+        bool           Connected;
+        float*         Buf;
+        jack_port_t*   Port;
+        std::string         ConnectedTo;
+        ringbuffer_t *in_ring;
+        bool	connected;	//setted in ::Process
+    };
+
+    ringbuffer_t*      m_ringbuffer;
 // 	int 		   m_ringbufferchannels;
-	char* 		   m_inbuf;
-	
+    char* 		   m_inbuf;
 
-	static JackClient*        m_Singleton;
-	static jack_client_t*     m_Client;
-	static std::map<int,JackPort*> m_InputPortMap;
-	static std::map<int,JackPort*> m_OutputPortMap;
-	int m_NextInputID;
-	int m_NextOutputID;
-	
-	static void(*RunCallback)(void*, unsigned int bufsize);
-	static void *RunContext;
-	bool	m_Encoded;
+
+    static JackClient*        m_Singleton;
+    static jack_client_t*     m_Client;
+    static std::map<int,JackPort*> m_InputPortMap;
+    static std::map<int,JackPort*> m_OutputPortMap;
+    int m_NextInputID;
+    int m_NextOutputID;
+
+    static void(*RunCallback)(void*, unsigned int bufsize);
+    static void *RunContext;
+    bool	m_Encoded;
 };
 
 #endif

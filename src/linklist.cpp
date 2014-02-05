@@ -3,7 +3,7 @@
  *  (c) Copyright 2001-2004 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -35,96 +35,96 @@
 
 
 Entry::Entry() {
-  next = NULL;
-  prev = NULL;
-  list = NULL;
-  data = NULL;
-  jsclass = NULL;
-  jsobj = NULL;
-  select = false;
-  memset(name, 0, sizeof(name));
+    next = NULL;
+    prev = NULL;
+    list = NULL;
+    data = NULL;
+    jsclass = NULL;
+    jsobj = NULL;
+    select = false;
+    memset(name, 0, sizeof(name));
 }
 
 Entry::~Entry() {
-  rem();
+    rem();
 }
 
 void Entry::set_name(const char *nn) {
-  strncpy(name,nn,sizeof(name)-1);
+    strncpy(name,nn,sizeof(name)-1);
 }
 
 bool Entry::up() {
-  if(!list) return(false);
-  if(!prev) return(false);
+    if(!list) return(false);
+    if(!prev) return(false);
 
 #ifdef THREADSAFE
-  list->lock();
+    list->lock();
 #endif
 
-  Entry *tprev = prev,
-    *tnext = next,
-    *pp = prev->prev;
+    Entry *tprev = prev,
+           *tnext = next,
+            *pp = prev->prev;
 
-  if(!next)
-    list->last = prev;
+    if(!next)
+        list->last = prev;
 
-  if(tnext)
-    tnext->prev = tprev;
+    if(tnext)
+        tnext->prev = tprev;
 
-  next = tprev;
-  prev = pp;
-  tprev->next = tnext;
-  tprev->prev = this;
+    next = tprev;
+    prev = pp;
+    tprev->next = tnext;
+    tprev->prev = this;
 
-  if(pp)
-    pp->next = this;
+    if(pp)
+        pp->next = this;
 
-  if(!prev)
-    list->first = this;
+    if(!prev)
+        list->first = this;
 
 #ifdef THREADSAFE
-  list->unlock();
+    list->unlock();
 #endif
-  return(true);
+    return(true);
 }
 
 bool Entry::down() {
-  if(!list) return(false);
-  if(!next) return(false);
+    if(!list) return(false);
+    if(!next) return(false);
 
 #ifdef THREADSAFE
-  list->lock();
+    list->lock();
 #endif
 
-  Entry *tprev = prev,
-    *tnext = next,
-    *nn = next->next;
+    Entry *tprev = prev,
+           *tnext = next,
+            *nn = next->next;
 
-  if(!prev)
-    list->first = next;
+    if(!prev)
+        list->first = next;
 
-  if(tprev)
-    tprev->next = tnext;
+    if(tprev)
+        tprev->next = tnext;
 
-  prev = tnext;
-  next = nn;
-  tnext->prev = tprev;
-  tnext->next = this;
-  if(nn)
-    nn->prev = this;
+    prev = tnext;
+    next = nn;
+    tnext->prev = tprev;
+    tnext->next = this;
+    if(nn)
+        nn->prev = this;
 
-  if(!next)
-    list->last = this;
+    if(!next)
+        list->last = this;
 
 #ifdef THREADSAFE
-  list->unlock();
+    list->unlock();
 #endif
-  return(true);
+    return(true);
 }
 
 bool Entry::move(int pos) {
     func("Entry::move(%i)", pos);
-    if(!list) 
+    if(!list)
         return(false);
 #ifdef THREADSAFE
     list->lock();
@@ -138,7 +138,7 @@ bool Entry::move(int pos) {
         mypos++;
         search = search->next;
     }
-    
+
     // no move is necessary
     if (mypos == pos) {
 #ifdef THREADSAFE
@@ -147,7 +147,7 @@ bool Entry::move(int pos) {
         return(true);
     }
     displaced = list->_pick(pos);
-    
+
     // detach ourselves from the list
     if (next) {
         next->prev = prev;
@@ -155,7 +155,7 @@ bool Entry::move(int pos) {
             prev->next = next;
         else
             list->first = next;
-    } else { 
+    } else {
         list->last = prev;
     }
     if (prev) {
@@ -164,7 +164,7 @@ bool Entry::move(int pos) {
             next->prev = prev;
         else
             list->last = prev;
-    
+
     } else {
         list->first = next;
     }
@@ -180,11 +180,11 @@ bool Entry::move(int pos) {
         next = list->first;
         list->first = this;
     } else {
-        if (mypos > pos) { 
+        if (mypos > pos) {
             prev = displaced->prev;
-            if (prev) 
+            if (prev)
                 prev->next = this;
-            else 
+            else
                 list->first = this;
             next = displaced;
             displaced->prev = this;
@@ -196,7 +196,7 @@ bool Entry::move(int pos) {
                 list->last = this;
             prev = displaced;
             displaced->next = this;
-        } 
+        }
     }
 #ifdef THREADSAFE
     list->unlock();
@@ -205,106 +205,106 @@ bool Entry::move(int pos) {
 }
 
 bool Entry::swap(int pos) {
-  func("Entry::swap(%i) - NEW LINKLIST SWAP, TRYING IT...");
-  if(!list) return(false);
+    func("Entry::swap(%i) - NEW LINKLIST SWAP, TRYING IT...");
+    if(!list) return(false);
 #ifdef THREADSAFE
-  list->lock();
+    list->lock();
 #endif
 
-  Entry *tn, *tp;
+    Entry *tn, *tp;
 
-  Entry *swapping = list->_pick(pos);
+    Entry *swapping = list->_pick(pos);
 
-  if (!swapping) {
+    if (!swapping) {
+#ifdef THREADSAFE
+        list->unlock();
+#endif
+        return(false);
+    }
+
+    if (swapping == this) {
+#ifdef THREADSAFE
+        list->unlock();
+#endif
+        return (true);
+    }
+
+    tn = swapping->next;
+    tp = swapping->prev;
+
+    swapping->next = (next == swapping)?this:next;
+    next = (tn == this)?swapping:tn;
+    swapping->prev = (prev == swapping)?this:prev;
+    prev = (tp == this)?swapping:tp;
+
+    // update head of the list if necessary
+    if (!prev) {
+        list->first = this;
+    } else {
+        prev->next = this;
+        if (!swapping->prev)
+            list->first = swapping;
+        else
+            swapping->prev->next = swapping;
+    }
+    // update the tail of the list if necessary
+    if (!next) {
+        list->last = this;
+    } else {
+        next->prev = this;
+        if (!swapping->next)
+            list->last = swapping;
+        else
+            swapping->next->prev = swapping;
+    }
 #ifdef THREADSAFE
     list->unlock();
 #endif
-      return(false);
-  }
-    
-  if (swapping == this) {
-#ifdef THREADSAFE
-    list->unlock();
-#endif
-    return (true);
-  }
-    
-  tn = swapping->next;
-  tp = swapping->prev;
+    func("LINKLIST MOVE RETURNS SUCCESS");
 
-  swapping->next = (next == swapping)?this:next;
-  next = (tn == this)?swapping:tn;
-  swapping->prev = (prev == swapping)?this:prev;
-  prev = (tp == this)?swapping:tp;
-
-  // update head of the list if necessary
-  if (!prev) {
-      list->first = this;
-  } else {
-      prev->next = this;
-      if (!swapping->prev)
-          list->first = swapping;
-      else
-          swapping->prev->next = swapping;
-  }
-  // update the tail of the list if necessary
-  if (!next) {
-      list->last = this;
-  } else {
-      next->prev = this;
-      if (!swapping->next)
-          list->last = swapping;
-      else
-          swapping->next->prev = swapping;
-  }  
-#ifdef THREADSAFE
-  list->unlock();
-#endif
-  func("LINKLIST MOVE RETURNS SUCCESS");
-
-  return(true);
+    return(true);
 }
 
 void Entry::rem() {
-  bool lastone = false;
-  if(!list) return;
+    bool lastone = false;
+    if(!list) return;
 #ifdef THREADSAFE
-  list->lock();
+    list->lock();
 #endif
 
-  if(next) { // if there is a next
-    next->prev = prev; // link it to the previous
-    if(select) { // change selection if we are selected
-      next->select = select; // inherit selection
-      list->selection = next;
+    if(next) { // if there is a next
+        next->prev = prev; // link it to the previous
+        if(select) { // change selection if we are selected
+            next->select = select; // inherit selection
+            list->selection = next;
+        }
+    } else {
+        list->last = prev; // else just make it the last
+        lastone = true;
     }
-  } else {
-    list->last = prev; // else just make it the last
-    lastone = true;
-  }
 
 
-  if(prev) { // if there is a previous
-    prev->next = next; // link it to the next
-    if(select) { // change selection if we are selected
-      if(lastone) prev->select = select;
-      list->selection = prev;
-    }
-  } else list->first = next; // else just make it a first
-  
-  list->length--;
-  prev = NULL;
-  next = NULL;
+    if(prev) { // if there is a previous
+        prev->next = next; // link it to the next
+        if(select) { // change selection if we are selected
+            if(lastone) prev->select = select;
+            list->selection = prev;
+        }
+    } else list->first = next; // else just make it a first
+
+    list->length--;
+    prev = NULL;
+    next = NULL;
 #ifdef THREADSAFE
-  list->unlock();
+    list->unlock();
 #endif
-  list = NULL;
+    list = NULL;
 }
 
 void Entry::sel(bool on) {
-  if(!list)
-      return;
-  select = on;
-  if(select)
-    list->selection = this;
+    if(!list)
+        return;
+    select = on;
+    if(select)
+        list->selection = this;
 }

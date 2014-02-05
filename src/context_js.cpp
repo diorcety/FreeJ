@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2009 Denis Roio <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -29,11 +29,11 @@
 
 // global environment class
 JSClass global_class = {
-  "Freej", JSCLASS_NEW_RESOLVE | JSCLASS_GLOBAL_FLAGS | JSCLASS_GLOBAL_FLAGS,
-  JS_PropertyStub,  JS_PropertyStub,
-  JS_PropertyStub,  JS_PropertyStub,
-  JS_EnumerateStub, JS_ResolveStub,
-  JS_ConvertStub,   JS_FinalizeStub
+    "Freej", JSCLASS_NEW_RESOLVE | JSCLASS_GLOBAL_FLAGS | JSCLASS_GLOBAL_FLAGS,
+    JS_PropertyStub,  JS_PropertyStub,
+    JS_PropertyStub,  JS_PropertyStub,
+    JS_EnumerateStub, JS_ResolveStub,
+    JS_ConvertStub,   JS_FinalizeStub
 };
 
 JSFunctionSpec global_functions[] = {
@@ -55,7 +55,7 @@ JSFunctionSpec global_functions[] = {
     {"unset_clear_all", unset_clear_all,        0},
     {"set_fps",         set_fps,                1},
     {"get_width",       get_width,              0},
-    {"get_height",      get_height,             0},      
+    {"get_height",      get_height,             0},
     {"set_resolution",  set_resolution,         2},
     {"scandir",         freej_scandir,          1},
     {"echo",            freej_echo,             1},
@@ -78,53 +78,53 @@ JSFunctionSpec global_functions[] = {
 };
 
 JS(js_gc) {
-	//JS_GC(cx);
-	return JS_TRUE;
+    //JS_GC(cx);
+    return JS_TRUE;
     //    env->js->gc();
 }
 
 JS(cafudda) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  double *pdouble;
-  double seconds;
-  int isecs;
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    double *pdouble;
+    double seconds;
+    int isecs;
 
-  if(argc>0) {
+    if(argc>0) {
 
-    if(JSVAL_IS_DOUBLE(argv[0])) {
-      
-      // JSVAL_TO_DOUBLE segfault when there's an int as input
-      pdouble=JSVAL_TO_DOUBLE(argv[0]);
-      seconds = *pdouble;
-      
-    } else if(JSVAL_IS_INT(argv[0])) {
-      
-      isecs=JSVAL_TO_INT(argv[0]);
-      seconds=(double)isecs;
+        if(JSVAL_IS_DOUBLE(argv[0])) {
 
-    }
+            // JSVAL_TO_DOUBLE segfault when there's an int as input
+            pdouble=JSVAL_TO_DOUBLE(argv[0]);
+            seconds = *pdouble;
 
-  } else seconds = 0;
+        } else if(JSVAL_IS_INT(argv[0])) {
 
-  
-  //  func("JsParser :: run for %f seconds",seconds);
-  global_environment->cafudda(seconds);
+            isecs=JSVAL_TO_INT(argv[0]);
+            seconds=(double)isecs;
 
-  return JS_TRUE;
+        }
+
+    } else seconds = 0;
+
+
+    //  func("JsParser :: run for %f seconds",seconds);
+    global_environment->cafudda(seconds);
+
+    return JS_TRUE;
 }
 
 JS(pause) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  global_environment->pause = !global_environment->pause;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    global_environment->pause = !global_environment->pause;
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 
 JS(quit) {
- func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
- global_environment->quit = true;
- return JS_TRUE;
+    global_environment->quit = true;
+    return JS_TRUE;
 }
 
 
@@ -164,36 +164,36 @@ JS(add_screen) {
 
     /** really add screen */
     if( global_environment->add_screen(scr) ) {
-      *rval=JSVAL_TRUE;
+        *rval=JSVAL_TRUE;
     } else {
-      *rval=JSVAL_FALSE;
+        *rval=JSVAL_FALSE;
     }
 
     return JS_TRUE;
 }
 
 JS(ctx_add_layer) {
-  func("%s",__PRETTY_FUNCTION__);
+    func("%s",__PRETTY_FUNCTION__);
 
     JSObject *jslayer = NULL;
-  Layer *lay;
+    Layer *lay;
 
-  if(argc<1)
-      JS_ERROR("missing argument");
-  //  js_is_instanceOf(&layer_class, argv[0]);
+    if(argc<1)
+        JS_ERROR("missing argument");
+    //  js_is_instanceOf(&layer_class, argv[0]);
 
-  jslayer = JSVAL_TO_OBJECT(argv[0]);
-  lay = (Layer*) JS_GetPrivate(cx, jslayer);
-  if(!lay)
-      JS_ERROR("Layer is NULL");
+    jslayer = JSVAL_TO_OBJECT(argv[0]);
+    lay = (Layer*) JS_GetPrivate(cx, jslayer);
+    if(!lay)
+        JS_ERROR("Layer is NULL");
 
-  if( global_environment->add_layer(lay) ) {
-    *rval=JSVAL_TRUE;
-  } else {
-    *rval=JSVAL_FALSE;
-  }
+    if( global_environment->add_layer(lay) ) {
+        *rval=JSVAL_TRUE;
+    } else {
+        *rval=JSVAL_FALSE;
+    }
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 
 JS(list_filters) {
@@ -209,11 +209,11 @@ JS(list_filters) {
 
     f = global_environment->filters.begin();
     while(f) {
-      str = JS_NewStringCopyZ(cx, f->name);
-      val = STRING_TO_JSVAL(str);
-      JS_SetElement(cx, arr, c, &val);
-      c++;
-      f = f->next;
+        str = JS_NewStringCopyZ(cx, f->name);
+        val = STRING_TO_JSVAL(str);
+        JS_SetElement(cx, arr, c, &val);
+        c++;
+        f = f->next;
     }
     *rval = OBJECT_TO_JSVAL( arr );
     return JS_TRUE;
@@ -237,7 +237,7 @@ JS(register_controller) {
     /// really add controller
     global_environment->register_controller( ctrl );
     *rval = JSVAL_TRUE;
-func("JSvalcmp: %p / %p", argv[0], ctrl->data);
+    func("JSvalcmp: %p / %p", argv[0], ctrl->data);
 
     return JS_TRUE;
 }
@@ -256,7 +256,7 @@ JS(rem_controller) {
     if(!ctrl)
         JS_ERROR("Layer core data is NULL");
 
-func("JSvalcmp: %p / %p", argv[0], ctrl->data);
+    func("JSvalcmp: %p / %p", argv[0], ctrl->data);
     global_environment->rem_controller(ctrl);
     return JS_TRUE;
 }
@@ -281,7 +281,7 @@ JS(register_encoder) {
 
     /// really add controller
     global_environment->add_encoder( enc );
-    
+
     *rval = JSVAL_TRUE;
 
     return JS_TRUE;
@@ -289,38 +289,38 @@ JS(register_encoder) {
 #endif
 
 JS(fullscreen) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  global_environment->screens.selected()->fullscreen();
-  //  global_environment->clear_all = !global_environment->clear_all;
-  return JS_TRUE;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    global_environment->screens.selected()->fullscreen();
+    //  global_environment->clear_all = !global_environment->clear_all;
+    return JS_TRUE;
 }
 
 JS(set_clear_all) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  global_environment->clear_all = true;
-  return JS_TRUE;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    global_environment->clear_all = true;
+    return JS_TRUE;
 }
 
 JS(unset_clear_all) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  global_environment->clear_all = false;
-  return JS_TRUE;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    global_environment->clear_all = false;
+    return JS_TRUE;
 }
 
 JS(set_fps) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  jsint fps = js_get_int(argv[0]);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  global_environment->fps.set(fps);
-  return JS_TRUE;
+    jsint fps = js_get_int(argv[0]);
+
+    global_environment->fps.set(fps);
+    return JS_TRUE;
 }
 
 JS(js_set_debug) {
     JSBool ret = JS_NewNumberValue(cx, get_debug(), rval);
     if(argc==1) {
-      jsint level = js_get_int(argv[0]);
-      set_debug(level);
+        jsint level = js_get_int(argv[0]);
+        set_debug(level);
     }
     return ret;
 }
@@ -338,11 +338,11 @@ JS(get_height) {
 }
 
 JS(set_resolution) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  int w = JSVAL_TO_INT(argv[0]);
-  int h = JSVAL_TO_INT(argv[1]);
-  global_environment->screens.selected()->resize(w, h);
-  return JS_TRUE;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    int w = JSVAL_TO_INT(argv[0]);
+    int h = JSVAL_TO_INT(argv[1]);
+    global_environment->screens.selected()->resize(w, h);
+    return JS_TRUE;
 }
 
 /*
@@ -362,246 +362,246 @@ JS(stream_stop) {
 }
 */
 #if defined (HAVE_DARWIN) || defined (HAVE_FREEBSD)
-static int dir_selector(struct dirent *dir) 
+static int dir_selector(struct dirent *dir)
 #else
-static int dir_selector(const struct dirent *dir) 
+static int dir_selector(const struct dirent *dir)
 #endif
 {
-  if(dir->d_name[0]=='.') return(0); // remove hidden files
-  return(1);
+    if(dir->d_name[0]=='.') return(0); // remove hidden files
+    return(1);
 }
 JS(freej_scandir) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  JSObject *arr;
-  JSString *str;
-  jsval val;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    JSObject *arr;
+    JSString *str;
+    jsval val;
 #if defined (HAVE_DARWIN) || defined (HAVE_FREEBSD)
-  struct dirent **filelist;
+    struct dirent **filelist;
 #else
-  struct dirent **filelist;
+    struct dirent **filelist;
 #endif
-  int found;
-  int c = 0;
+    int found;
+    int c = 0;
 
-  char *dir = js_get_string(argv[0]);
-  
-  found = scandir(dir,&filelist,dir_selector,alphasort);
-  if(found<0) {
-    error("scandir error: %s",strerror(errno));
-    return JS_TRUE; // fatal error
-  }
+    char *dir = js_get_string(argv[0]);
 
-  arr = JS_NewArrayObject(cx, 0, NULL); // create void array
-  if(!arr) return JS_FALSE;
+    found = scandir(dir,&filelist,dir_selector,alphasort);
+    if(found<0) {
+        error("scandir error: %s",strerror(errno));
+        return JS_TRUE; // fatal error
+    }
 
-  // now fill up the array  
-  while(found--) {
-    char tmp[512];
-    snprintf(tmp,512,"%s/%s",dir, filelist[found]->d_name);
-    free(filelist[found]);
-    str = JS_NewStringCopyZ(cx, tmp); 
-    val = STRING_TO_JSVAL(str);    
-    JS_SetElement(cx, arr, c, &val );
-    c++;
-  }
-  free(filelist);
+    arr = JS_NewArrayObject(cx, 0, NULL); // create void array
+    if(!arr) return JS_FALSE;
 
-  *rval = OBJECT_TO_JSVAL( arr );
-  return JS_TRUE;
+    // now fill up the array
+    while(found--) {
+        char tmp[512];
+        snprintf(tmp,512,"%s/%s",dir, filelist[found]->d_name);
+        free(filelist[found]);
+        str = JS_NewStringCopyZ(cx, tmp);
+        val = STRING_TO_JSVAL(str);
+        JS_SetElement(cx, arr, c, &val );
+        c++;
+    }
+    free(filelist);
+
+    *rval = OBJECT_TO_JSVAL( arr );
+    return JS_TRUE;
 }
 
 JS(freej_echo) {
-  char *msg = js_get_string(argv[0]);
-  fprintf(stdout,"%s\n", msg);
-  return JS_TRUE;
+    char *msg = js_get_string(argv[0]);
+    fprintf(stdout,"%s\n", msg);
+    return JS_TRUE;
 }
 
 JS(freej_echo_func) {
-  char *msg = js_get_string(argv[0]);
-  func("%s", msg);
-  return JS_TRUE;
+    char *msg = js_get_string(argv[0]);
+    func("%s", msg);
+    return JS_TRUE;
 }
 
 JS(freej_strstr) {
-  char *res;
-  int intval;
+    char *res;
+    int intval;
 
-  char *haystack = js_get_string(argv[0]);
-  char *needle = js_get_string(argv[1]);
+    char *haystack = js_get_string(argv[0]);
+    char *needle = js_get_string(argv[1]);
 
-  res = strstr(haystack, needle);
-  if(res == NULL)
-    intval = 0;
-  else intval = 1;
-  return JS_NewNumberValue(cx, intval, rval);
+    res = strstr(haystack, needle);
+    if(res == NULL)
+        intval = 0;
+    else intval = 1;
+    return JS_NewNumberValue(cx, intval, rval);
 }
-  
+
 JS(read_file) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  JSString *str;
+    JS_CHECK_ARGC(1);
 
-  FILE *fd;
+    JSString *str;
 
-  int len;
-  char *buf;
+    FILE *fd;
 
-  char *file = js_get_string(argv[0]);
+    int len;
+    char *buf;
 
-  // try to open the file
-  fd = ::fopen(file,"r");
-  if(!fd) {
-    error("read_file failed for %s: %s",file, strerror(errno) );
-    *rval = JSVAL_NULL;
+    char *file = js_get_string(argv[0]);
+
+    // try to open the file
+    fd = ::fopen(file,"r");
+    if(!fd) {
+        error("read_file failed for %s: %s",file, strerror(errno) );
+        *rval = JSVAL_NULL;
+        return JS_TRUE;
+    }
+
+    // read it all in *buf
+    fseek(fd,0,SEEK_END);
+    len = ftell(fd);
+    rewind(fd);
+    buf = (char*)calloc(len,sizeof(char));
+    fread(buf,len,1,fd);
+    fclose(fd);
+    // file is now read in memory
+
+    // create the new string
+    str = JS_NewStringCopyN(cx, buf, len);
+    // cast it into a js return value
+    *rval = STRING_TO_JSVAL(str);
+
+    act("file loaded: %s",file);
+
     return JS_TRUE;
-  }
-
-  // read it all in *buf
-  fseek(fd,0,SEEK_END);
-  len = ftell(fd);
-  rewind(fd);
-  buf = (char*)calloc(len,sizeof(char));
-  fread(buf,len,1,fd);
-  fclose(fd);
-  // file is now read in memory
-  
-  // create the new string
-  str = JS_NewStringCopyN(cx, buf, len);
-  // cast it into a js return value
-  *rval = STRING_TO_JSVAL(str);
-
-  act("file loaded: %s",file);
-
-  return JS_TRUE;
 }
 
 
 
 JS(file_to_strings) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  JS_CHECK_ARGC(1);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  JSObject *arr;
-  JSString *str;
-  jsval val;
+    JS_CHECK_ARGC(1);
 
-  FILE *fd;
+    JSObject *arr;
+    JSString *str;
+    jsval val;
 
-  char *buf;
-  char *punt;
-  char *pword;
-  int len;
-  int c;
+    FILE *fd;
 
-  char *file = js_get_string(argv[0]);
+    char *buf;
+    char *punt;
+    char *pword;
+    int len;
+    int c;
 
-  // try to open the file and read it in memory
-  fd = ::fopen(file,"r");
-  if(!fd) {
-    error("file_to_strings failed for %s: %s",file, strerror(errno) );
-    *rval = JSVAL_NULL;
-    return JS_TRUE;
-  }
+    char *file = js_get_string(argv[0]);
 
-  // read it all in *buf
-  fseek(fd,0,SEEK_END);
-  len = ftell(fd);
-  rewind(fd);
-  buf = (char*)calloc(len,sizeof(char));
-  fread(buf,len,1,fd);
-  fclose(fd);
-  // file is now read in memory
-
-  arr = JS_NewArrayObject(cx, 0, NULL);
-  if(!arr) return JS_FALSE;
-
-  punt = buf;
-  c = 0;
-  // now fill up the array
-
-  while(punt - buf < len) { // parse it until the end
-    while(!isgraph(*punt)) // goes forward until it meets a word
-      if(punt-buf >= len) // end of chunk reached
-	break;
-      else punt++;
-    
-    // word found, now reach its end
-    pword = punt;
-    while(   isgraph(*punt)
-	     && *punt != ' '
-	     && *punt != '\0'
-	     && *punt != '\n'
-	     && *punt != '\r'
-	     && *punt != '\t') {
-      if(punt-buf >= len) // end of chunk reached
-	break;
-      else punt++;
+    // try to open the file and read it in memory
+    fd = ::fopen(file,"r");
+    if(!fd) {
+        error("file_to_strings failed for %s: %s",file, strerror(errno) );
+        *rval = JSVAL_NULL;
+        return JS_TRUE;
     }
 
-    // there is a word to acquire!
-    // create the new entry
-    str = JS_NewStringCopyN(cx, pword, punt-pword);
-    val = STRING_TO_JSVAL(str);
-    JS_SetElement(cx, arr, c, &val);
-    c++;
-  }
+    // read it all in *buf
+    fseek(fd,0,SEEK_END);
+    len = ftell(fd);
+    rewind(fd);
+    buf = (char*)calloc(len,sizeof(char));
+    fread(buf,len,1,fd);
+    fclose(fd);
+    // file is now read in memory
 
-  free(buf);
+    arr = JS_NewArrayObject(cx, 0, NULL);
+    if(!arr) return JS_FALSE;
 
-  *rval = OBJECT_TO_JSVAL( arr );
-  return JS_TRUE;
+    punt = buf;
+    c = 0;
+    // now fill up the array
+
+    while(punt - buf < len) { // parse it until the end
+        while(!isgraph(*punt)) // goes forward until it meets a word
+            if(punt-buf >= len) // end of chunk reached
+                break;
+            else punt++;
+
+        // word found, now reach its end
+        pword = punt;
+        while(   isgraph(*punt)
+                 && *punt != ' '
+                 && *punt != '\0'
+                 && *punt != '\n'
+                 && *punt != '\r'
+                 && *punt != '\t') {
+            if(punt-buf >= len) // end of chunk reached
+                break;
+            else punt++;
+        }
+
+        // there is a word to acquire!
+        // create the new entry
+        str = JS_NewStringCopyN(cx, pword, punt-pword);
+        val = STRING_TO_JSVAL(str);
+        JS_SetElement(cx, arr, c, &val);
+        c++;
+    }
+
+    free(buf);
+
+    *rval = OBJECT_TO_JSVAL( arr );
+    return JS_TRUE;
 }
 
 // debugging commodity
 // run freej with -D3 to see this
 JS(debug) {
-  char *msg = js_get_string(argv[0]);
- 
-  func("%s", msg);
+    char *msg = js_get_string(argv[0]);
 
-  return JS_TRUE;
+    func("%s", msg);
+
+    return JS_TRUE;
 }
 
 static uint32_t randval;
 JS(rand) {
-  //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  randval = randval * 1073741789 + 32749;
+    randval = randval * 1073741789 + 32749;
 
-  return JS_NewNumberValue(cx, randval, rval);
-  /*
-  r = rand();
+    return JS_NewNumberValue(cx, randval, rval);
+    /*
+    r = rand();
 
-  if(argc<1) *rval = 1+(int)(r/(RAND_MAX+1.0));
-  else {
-  jsdouble max = js_get_double(argv[0]);
-    JS_ARG_NUMBER(max, 0);
-    func("randomizing with max %f",max);
-    r = 1+(int)(max*r/(RAND_MAX+1.0));
-    *rval = INT_TO_JSVAL(r);
-  }
-  */
+    if(argc<1) *rval = 1+(int)(r/(RAND_MAX+1.0));
+    else {
+    jsdouble max = js_get_double(argv[0]);
+      JS_ARG_NUMBER(max, 0);
+      func("randomizing with max %f",max);
+      r = 1+(int)(max*r/(RAND_MAX+1.0));
+      *rval = INT_TO_JSVAL(r);
+    }
+    */
 }
 
 JS(srand) {
-  // this is not fast and you'd better NOT use it often
-  // to achieve more randomization on higher numbers:
-  // u get unpredictably sloow
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  int seed;
-  jsint r;
-  if(argc<1)
-    seed = time(NULL);
-  else {
-    r = js_get_int(argv[0]);
-    seed = r;
-  }
-  randval = seed;
+    // this is not fast and you'd better NOT use it often
+    // to achieve more randomization on higher numbers:
+    // u get unpredictably sloow
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    int seed;
+    jsint r;
+    if(argc<1)
+        seed = time(NULL);
+    else {
+        r = js_get_int(argv[0]);
+        seed = r;
+    }
+    randval = seed;
 
-  return JS_TRUE;
+    return JS_TRUE;
 }
 
 
@@ -609,203 +609,203 @@ JS(srand) {
 // Linklist Entry Methods
 
 JS(entry_down) {
- func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
- GET_LAYER(Layer);
+    GET_LAYER(Layer);
 
- if(! lay->down() )
-   warning("cannot move %s down", lay->name);
- 
- return JS_TRUE;
+    if(! lay->down() )
+        warning("cannot move %s down", lay->name);
+
+    return JS_TRUE;
 }
 JS(entry_up) {
- func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
- GET_LAYER(Layer);
+    GET_LAYER(Layer);
 
- if(! lay->up() )
-   warning("cannot move %s up", lay->name);
+    if(! lay->up() )
+        warning("cannot move %s up", lay->name);
 
- return JS_TRUE;
+    return JS_TRUE;
 }
 
 JS(entry_move) {
- func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
- GET_LAYER(Layer);
+    GET_LAYER(Layer);
 
- int pos = JSVAL_TO_INT(argv[0]);
- if( ! lay->move(pos) )
-   warning("cannot move %s to position %u", lay->name, pos);
+    int pos = JSVAL_TO_INT(argv[0]);
+    if( ! lay->move(pos) )
+        warning("cannot move %s to position %u", lay->name, pos);
 
- return JS_TRUE;
+    return JS_TRUE;
 }
 
 JS(entry_next) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  
-  Layer *res;
-  JSObject *objtmp;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  GET_LAYER(Layer);
+    Layer *res;
+    JSObject *objtmp;
 
-  res = (Layer*)lay->next;
-  if(!res) // if last entry the cycle to the first
-    res = ((Linklist<Layer>*)lay->list)->begin();
+    GET_LAYER(Layer);
 
-  objtmp = JS_NewObject(cx, res->jsclass, NULL, obj);
-  JS_SetPrivate(cx, objtmp, (void*) res);
+    res = (Layer*)lay->next;
+    if(!res) // if last entry the cycle to the first
+        res = ((Linklist<Layer>*)lay->list)->begin();
 
-  *rval = OBJECT_TO_JSVAL(objtmp);
+    objtmp = JS_NewObject(cx, res->jsclass, NULL, obj);
+    JS_SetPrivate(cx, objtmp, (void*) res);
 
-  return JS_TRUE;
+    *rval = OBJECT_TO_JSVAL(objtmp);
+
+    return JS_TRUE;
 }
 
 JS(entry_prev) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  Layer *res;
-  JSObject *objtmp;
+    Layer *res;
+    JSObject *objtmp;
 
-  GET_LAYER(Layer);
-  
-  res = (Layer*)lay->prev;
-  if(!res) // if first entry the cycle to the end
-    res = ((Linklist<Layer>*)lay->list)->end();
-  
-  objtmp = JS_NewObject(cx, res->jsclass, NULL, obj);
-  JS_SetPrivate(cx, objtmp, (void*) res);
-  
-  *rval = OBJECT_TO_JSVAL(objtmp);
-  
-  return JS_TRUE;
+    GET_LAYER(Layer);
+
+    res = (Layer*)lay->prev;
+    if(!res) // if first entry the cycle to the end
+        res = ((Linklist<Layer>*)lay->list)->end();
+
+    objtmp = JS_NewObject(cx, res->jsclass, NULL, obj);
+    JS_SetPrivate(cx, objtmp, (void*) res);
+
+    *rval = OBJECT_TO_JSVAL(objtmp);
+
+    return JS_TRUE;
 }
 
 JS(entry_select) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  Entry *tmp;
+    Entry *tmp;
 
-  GET_LAYER(Layer);
+    GET_LAYER(Layer);
 
-  // select only one
-  lay->sel(true);
+    // select only one
+    lay->sel(true);
 
-  // deselects all others in the list
-  tmp = lay->prev;
-  while(tmp) {
-    tmp->sel(false);
-    tmp = tmp->prev;
-  }
-  tmp = lay->next;
-  while(tmp) {
-    tmp->sel(false);
-    tmp = tmp->next;
-  }
-  
-  return JS_TRUE;
+    // deselects all others in the list
+    tmp = lay->prev;
+    while(tmp) {
+        tmp->sel(false);
+        tmp = tmp->prev;
+    }
+    tmp = lay->next;
+    while(tmp) {
+        tmp->sel(false);
+        tmp = tmp->next;
+    }
+
+    return JS_TRUE;
 }
 
 JS(include_javascript_file) {
-	func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-	
-	if(argc<1)
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+
+    if(argc<1)
         JS_ERROR("missing argument");
 
-	char *jscript;
-	jscript = js_get_string(argv[0]);
+    char *jscript;
+    jscript = js_get_string(argv[0]);
 
-	JsParser *js = (JsParser *)JS_GetContextPrivate(cx);
+    JsParser *js = (JsParser *)JS_GetContextPrivate(cx);
 
-	if( ! js->include(cx, jscript) )
-	  error("javascript include not found: \"%s\"",jscript);
-	
-	// if its the first script loaded, save it as main one
-	// this is then used in reset to return at beginning stage
-	//	if(global_environment->main_javascript[0] == 0x0)
-	//	  memcpy(global_environment->main_javascript, temp, 512);
+    if( ! js->include(cx, jscript) )
+        error("javascript include not found: \"%s\"",jscript);
 
-	return JS_TRUE;
+    // if its the first script loaded, save it as main one
+    // this is then used in reset to return at beginning stage
+    //	if(global_environment->main_javascript[0] == 0x0)
+    //	  memcpy(global_environment->main_javascript, temp, 512);
+
+    return JS_TRUE;
 }
 
 JS(execute_javascript_command) {
-	func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-	char *jscript;
-	jsval use;
+    char *jscript;
+    jsval use;
 
-	if(argc<1)
+    if(argc<1)
         JS_ERROR("missing argument");
-	jscript = js_get_string(argv[0]);
-	JsParser *js = (JsParser *)JS_GetContextPrivate(cx);
+    jscript = js_get_string(argv[0]);
+    JsParser *js = (JsParser *)JS_GetContextPrivate(cx);
 
-	use = js->use(cx, obj, jscript);
-	if (use == JS_FALSE) {
-		// all errors already reported,
-		// js->open talks too much
-		error("JS include('%s') failed", jscript);
-		return JS_FALSE;
-	}
-	*rval = use;
-	return JS_TRUE;
+    use = js->use(cx, obj, jscript);
+    if (use == JS_FALSE) {
+        // all errors already reported,
+        // js->open talks too much
+        error("JS include('%s') failed", jscript);
+        return JS_FALSE;
+    }
+    *rval = use;
+    return JS_TRUE;
 }
 
 // XXX - are we sure that we really want to expose such a function? :/
 JS(system_exec) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  unsigned int c;
-  char *prog;
-  char **args;
+    unsigned int c;
+    char *prog;
+    char **args;
 
-  // get the executable program
-  prog = js_get_string(argv[0]);
+    // get the executable program
+    prog = js_get_string(argv[0]);
 
-  // get the arguments in a NULL terminated array
-  args = (char**)calloc(argc +1, sizeof(char*));
+    // get the arguments in a NULL terminated array
+    args = (char**)calloc(argc +1, sizeof(char*));
 
-  for (c=0; c<argc; c++) {
+    for (c=0; c<argc; c++) {
 
-    if( JSVAL_IS_STRING(argv[c]) )
+        if( JSVAL_IS_STRING(argv[c]) )
 
-      args[c] = (char*)JS_GetStringBytes( JS_ValueToString(cx, argv[c]) );
+            args[c] = (char*)JS_GetStringBytes( JS_ValueToString(cx, argv[c]) );
 
-    else {
+        else {
 
-      JS_ReportError(cx,"%s: argument %u is not a string",__FUNCTION__, c);
-      global_environment->quit = true;
-      return JS_FALSE;
+            JS_ReportError(cx,"%s: argument %u is not a string",__FUNCTION__, c);
+            global_environment->quit = true;
+            return JS_FALSE;
+
+        }
 
     }
 
-  }
+    if(!fork()) {
+        /* execvp(3) functions provide an array of pointers to
+           null-terminated strings that represent the argument list
+           available to the new program.  The first argument, by convention,
+           should point to the file name associated with the file being
+           executed.  The array of pointers must be terminated by a NULL
+           pointer.  */
+        execvp( prog, args );
+    }
 
-  if(!fork()) {
-  /* execvp(3) functions provide an array of pointers to
-     null-terminated strings that represent the argument list
-     available to the new program.  The first argument, by convention,
-     should point to the file name associated with the file being
-     executed.  The array of pointers must be terminated by a NULL
-     pointer.  */
-    execvp( prog, args );
-  }
-
-  return JS_TRUE;
+    return JS_TRUE;
 }
 
 JS(reset_js) {
-	func("%s",__PRETTY_FUNCTION__);
-	//	char *jscript;
+    func("%s",__PRETTY_FUNCTION__);
+    //	char *jscript;
 
-	*rval = JSVAL_TRUE;
-	//JsParser *js = (JsParser *)JS_GetContextPrivate(cx);
-	func("resetting freej context");
-	global_environment->reset();
-	//func("reloading main script: %s", global_environment->main_javascript);
-	//	js->open(global_environment->main_javascript);
+    *rval = JSVAL_TRUE;
+    //JsParser *js = (JsParser *)JS_GetContextPrivate(cx);
+    func("resetting freej context");
+    global_environment->reset();
+    //func("reloading main script: %s", global_environment->main_javascript);
+    //	js->open(global_environment->main_javascript);
 
-	//	func("garbage collection of jsparser");
-	//	js->reset();
+    //	func("garbage collection of jsparser");
+    //	js->reset();
 
 // 	if(argc == 1) {
 //	char *jscript = js_get_string(argv[0]);
@@ -816,8 +816,8 @@ JS(reset_js) {
 // 		}
 // 	}
 // 	JS_GC(cx);
-	// if called by a controller, it must then return true
-	// otherwise rehandling it's event can be endless loop
-	return JS_TRUE;
+    // if called by a controller, it must then return true
+    // otherwise rehandling it's event can be endless loop
+    return JS_TRUE;
 }
 

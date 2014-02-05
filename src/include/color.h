@@ -26,30 +26,30 @@
 
 class Color {
 
- public:
+public:
 
-  Color();
-  virtual ~Color();
+    Color();
+    virtual ~Color();
 
-  double r;
-  double g;
-  double b;
-  double a;
+    double r;
+    double g;
+    double b;
+    double a;
 
-  void set_rgb(double nr, double ng, double nb);
-  void set_rgba(double nr, double ng, double nb, double na);
+    void set_rgb(double nr, double ng, double nb);
+    void set_rgba(double nr, double ng, double nb, double na);
 
-  void set_gray(double g);
-  void set_gray_alpha(double g, double a);
+    void set_gray(double g);
+    void set_gray_alpha(double g, double a);
 
-  /* void set_hsb(double h, double s, double b); */
+    /* void set_hsb(double h, double s, double b); */
 
-  /* void set_hex(uint32_t h); */
-  /* void set_hex_alpha(uint32_t h, uint8_t a); */
+    /* void set_hex(uint32_t h); */
+    /* void set_hex_alpha(uint32_t h, uint8_t a); */
 
-  virtual void set() =0;
+    virtual void set() =0;
 
 };
 
 #endif
-  
+

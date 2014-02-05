@@ -4,7 +4,7 @@
  * code inspired by seqdemo.c by Matthias Nagorni
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -43,10 +43,10 @@ DECLARE_CLASS_GC("MidiController", js_midi_ctrl_class, js_midi_ctrl_constructor,
 
 JS(midi_connect);
 JS(midi_connect_from);
-JSFunctionSpec js_midi_ctrl_methods[] = { 
-  {"connect_from", midi_connect_from, 3},
-  //    {"connect", midi_connect, 4 },
-  {0} 
+JSFunctionSpec js_midi_ctrl_methods[] = {
+    {"connect_from", midi_connect_from, 3},
+    //    {"connect", midi_connect, 4 },
+    {0}
 };
 
 JS(js_midi_ctrl_constructor) {
@@ -56,11 +56,13 @@ JS(js_midi_ctrl_constructor) {
     // initialize with javascript context
     if(! midi->init(global_environment) ) {
         error("failed initializing midi controller");
-        delete midi; return JS_FALSE;
+        delete midi;
+        return JS_FALSE;
     }
     if( ! JS_SetPrivate(cx, obj, (void*)midi) ) {
         error("failed assigning midi controller to javascript");
-        delete midi; return JS_FALSE;
+        delete midi;
+        return JS_FALSE;
     }
 
     // assign the real js object
@@ -85,25 +87,25 @@ MidiController::~MidiController() {
 }
 
 JS(midi_connect_from) {
-	func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
-	JS_CHECK_ARGC(3);
-	int res = 0;
+    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    JS_CHECK_ARGC(3);
+    int res = 0;
 
-	MidiController *midi = (MidiController *) JS_GetPrivate(cx,obj);
-	if(!midi) {
-		error("%u:%s:%s :: Midi core data is NULL",
-		__LINE__,__FILE__,__FUNCTION__);
-		return JS_FALSE;
-	}
+    MidiController *midi = (MidiController *) JS_GetPrivate(cx,obj);
+    if(!midi) {
+        error("%u:%s:%s :: Midi core data is NULL",
+              __LINE__,__FILE__,__FUNCTION__);
+        return JS_FALSE;
+    }
 
-	// int snd_seq_connect_to(snd_seq_t * seq, int myport, int dest_client, int dest_port)
-	jsint myport = js_get_int(argv[0]);
-	jsint dest_client = js_get_int(argv[1]);
-	jsint dest_port = js_get_int(argv[2]);
+    // int snd_seq_connect_to(snd_seq_t * seq, int myport, int dest_client, int dest_port)
+    jsint myport = js_get_int(argv[0]);
+    jsint dest_client = js_get_int(argv[1]);
+    jsint dest_port = js_get_int(argv[2]);
 
-	res = midi->connect_from(int(myport), int(dest_client), int(dest_port));
+    res = midi->connect_from(int(myport), int(dest_client), int(dest_port));
 
-	return JS_NewNumberValue(cx, res, rval);
+    return JS_NewNumberValue(cx, res, rval);
 }
 
 int MidiController::connect_from(int myport, int dest_client, int dest_port) {
@@ -124,35 +126,35 @@ int MidiController::dispatch() {
         return ret;
     }
     while (snd_seq_event_input(seq_handle, &ev) >=0) {
-        func ("midi action type/channel/param/value/time/src:port/dest:port %5d/%5d/%5d/%5d/%5d/%u:%u/%u:%u", 
-            ev->type, 
-            ev->data.control.channel,
-            ev->data.control.param,
-            ev->data.control.value,
-            ev->time.tick, // time
-            ev->source.client, ev->source.port,
-            ev->dest.client, ev->dest.port
-        );
+        func ("midi action type/channel/param/value/time/src:port/dest:port %5d/%5d/%5d/%5d/%5d/%u:%u/%u:%u",
+              ev->type,
+              ev->data.control.channel,
+              ev->data.control.param,
+              ev->data.control.value,
+              ev->time.tick, // time
+              ev->source.client, ev->source.port,
+              ev->dest.client, ev->dest.port
+             );
 
         switch (ev->type) {
-            case SND_SEQ_EVENT_CONTROLLER: 
-		ret = event_ctrl(ev->data.control.channel, ev->data.control.param, ev->data.control.value);
+        case SND_SEQ_EVENT_CONTROLLER:
+            ret = event_ctrl(ev->data.control.channel, ev->data.control.param, ev->data.control.value);
             break;
 
-            case SND_SEQ_EVENT_PITCHBEND:
-		ret = event_pitch(ev->data.control.channel, ev->data.control.param, ev->data.control.value);
+        case SND_SEQ_EVENT_PITCHBEND:
+            ret = event_pitch(ev->data.control.channel, ev->data.control.param, ev->data.control.value);
             break;
 
-            case SND_SEQ_EVENT_NOTEON:
-		ret = event_noteon(ev->data.control.channel, ev->data.note.note, ev->data.note.velocity);
+        case SND_SEQ_EVENT_NOTEON:
+            ret = event_noteon(ev->data.control.channel, ev->data.note.note, ev->data.note.velocity);
             break;
 
-            case SND_SEQ_EVENT_NOTEOFF: 
-		ret = event_noteoff(ev->data.control.channel, ev->data.note.note, ev->data.note.velocity);
+        case SND_SEQ_EVENT_NOTEOFF:
+            ret = event_noteoff(ev->data.control.channel, ev->data.note.note, ev->data.note.velocity);
             break;
-            
-            case SND_SEQ_EVENT_PGMCHANGE:
-		ret = event_pgmchange(ev->data.control.channel, ev->data.control.param, ev->data.control.value);
+
+        case SND_SEQ_EVENT_PGMCHANGE:
+            ret = event_pgmchange(ev->data.control.channel, ev->data.control.param, ev->data.control.value);
             break;
         } // switch
         snd_seq_free_event(ev);
@@ -161,92 +163,92 @@ int MidiController::dispatch() {
 }
 
 int MidiController::event_ctrl(int channel, int param, int value) {
-	func("midi Control event on Channel\t%2d: %5d %5d (param/value)", channel, param, value);
-	if (jsenv == NULL) {
-		error("Midi handle action: jsobj is null");
-		return(0);
-	}
-	jsval js_data[] = { channel, param, value };
-	JSCall("event_ctrl", 3, js_data);
-	return(1);
+    func("midi Control event on Channel\t%2d: %5d %5d (param/value)", channel, param, value);
+    if (jsenv == NULL) {
+        error("Midi handle action: jsobj is null");
+        return(0);
+    }
+    jsval js_data[] = { channel, param, value };
+    JSCall("event_ctrl", 3, js_data);
+    return(1);
 }
 
 int MidiController::event_pitch(int channel, int param, int value) {
-	func("midi Pitchbender event on Channel\t%2d: %5d %5d   ",  channel, param, value);
-	if (jsenv == NULL) {
-		error("Midi handle action: jsobj is null");
-		return(0);
-	}
-	jsval js_data[] = { channel, param, value };
-	JSCall("event_pitch", 3, js_data);
-	return(1);
+    func("midi Pitchbender event on Channel\t%2d: %5d %5d   ",  channel, param, value);
+    if (jsenv == NULL) {
+        error("Midi handle action: jsobj is null");
+        return(0);
+    }
+    jsval js_data[] = { channel, param, value };
+    JSCall("event_pitch", 3, js_data);
+    return(1);
 }
 
 int MidiController::event_noteon(int channel, int note, int velocity) {
-	func("midi Note On event on Channel\t%2d: %5d %5d      ", channel, note, velocity);
-	if (jsenv == NULL) {
-		error("Midi handle action: jsobj is null");
-		return(0);
-	}
-	jsval js_data[] = { channel, note, velocity };
-	JSCall("event_noteon", 3, js_data);
-	return(1);
+    func("midi Note On event on Channel\t%2d: %5d %5d      ", channel, note, velocity);
+    if (jsenv == NULL) {
+        error("Midi handle action: jsobj is null");
+        return(0);
+    }
+    jsval js_data[] = { channel, note, velocity };
+    JSCall("event_noteon", 3, js_data);
+    return(1);
 }
 
 int MidiController::event_noteoff(int channel, int note, int velocity) {
-	func("midi Note Off event on Channel\t%2d: %5d      ", channel, note);
+    func("midi Note Off event on Channel\t%2d: %5d      ", channel, note);
 
-	if (jsenv == NULL) {
-		error("Midi handle action: jsobj is null");
-		return(0);
-	}
+    if (jsenv == NULL) {
+        error("Midi handle action: jsobj is null");
+        return(0);
+    }
 
-	jsval js_data[] = { channel, note, velocity };
-	JSCall("event_noteoff", 3, js_data);
-	return(1);
+    jsval js_data[] = { channel, note, velocity };
+    JSCall("event_noteoff", 3, js_data);
+    return(1);
 }
 
 int MidiController::event_pgmchange(int channel, int param, int value) {
-	func("midi PGM change event on Channel\t%2d: %5d %5d ", channel, param, value);
-	if (jsenv == NULL) {
-		error("Midi handle action: jsobj is null");
-		return(0);
-	}
-	jsval js_data[] = { channel, param, value };
-	JSCall("event_pgmchange", 3, js_data);
-	return(1);
+    func("midi PGM change event on Channel\t%2d: %5d %5d ", channel, param, value);
+    if (jsenv == NULL) {
+        error("Midi handle action: jsobj is null");
+        return(0);
+    }
+    jsval js_data[] = { channel, param, value };
+    JSCall("event_pgmchange", 3, js_data);
+    return(1);
 }
 
 /*
 typedef struct snd_seq_event {
-         snd_seq_event_type_t type;      
-         unsigned char flags;            
-         unsigned char tag;              
-         unsigned char queue;            
-         snd_seq_timestamp_t time;       
-         snd_seq_addr_t source;          
-         snd_seq_addr_t dest;            
+         snd_seq_event_type_t type;
+         unsigned char flags;
+         unsigned char tag;
+         unsigned char queue;
+         snd_seq_timestamp_t time;
+         snd_seq_addr_t source;
+         snd_seq_addr_t dest;
          union {
-                 snd_seq_ev_note_t note;         
-                 snd_seq_ev_ctrl_t control;      
-                 snd_seq_ev_raw8_t raw8;         
-                 snd_seq_ev_raw32_t raw32;       
-                 snd_seq_ev_ext_t ext;           
-                 snd_seq_ev_queue_control_t queue; 
-                 snd_seq_timestamp_t time;       
-                 snd_seq_addr_t addr;            
-                 snd_seq_connect_t connect;      
-                 snd_seq_result_t result;        
-                 snd_seq_ev_instr_begin_t instr_begin; 
-                 snd_seq_ev_sample_control_t sample; 
-         } data;                         
+                 snd_seq_ev_note_t note;
+                 snd_seq_ev_ctrl_t control;
+                 snd_seq_ev_raw8_t raw8;
+                 snd_seq_ev_raw32_t raw32;
+                 snd_seq_ev_ext_t ext;
+                 snd_seq_ev_queue_control_t queue;
+                 snd_seq_timestamp_t time;
+                 snd_seq_addr_t addr;
+                 snd_seq_connect_t connect;
+                 snd_seq_result_t result;
+                 snd_seq_ev_instr_begin_t instr_begin;
+                 snd_seq_ev_sample_control_t sample;
+         } data;
  } snd_seq_event_t;
 */
 
 bool MidiController::init(Context *freej) {
-  func("%s",__PRETTY_FUNCTION__);
+    func("%s",__PRETTY_FUNCTION__);
 
-  int portid;
+    int portid;
     int result=snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK);
     if (result<0) {
         error("Error opening ALSA sequencer: %s\n", snd_strerror(result));
@@ -256,8 +258,8 @@ bool MidiController::init(Context *freej) {
     seq_client_id = snd_seq_client_id(seq_handle);
     // port name 16 chars
     if ((portid = snd_seq_create_simple_port(seq_handle, "MIDI IN",
-            SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
-            SND_SEQ_PORT_TYPE_APPLICATION)) < 0) {
+                  SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
+                  SND_SEQ_PORT_TYPE_APPLICATION)) < 0) {
         error("Error creating sequencer port.\n");
         return(false);
     }
@@ -282,10 +284,10 @@ int MidiController::poll() {
 
 /*
 
-obtain subscription information 
+obtain subscription information
 int snd_seq_get_port_subscription (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
 
-subscribe a port connection 
+subscribe a port connection
 int   snd_seq_subscribe_port (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
 unsubscribe a connection between ports
 int   snd_seq_unsubscribe_port (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)

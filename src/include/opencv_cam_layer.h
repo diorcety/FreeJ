@@ -28,28 +28,28 @@
 #include <context.h>
 
 class OpenCVCamLayer: public Layer {
-  
- public:
-  OpenCVCamLayer();
-  ~OpenCVCamLayer();
 
-  bool open(const char *devfile);
-  void *feed();
-  void close();
+public:
+    OpenCVCamLayer();
+    ~OpenCVCamLayer();
 
- protected:
-  bool _init();
+    bool open(const char *devfile);
+    void *feed();
+    void close();
 
- private:
-  CvCapture *capture;
+protected:
+    bool _init();
 
-  IplImage *frame;
-  void *rgba;
+private:
+    CvCapture *capture;
 
-  CvSize cvsize;
+    IplImage *frame;
+    void *rgba;
 
-  // allow to use Factory on this class
-  FACTORY_ALLOWED
+    CvSize cvsize;
+
+    // allow to use Factory on this class
+    FACTORY_ALLOWED
 };
 
 #endif // WITH_OPENCV

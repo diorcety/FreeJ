@@ -1,10 +1,10 @@
 /*  FreeJ audio input
  *
  *  (c) Copyright 2008 Denis Rojo <jaromil@dyne.org>
- *                
+ *
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -31,36 +31,36 @@
 
 
 AudioInput::AudioInput() {
-  func("creating audio input");
+    func("creating audio input");
 
-  //  set_format(1, 44100); // default mono 44khz
+    //  set_format(1, 44100); // default mono 44khz
 
-  audio = NULL;
+    audio = NULL;
 
-  initialized = false;
-  started = false;
+    initialized = false;
+    started = false;
 }
 
 AudioInput::~AudioInput() {
 
-  if(audio) delete audio;
+    if(audio) delete audio;
 
 }
 
 bool AudioInput::init() {
-  notice("Initializing audio input jack");
+    notice("Initializing audio input jack");
 
-  audio = new AudioCollector(name, 2048, 44100);
+    audio = new AudioCollector(name, 2048, 44100);
 
-  if(!audio) return(false);
+    if(!audio) return(false);
 
-  act("audio initialization successful");
-  initialized = true;
+    act("audio initialization successful");
+    initialized = true;
 
-  return true;
-  
+    return true;
+
 }
 
-  
+
 
 #endif

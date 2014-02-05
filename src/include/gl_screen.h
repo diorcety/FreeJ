@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -28,58 +28,66 @@
 #include <screen.h>
 #include <factory.h>
 
-struct Vertex
-{
+struct Vertex {
     float tu, tv;
     float x, y, z;
 };
 
 class GlScreen : public ViewPort {
- public:
-  GlScreen();
-  ~GlScreen() { };
+public:
+    GlScreen();
+    ~GlScreen() { };
 
 
 
-  fourcc get_pixel_format() { return RGBA32; };
-  void *get_surface() {   error("GlScreen::get_surface TODO (refactoring)"); return NULL; };
-  void *coords(int x, int y) { return NULL; };
+    fourcc get_pixel_format() {
+        return RGBA32;
+    };
+    void *get_surface() {
+        error("GlScreen::get_surface TODO (refactoring)");
+        return NULL;
+    };
+    void *coords(int x, int y) {
+        return NULL;
+    };
 
-  // whis is the main window surface
-  SDL_Surface *surface;
+    // whis is the main window surface
+    SDL_Surface *surface;
 
-  float x_translation;
-  float y_translation;
-  float x_rotation;
-  float y_rotation;
-  float rotation;
-  float zoom;
+    float x_translation;
+    float y_translation;
+    float x_rotation;
+    float y_rotation;
+    float rotation;
+    float zoom;
 
-  // opengl stuff
-  void blit(Layer *layer);
-  //  bool glblitX(Layer *layer);
-  GLuint texturize(Layer *layer);
-  Vertex g_quadVertices[4];
-  void setup_blits(Layer *lay) {};
+    // opengl stuff
+    void blit(Layer *layer);
+    //  bool glblitX(Layer *layer);
+    GLuint texturize(Layer *layer);
+    Vertex g_quadVertices[4];
+    void setup_blits(Layer *lay) {};
 
 
-  //  bool lock();
-  //  bool unlock();
+    //  bool lock();
+    //  bool unlock();
 
- protected:
-  bool _init() { return true; };
+protected:
+    bool _init() {
+        return true;
+    };
 
- private:
-  int setres(int wx, int hx);
-  bool dbl;
-  uint32_t sdl_flags;
+private:
+    int setres(int wx, int hx);
+    bool dbl;
+    uint32_t sdl_flags;
 
-  // check gl error and print it
-  bool check_opengl_error();
+    // check gl error and print it
+    bool check_opengl_error();
 
-  // allow to use Factory on this class
-  FACTORY_ALLOWED
+    // allow to use Factory on this class
+    FACTORY_ALLOWED
 
 };
 
-#endif 
+#endif

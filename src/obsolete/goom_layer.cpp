@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2006 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -32,78 +32,78 @@
 
 
 GoomLayer::GoomLayer()
-  :Layer() {
-  set_name("Goom");
-  buffer = NULL;
-  use_audio = true;
-  jsclass = &goom_layer_class;
+    :Layer() {
+    set_name("Goom");
+    buffer = NULL;
+    use_audio = true;
+    jsclass = &goom_layer_class;
 }
 
 GoomLayer::~GoomLayer() {
-  close();
+    close();
 }
 
 bool GoomLayer::init(Context *freej) {
 
-  int width  = freej->screen->w;
-  int height = freej->screen->h;
+    int width  = freej->screen->w;
+    int height = freej->screen->h;
 
-  func("GoomLayer::init()");
+    func("GoomLayer::init()");
 
-  _init(width,height);
-  
-  goom = goom_init(geo.w, geo.h);
+    _init(width,height);
 
-  buffer = malloc(geo.size);
+    goom = goom_init(geo.w, geo.h);
 
-  
-  goom_set_screenbuffer(goom, buffer);
+    buffer = malloc(geo.size);
 
-  opened = true;
 
-  return(true);
+    goom_set_screenbuffer(goom, buffer);
+
+    opened = true;
+
+    return(true);
 }
 
 bool GoomLayer::open(const char *file) {
 
-  return true;
+    return true;
 }
 
 void GoomLayer::close() {
-  if(buffer)
-    free(buffer);
+    if(buffer)
+        free(buffer);
 
 }
 
 void *GoomLayer::feed() {
-  int c;
-  short int hc;
-  // TODO: use FFT values and fill in incval and samples
+    int c;
+    short int hc;
+    // TODO: use FFT values and fill in incval and samples
 
-  if(audio) {
-    
-    audio->GetFFT();
+    if(audio) {
 
-    /* find the max */
-    float incvar = 0;
-    for (c = 0; c < 16; c++) {
-      hc = (int) floor(audio->GetHarmonic(c));
-      if (incvar < hc) incvar = hc;
-      goom->sound.samples[c] = hc;
+        audio->GetFFT();
+
+        /* find the max */
+        float incvar = 0;
+        for (c = 0; c < 16; c++) {
+            hc = (int) floor(audio->GetHarmonic(c));
+            if (incvar < hc) incvar = hc;
+            goom->sound.samples[c] = hc;
+        }
+
+        if (incvar > goom->sound.allTimesMax)
+            goom->sound.allTimesMax = incvar;
+
+        /* volume sonore */
+        goom->sound.volume = (float)incvar / (float)goom->sound.allTimesMax;
+
     }
-    
-    if (incvar > goom->sound.allTimesMax)
-      goom->sound.allTimesMax = incvar;
-    
-    /* volume sonore */
-    goom->sound.volume = (float)incvar / (float)goom->sound.allTimesMax;
+    //  ringbuffer_peek(env->audio->input_pipe, (char*)audio, 1024);
 
-  }
-  //  ringbuffer_peek(env->audio->input_pipe, (char*)audio, 1024);
+    goom_update(goom, audiobuf, 0, -1, NULL, NULL);
 
-  goom_update(goom, audiobuf, 0, -1, NULL, NULL);
-
-  return buffer;
+    return buffer;
 }
 
 // bool GoomLayer::keypress(int key) {

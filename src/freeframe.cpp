@@ -9,7 +9,7 @@
  *
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -47,130 +47,133 @@
 
 FACTORY_REGISTER_INSTANTIATOR(Filter, Freeframe, FreeframeFilter, core);
 
-Freeframe::Freeframe() 
-  : Filter() 
-{ 
+Freeframe::Freeframe()
+    : Filter() {
 
-  handle = NULL;
-  opened = false;
+    handle = NULL;
+    opened = false;
 
 
-  set_name((char*)info->pluginName);
+    set_name((char*)info->pluginName);
 
-  // init freeframe filter
-  if(plugmain(FF_INITIALISE, NULL, 0).ivalue == FF_FAIL)
-    error("cannot initialise freeframe plugin %s",name);
+    // init freeframe filter
+    if(plugmain(FF_INITIALISE, NULL, 0).ivalue == FF_FAIL)
+        error("cannot initialise freeframe plugin %s",name);
 
-  if(get_debug()>2)
-    print_info();
+    if(get_debug()>2)
+        print_info();
 
 }
 
 Freeframe::~Freeframe() {
 
-  if(handle)
-      dlclose(handle);
+    if(handle)
+        dlclose(handle);
 
 }
 
 void Freeframe::init_parameters(Linklist<Parameter> &parameters) {
-	// TODO freeframe parameters
+    // TODO freeframe parameters
 
 }
 
 int Freeframe::open(char *file) {
-  plugMainType *plgMain;
+    plugMainType *plgMain;
 
-  if(opened) {
-    error("Freeframe object %p has already opened file %s",this, filename);
-    return 0;
-  }
+    if(opened) {
+        error("Freeframe object %p has already opened file %s",this, filename);
+        return 0;
+    }
 
-  // clear up the errors if there were any
-  dlerror();
+    // clear up the errors if there were any
+    dlerror();
 
-  // Create dynamic handle to the library file.
-  if(strstr(file, ".frf")) {
+    // Create dynamic handle to the library file.
+    if(strstr(file, ".frf")) {
 #ifdef HAVE_DARWIN
-      CFStringRef filestring = CFStringCreateWithCString(NULL, file, kCFStringEncodingUTF8);
-      CFURLRef filepath = CFURLCreateWithFileSystemPath(NULL, filestring, kCFURLPOSIXPathStyle, 1);;
-      CFBundleRef bundle = CFBundleCreate(NULL, filepath);
-      plgMain = (plugMainUnion (*)(DWORD, void*, DWORD))CFBundleGetFunctionPointerForName(bundle, CFSTR("plugMain"));
-      CFRelease(filestring);
-      CFRelease(filepath);
+        CFStringRef filestring = CFStringCreateWithCString(NULL, file, kCFStringEncodingUTF8);
+        CFURLRef filepath = CFURLCreateWithFileSystemPath(NULL, filestring, kCFURLPOSIXPathStyle, 1);;
+        CFBundleRef bundle = CFBundleCreate(NULL, filepath);
+        plgMain = (plugMainUnion (*)(DWORD, void*, DWORD))CFBundleGetFunctionPointerForName(bundle, CFSTR("plugMain"));
+        CFRelease(filestring);
+        CFRelease(filepath);
 #endif
-  } else {
-      dlerror(); //clear up previous errors 
+    } else {
+        dlerror(); //clear up previous errors
 #if 0
-      if (!dlopen_preflight(file)) {
-        warning("plugin '%s' failed: %s", file, dlerror());
-        return 0;
-      }
+        if (!dlopen_preflight(file)) {
+            warning("plugin '%s' failed: %s", file, dlerror());
+            return 0;
+        }
 #endif
-      handle = dlopen(file, RTLD_NOW);
-      if(!handle) {
-        warning("can't dlopen plugin: %s", file);
-        return 0;
-      }
+        handle = dlopen(file, RTLD_NOW);
+        if(!handle) {
+            warning("can't dlopen plugin: %s", file);
+            return 0;
+        }
 
-      // try the freeframe symbol
-      plgMain = (plugMainType *) dlsym(handle, "plugMain");
-      if(!plgMain) {
-        func("%s not a valid freeframe plugin: %s", file, dlerror());
-        // don't forget to close
+        // try the freeframe symbol
+        plgMain = (plugMainType *) dlsym(handle, "plugMain");
+        if(!plgMain) {
+            func("%s not a valid freeframe plugin: %s", file, dlerror());
+            // don't forget to close
+            dlclose(handle);
+            handle = NULL;
+            return 0;
+        }
+
+    }
+
+    /// WARNING:  if  compiled  without  -freg-struct-return  this  will
+    /// return an invalid address ...
+    PlugInfoStruct *pis = (plgMain(FF_GETINFO,NULL, 0)).PISvalue;
+
+    //  func("freeframe plugin: %s",pis->pluginName);
+    // ... and here will segfault
+    if ((plgMain(FF_GETPLUGINCAPS,
+                 (LPVOID) FF_CAP_32BITVIDEO, 0)).ivalue != FF_TRUE) {
+        func("plugin %s: no 32 bit support", file);
         dlclose(handle);
         handle = NULL;
         return 0;
-      }
+    }
 
-  }
-  
-  /// WARNING:  if  compiled  without  -freg-struct-return  this  will
-  /// return an invalid address ...
-  PlugInfoStruct *pis = (plgMain(FF_GETINFO,NULL, 0)).PISvalue;
+    if (pis->APIMajorVersion < 1) {
+        error("plugin %s: old api version", file);
+        dlclose(handle);
+        handle = NULL;
+        return 0;
+    }
 
-  //  func("freeframe plugin: %s",pis->pluginName);
-  // ... and here will segfault
-  if ((plgMain(FF_GETPLUGINCAPS,
-		(LPVOID) FF_CAP_32BITVIDEO, 0)).ivalue != FF_TRUE) {
-    func("plugin %s: no 32 bit support", file);
-    dlclose(handle);
-    handle = NULL;
-    return 0;
-  }
- 
-  if (pis->APIMajorVersion < 1) {
-    error("plugin %s: old api version", file);
-    dlclose(handle);
-    handle = NULL;
-    return 0;
-  }
+    // init is called by Filter class
+    //   (plgMain(FF_INITIALISE, NULL, 0)).ivalue {
 
-  // init is called by Filter class
-  //   (plgMain(FF_INITIALISE, NULL, 0)).ivalue {
+    info = pis;
+    //  extinfo = plgMain(FF_GETEXTENDEDINFO, NULL, 0)
+    plugmain = plgMain;
+    opened = true;
+    snprintf(filename,255,"%s",file);
 
-  info = pis;
-  //  extinfo = plgMain(FF_GETEXTENDEDINFO, NULL, 0)
-  plugmain = plgMain;
-  opened = true;
-  snprintf(filename,255,"%s",file);
-
-  return 1;
+    return 1;
 
 }
 
 void Freeframe::print_info() {
-  notice("Name             : %s", info->pluginName);
-  switch(info->pluginType) {    
-  case FF_EFFECT: act("Type             : Filter"); break;
-  case FF_SOURCE: act("Type             : Source"); break;
-  default: error("Unrecognized plugin type");
-  }
-  act("Parameters [%i total]", plugmain(FF_GETNUMPARAMETERS, NULL, 0).ivalue);
+    notice("Name             : %s", info->pluginName);
+    switch(info->pluginType) {
+    case FF_EFFECT:
+        act("Type             : Filter");
+        break;
+    case FF_SOURCE:
+        act("Type             : Source");
+        break;
+    default:
+        error("Unrecognized plugin type");
+    }
+    act("Parameters [%i total]", plugmain(FF_GETNUMPARAMETERS, NULL, 0).ivalue);
 }
 
-bool Freeframe::apply(Layer *lay, FilterInstance *instance) 
-{
+bool Freeframe::apply(Layer *lay, FilterInstance *instance) {
     VideoInfoStruct vidinfo;
     vidinfo.frameWidth = lay->geo.w;
     vidinfo.frameHeight = lay->geo.h;
@@ -194,31 +197,26 @@ void Freeframe::update(FilterInstance *inst, double time, uint32_t *inframe, uin
     plugmain(FF_PROCESSFRAME, (void*)outframe, inst->intcore);
 }
 
-const char *Freeframe::description()
-{
+const char *Freeframe::description() {
     // TODO freeframe has no extentedinfostruct returned!?
     return "freeframe VFX";
 }
 
-const char *Freeframe::author()
-{
+const char *Freeframe::author() {
     // TODO freeframe has no extentedinfostruct returned!?
     return "freeframe authors";
 }
 
-int Freeframe::get_parameter_type(int i)
-{
+int Freeframe::get_parameter_type(int i) {
     // TODO
     return -1;
 }
 
-char *Freeframe::get_parameter_description(int i)
-{
+char *Freeframe::get_parameter_description(int i) {
     // TODO
     return (char *)"Unknown";
 }
 
-int Freeframe::type()
-{
+int Freeframe::type() {
     return Filter::FREEFRAME;
 }

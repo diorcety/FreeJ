@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2006 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -31,26 +31,28 @@ extern "C" {
 
 class GoomLayer: public Layer {
 
- public:
-  GoomLayer();
-  ~GoomLayer();
+public:
+    GoomLayer();
+    ~GoomLayer();
 
-  bool init(Context *freej);
-  bool init(Context *freej, int w, int h) { return init(freej); };
+    bool init(Context *freej);
+    bool init(Context *freej, int w, int h) {
+        return init(freej);
+    };
 
-  bool open(const char *file);
-  void *feed();
-  void close();
+    bool open(const char *file);
+    void *feed();
+    void close();
 
-  PluginInfo *goom;
-  
- private:
+    PluginInfo *goom;
 
-  short int audiobuf[2][512];
+private:
 
-  SDL_Surface *surf;
+    short int audiobuf[2][512];
 
-  
+    SDL_Surface *surf;
+
+
 };
 
 #endif // WITH_GOOM

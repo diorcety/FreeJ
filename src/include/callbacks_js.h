@@ -5,7 +5,7 @@
  *  Denis Rojo aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -109,7 +109,7 @@ jsdouble js_get_double(jsval val);
     JS_ReportError(cx,"%s: property value is not a string",__FUNCTION__); \
     ::error("%s: property value is not a string",__FUNCTION__);	\
   }
-  
+
 
 // set the return value as a string
 #define JS_RETURN_STRING(cb_msg) \
@@ -138,7 +138,7 @@ JSClass class_struct = { \
   NULL,   NULL, \
   class_constructor \
 };
- // s/JS_FinalizeStub/gc_callback/ to activate GC in JS (not working currently)
+// s/JS_FinalizeStub/gc_callback/ to activate GC in JS (not working currently)
 //static JSClass *jsclass_s = &class_struct;
 
 #define REGISTER_CLASS(class_name, class_struct, class_constructor, class_properties, class_methods, parent_class) \
@@ -147,7 +147,7 @@ JSClass class_struct = { \
 				class_properties, class_methods, 0, 0); \
     if(!layer_object) { \
       ::error("JsParser::init() can't instantiate %s class",class_name); \
-    } 
+    }
 
 
 #define JS_CONSTRUCTOR(constructor_name, constructor_func, constructor_class) \
@@ -174,7 +174,7 @@ JS(constructor_func) {                                                        \
   return JS_TRUE;							      \
 }
 /* this was removed from the error proccedure in the macro above:
-   cx->newborn[GCX_OBJECT] = NULL;				       
+   cx->newborn[GCX_OBJECT] = NULL;
    as since javascript 1.7 the newborn field of struct doesn't exists anymore
    hopefully the object is null'd and freed correctly -jrml */
 

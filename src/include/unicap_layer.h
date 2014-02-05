@@ -2,7 +2,7 @@
  *  (c) Copyright 2008 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -32,41 +32,41 @@
 
 class UnicapLayer: public Layer {
 
- public:
-  UnicapLayer();
-  ~UnicapLayer();
+public:
+    UnicapLayer();
+    ~UnicapLayer();
 
-  bool open(const char *devfile);
+    bool open(const char *devfile);
 
-  void *feed();
-  void close();
+    void *feed();
+    void close();
 
-  void *feed_ready;
-  void *rgba[2];
-  int swap;
-  int detected;
+    void *feed_ready;
+    void *rgba[2];
+    int swap;
+    int detected;
 
-  int capture_type;
+    int capture_type;
 
- protected:
-  bool _init();
+protected:
+    bool _init();
 
- private:
+private:
 
-  unicap_device_t m_device;
-  unicap_device_t m_device_spec;
+    unicap_device_t m_device;
+    unicap_device_t m_device_spec;
 
-  unicap_handle_t m_handle;
+    unicap_handle_t m_handle;
 
-  unicap_data_buffer_t m_buffer;
+    unicap_data_buffer_t m_buffer;
 
-  unicap_format_t m_format;
+    unicap_format_t m_format;
 
-  unicap_property_t m_property;
-  unicap_property_t m_property_spec;
+    unicap_property_t m_property;
+    unicap_property_t m_property_spec;
 
-  // allow to use Factory on this class
-  FACTORY_ALLOWED
+    // allow to use Factory on this class
+    FACTORY_ALLOWED
 
 };
 

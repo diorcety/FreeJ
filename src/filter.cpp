@@ -2,7 +2,7 @@
  *  Copyright (C) 2001-2010 Denis Roio <jaromil@dyne.org>
  *  Copyright (C) 2010    Andrea Guzzo <xant@dyne.org>
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -29,21 +29,19 @@ $Id: $
 
 #include <jutils.h>
 
-Filter::Filter() 
-  : Entry()
-{
-  int i;
+Filter::Filter()
+    : Entry() {
+    int i;
 
-  initialized = false;
-  active = false;
-  inuse = false;
+    initialized = false;
+    active = false;
+    inuse = false;
 
-  bytesize = 0;
-    
+    bytesize = 0;
+
 }
 
-static const char *KnownFilters[] =
-{
+static const char *KnownFilters[] = {
 #ifdef WITH_FREI0R
     "Freior",
 #endif
@@ -64,9 +62,8 @@ FilterInstance *Filter::new_instance() {
     return instance;
 }
 
-bool Filter::apply(Layer *lay, FilterInstance *instance)
-{
-    
+bool Filter::apply(Layer *lay, FilterInstance *instance) {
+
     errno=0;
     instance->outframe = (uint32_t*) calloc(lay->geo.bytesize, 1);
     if(errno != 0) {
@@ -75,26 +72,26 @@ bool Filter::apply(Layer *lay, FilterInstance *instance)
         delete instance;
         return NULL;
     }
-    
+
     bytesize = lay->geo.bytesize;
-    
+
     lay->filters.append(instance);
-    
+
     act("initialized filter %s on layer %s", name, lay->name);
-    
+
     instance->set_layer(lay);
-    
-    return true;    
+
+    return true;
 }
 
 FilterInstance *Filter::apply(Layer *lay) {
 
-  FilterInstance *instance = new_instance();
-  
-  if (apply(lay, instance))
-      return instance;
-  delete instance;
-  return NULL;
+    FilterInstance *instance = new_instance();
+
+    if (apply(lay, instance))
+        return instance;
+    delete instance;
+    return NULL;
 }
 
 const char *Filter::description() {
@@ -107,11 +104,11 @@ const char *Filter::author()  {
 
 
 int Filter::get_parameter_type(int i) {
-  return -1; // this method must be extended by subclasses (perhaps it should be pure virtual?)
+    return -1; // this method must be extended by subclasses (perhaps it should be pure virtual?)
 }
 
 char *Filter::get_parameter_description(int i) {
-  return (char *)"Unknown";
+    return (char *)"Unknown";
 }
 
 void Filter::destruct(FilterInstance *inst) {
@@ -122,8 +119,7 @@ void Filter::update(FilterInstance *inst, double time, uint32_t *inframe, uint32
     apply_parameters(inst);
 }
 
-void Filter::apply_parameters(FilterInstance *inst)
-{
+void Filter::apply_parameters(FilterInstance *inst) {
     int idx = 1; // linklist starts from 1
     inst->parameters.lock();
     Parameter *param = inst->parameters.begin();

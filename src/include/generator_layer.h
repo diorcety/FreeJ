@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2009 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -24,25 +24,25 @@
 #include <factory.h>
 
 class GeneratorLayer: public Layer {
- public:
-  GeneratorLayer();
-  ~GeneratorLayer();
-  
-  bool open(const char *file);
-  void *feed();
-  void close();
+public:
+    GeneratorLayer();
+    ~GeneratorLayer();
 
-  void register_generators(Linklist<Filter> *gens);
+    bool open(const char *file);
+    void *feed();
+    void close();
 
-  void *swap_buffer;
-  FilterInstance *generator;
+    void register_generators(Linklist<Filter> *gens);
 
- protected:
-  bool _init();
+    void *swap_buffer;
+    FilterInstance *generator;
 
-  Linklist<Filter> *generators; ///< linked list of registered generators
+protected:
+    bool _init();
 
-  FACTORY_ALLOWED
+    Linklist<Filter> *generators; ///< linked list of registered generators
+
+    FACTORY_ALLOWED
 };
 
 #endif

@@ -54,242 +54,250 @@
 
 namespace callbacks {
 
-  class CbackData {
-    public:
-      CbackData(std::string name) : name_(name) {}
-      virtual ~CbackData() { }
-      const std::string& name() const { return name_; }
+class CbackData {
+public:
+    CbackData(std::string name) : name_(name) {}
+    virtual ~CbackData() { }
+    const std::string& name() const {
+        return name_;
+    }
 
-    protected:
-      std::string name_;
-  };
+protected:
+    std::string name_;
+};
 
-  class CbackDataFun0 : public CbackData {
-    public:
-      typedef void (*FunctionType)();
+class CbackDataFun0 : public CbackData {
+public:
+    typedef void (*FunctionType)();
 
-      CbackDataFun0(std::string name, FunctionType function)
-      : CbackData(name), function_(function) {}
-      ~CbackDataFun0() { calls_.clear(); }
+    CbackDataFun0(std::string name, FunctionType function)
+        : CbackData(name), function_(function) {}
+    ~CbackDataFun0() {
+        calls_.clear();
+    }
 
-      bool add_call(FunctionType call) {
+    bool add_call(FunctionType call) {
         if (typeid(call) == typeid(function_)) {
-          if (get_fun_(call)) {
-            warning("%s %s, callback already added",
+            if (get_fun_(call)) {
+                warning("%s %s, callback already added",
+                        __PRETTY_FUNCTION__, name_.c_str());
+                return false;
+            }
+            calls_.push_back(call);
+            return true;
+        } else {
+            warning("%s %s, signature mismatch",
                     __PRETTY_FUNCTION__, name_.c_str());
             return false;
-          }
-          calls_.push_back(call);
-          return true;
-        } else {
-          warning("%s %s, signature mismatch",
-                  __PRETTY_FUNCTION__, name_.c_str());
-          return false;
         }
-      }
+    }
 
-      bool rem_call(FunctionType call) {
+    bool rem_call(FunctionType call) {
         if (!get_fun_(call)) {
-          warning("%s %s, callback not present",
-                  __PRETTY_FUNCTION__, name_.c_str());
-          return false;
+            warning("%s %s, callback not present",
+                    __PRETTY_FUNCTION__, name_.c_str());
+            return false;
         }
         calls_.remove(call);
         return true;
-      }
+    }
 
-      void notify(ThreadedClosureQueue *dispatcher) {
+    void notify(ThreadedClosureQueue *dispatcher) {
         std::list<FunctionType>::iterator i;
         for (i=calls_.begin() ; i!=calls_.end() ; i++)
-          dispatcher->add_job(NewClosure(*i));
-      }
+            dispatcher->add_job(NewClosure(*i));
+    }
 
-    private:
-      FunctionType get_fun_(FunctionType call) {
+private:
+    FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
         std::list<FunctionType>::iterator i;
         for (i=calls_.begin() ; i!=calls_.end() ; i++)
-          if (*i == call) fun = call;
+            if (*i == call) fun = call;
         return fun;
-      }
+    }
 
-      FunctionType function_;
-      std::list<FunctionType> calls_;
-  };
+    FunctionType function_;
+    std::list<FunctionType> calls_;
+};
 
-  template <typename Arg1>
-  class CbackDataFun1 : public CbackData {
-    public:
-      typedef void (*FunctionType)(Arg1);
+template <typename Arg1>
+class CbackDataFun1 : public CbackData {
+public:
+    typedef void (*FunctionType)(Arg1);
 
-      CbackDataFun1(std::string name, FunctionType function)
-      : CbackData(name), function_(function) {}
-      ~CbackDataFun1() { calls_.clear(); }
+    CbackDataFun1(std::string name, FunctionType function)
+        : CbackData(name), function_(function) {}
+    ~CbackDataFun1() {
+        calls_.clear();
+    }
 
-      bool add_call(FunctionType call) {
+    bool add_call(FunctionType call) {
         if (typeid(call) == typeid(function_)) {
-          if (get_fun_(call)) {
-            warning("%s %s, callback already added",
+            if (get_fun_(call)) {
+                warning("%s %s, callback already added",
+                        __PRETTY_FUNCTION__, name_.c_str());
+                return false;
+            }
+            calls_.push_back(call);
+            return true;
+        } else {
+            warning("%s %s, signature mismatch",
                     __PRETTY_FUNCTION__, name_.c_str());
             return false;
-          }
-          calls_.push_back(call);
-          return true;
-        } else {
-          warning("%s %s, signature mismatch",
-                  __PRETTY_FUNCTION__, name_.c_str());
-          return false;
         }
-      }
+    }
 
-      bool rem_call(FunctionType call) {
+    bool rem_call(FunctionType call) {
         if (!get_fun_(call)) {
-          warning("%s %s, callback not present",
-                  __PRETTY_FUNCTION__, name_.c_str());
-          return false;
+            warning("%s %s, callback not present",
+                    __PRETTY_FUNCTION__, name_.c_str());
+            return false;
         }
         calls_.remove(call);
         return true;
-      }
+    }
 
-      void notify(ThreadedClosureQueue *dispatcher, Arg1 arg1) {
+    void notify(ThreadedClosureQueue *dispatcher, Arg1 arg1) {
         typename std::list<FunctionType>::iterator i;
         for (i=calls_.begin() ; i!=calls_.end() ; i++)
-          dispatcher->add_job(NewClosure(*i, arg1));
-      }
+            dispatcher->add_job(NewClosure(*i, arg1));
+    }
 
-    private:
-      FunctionType get_fun_(FunctionType call) {
+private:
+    FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
         typename std::list<FunctionType>::iterator i;
         for (i=calls_.begin() ; i!=calls_.end() ; i++)
-          if (*i == call) fun = call;
+            if (*i == call) fun = call;
         return fun;
-      }
+    }
 
-      FunctionType function_;
-      std::list<FunctionType> calls_;
-  };
+    FunctionType function_;
+    std::list<FunctionType> calls_;
+};
 
 }  // namespace callbacks
 
 
 class CallbackHandler {
-  public:
-    CallbackHandler() { dispatcher_ = new ThreadedClosureQueue(); }
+public:
+    CallbackHandler() {
+        dispatcher_ = new ThreadedClosureQueue();
+    }
     ~CallbackHandler() {
-      cbacks_.clear();
-      delete dispatcher_;
+        cbacks_.clear();
+        delete dispatcher_;
     }
 
     bool add_call(const char *name, void (*prototype)()) {
-      callbacks::CbackData *c = get_data_(name);
-      if (!c) {
-          warning("%s name %s not found", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      callbacks::CbackDataFun0* c0 = static_cast<callbacks::CbackDataFun0 *>(c);
-      return c0->add_call(prototype);
+        callbacks::CbackData *c = get_data_(name);
+        if (!c) {
+            warning("%s name %s not found", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        callbacks::CbackDataFun0* c0 = static_cast<callbacks::CbackDataFun0 *>(c);
+        return c0->add_call(prototype);
     }
 
     template <typename Arg1>
     bool add_call(const char *name, void (*prototype)(Arg1)) {
-      callbacks::CbackData *c = get_data_(name);
-      if (!c) {
-          warning("%s name %s not found", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      callbacks::CbackDataFun1<Arg1>* c1 = static_cast<callbacks::CbackDataFun1<Arg1>*>(c);
-      return c1->add_call(prototype);
+        callbacks::CbackData *c = get_data_(name);
+        if (!c) {
+            warning("%s name %s not found", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        callbacks::CbackDataFun1<Arg1>* c1 = static_cast<callbacks::CbackDataFun1<Arg1>*>(c);
+        return c1->add_call(prototype);
     }
 
     bool rem_call(const char *name, void (*prototype)()) {
-      callbacks::CbackData *c = get_data_(name);
-      if (!c) {
-          warning("%s name %s not found", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      // here we have a static checking for callback signature
-      callbacks::CbackDataFun0* c0 = static_cast<callbacks::CbackDataFun0 *>(c);
-      return c0->rem_call(prototype);
+        callbacks::CbackData *c = get_data_(name);
+        if (!c) {
+            warning("%s name %s not found", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        // here we have a static checking for callback signature
+        callbacks::CbackDataFun0* c0 = static_cast<callbacks::CbackDataFun0 *>(c);
+        return c0->rem_call(prototype);
     }
 
     template <typename Arg1>
     bool rem_call(const char *name, void (*prototype)(Arg1)) {
-      callbacks::CbackData *c = get_data_(name);
-      if (!c) {
-          warning("%s name %s not found", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      callbacks::CbackDataFun1<Arg1>* c1 = static_cast<callbacks::CbackDataFun1<Arg1>*>(c);
-      return c1->rem_call(prototype);
+        callbacks::CbackData *c = get_data_(name);
+        if (!c) {
+            warning("%s name %s not found", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        callbacks::CbackDataFun1<Arg1>* c1 = static_cast<callbacks::CbackDataFun1<Arg1>*>(c);
+        return c1->rem_call(prototype);
     }
 
     bool unregister_callback(const char *name) {
-      callbacks::CbackData *c = get_data_(name);
-      if (!c) {
-          warning("%s name %s not found", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      cbacks_.remove(c); // this performs 'delete c' as well
-      return true;
+        callbacks::CbackData *c = get_data_(name);
+        if (!c) {
+            warning("%s name %s not found", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        cbacks_.remove(c); // this performs 'delete c' as well
+        return true;
     }
 
     bool register_callback(const char *name, void (*prototype)()) {
-      callbacks::CbackData *c = get_data_(name);
-      if (c) {
-          warning("%s name %s already registered", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      c = new callbacks::CbackDataFun0(name, prototype);
-      cbacks_.push_back(c);
-      return true;
+        callbacks::CbackData *c = get_data_(name);
+        if (c) {
+            warning("%s name %s already registered", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        c = new callbacks::CbackDataFun0(name, prototype);
+        cbacks_.push_back(c);
+        return true;
     }
 
     template <typename Arg1>
     bool register_callback(const char *name, void (*prototype)(Arg1)) {
-      callbacks::CbackData *c = get_data_(name);
-      if (c) {
-          warning("%s name %s already registered", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      c = new callbacks::CbackDataFun1<Arg1>(name, prototype);
-      cbacks_.push_back(c);
-      return true;
+        callbacks::CbackData *c = get_data_(name);
+        if (c) {
+            warning("%s name %s already registered", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        c = new callbacks::CbackDataFun1<Arg1>(name, prototype);
+        cbacks_.push_back(c);
+        return true;
     }
 
     bool notify(const char *name) {
-      callbacks::CbackData *c = get_data_(name);
-      if (!c) {
-          warning("%s name %s not found", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      // here we have a static checking for callback signature
-      callbacks::CbackDataFun0* c0 = static_cast<callbacks::CbackDataFun0 *>(c);
-      c0->notify(dispatcher_);
-      return true;
+        callbacks::CbackData *c = get_data_(name);
+        if (!c) {
+            warning("%s name %s not found", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        // here we have a static checking for callback signature
+        callbacks::CbackDataFun0* c0 = static_cast<callbacks::CbackDataFun0 *>(c);
+        c0->notify(dispatcher_);
+        return true;
     }
 
     template <typename Arg1>
     bool notify(const char *name, Arg1 arg1) {
-      callbacks::CbackData *c = get_data_(name);
-      if (!c) {
-          warning("%s name %s not found", __PRETTY_FUNCTION__, name);
-          return false;
-      }
-      callbacks::CbackDataFun1<Arg1>* c1 = static_cast<callbacks::CbackDataFun1<Arg1>*>(c);
-      c1->notify(dispatcher_, arg1);
-      return true;
+        callbacks::CbackData *c = get_data_(name);
+        if (!c) {
+            warning("%s name %s not found", __PRETTY_FUNCTION__, name);
+            return false;
+        }
+        callbacks::CbackDataFun1<Arg1>* c1 = static_cast<callbacks::CbackDataFun1<Arg1>*>(c);
+        c1->notify(dispatcher_, arg1);
+        return true;
     }
 
 
-  private:
+private:
     callbacks::CbackData *get_data_(const std::string& name) {
-      callbacks::CbackData *c = NULL;
-      std::list<callbacks::CbackData*>::iterator i;
-      for (i=cbacks_.begin() ; i!=cbacks_.end() ; i++)
-          if ((*i)->name() == name) c = *i;
-      return c;
+        callbacks::CbackData *c = NULL;
+        std::list<callbacks::CbackData*>::iterator i;
+        for (i=cbacks_.begin() ; i!=cbacks_.end() ; i++)
+            if ((*i)->name() == name) c = *i;
+        return c;
     }
 
     std::list<callbacks::CbackData*> cbacks_;
@@ -299,19 +307,19 @@ class CallbackHandler {
 
 // TODO(shammash): quick hack to provide EOS callback immediately
 class DumbCall {
-  public:
+public:
     DumbCall();
     virtual ~DumbCall();
 
     void notify();
     void enqueue();
     void dequeue();
-    
+
     virtual void callback() {};
 
-  private:
+private:
     pthread_mutex_t pending_; // used as a flag to block destructor if a call
-                              // is in progress
+    // is in progress
     pthread_mutexattr_t pendingattr_;
     int refcount_; // reference counter for the number of calls in progress
     pthread_mutex_t refcount_mutex_;
@@ -319,7 +327,7 @@ class DumbCall {
 };
 
 class DumbCallback {
-  public:
+public:
     DumbCallback();
     ~DumbCallback();
 
@@ -327,7 +335,7 @@ class DumbCallback {
     bool rem_call(DumbCall *call);
     void notify();
 
-  private:
+private:
     DumbCall *get_call_(DumbCall *call);
 
     std::list<DumbCall *> calls_;

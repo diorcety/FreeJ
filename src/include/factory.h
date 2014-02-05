@@ -2,7 +2,7 @@
  *  (c) Copyright 2009 Xant <xant@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -58,16 +58,16 @@
  * for example:
  *  >  MyClass *newInstance = Factory<Layer>::new_instance('GeometryLayer');
  *
- * This will allow javascripts to call "var geo_layer = new GeometryLayer()" 
+ * This will allow javascripts to call "var geo_layer = new GeometryLayer()"
  * obtaining an instance of a different subclass depending on the platform and setup.
  *
- * If the purpose is to reuse instances (implementing, for instance, singletons) the get_instance() method 
+ * If the purpose is to reuse instances (implementing, for instance, singletons) the get_instance() method
  * can be used instead of new_instance().
- * for example: 
- *  > MyScreen *screenInstance = Factory<Screen>::get_instance("Screen"); 
- * 
+ * for example:
+ *  > MyScreen *screenInstance = Factory<Screen>::get_instance("Screen");
+ *
  * will return always the same instance as long as only 'get_instance()' is called.
- * It will take care of creating a new instance when called the first time so 
+ * It will take care of creating a new instance when called the first time so
  * mixing calls to new_instance() and get_instance() can lead to unexpected behaviours.
  *
  */
@@ -103,17 +103,15 @@ typedef std::pair<std::string, void *> FInstancePair;
 typedef std::map<std::string, const char *> FDefaultClassesMap;
 
 template <class T>
-class Factory
-{
+class Factory {
 
-  private:
+private:
 
     static FInstantiatorsMap *instantiators_map;
     static FDefaultClassesMap *defaults_map;
     static FInstancesMap *instances_map;
 
-    static inline bool make_tag(const char *category, const char *id, char *out, unsigned int outlen)
-    {
+    static inline bool make_tag(const char *category, const char *id, char *out, unsigned int outlen) {
         if (strlen(category)+strlen(id)+3 > outlen) { // check the size of the requested id
             error("Factory::new_instance : requested ID (%s::%s) exceedes maximum size", category, id);
             return false;
@@ -121,12 +119,11 @@ class Factory
         snprintf(out, outlen, "%s::%s", category, id);
         return true;
     }
-    
-  public:
+
+public:
 
     // Define a default class for a certain category
-    static int set_default_classtype(const char *category, const char *id)
-    {
+    static int set_default_classtype(const char *category, const char *id) {
         if (!defaults_map) // create on first use
             defaults_map = new FDefaultClassesMap();
         FTagMap::iterator pair = defaults_map->find(category);
@@ -141,17 +138,15 @@ class Factory
     // regardless of the real class of the returned object.
     // The configured default for the current platform (if defined)
     // will be returned.
-    static inline T *new_instance(const char *category)
-    {
+    static inline T *new_instance(const char *category) {
         FTagMap::iterator pair = defaults_map->find(category);
         if (pair != defaults_map->end())
             return new_instance(category, pair->second);
         return NULL;
     }
-    
+
     // Create (and return) a new instance of the class which matches 'id' within a certain category.
-    static inline T *new_instance(const char *category, const char *id)
-    {
+    static inline T *new_instance(const char *category, const char *id) {
         char tag[FACTORY_ID_MAXLEN];
         if (!category || !id) // safety belts
             return NULL;
@@ -170,27 +165,25 @@ class Factory
         return NULL;
     };
 
-    static inline T*get_instance(const char *category)
-    {
+    static inline T*get_instance(const char *category) {
         FTagMap::iterator pair = defaults_map->find(category);
         if (pair != defaults_map->end())
             return get_instance(category, pair->second);
-        return NULL;        
+        return NULL;
     }
 
     // TODO - remove duplicated code across get_instance() and new_instance
     //        (move common code in a private method used by both (get|new)_instance()
-    static inline T *get_instance(const char *category, const char *id)
-    {
+    static inline T *get_instance(const char *category, const char *id) {
         char tag[FACTORY_ID_MAXLEN];
         if (!category || !id) // safety belts
             return NULL;
-        
+
         func("(get_instance) Looking for %s::%s", category, id);
-        
+
         if (!make_tag(category, id, tag, sizeof(tag)))
             return NULL;
-        
+
         if (instances_map) {
             func("Looking for %s in instantiators_map (%d)", tag, instances_map->size());
             FInstancesMap::iterator instance_pair = instances_map->find(tag);
@@ -215,8 +208,7 @@ class Factory
     //          (when using a Factory<Layer>)
     //       'id' could be any of 'ffmpeg' or 'qt' or 'opencv' and so on
     //          (referencing a specific VideoLayer implementation)
-    static int register_instantiator(const char *category, const char *id, Instantiator func)
-    {
+    static int register_instantiator(const char *category, const char *id, Instantiator func) {
         char tag[FACTORY_ID_MAXLEN];
 
         if (!make_tag(category, id, tag, sizeof(tag)))

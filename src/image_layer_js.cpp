@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2005 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -29,25 +29,25 @@ DECLARE_CLASS_GC("ImageLayer",image_layer_class,image_layer_constructor,js_layer
 ////////////////////////////////
 // Image Layer methods
 JSFunctionSpec image_layer_methods[] = {
-  ENTRY_METHODS  ,
-  {     "open",         image_layer_open,               1},
-  {0}
+    ENTRY_METHODS  ,
+    {     "open",         image_layer_open,               1},
+    {0}
 };
 
 JS_CONSTRUCTOR("ImageLayer",image_layer_constructor,ImageLayer);
 JS(image_layer_open) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  if(argc<1) return JS_FALSE;
+    if(argc<1) return JS_FALSE;
 
-  GET_LAYER(ImageLayer);
-  
-  char *file = JS_GetStringBytes(JS_ValueToString(cx,argv[0]));
-  if(!file) {
-    error("JsParser :: invalid string in ImageLayer::open");
-    return JS_FALSE;
-  }
-  lay->open(file);
+    GET_LAYER(ImageLayer);
 
-  return JS_TRUE;
+    char *file = JS_GetStringBytes(JS_ValueToString(cx,argv[0]));
+    if(!file) {
+        error("JsParser :: invalid string in ImageLayer::open");
+        return JS_FALSE;
+    }
+    lay->open(file);
+
+    return JS_TRUE;
 }

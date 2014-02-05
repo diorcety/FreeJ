@@ -1,4 +1,4 @@
-/*  FreeJ - Mouse controller 
+/*  FreeJ - Mouse controller
  *
  *  (c) Copyright 2008 Christoph Rudorff <goil@dyne.org>
  *
@@ -38,12 +38,12 @@ JS(js_mouse_ctrl_constructor);
 DECLARE_CLASS("MouseController",js_mouse_ctrl_class, js_mouse_ctrl_constructor);
 
 JSBool js_add_p (JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
-	func("add prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
-	return JS_TRUE;
+    func("add prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
+    return JS_TRUE;
 }
 JSBool js_del_p (JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
-	func("del prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
-	return JS_TRUE;
+    func("del prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
+    return JS_TRUE;
 }
 
 // JSClass js_mouse_ctrl_class = {
@@ -60,36 +60,35 @@ JSBool js_del_p (JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
 //static JSClass *jsclass_s = &js_mouse_ctrl_class;
 
 JSFunctionSpec js_mouse_ctrl_methods[] = {
-	{"grab",	js_mouse_grab,	1},
-	{0}
+    {"grab",	js_mouse_grab,	1},
+    {0}
 };
 
 JS(js_mouse_grab) {
-	JS_CHECK_ARGC(1);
+    JS_CHECK_ARGC(1);
 
-	jsint state = js_get_int(argv[0]);
+    jsint state = js_get_int(argv[0]);
 
-	MouseController *mouse = (MouseController *) JS_GetPrivate(cx,obj);
-	if(!mouse) {
-		error("%u:%s:%s :: Mouse core data is NULL",
-		__LINE__,__FILE__,__FUNCTION__);
-		return JS_FALSE;
-	}
+    MouseController *mouse = (MouseController *) JS_GetPrivate(cx,obj);
+    if(!mouse) {
+        error("%u:%s:%s :: Mouse core data is NULL",
+              __LINE__,__FILE__,__FUNCTION__);
+        return JS_FALSE;
+    }
 
-	mouse->grab(state);
+    mouse->grab(state);
 
-	return JS_TRUE;
+    return JS_TRUE;
 }
 
-MouseController::MouseController() 
-    :SdlController()
-{
+MouseController::MouseController()
+    :SdlController() {
     set_name("Mouse");
     indestructible = true;
 }
 
 MouseController::~MouseController() {
-  active = false; // ungrab ... ;)
+    active = false; // ungrab ... ;)
 }
 
 
@@ -109,8 +108,8 @@ MouseController::~MouseController() {
 // }
 
 int MouseController::poll() {
-  poll_sdlevents(SDL_MOUSEEVENTMASK); // calls dispatch() foreach SDL_Event
-  return 0;
+    poll_sdlevents(SDL_MOUSEEVENTMASK); // calls dispatch() foreach SDL_Event
+    return 0;
 }
 
 /*
@@ -161,22 +160,22 @@ int MouseController::button(int button, int state, int x, int y) {
 }
 
 int MouseController::dispatch() {
-	if (event.type == SDL_MOUSEMOTION) {
-		SDL_MouseMotionEvent mm = event.motion;
-		return motion(mm.state, mm.x, mm.y, mm.xrel, mm.yrel);
-	} else { // MOUSE_BUTTON
-		SDL_MouseButtonEvent mb = event.button;
-		return button(mb.button, mb.state, mb.x, mb.y);
-	}
+    if (event.type == SDL_MOUSEMOTION) {
+        SDL_MouseMotionEvent mm = event.motion;
+        return motion(mm.state, mm.x, mm.y, mm.xrel, mm.yrel);
+    } else { // MOUSE_BUTTON
+        SDL_MouseButtonEvent mb = event.button;
+        return button(mb.button, mb.state, mb.x, mb.y);
+    }
 }
 
 void MouseController::grab(bool state) {
     if (state) {
-            SDL_ShowCursor(0);
-            SDL_WM_GrabInput(SDL_GRAB_ON);
+        SDL_ShowCursor(0);
+        SDL_WM_GrabInput(SDL_GRAB_ON);
     } else {
-            SDL_ShowCursor(1);
-            SDL_WM_GrabInput(SDL_GRAB_OFF);
+        SDL_ShowCursor(1);
+        SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 }
 
@@ -187,14 +186,16 @@ JS(js_mouse_ctrl_constructor) {
 
     // initialize with javascript context
     if(! mouse->init(global_environment) ) {
-            error("failed initializing mouse controller");
-            delete mouse; return JS_FALSE;
+        error("failed initializing mouse controller");
+        delete mouse;
+        return JS_FALSE;
     }
 
     // assign instance into javascript object
     if( ! JS_SetPrivate(cx, obj, (void*)mouse) ) {
-            error("failed assigning mouse controller to javascript");
-            delete mouse; return JS_FALSE;
+        error("failed assigning mouse controller to javascript");
+        delete mouse;
+        return JS_FALSE;
     }
 
     mouse->add_listener(cx, obj);

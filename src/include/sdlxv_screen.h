@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -26,37 +26,37 @@
 #include <screen.h>
 
 class SdlXvScreen : public ViewPort {
- public:
+public:
 
-  SdlXvScreen();
-  ~SdlXvScreen();
+    SdlXvScreen();
+    ~SdlXvScreen();
 
-  bool init(int width, int height);
-  void blit(Layer *layer);
-  void crop(Layer *layer);
-  void show();
-  void clear();
-  void fullscreen() {};
-  void *get_surface();
-  SDL_Surface *scr;
+    bool init(int width, int height);
+    void blit(Layer *layer);
+    void crop(Layer *layer);
+    void show();
+    void clear();
+    void fullscreen() {};
+    void *get_surface();
+    SDL_Surface *scr;
 
-  // deprecated
-  void *coords(int x, int y);
+    // deprecated
+    void *coords(int x, int y);
 
- private:
+private:
 
-  bool sdl_lock();
-  bool sdl_unlock();
-  bool yuv_lock();
-  bool yuv_unlock();
+    bool sdl_lock();
+    bool sdl_unlock();
+    bool yuv_lock();
+    bool yuv_unlock();
 
-  SDL_Surface *blitter;
-  //  uint32_t rmask,gmask,bmask,amask;
-  SDL_Rect rect;
-  SDL_Overlay *yuv_overlay;
+    SDL_Surface *blitter;
+    //  uint32_t rmask,gmask,bmask,amask;
+    SDL_Rect rect;
+    SDL_Overlay *yuv_overlay;
 
-  
-  void *anal;
+
+    void *anal;
 
 };
 

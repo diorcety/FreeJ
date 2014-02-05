@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Silvano Galliani aka kysucix <kysucix@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -27,12 +27,12 @@
 #include <impl_video_encoders.h>
 
 VideoEncoder *get_encoder(char *enctype) {
-  VideoEncoder *e = NULL;
-  
+    VideoEncoder *e = NULL;
+
 #ifdef WITH_OGGTHEORA
-  if(strncasecmp(enctype,"theora",3) == 0)
-    e = new OggTheoraEncoder();
+    if(strncasecmp(enctype,"theora",3) == 0)
+        e = new OggTheoraEncoder();
 #endif
-  
-  return e;
+
+    return e;
 }

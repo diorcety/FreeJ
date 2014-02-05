@@ -33,154 +33,175 @@
 FACTORY_REGISTER_INSTANTIATOR(Layer, CairoLayer, VectorLayer, cairo);
 
 CairoColor::CairoColor(cairo_t *cai) :Color() {
-  r = 0.;
-  g = 0.;
-  b = 0.;
-  a = 255.;
-  cairo = cai;
+    r = 0.;
+    g = 0.;
+    b = 0.;
+    a = 255.;
+    cairo = cai;
 }
 CairoColor::~CairoColor() { }
 void CairoColor::set() {
-  double sr = r / 255.;
-  double sg = g / 255.;
-  double sb = b / 255.;
-  double sa = a / 255.;
-  func("Color::set r[%.2f] g[%.2f] b[%.2f] a[%.2f]",sr,sg,sb,sa);
-  cairo_set_source_rgba(cairo, sr, sg, sb, sa);
+    double sr = r / 255.;
+    double sg = g / 255.;
+    double sb = b / 255.;
+    double sa = a / 255.;
+    func("Color::set r[%.2f] g[%.2f] b[%.2f] a[%.2f]",sr,sg,sb,sa);
+    cairo_set_source_rgba(cairo, sr, sg, sb, sa);
 };
 
 CairoLayer::CairoLayer()
-  :Layer() {
+    :Layer() {
 
 
-  surf = NULL;
-  cairo = NULL;
-  pixels = NULL;
-  color = NULL;
-  saved_color = NULL;
+    surf = NULL;
+    cairo = NULL;
+    pixels = NULL;
+    color = NULL;
+    saved_color = NULL;
 
-  set_name("VEC");
-  set_filename("/vector layer");
-  jsclass = &vector_layer_class;
+    set_name("VEC");
+    set_filename("/vector layer");
+    jsclass = &vector_layer_class;
 }
 
 CairoLayer::~CairoLayer() {
-  
-  if(cairo)  cairo_destroy(cairo);
-  if(surf)   cairo_surface_destroy(surf);
-  if(pixels) free(pixels);
-  if(color) free(color);
+
+    if(cairo)  cairo_destroy(cairo);
+    if(surf)   cairo_surface_destroy(surf);
+    if(pixels) free(pixels);
+    if(color) free(color);
 }
 
 bool CairoLayer::_init() {
-  // create the surface
-  stride = cairo_format_stride_for_width
-    (CAIRO_FORMAT_ARGB32, geo.w);
-  pixels = malloc (stride * geo.h);
-  surf = cairo_image_surface_create_for_data
-    ((unsigned char*)pixels, CAIRO_FORMAT_ARGB32, geo.w, geo.h, stride);
-  // create the drawing context
-  cairo = cairo_create(surf);
-  // This  function references  target,  so you  can immediately  call
-  // cairo_surface_destroy()  on it if  you don't  need to  maintain a
-  // separate reference to it.
+    // create the surface
+    stride = cairo_format_stride_for_width
+             (CAIRO_FORMAT_ARGB32, geo.w);
+    pixels = malloc (stride * geo.h);
+    surf = cairo_image_surface_create_for_data
+           ((unsigned char*)pixels, CAIRO_FORMAT_ARGB32, geo.w, geo.h, stride);
+    // create the drawing context
+    cairo = cairo_create(surf);
+    // This  function references  target,  so you  can immediately  call
+    // cairo_surface_destroy()  on it if  you don't  need to  maintain a
+    // separate reference to it.
 
-  color = new CairoColor( cairo );
+    color = new CairoColor( cairo );
 
-  opened = true;
-  return(true);
+    opened = true;
+    return(true);
 
 }
 
 void *CairoLayer::feed() {
-  return(pixels);
+    return(pixels);
 }
 
 bool CairoLayer::open(const char *file) {
-  /* we don't need this */
-  return true;
+    /* we don't need this */
+    return true;
 }
 
 void CairoLayer::close() {
-  /* neither this */
-  return;
+    /* neither this */
+    return;
 }
 
 ///////////////////////////////////////////////
 // public methods exported to language bindings
 
 // Cairo API
-void CairoLayer::save() { cairo_save(cairo); }
-void CairoLayer::restore() { cairo_restore(cairo); }
-void CairoLayer::new_path() { cairo_new_path(cairo); }
-void CairoLayer::close_path() { cairo_close_path(cairo); }
-void CairoLayer::scale(double xx, double yy) {
-  func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
-  cairo_scale(cairo, xx, yy); }
-void CairoLayer::rotate(double angle) { cairo_rotate(cairo, angle); }
-void CairoLayer::translate(int xx, int yy) {
-  func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
-  cairo_translate(cairo, xx, yy);
+void CairoLayer::save() {
+    cairo_save(cairo);
 }
-void CairoLayer::move_to(double xx, double yy) { 
-  func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
-  cairo_move_to(cairo, xx, yy);
+void CairoLayer::restore() {
+    cairo_restore(cairo);
+}
+void CairoLayer::new_path() {
+    cairo_new_path(cairo);
+}
+void CairoLayer::close_path() {
+    cairo_close_path(cairo);
+}
+void CairoLayer::scale(double xx, double yy) {
+    func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
+    cairo_scale(cairo, xx, yy);
+}
+void CairoLayer::rotate(double angle) {
+    cairo_rotate(cairo, angle);
+}
+void CairoLayer::translate(int xx, int yy) {
+    func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
+    cairo_translate(cairo, xx, yy);
+}
+void CairoLayer::move_to(double xx, double yy) {
+    func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
+    cairo_move_to(cairo, xx, yy);
 }
 void CairoLayer::line_to(double xx, double yy) {
-  func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
-  cairo_line_to(cairo, xx, yy);
+    func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
+    cairo_line_to(cairo, xx, yy);
 }
 void CairoLayer::curve_to(int x1, int y1, int x2, int y2, int x3, int y3) {
-    cairo_curve_to(cairo, x1, y1, x2, y2, x3, y3); }
-void CairoLayer::arc(double xc, double yc, double radius, double angle1, double angle2) {
-  cairo_arc(cairo, xc, yc, radius, angle1, angle2); }
-void CairoLayer::rect(double x1, double y1, double x2, double y2) {
-  cairo_rectangle(cairo, x1, y1, x2, y2);
+    cairo_curve_to(cairo, x1, y1, x2, y2, x3, y3);
 }
-void CairoLayer::fill() { cairo_fill(cairo); }
-void CairoLayer::stroke() { cairo_stroke(cairo); }
-void CairoLayer::set_line_width(double wid) { cairo_set_line_width(cairo, wid); }
-int CairoLayer::get_line_width() { return cairo_get_line_width(cairo); }
+void CairoLayer::arc(double xc, double yc, double radius, double angle1, double angle2) {
+    cairo_arc(cairo, xc, yc, radius, angle1, angle2);
+}
+void CairoLayer::rect(double x1, double y1, double x2, double y2) {
+    cairo_rectangle(cairo, x1, y1, x2, y2);
+}
+void CairoLayer::fill() {
+    cairo_fill(cairo);
+}
+void CairoLayer::stroke() {
+    cairo_stroke(cairo);
+}
+void CairoLayer::set_line_width(double wid) {
+    cairo_set_line_width(cairo, wid);
+}
+int CairoLayer::get_line_width() {
+    return cairo_get_line_width(cairo);
+}
 
 // Mozilla's GFX compatibility API
 void CairoLayer::quad_curve_to(double x1, double y1, double x2, double y2) {
-  double xc, yc;
-  cairo_get_current_point(cairo, &xc, &yc);
-  cairo_curve_to(cairo,
-		 (xc + x1 * 2.0) / 3.0,
-		 (yc + y1 * 2.0) / 3.0,
-		 (x1 * 2.0 + x2) / 3.0,
-		 (y1 * 2.0 + y2) / 3.0,
-		 x2, y2);
+    double xc, yc;
+    cairo_get_current_point(cairo, &xc, &yc);
+    cairo_curve_to(cairo,
+                   (xc + x1 * 2.0) / 3.0,
+                   (yc + y1 * 2.0) / 3.0,
+                   (x1 * 2.0 + x2) / 3.0,
+                   (y1 * 2.0 + y2) / 3.0,
+                   x2, y2);
 }
 
 void CairoLayer::fill_rect(double x1, double y1, double x2, double y2) {
-  cairo_save(cairo);
-  cairo_rectangle(cairo, x1, y1, x2, y2);
-  cairo_fill(cairo);
-  cairo_restore(cairo);
+    cairo_save(cairo);
+    cairo_rectangle(cairo, x1, y1, x2, y2);
+    cairo_fill(cairo);
+    cairo_restore(cairo);
 }
 
 // Color facilities
 
 void CairoLayer::push_color() {
-  if(saved_color) {
-    warning("previously saved color lost");
-    delete saved_color;
-  }
-  saved_color = color;
-  color = new CairoColor(cairo);
+    if(saved_color) {
+        warning("previously saved color lost");
+        delete saved_color;
+    }
+    saved_color = color;
+    color = new CairoColor(cairo);
 }
 void CairoLayer::pop_color() {
-  if(!saved_color) {
-    warning("no previourly saved color found");
-    return;
-  } 
-  delete color;
-  color = saved_color;
-  saved_color = NULL;
-  func("popped back color: r[%.2f] g[%.2f] b[%.2f] a[%.2f]",
-       color->r, color->g, color->b, color->a);
+    if(!saved_color) {
+        warning("no previourly saved color found");
+        return;
+    }
+    delete color;
+    color = saved_color;
+    saved_color = NULL;
+    func("popped back color: r[%.2f] g[%.2f] b[%.2f] a[%.2f]",
+         color->r, color->g, color->b, color->a);
 }
 
 #endif

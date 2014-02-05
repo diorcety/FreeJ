@@ -2,7 +2,7 @@
  *  (c) Copyright 2001-2007 Denis Rojo aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -27,37 +27,37 @@
 #include <sdl_controller.h>
 
 // #include <callbacks_js.h>
-#define CLIENT_NAME "freej MidiController" 
+#define CLIENT_NAME "freej MidiController"
 
 // int _poll (pollfd * a, nfds_t b, int c) {return poll(a,b,c);};
 
 class Context;
 
 class MidiController: public SdlController {
-	public:
-		MidiController();
-		virtual ~MidiController();
+public:
+    MidiController();
+    virtual ~MidiController();
 
-        bool init(Context*);
-        int poll();
-        virtual int dispatch();
-	virtual int event_ctrl(int channel, int param, int value);
-	virtual int event_pitch(int channel, int param, int value);
-	virtual int event_noteon(int channel, int note, int velocity);
-	virtual int event_noteoff(int channel, int note, int velocity);
-	virtual int event_pgmchange(int channel, int param, int value);
-        int connect_from(int myport, int dest_client, int dest_port);
+    bool init(Context*);
+    int poll();
+    virtual int dispatch();
+    virtual int event_ctrl(int channel, int param, int value);
+    virtual int event_pitch(int channel, int param, int value);
+    virtual int event_noteon(int channel, int note, int velocity);
+    virtual int event_noteoff(int channel, int note, int velocity);
+    virtual int event_pgmchange(int channel, int param, int value);
+    int connect_from(int myport, int dest_client, int dest_port);
 
-		//bool quit;
+    //bool quit;
 
-	private:
+private:
 
-		//int midi_action();
+    //int midi_action();
 
-		snd_seq_t *seq_handle;
-        int seq_client_id;
-		//int npfd;
-		//struct pollfd *pfd;
+    snd_seq_t *seq_handle;
+    int seq_client_id;
+    //int npfd;
+    //struct pollfd *pfd;
 };
 #endif
 #endif

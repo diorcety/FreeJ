@@ -5,7 +5,7 @@
 #include <SDL.h>
 
 class SdlController: public Controller {
-  public:
+public:
     SDL_Event event; ///< SDL event structure
 
     SdlController();
@@ -13,7 +13,7 @@ class SdlController: public Controller {
     void poll_sdlevents(Uint32 eventmask);
     ///< helper function to filter and redispatch unhandled SDL_Events
     ///< calls dispatch() foreach event in eventmask
- 
+
 };
 
 #endif

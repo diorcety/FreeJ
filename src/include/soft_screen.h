@@ -2,7 +2,7 @@
  *  (c) Copyright 2009 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -26,34 +26,36 @@
 
 class SoftScreen : public ViewPort {
 
- public:
-  SoftScreen();
-  ~SoftScreen();
+public:
+    SoftScreen();
+    ~SoftScreen();
 
 
 
-  fourcc get_pixel_format() { return RGBA32; };
+    fourcc get_pixel_format() {
+        return RGBA32;
+    };
 
-  void *get_surface();
+    void *get_surface();
 
-  void setup_blits(Layer *);
+    void setup_blits(Layer *);
 
-  void blit(Layer *src);
+    void blit(Layer *src);
 
-  void set_buffer(void *buf);
-  void *coords(int x, int y);
+    void set_buffer(void *buf);
+    void *coords(int x, int y);
 
-  void *screen_buffer;
+    void *screen_buffer;
 
-  uint32_t *pscr, *play;  // generic blit buffer pointers
+    uint32_t *pscr, *play;  // generic blit buffer pointers
 
-  // allow to use Factory on this class
-  FACTORY_ALLOWED;
-  
- protected:
-  bool _init();
+    // allow to use Factory on this class
+    FACTORY_ALLOWED;
+
+protected:
+    bool _init();
 
 
 };
- 
+
 #endif

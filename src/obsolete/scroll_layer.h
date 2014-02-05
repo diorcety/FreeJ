@@ -2,7 +2,7 @@
  *  (c) Copyright 2004 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -25,51 +25,53 @@
 #include <layer.h>
 
 struct txtline {
-  void *buf;
-  char *txt;
-  int y;
-  int len;
-  int size;
-  bool rendered;
-  struct txtline *next;
-  struct txtline *prev;
+    void *buf;
+    char *txt;
+    int y;
+    int len;
+    int size;
+    bool rendered;
+    struct txtline *next;
+    struct txtline *prev;
 };
 
 class ScrollLayer: public Layer {
 
- public:
-  ScrollLayer();  
-  ~ScrollLayer();
+public:
+    ScrollLayer();
+    ~ScrollLayer();
 
-  bool init(Context *freej);
-  bool init(Context *freej, int w, int h) { return init(freej); };
+    bool init(Context *freej);
+    bool init(Context *freej, int w, int h) {
+        return init(freej);
+    };
 
-  bool open(const char *file);
-  void *feed();
-  bool keypress(int key);
-  void close();
+    bool open(const char *file);
+    void *feed();
+    bool keypress(int key);
+    void close();
 
-  void append(char *txt);
+    void append(char *txt);
 
-  int line_space;
-  int kerning;
-  int step;
-  
+    int line_space;
+    int kerning;
+    int step;
 
- private:
 
-  void render(struct txtline *l);
-  int streol(char *line);
-  bool _open(char *file);
-  void *procbuf;
-  
-  char path[512];
+private:
 
-  struct txtline *first;
-  struct txtline *last;
-  int length;
-  int wmax;
-  int border;
+    void render(struct txtline *l);
+    int streol(char *line);
+    bool _open(char *file);
+    void *procbuf;
+
+    char path[512];
+
+    struct txtline *first;
+    struct txtline *last;
+    int length;
+    int wmax;
+    int border;
 
 };
 

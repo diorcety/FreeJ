@@ -2,7 +2,7 @@
  *  (c) Copyright 2009 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -34,72 +34,72 @@ FACTORY_REGISTER_INSTANTIATOR(ViewPort, SoftScreen, Screen, soft);
 
 
 SoftScreen::SoftScreen()
-  : ViewPort() {
+    : ViewPort() {
 
-  screen_buffer = NULL;
-  set_name("SOFT");
+    screen_buffer = NULL;
+    set_name("SOFT");
 }
 
 SoftScreen::~SoftScreen() {
-  func("%s",__PRETTY_FUNCTION__);
-  if(screen_buffer) free(screen_buffer);
+    func("%s",__PRETTY_FUNCTION__);
+    if(screen_buffer) free(screen_buffer);
 }
 
 void SoftScreen::setup_blits(Layer *lay) {
 
-  Blitter *b = new Blitter();
+    Blitter *b = new Blitter();
 
-  setup_linear_blits(b);
+    setup_linear_blits(b);
 
-  lay->blitter = b;
+    lay->blitter = b;
 
-  lay->set_blit("RGB"); // default
+    lay->set_blit("RGB"); // default
 
 }
 
 bool SoftScreen::_init() {
 
-  screen_buffer = malloc(geo.bytesize);
-  return(true);
+    screen_buffer = malloc(geo.bytesize);
+    return(true);
 }
 
 void SoftScreen::blit(Layer *src) {
-  int16_t c;
-  Blit *b;
-    
-  if(src->screen != this) {
-    error("%s: blit called on a layer not belonging to screen",
-	  __PRETTY_FUNCTION__);
-    return;
-  }
+    int16_t c;
+    Blit *b;
 
-  if(src->need_crop)
-    src->blitter->crop( src, this );
+    if(src->screen != this) {
+        error("%s: blit called on a layer not belonging to screen",
+              __PRETTY_FUNCTION__);
+        return;
+    }
 
-  b = src->current_blit;
+    if(src->need_crop)
+        src->blitter->crop( src, this );
 
-  pscr = (uint32_t*) get_surface() + b->scr_offset;
-  play = (uint32_t*) src->buffer   + b->lay_offset;
+    b = src->current_blit;
 
-  // iterates the blit on each horizontal line
-  for( c = b->lay_height ; c > 0 ; c-- ) {
+    pscr = (uint32_t*) get_surface() + b->scr_offset;
+    play = (uint32_t*) src->buffer   + b->lay_offset;
 
-    (*b->fun)
-      ((void*)play, (void*)pscr,
-       b->lay_bytepitch,// * src->geo.bpp>>3,
-       &b->parameters);
+    // iterates the blit on each horizontal line
+    for( c = b->lay_height ; c > 0 ; c-- ) {
 
-    // strides down to the next line
-    pscr += b->scr_stride + b->lay_pitch;
-    play += b->lay_stride + b->lay_pitch;
-    
-  }
+        (*b->fun)
+        ((void*)play, (void*)pscr,
+         b->lay_bytepitch,// * src->geo.bpp>>3,
+         &b->parameters);
+
+        // strides down to the next line
+        pscr += b->scr_stride + b->lay_pitch;
+        play += b->lay_stride + b->lay_pitch;
+
+    }
 
 }
 
 void SoftScreen::set_buffer(void *buf) {
-  if(screen_buffer) free(screen_buffer);
-  screen_buffer = buf;
+    if(screen_buffer) free(screen_buffer);
+    screen_buffer = buf;
 }
 
 void *SoftScreen::coords(int x, int y) {
@@ -107,17 +107,17 @@ void *SoftScreen::coords(int x, int y) {
 // if you are trying to get a cropped part of the layer
 // use the .pixelsize geometric property for a pre-calculated stride
 // that is: number of bytes for one full line
-  return
-    ( x + geo.pixelsize +
-      (uint32_t*)get_surface() );
+    return
+        ( x + geo.pixelsize +
+          (uint32_t*)get_surface() );
 }
 
 void *SoftScreen::get_surface() {
-  if(!screen_buffer) {
-    error("SOFT screen output is not properly initialised via set_buffer");
-    error("this will likely segfault FreeJ");
-    return NULL;
-  }
-  return screen_buffer;
+    if(!screen_buffer) {
+        error("SOFT screen output is not properly initialised via set_buffer");
+        error("this will likely segfault FreeJ");
+        return NULL;
+    }
+    return screen_buffer;
 }
 

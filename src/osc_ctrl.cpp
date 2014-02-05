@@ -2,7 +2,7 @@
  *  (c) Copyright 2008 Denis Rojo <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -38,7 +38,7 @@ FACTORY_REGISTER_INSTANTIATOR(Controller, OscController, OscController, core);
 //#ifdef ARCH_X86
 /*
 static int toInt(const char* b) {
-  return 
+  return
     (( (int) b[3]) & 0xff)        +
     ((((int) b[2]) & 0xff) << 8)  +
     ((((int) b[1]) & 0xff) << 16) +
@@ -51,104 +51,103 @@ static int toInt(const char *b)
   return
     (( (int) b[0]) & 0xff)        +
     (( (int) b[1]  & 0xff) << 8)  +
-    ((((int) b[2]) & 0xff) << 16) +        
+    ((((int) b[2]) & 0xff) << 16) +
     ((((int) b[3]) & 0xff) << 24) ;
 }
 //#endif
 */
 
 void osc_error_handler(int num, const char *msg, const char *path) {
-  error("OSC server error %d in path %s: %s\n", num, path, msg);
+    error("OSC server error %d in path %s: %s\n", num, path, msg);
 }
 
 int osc_command_handler(const char *path, const char *types,
-			 lo_arg **argv, int argc,
-			 void *data, void *user_data) {
+                        lo_arg **argv, int argc,
+                        void *data, void *user_data) {
 
-  OscController *osc = (OscController*)user_data;
-  OscCommand *cmd;
+    OscController *osc = (OscController*)user_data;
+    OscCommand *cmd;
 
-  func("OSC call path %s type %s", path, types);
+    func("OSC call path %s type %s", path, types);
 
-  cmd = (OscCommand*) osc->commands_handled.search((char*)path,NULL);
+    cmd = (OscCommand*) osc->commands_handled.search((char*)path,NULL);
 
-  // check that path is handled
-  if(cmd) func("OSC path handled by %s",cmd->js_cmd);
-  else {
-    warning("OSC path %s called, but no method is handling it", path);
-    return -1;
-  }
-
-  // check that types are matching
-  if(strcmp(types, cmd->proto_cmd) != 0) {
-    error("OSC path %s called with wrong types: \"%s\" instead of \"%s\"",
-	  cmd->name, types, cmd->proto_cmd);
-    return -1;
-  }
-
-
-  func("OSC call to %s with argc %u",cmd->js_cmd, argc);
-
-      // TODO: arguments are not supported
-      // the code below correctly parses them, but then
-      // the jsval is not valid as such in JS_CallFunction
-
-  JsCommand *jscmd = new JsCommand();
-  jscmd->set_name(cmd->js_cmd);
-  jscmd->format = cmd->proto_cmd;
-  jscmd->argc = argc;
-  jscmd->argv = (jsval*)calloc(argc+1, sizeof(jsval));
-
-  // put values into a jsval array
-  int c;
-  for(c=0;c<argc;c++) {
-    switch(types[c]) {
-    case 'i':
-      func("OSC arg %u is int: %i",c, argv[c]->i32 );
-      JS_NewNumberValue(osc->jsenv,(double)argv[c]->i32, &jscmd->argv[c]);
-      break;
-    case 'f':
-      func("OSC arg %u is float: %.2f",c, argv[c]->f);
-      JS_NewNumberValue(osc->jsenv,(double)argv[c]->f, &jscmd->argv[c]);
-      //      jsargv[c] = DOUBLE_TO_JSVAL((double)argv[c]->f);
-      // TODO
-      break;
-    case 's':
-      {
-	func("OSC arg %u is string: %s",c, argv[c]);
-	JSString *tmp = JS_NewStringCopyZ(osc->jsenv, (const char*)argv[c]);
-	jscmd->argv[c] = STRING_TO_JSVAL(tmp);
-	//      JS_NewString
-	//      jsargv[c] = STRING_TO_JSVAL(argv[c]->s);
-	// TODO
-	break;
-      }
-    default:
-      error("OSC unrecognized type '%c' in arg %u of path %s",
-	    types[c], c, cmd->name);
+    // check that path is handled
+    if(cmd) func("OSC path handled by %s",cmd->js_cmd);
+    else {
+        warning("OSC path %s called, but no method is handling it", path);
+        return -1;
     }
-  }
-  
-  osc->commands_pending.append(jscmd);
 
-  return 1;
+    // check that types are matching
+    if(strcmp(types, cmd->proto_cmd) != 0) {
+        error("OSC path %s called with wrong types: \"%s\" instead of \"%s\"",
+              cmd->name, types, cmd->proto_cmd);
+        return -1;
+    }
+
+
+    func("OSC call to %s with argc %u",cmd->js_cmd, argc);
+
+    // TODO: arguments are not supported
+    // the code below correctly parses them, but then
+    // the jsval is not valid as such in JS_CallFunction
+
+    JsCommand *jscmd = new JsCommand();
+    jscmd->set_name(cmd->js_cmd);
+    jscmd->format = cmd->proto_cmd;
+    jscmd->argc = argc;
+    jscmd->argv = (jsval*)calloc(argc+1, sizeof(jsval));
+
+    // put values into a jsval array
+    int c;
+    for(c=0; c<argc; c++) {
+        switch(types[c]) {
+        case 'i':
+            func("OSC arg %u is int: %i",c, argv[c]->i32 );
+            JS_NewNumberValue(osc->jsenv,(double)argv[c]->i32, &jscmd->argv[c]);
+            break;
+        case 'f':
+            func("OSC arg %u is float: %.2f",c, argv[c]->f);
+            JS_NewNumberValue(osc->jsenv,(double)argv[c]->f, &jscmd->argv[c]);
+            //      jsargv[c] = DOUBLE_TO_JSVAL((double)argv[c]->f);
+            // TODO
+            break;
+        case 's': {
+            func("OSC arg %u is string: %s",c, argv[c]);
+            JSString *tmp = JS_NewStringCopyZ(osc->jsenv, (const char*)argv[c]);
+            jscmd->argv[c] = STRING_TO_JSVAL(tmp);
+            //      JS_NewString
+            //      jsargv[c] = STRING_TO_JSVAL(argv[c]->s);
+            // TODO
+            break;
+        }
+        default:
+            error("OSC unrecognized type '%c' in arg %u of path %s",
+                  types[c], c, cmd->name);
+        }
+    }
+
+    osc->commands_pending.append(jscmd);
+
+    return 1;
 }
 
 
 OscController::OscController()
-:Controller() {
-    
+    :Controller() {
+
     srv = NULL;
     sendto = NULL;
-    
+
     set_name("OscCtrl");
 }
 
 OscController::~OscController() {
-    
+
     if(srv)
         lo_server_thread_free(srv);
-    
+
 }
 
 int OscController::poll() {
@@ -160,28 +159,28 @@ int OscController::poll() {
 }
 
 int OscController::dispatch() {
-  int res;
-  int c = 0;
-  // execute pending comamnds (javascript calls)
-  JsCommand *jscmd = (JsCommand*) commands_pending.begin();
-  while(jscmd) {
+    int res;
+    int c = 0;
+    // execute pending comamnds (javascript calls)
+    JsCommand *jscmd = (JsCommand*) commands_pending.begin();
+    while(jscmd) {
 
-    //    int res = JS_CallFunctionValue
-    //      (jsenv, jsobj, jscmd->function, jscmd->argc, jscmd->argv, &ret);
+        //    int res = JS_CallFunctionValue
+        //      (jsenv, jsobj, jscmd->function, jscmd->argc, jscmd->argv, &ret);
 
-    func("OSC controller dispatching %s(%s)", jscmd->name, jscmd->format);
-    res = JSCall(jscmd->name, jscmd->argc, jscmd->argv);
-    if (res) func("OSC dispatched call to %s", jscmd->name);
-    else error("OSC failed JSCall to %s", jscmd->name);
+        func("OSC controller dispatching %s(%s)", jscmd->name, jscmd->format);
+        res = JSCall(jscmd->name, jscmd->argc, jscmd->argv);
+        if (res) func("OSC dispatched call to %s", jscmd->name);
+        else error("OSC failed JSCall to %s", jscmd->name);
 
-    
-    free(jscmd->argv); // must free previous callod on argv
-    commands_pending.rem(1);
-    delete jscmd;
-    jscmd = (JsCommand*)commands_pending.begin();
-    c++;
-  }
-  return c;
+
+        free(jscmd->argv); // must free previous callod on argv
+        commands_pending.rem(1);
+        delete jscmd;
+        jscmd = (JsCommand*)commands_pending.begin();
+        c++;
+    }
+    return c;
 }
 
 
@@ -199,67 +198,67 @@ JS(js_osc_ctrl_send);
 //JS(js_osc_ctrl_rem_method);
 
 JSFunctionSpec js_osc_ctrl_methods[] = {
-  {"start",      js_osc_ctrl_start,      0},
-  {"stop",       js_osc_ctrl_stop,       0},
-  {"add_method", js_osc_ctrl_add_method, 3},
-  {"send_to",    js_osc_ctrl_send_to,    2},
-  {"send",       js_osc_ctrl_send,       8},
-  //  {"rem_method", js_osc_ctrl_rem_method, 2},
-  {0}
+    {"start",      js_osc_ctrl_start,      0},
+    {"stop",       js_osc_ctrl_stop,       0},
+    {"add_method", js_osc_ctrl_add_method, 3},
+    {"send_to",    js_osc_ctrl_send_to,    2},
+    {"send",       js_osc_ctrl_send,       8},
+    //  {"rem_method", js_osc_ctrl_rem_method, 2},
+    {0}
 };
 
 JS(js_osc_ctrl_constructor) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  char excp_msg[MAX_ERR_MSG + 1];
-  char *port;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    char excp_msg[MAX_ERR_MSG + 1];
+    char *port;
 
-  OscController *osc = (OscController *)Factory<Controller>::new_instance( "OscController" );
-  //JS_SetContextThread(cx);
-  JS_BeginRequest(cx);
-  // assign instance into javascript object
-  if( ! JS_SetPrivate(cx, obj, (void*)osc) ) {
-    sprintf(excp_msg, "failed assigning OSC controller to javascript");
-    goto error;
-  }
-  // initialize with javascript context
-  if(! osc->init(global_environment) ) {
-    sprintf(excp_msg, "failed initializing OSC controller");
-    goto error;
-  }
+    OscController *osc = (OscController *)Factory<Controller>::new_instance( "OscController" );
+    //JS_SetContextThread(cx);
+    JS_BeginRequest(cx);
+    // assign instance into javascript object
+    if( ! JS_SetPrivate(cx, obj, (void*)osc) ) {
+        sprintf(excp_msg, "failed assigning OSC controller to javascript");
+        goto error;
+    }
+    // initialize with javascript context
+    if(! osc->init(global_environment) ) {
+        sprintf(excp_msg, "failed initializing OSC controller");
+        goto error;
+    }
 
-  // assign the real js object (DEPRECATED)
-  // TODO - use listeners
-  osc->jsobj = obj;
-  osc->jsenv = cx;
+    // assign the real js object (DEPRECATED)
+    // TODO - use listeners
+    osc->jsobj = obj;
+    osc->jsenv = cx;
 
-  osc->javascript = true;
+    osc->javascript = true;
 
-  port = js_get_string(argv[0]);
-  strncpy(osc->port, port, 64);
+    port = js_get_string(argv[0]);
+    strncpy(osc->port, port, 64);
 
-  osc->srv = lo_server_thread_new(osc->port, osc_error_handler);
+    osc->srv = lo_server_thread_new(osc->port, osc_error_handler);
 
-  // register method handler
-  // here we register only one method handler
-  // as we use our own marshaller instead of liblo's
-  lo_server_thread_add_method(osc->srv, NULL, NULL, osc_command_handler, osc);
+    // register method handler
+    // here we register only one method handler
+    // as we use our own marshaller instead of liblo's
+    lo_server_thread_add_method(osc->srv, NULL, NULL, osc_command_handler, osc);
 
-  notice("OSC controller created: %s",lo_server_thread_get_url(osc->srv));
+    notice("OSC controller created: %s",lo_server_thread_get_url(osc->srv));
 
-  *rval = OBJECT_TO_JSVAL(obj);
-  JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  return JS_TRUE;
+    *rval = OBJECT_TO_JSVAL(obj);
+    JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    return JS_TRUE;
 
- error:
+error:
 
-  JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-		       JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
-  //  cx->newborn[GCX_OBJECT] = NULL;
-  JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  delete osc;
-  return JS_FALSE;
+    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
+                         JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
+    //  cx->newborn[GCX_OBJECT] = NULL;
+    JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    delete osc;
+    return JS_FALSE;
 }
 
 JS(js_osc_ctrl_start) {
@@ -283,7 +282,7 @@ JS(js_osc_ctrl_stop) {
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     OscController *osc = (OscController *)JS_GetPrivate(cx, obj);
-    if(!osc) 
+    if(!osc)
         JS_ERROR("OSC core data is NULL");
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
@@ -319,7 +318,7 @@ JS(js_osc_ctrl_add_method) {
     osc->commands_handled.append(cmd);
 
     act("OSC method \"%s\" with args \"%s\" binded to %s",
-	osc_cmd, proto_cmd, js_cmd);
+        osc_cmd, proto_cmd, js_cmd);
 
     return JS_TRUE;
 }
@@ -340,7 +339,7 @@ JS(js_osc_ctrl_send_to) {
     //JS_ClearContextThread(cx);
     char *host = js_get_string(argv[0]);
     char *port = js_get_string(argv[1]);
-    
+
     if(osc->sendto) lo_address_free(osc->sendto);
     osc->sendto = lo_address_new(host,port);
 
@@ -351,70 +350,67 @@ JS(js_osc_ctrl_send_to) {
 }
 
 JS(js_osc_ctrl_send) {
-  func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
-  //JS_SetContextThread(cx);
-  JS_BeginRequest(cx);
+    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    //JS_SetContextThread(cx);
+    JS_BeginRequest(cx);
 
-  JS_CHECK_ARGC(2);
-  
-  OscController *osc = (OscController *)JS_GetPrivate(cx, obj);
-  if(!osc)
-      JS_ERROR("OSC core data is NULL");
-  JS_EndRequest(cx);
-  //JS_ClearContextThread(cx);
-  // minimum arguments: path and type
-  char *path = js_get_string(argv[0]);
-  char *type = js_get_string(argv[1]);
+    JS_CHECK_ARGC(2);
 
-  func("generating OSC message path %s type %s",path,type);
-  // we use the internal functions:
-  // int lo_send_message_from
-  // (lo_address a, lo_server from, const char *path, lo_message msg)
+    OscController *osc = (OscController *)JS_GetPrivate(cx, obj);
+    if(!osc)
+        JS_ERROR("OSC core data is NULL");
+    JS_EndRequest(cx);
+    //JS_ClearContextThread(cx);
+    // minimum arguments: path and type
+    char *path = js_get_string(argv[0]);
+    char *type = js_get_string(argv[1]);
 
-  osc->outmsg = lo_message_new();
-    
-  // put values into a jsval array
-  unsigned int c;
-  for(c=2;c<argc;c++) {
+    func("generating OSC message path %s type %s",path,type);
+    // we use the internal functions:
+    // int lo_send_message_from
+    // (lo_address a, lo_server from, const char *path, lo_message msg)
 
-    switch(type[c]) {
-    case 'i':
-      {
-	jsint i = js_get_int(argv[c]);
-	func("OSC add message arg %i with value %i",c,i);
-	lo_message_add_int32(osc->outmsg,i);
-      }
-      break;
-    case 'f':
-      {
-	jsdouble f = js_get_double(argv[c]);
-	func("OSC add message arg %u with value %.2f",c,f);
-	lo_message_add_float(osc->outmsg,(float)f);
-      }
-      break;
-    case 's':
-      {
-	char *s = js_get_string(argv[c+1]);
-	func("OSC add message arg %u with value %s",c,s);
-	lo_message_add_string(osc->outmsg,s);
-      }
-      break;
-    default:
-      error("OSC unrecognized type '%c' in arg %u", type[c], c);
-    }
-    
-  } // foreach type in format
+    osc->outmsg = lo_message_new();
 
-  lo_send_message_from((void*)osc->sendto, osc->srv, path, osc->outmsg);
-  lo_message_free(osc->outmsg);
+    // put values into a jsval array
+    unsigned int c;
+    for(c=2; c<argc; c++) {
 
-  return(JS_TRUE);
+        switch(type[c]) {
+        case 'i': {
+            jsint i = js_get_int(argv[c]);
+            func("OSC add message arg %i with value %i",c,i);
+            lo_message_add_int32(osc->outmsg,i);
+        }
+        break;
+        case 'f': {
+            jsdouble f = js_get_double(argv[c]);
+            func("OSC add message arg %u with value %.2f",c,f);
+            lo_message_add_float(osc->outmsg,(float)f);
+        }
+        break;
+        case 's': {
+            char *s = js_get_string(argv[c+1]);
+            func("OSC add message arg %u with value %s",c,s);
+            lo_message_add_string(osc->outmsg,s);
+        }
+        break;
+        default:
+            error("OSC unrecognized type '%c' in arg %u", type[c], c);
+        }
+
+    } // foreach type in format
+
+    lo_send_message_from((void*)osc->sendto, osc->srv, path, osc->outmsg);
+    lo_message_free(osc->outmsg);
+
+    return(JS_TRUE);
 
 }
 
 //JS(js_osc_ctrl_rem_method) {
 
-  // remove methods from commands_pending linklist
+// remove methods from commands_pending linklist
 
 //}
 

@@ -29,75 +29,75 @@
 
 class CairoColor: public Color {
 
- public:
-  CairoColor(cairo_t *cai);
-  ~CairoColor();
+public:
+    CairoColor(cairo_t *cai);
+    ~CairoColor();
 
- protected:
-  void set();
+protected:
+    void set();
 
- private:
-  cairo_t *cairo;
+private:
+    cairo_t *cairo;
 
 };
 
 class CairoLayer: public Layer {
 
- public:
-  CairoLayer();
-  ~CairoLayer();
+public:
+    CairoLayer();
+    ~CairoLayer();
 
-  bool open(const char *file);
-  void *feed();
-  void close();
+    bool open(const char *file);
+    void *feed();
+    void close();
 
-  cairo_t *cairo;
+    cairo_t *cairo;
 
-  Color *color;
-  Color *saved_color;
+    Color *color;
+    Color *saved_color;
 
-  JSBool set_color(JSContext *cx, uintN argc, jsval *argv, int idx);
+    JSBool set_color(JSContext *cx, uintN argc, jsval *argv, int idx);
 
-  ///////////////////////////////////////////////
-  // public methods exported to language bindings
+    ///////////////////////////////////////////////
+    // public methods exported to language bindings
 
-  // Cairo API
-  void save();
-  void restore();
-  void new_path();
-  void close_path();
-  void fill();
-  void stroke();
-  void scale(double xx, double yy);
-  void rotate(double angle);
-  void translate(int xx, int yy);
-  void line_to(double xx, double yy);
-  void move_to(double xx, double yy);
-  void curve_to(int x1, int y1, int x2, int y2, int x3, int y3);
-  void rect(double x1, double y1, double x2, double y2);
-  void arc(double xc, double yc, double radius, double angle1, double angle2);
-  void set_line_width(double wid);
-  int get_line_width();
+    // Cairo API
+    void save();
+    void restore();
+    void new_path();
+    void close_path();
+    void fill();
+    void stroke();
+    void scale(double xx, double yy);
+    void rotate(double angle);
+    void translate(int xx, int yy);
+    void line_to(double xx, double yy);
+    void move_to(double xx, double yy);
+    void curve_to(int x1, int y1, int x2, int y2, int x3, int y3);
+    void rect(double x1, double y1, double x2, double y2);
+    void arc(double xc, double yc, double radius, double angle1, double angle2);
+    void set_line_width(double wid);
+    int get_line_width();
 
-  // Mozilla's GFX compatibility API
-  void quad_curve_to(double x1, double y1, double x2, double y2);
-  void fill_rect(double x1, double y1, double x2, double y2);
+    // Mozilla's GFX compatibility API
+    void quad_curve_to(double x1, double y1, double x2, double y2);
+    void fill_rect(double x1, double y1, double x2, double y2);
 
-  // Color facilities
-  void push_color();
-  void pop_color();
+    // Color facilities
+    void push_color();
+    void pop_color();
 
- protected:
-  bool _init();
+protected:
+    bool _init();
 
- private:
-  cairo_surface_t *surf;
-  void *pixels;
+private:
+    cairo_surface_t *surf;
+    void *pixels;
 
-  int stride;
-  
-   // allow to use Factory on this class
-  FACTORY_ALLOWED
+    int stride;
+
+    // allow to use Factory on this class
+    FACTORY_ALLOWED
 };
 
 #endif

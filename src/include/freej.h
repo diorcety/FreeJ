@@ -17,7 +17,7 @@
  */
 
 /** @mainpage FreeJ - vision mixer
- 
+
     @section sec_intro Introduction
 
     FreeJ is  a commandline application  on GNU/Linux and  a graphical
@@ -37,9 +37,9 @@
     The FreeJ engine is organized in a tree structure seen as:
 
     @verbatim
-                                   
-   ViewPort---(Blit)______________Layer_____Filter 
-           \   vvvv                    \____Filter 
+
+   ViewPort---(Blit)______________Layer_____Filter
+           \   vvvv                    \____Filter
             \-(Blit)____Layer__Filter   \___Filter
              \ vvvv         \__Filter        ...
               (Blit)__Layer  \_Filter
@@ -89,7 +89,7 @@
    free all the buffers you allocate ;^)
 
    @section sec_tobecontinued To Be Continued...
-   
+
    This documentation needs to be completed but it's already useful as
    various coders found their way  through the headers for the missing
    bits. We  are actively documenting  the code! feel free  to contact

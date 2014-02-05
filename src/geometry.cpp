@@ -19,23 +19,25 @@
 #include <geometry.h>
 
 Geometry::Geometry() {
-  x = 0;
-  y = 0;
-  w = 0;
-  h = 0;
-  bpp = 0;
-  pixelsize = 0;
-  bytesize = 0;
-  bytewidth = 0;
+    x = 0;
+    y = 0;
+    w = 0;
+    h = 0;
+    bpp = 0;
+    pixelsize = 0;
+    bytesize = 0;
+    bytewidth = 0;
 }
 
 Geometry::~Geometry() {
 }
 
 void Geometry::init(int nw, int nh, int nbpp) {
-  w = nw; h = nh; bpp = nbpp;
-  pixelsize = w * h;
-  bytesize  = w * h * (bpp / 8);
-  bytewidth = w * (bpp / 8);
+    w = nw;
+    h = nh;
+    bpp = nbpp;
+    pixelsize = w * h;
+    bytesize  = w * h * (bpp / 8);
+    bytewidth = w * (bpp / 8);
 }
 

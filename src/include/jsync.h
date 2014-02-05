@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -28,39 +28,45 @@
 #include <fps.h>
 
 class JSyncThread {
- private:
-  
-  pthread_t _thread;
-  pthread_attr_t _attr;
+private:
 
-  pthread_mutex_t _mutex;
-  
-  static void* _run(void *arg);
+    pthread_t _thread;
+    pthread_attr_t _attr;
+
+    pthread_mutex_t _mutex;
+
+    static void* _run(void *arg);
 
 
-  bool _running;
+    bool _running;
 
- protected:
+protected:
 
-  ClosureQueue *deferred_calls;
+    ClosureQueue *deferred_calls;
 
- public:
-  
-  JSyncThread();
-  virtual ~JSyncThread();
+public:
 
-  int start();
-  void stop();
-  virtual void thread_setup() {};
-  virtual void thread_loop() {};
-  virtual void thread_teardown() {};
+    JSyncThread();
+    virtual ~JSyncThread();
 
-  FPS fps;
+    int start();
+    void stop();
+    virtual void thread_setup() {};
+    virtual void thread_loop() {};
+    virtual void thread_teardown() {};
 
-  void lock() { pthread_mutex_lock(&_mutex); };
-  void unlock() { pthread_mutex_unlock(&_mutex); };
+    FPS fps;
 
-  bool is_running() { return _running; };
+    void lock() {
+        pthread_mutex_lock(&_mutex);
+    };
+    void unlock() {
+        pthread_mutex_unlock(&_mutex);
+    };
+
+    bool is_running() {
+        return _running;
+    };
 
 };
 

@@ -2,7 +2,7 @@
  *  (c) Copyright 2008 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -26,34 +26,36 @@
 
 class AudioLayer: public Layer {
 
- public:
-  AudioLayer();
-  ~AudioLayer();
+public:
+    AudioLayer();
+    ~AudioLayer();
 
-  bool open(const char *devfile);
+    bool open(const char *devfile);
 
 
-  void *feed();
-  void close();
+    void *feed();
+    void close();
 
-  unsigned int Samplerate;
-  unsigned int BufferLength;
+    unsigned int Samplerate;
+    unsigned int BufferLength;
 
- protected:
-  bool _init() { return true; };
+protected:
+    bool _init() {
+        return true;
+    };
 
- private:
+private:
 
-  void AudioCallback_i(unsigned int);
-  static void AudioCallback(void *, unsigned int);
+    void AudioCallback_i(unsigned int);
+    static void AudioCallback(void *, unsigned int);
 
-  float *m_AudioBuffer;
-  float *m_JackBuffer;
-  unsigned int m_ProcessPos;
-  unsigned int m_ProcessLength;
-  bool   m_Processing;
-  pthread_mutex_t* m_Mutex;
-  float *m_Buffer;
+    float *m_AudioBuffer;
+    float *m_JackBuffer;
+    unsigned int m_ProcessPos;
+    unsigned int m_ProcessLength;
+    bool   m_Processing;
+    pthread_mutex_t* m_Mutex;
+    float *m_Buffer;
 };
 
 #endif

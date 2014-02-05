@@ -35,173 +35,173 @@ JS(js_audio_jack_constructor);
 void js_audio_jack_gc(JSContext *cx, JSObject *obj);
 
 DECLARE_CLASS_GC("AudioJack", js_audio_jack_class,
-		 js_audio_jack_constructor, js_audio_jack_gc)
+                 js_audio_jack_constructor, js_audio_jack_gc)
 
 JS(js_audio_jack_add_output);
 JS(js_audio_jack_get_harmonic);
 JS(js_audio_jack_fft);
 
 JSFunctionSpec js_audio_jack_methods[] = {
-  {"set_layer", js_audio_jack_add_layer, 1},
-  {"add_output", js_audio_jack_add_output, 1},
-  {"get_harmonic", js_audio_jack_get_harmonic, 1},
-  {"fft", js_audio_jack_fft, 0},
-  {0}
+    {"set_layer", js_audio_jack_add_layer, 1},
+    {"add_output", js_audio_jack_add_output, 1},
+    {"get_harmonic", js_audio_jack_get_harmonic, 1},
+    {"fft", js_audio_jack_fft, 0},
+    {0}
 };
 
 JS(js_audio_jack_constructor) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-  char excp_msg[MAX_ERR_MSG + 1];
-  char *port;
-  
-  JS_CHECK_ARGC(3);
+    char excp_msg[MAX_ERR_MSG + 1];
+    char *port;
 
-  port = js_get_string(argv[0]);
-  jsint sample, rate;
-  sample = js_get_int(argv[1]);
-  rate = js_get_int(argv[2]);
-  
-  AudioCollector *audio = new AudioCollector(port, sample, rate);
+    JS_CHECK_ARGC(3);
 
-  if( ! JS_SetPrivate(cx, obj, (void*)audio) ) {
-    sprintf(excp_msg, "failed assigning audio jack to javascript");
-    goto error;
-  }
- 
-  *rval = OBJECT_TO_JSVAL(obj);
-  return JS_TRUE;
+    port = js_get_string(argv[0]);
+    jsint sample, rate;
+    sample = js_get_int(argv[1]);
+    rate = js_get_int(argv[2]);
 
- error:
-  JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-		       JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
-  //  cx->newborn[GCX_OBJECT] = NULL;
-  delete audio;
-  return JS_FALSE;
+    AudioCollector *audio = new AudioCollector(port, sample, rate);
+
+    if( ! JS_SetPrivate(cx, obj, (void*)audio) ) {
+        sprintf(excp_msg, "failed assigning audio jack to javascript");
+        goto error;
+    }
+
+    *rval = OBJECT_TO_JSVAL(obj);
+    return JS_TRUE;
+
+error:
+    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
+                         JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
+    //  cx->newborn[GCX_OBJECT] = NULL;
+    delete audio;
+    return JS_FALSE;
 }
 
 JS(js_audio_jack_add_output) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  char excp_msg[MAX_ERR_MSG + 1];
-  Layer *lay;
-  AudioCollector *audio;
-  JSObject *jslayer;
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    char excp_msg[MAX_ERR_MSG + 1];
+    Layer *lay;
+    AudioCollector *audio;
+    JSObject *jslayer;
 
-  JS_CHECK_ARGC(1);
-  //  js_is_instanceOf(&layer_class, argv[0]);
+    JS_CHECK_ARGC(1);
+    //  js_is_instanceOf(&layer_class, argv[0]);
 
-  audio = (AudioCollector*)JS_GetPrivate(cx, obj);
-  if(!audio) {
-    sprintf(excp_msg, "audio collector core data is NULL");
-    goto error;
-  }
+    audio = (AudioCollector*)JS_GetPrivate(cx, obj);
+    if(!audio) {
+        sprintf(excp_msg, "audio collector core data is NULL");
+        goto error;
+    }
 
-  jslayer = JSVAL_TO_OBJECT(argv[0]);
-  lay = (Layer*)JS_GetPrivate(cx, jslayer);
-  if(!lay) {
-    sprintf(excp_msg, "audio add_output called on an invalid object");
-    goto error;
-  }
+    jslayer = JSVAL_TO_OBJECT(argv[0]);
+    lay = (Layer*)JS_GetPrivate(cx, jslayer);
+    if(!lay) {
+        sprintf(excp_msg, "audio add_output called on an invalid object");
+        goto error;
+    }
 
-  // assign the audio collector to the layer
-  lay->audio = audio;
+    // assign the audio collector to the layer
+    lay->audio = audio;
 
-  return JS_TRUE;
+    return JS_TRUE;
 
- error:
-  JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-		       JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
-  return JS_FALSE;
+error:
+    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
+                         JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
+    return JS_FALSE;
 }
 
 JS(js_audio_jack_get_harmonic) {
 //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  char excp_msg[MAX_ERR_MSG + 1];
-  float harmonic;
+    char excp_msg[MAX_ERR_MSG + 1];
+    float harmonic;
 
-  JS_CHECK_ARGC(1);
-  
-  jsint hc = js_get_int(argv[0]);
-  
-  AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
-  if(!audio) {
-    sprintf(excp_msg, "audio collector core data is NULL");
-    goto error;
-  }
+    JS_CHECK_ARGC(1);
 
-  harmonic = audio->GetHarmonic(hc);
+    jsint hc = js_get_int(argv[0]);
 
-  return JS_NewNumberValue(cx, (double)harmonic, rval);
-  
- error:
-  JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-		       JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
-  return JS_FALSE;
+    AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
+    if(!audio) {
+        sprintf(excp_msg, "audio collector core data is NULL");
+        goto error;
+    }
+
+    harmonic = audio->GetHarmonic(hc);
+
+    return JS_NewNumberValue(cx, (double)harmonic, rval);
+
+error:
+    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
+                         JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
+    return JS_FALSE;
 }
 
 JS(js_audio_jack_add_layer) {
-   func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
 
-   Layer *lay;
-   JSObject *jslayer;
-   *rval=JSVAL_FALSE;
+    Layer *lay;
+    JSObject *jslayer;
+    *rval=JSVAL_FALSE;
 
-   if(argc<1) JS_ERROR("missing argument");
-   //   js_is_instanceOf(&layer_class, argv[0]);
-   
-   jslayer = JSVAL_TO_OBJECT(argv[0]);
-   lay = (Layer *) JS_GetPrivate(cx, jslayer);
-   if(!lay) JS_ERROR("Layer core data is NULL");
+    if(argc<1) JS_ERROR("missing argument");
+    //   js_is_instanceOf(&layer_class, argv[0]);
 
-   if(!lay->screen) {
-     error("layer %s is not added to any screen", lay->name);
-     *rval = JSVAL_FALSE;
-     return JS_TRUE;
-   }
-   
-   AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
-   if(!audio) JS_ERROR("Audio core data is NULL");
-   if(!audio->attached) {
-     error("audio jack is not attached (jack daemon not running?)");
-     *rval = JSVAL_FALSE;
-     return JS_TRUE;
-   }
+    jslayer = JSVAL_TO_OBJECT(argv[0]);
+    lay = (Layer *) JS_GetPrivate(cx, jslayer);
+    if(!lay) JS_ERROR("Layer core data is NULL");
 
-   lay->screen->add_audio( audio->Jack );
+    if(!lay->screen) {
+        error("layer %s is not added to any screen", lay->name);
+        *rval = JSVAL_FALSE;
+        return JS_TRUE;
+    }
 
-   *rval = JSVAL_TRUE;
+    AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
+    if(!audio) JS_ERROR("Audio core data is NULL");
+    if(!audio->attached) {
+        error("audio jack is not attached (jack daemon not running?)");
+        *rval = JSVAL_FALSE;
+        return JS_TRUE;
+    }
 
-   return JS_TRUE;
+    lay->screen->add_audio( audio->Jack );
+
+    *rval = JSVAL_TRUE;
+
+    return JS_TRUE;
 }
 
 JS(js_audio_jack_fft) {
 //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  char excp_msg[MAX_ERR_MSG + 1];
+    char excp_msg[MAX_ERR_MSG + 1];
 
-  AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
-  if(!audio) {
-    sprintf(excp_msg, "audio collector core data is NULL");
-    goto error;
-  }
-  
-  audio->GetFFT();
+    AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
+    if(!audio) {
+        sprintf(excp_msg, "audio collector core data is NULL");
+        goto error;
+    }
 
-  return JS_TRUE;
+    audio->GetFFT();
 
- error:
-  JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-		       JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
-  return JS_FALSE;
+    return JS_TRUE;
+
+error:
+    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
+                         JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);
+    return JS_FALSE;
 }
 
 void js_audio_jack_gc(JSContext *cx, JSObject *obj) {
-  func("%s",__PRETTY_FUNCTION__);
+    func("%s",__PRETTY_FUNCTION__);
 
-  AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
-  if(!audio) return;
+    AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
+    if(!audio) return;
 
-  delete audio;
+    delete audio;
 
 }
-  
+
 #endif

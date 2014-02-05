@@ -1,4 +1,4 @@
-#include <stdint.h>  
+#include <stdint.h>
 /* prototypes of fn in ffdec.c */
 
 typedef struct ffdec ffdec_t;

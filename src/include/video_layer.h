@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Silvano Galliani aka kysucix <silvano.galliani@poste.it>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -63,128 +63,132 @@ extern "C" {
 
 class VideoLayer: public Layer {
 
-    public:
-	VideoLayer();
-	~VideoLayer();
-	
+public:
+    VideoLayer();
+    ~VideoLayer();
 
-	bool open(const char *file);
-	void *feed();
-	void close();
 
-	int64_t to_seek;
+    bool open(const char *file);
+    void *feed();
+    void close();
 
-	bool relative_seek(double increment);
+    int64_t to_seek;
 
-	bool set_mark_in();
-	bool set_mark_out();
-	void pause();
+    bool relative_seek(double increment);
 
-	// quick hack for EOS callback
-	bool add_eos_call(DumbCall *c) { return eos->add_call(c); }
-	bool rem_eos_call(DumbCall *c) { return eos->rem_call(c); }
+    bool set_mark_in();
+    bool set_mark_out();
+    void pause();
 
-	bool use_audio; ///< set true if audio should be decoded and fed to the scren->audio FIFO pipe
+    // quick hack for EOS callback
+    bool add_eos_call(DumbCall *c) {
+        return eos->add_call(c);
+    }
+    bool rem_eos_call(DumbCall *c) {
+        return eos->rem_call(c);
+    }
 
-	int audio_channels;
-	int audio_samplerate;
+    bool use_audio; ///< set true if audio should be decoded and fed to the scren->audio FIFO pipe
 
- protected:
-	bool _init();
+    int audio_channels;
+    int audio_samplerate;
 
-    private:	
+protected:
+    bool _init();
+
+private:
     /**
-	 * av(codec|format) aka ffmpeg related variables
-	 */
-	AVCodec *avcodec;
-	AVInputFormat *fmt;
-	AVFormatContext *avformat_context;
-	AVStream *avformat_stream;
-	AVPicture *rgba_picture;
-	AVPacket pkt;
+     * av(codec|format) aka ffmpeg related variables
+     */
+    AVCodec *avcodec;
+    AVInputFormat *fmt;
+    AVFormatContext *avformat_context;
+    AVStream *avformat_stream;
+    AVPicture *rgba_picture;
+    AVPacket pkt;
 
 
-	AVCodecContext *video_codec_ctx;	
-	AVCodec *video_codec;
+    AVCodecContext *video_codec_ctx;
+    AVCodec *video_codec;
 
-	AVCodecContext *audio_codec_ctx;
-	AVCodec *audio_codec;
-	uint8_t *audio_buf; // buffer used by decode_audio_packet
-	double audio_size;
+    AVCodecContext *audio_codec_ctx;
+    AVCodec *audio_codec;
+    uint8_t *audio_buf; // buffer used by decode_audio_packet
+    double audio_size;
 
-	AVFrame av_frame;
+    AVFrame av_frame;
 #ifdef WITH_SWSCALE
-	struct SwsContext *img_convert_ctx;
+    struct SwsContext *img_convert_ctx;
 #endif
 
-	uint8_t *av_buf;
-	uint8_t *deinterlace_buffer;
-	int packet_len;
-	double packet_pts;
-	unsigned char *ptr;
-	double video_last_P_pts;
-	double video_clock;
-	double video_current_pts;
-	double video_current_pts_time;
+    uint8_t *av_buf;
+    uint8_t *deinterlace_buffer;
+    int packet_len;
+    double packet_pts;
+    unsigned char *ptr;
+    double video_last_P_pts;
+    double video_clock;
+    double video_current_pts;
+    double video_current_pts_time;
 
-	/* audio resample buffer */
-	float *audio_float_buf;
-	float *audio_resampled_buf;
-	unsigned long audio_resampled_buf_len;
+    /* audio resample buffer */
+    float *audio_float_buf;
+    float *audio_resampled_buf;
+    unsigned long audio_resampled_buf_len;
 
-	/**
-	 * Number of decoded frames. As for now together with picture_number
-	 * it's broken when seeking TODO!
-	 */
-	int frame_number;
-	int picture_number;
+    /**
+     * Number of decoded frames. As for now together with picture_number
+     * it's broken when seeking TODO!
+     */
+    int frame_number;
+    int picture_number;
 
-	/**
-	 * application variables
-	 */
-	struct frame_fifo_t { // I want it hard, I want it raw
-		AVPicture *picture[FIFO_SIZE];
-		int picture_type[FIFO_SIZE];
-		int length;
-	} frame_fifo;
-	int fifo_position;
-	bool deinterlaced;
-	bool backward_control;
-	bool paused;
-	bool seekable;
-	bool grab_dv;
-	double mark_in;
-	double mark_out;
-	/** dropping frames variables */
-	int user_play_speed; /** play speed to be visualized to the user */
-	float play_speed; /** real speed */
-	int play_speed_control;
+    /**
+     * application variables
+     */
+    struct frame_fifo_t { // I want it hard, I want it raw
+        AVPicture *picture[FIFO_SIZE];
+        int picture_type[FIFO_SIZE];
+        int length;
+    } frame_fifo;
+    int fifo_position;
+    bool deinterlaced;
+    bool backward_control;
+    bool paused;
+    bool seekable;
+    bool grab_dv;
+    double mark_in;
+    double mark_out;
+    /** dropping frames variables */
+    int user_play_speed; /** play speed to be visualized to the user */
+    float play_speed; /** real speed */
+    int play_speed_control;
 
 
-	char *full_filename;
+    char *full_filename;
 
-	int video_index;	//contains the stream place number
-	int audio_index;	//contains the stream place number
+    int video_index;	//contains the stream place number
+    int audio_index;	//contains the stream place number
 
-	FILE *fp;
+    FILE *fp;
 
-	/** private methods */
-	int seek(int64_t timestamp);
-	int decode_video_packet( int *got_picture);
-	int decode_audio_packet( int *data_size);
-	int decode_audio_packet();
+    /** private methods */
+    int seek(int64_t timestamp);
+    int decode_video_packet( int *got_picture);
+    int decode_audio_packet( int *data_size);
+    int decode_audio_packet();
 
-	void set_speed(int speed);
-	double get_master_clock();
-	void deinterlace(AVPicture *picture);
-	int new_fifo();
-	void free_fifo();
-	int new_picture(AVPicture *p);
-	void free_picture(AVPicture *p);
+    void set_speed(int speed);
+    double get_master_clock();
+    void deinterlace(AVPicture *picture);
+    int new_fifo();
+    void free_fifo();
+    int new_picture(AVPicture *p);
+    void free_picture(AVPicture *p);
 
-	// quick hack for EOS callback
-	DumbCallback *eos;
-    
+    // quick hack for EOS callback
+    DumbCallback *eos;
+
     // allow to use Factory on this class
     FACTORY_ALLOWED
 };

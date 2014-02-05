@@ -2,7 +2,7 @@
  *  (c) Copyright 2004 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -33,32 +33,32 @@ enum iterator_envelope_t { LINEAR, SIN, RAND };
 enum iterator_mode_t { ONCE, LOOP, BOUNCE, PULSE };
 
 class Iterator : public Entry {
- public:
-  Iterator(float *val);
-  ~Iterator();
+public:
+    Iterator(float *val);
+    ~Iterator();
 
-  int cafudda();
+    int cafudda();
 
-  void set_min(float val);  
-  void set_max(float val);
-  void set_step(float val);
-  void set_aim(float val);
-  void set_value(float *val);
-  void set_mode(iterator_mode_t m);
-  void set_envelope(iterator_envelope_t e);
-  
-  bool direction;
-  
- private:
-  float *value;
-  float saved_value;
-  float min;
-  float max;
-  float aim;
-  float step;
+    void set_min(float val);
+    void set_max(float val);
+    void set_step(float val);
+    void set_aim(float val);
+    void set_value(float *val);
+    void set_mode(iterator_mode_t m);
+    void set_envelope(iterator_envelope_t e);
 
-  iterator_envelope_t envelope;
-  iterator_mode_t mode;
+    bool direction;
+
+private:
+    float *value;
+    float saved_value;
+    float min;
+    float max;
+    float aim;
+    float step;
+
+    iterator_envelope_t envelope;
+    iterator_mode_t mode;
 };
 
 

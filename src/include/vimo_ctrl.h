@@ -2,7 +2,7 @@
  *  (c) Copyright 2006 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -34,29 +34,29 @@ class JSObject;
 union ViMoData;
 
 class ViMoController: public Controller {
-	friend class Context;
+    friend class Context;
 
-	public:
-		ViMoController();
-		virtual ~ViMoController();
+public:
+    ViMoController();
+    virtual ~ViMoController();
 
-		bool open();
-		bool open(char *filename);
-		void close();
+    bool open();
+    bool open(char *filename);
+    void close();
 
-		int poll();
-		virtual int dispatch();
-		virtual void button(unsigned int button, bool state, unsigned int mask, unsigned int old_mask);
-		virtual void inner_wheel(int direction, unsigned int history);
-		virtual void outer_wheel(int speed, int old_speed);
+    int poll();
+    virtual int dispatch();
+    virtual void button(unsigned int button, bool state, unsigned int mask, unsigned int old_mask);
+    virtual void inner_wheel(int direction, unsigned int history);
+    virtual void outer_wheel(int speed, int old_speed);
 
-	private:
-		char *filename;
-		int fd;
-		ViMoData *vmd, *vmd_old;
-		int read_pos;
-		unsigned int wi_hist; // wheel history
-		int wi_dir; // inner wheel -1=left; 1=right
+private:
+    char *filename;
+    int fd;
+    ViMoData *vmd, *vmd_old;
+    int read_pos;
+    unsigned int wi_hist; // wheel history
+    int wi_dir; // inner wheel -1=left; 1=right
 };
 
 #endif

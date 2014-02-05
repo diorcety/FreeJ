@@ -29,39 +29,39 @@ class Layer;
 class FilterInstance;
 
 class SlwTitle : public SLangWidget {
- public:
-  SlwTitle();
-  ~SlwTitle();
+public:
+    SlwTitle();
+    ~SlwTitle();
 
-  bool init();
-  bool feed(int key);
-  bool refresh();
+    bool init();
+    bool feed(int key);
+    bool refresh();
 
-  Context *env;
+    Context *env;
 
- private:
-  char title[256];
-  int titlelen;
+private:
+    char title[256];
+    int titlelen;
 
 };
 
-class SlwSelector : public SLangWidget {  
- public:
+class SlwSelector : public SLangWidget {
+public:
 
-  SlwSelector();
-  ~SlwSelector();
-  
-  bool init();
-  bool feed(int key);
-  bool refresh();
+    SlwSelector();
+    ~SlwSelector();
 
-  Context *env;
-  
- private:
-  Layer *layer;
-  FilterInstance *filter;
-  
-  char *tmp;
+    bool init();
+    bool feed(int key);
+    bool refresh();
+
+    Context *env;
+
+private:
+    Layer *layer;
+    FilterInstance *filter;
+
+    char *tmp;
 
 };
 

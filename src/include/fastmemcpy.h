@@ -1,7 +1,7 @@
 /*
    (c) Copyright 2000-2002  convergence integrated media GmbH.
    (c) Copyright 2002       convergence GmbH.
-   
+
    All rights reserved.
 
    Written by Denis Oliver Kropp <dok@directfb.org>,
@@ -36,12 +36,11 @@ void find_best_memcpy();
 
 extern void *(*jmemcpy)( void *to, const void *from, size_t len );
 
-static inline void *jmemmove( void *to, const void *from, size_t len )
-{
-  if (from > to  ||  ((const char*) from + len) < ((char*) to))
-    return jmemcpy( to, from, len );
-  
-  return memmove( to, from, len );
+static inline void *jmemmove( void *to, const void *from, size_t len ) {
+    if (from > to  ||  ((const char*) from + len) < ((char*) to))
+        return jmemcpy( to, from, len );
+
+    return memmove( to, from, len );
 }
 
 #endif

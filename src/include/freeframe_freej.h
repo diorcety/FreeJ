@@ -2,7 +2,7 @@
  *  (c) Copyright 2008 - 2009 Denis Roio <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -29,42 +29,42 @@ class Filter;
 
 
 class Freeframe: public Filter {
-  friend class GeneratorLayer;
+    friend class GeneratorLayer;
 #ifdef WITH_COCOA
-  friend class CVF0rLayer;
+    friend class CVF0rLayer;
 #endif
- public:
+public:
 
-  Freeframe();
-  virtual ~Freeframe();
+    Freeframe();
+    virtual ~Freeframe();
 
-  int type();
+    int type();
 
-  int open(char *file);
+    int open(char *file);
 
-  const char *description();
-  const char *author();
+    const char *description();
+    const char *author();
 
-  void print_info();
-  int  get_parameter_type(int i);
-  char *get_parameter_description(int i);
+    void print_info();
+    int  get_parameter_type(int i);
+    char *get_parameter_description(int i);
 
-  bool apply(Layer *lay, FilterInstance *instance);
+    bool apply(Layer *lay, FilterInstance *instance);
 
-  PlugInfoStruct *info;
+    PlugInfoStruct *info;
 
-  VideoInfoStruct vidinfo;
+    VideoInfoStruct vidinfo;
 
-  bool opened;
+    bool opened;
 
- protected:
-  void destruct(FilterInstance *inst);
-  void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
-  void init_parameters(Linklist<Parameter> &parameters);
-  // Interface function pointers.
-  plugMainType *plugmain;
+protected:
+    void destruct(FilterInstance *inst);
+    void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
+    void init_parameters(Linklist<Parameter> &parameters);
+    // Interface function pointers.
+    plugMainType *plugmain;
 
-  private:
+private:
     // dlopen handle
     void *handle;
     // full .so file path

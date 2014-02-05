@@ -25,34 +25,34 @@
 #include <inttypes.h>
 
 class FPS {
- public:
-  FPS();
-  ~FPS();
+public:
+    FPS();
+    ~FPS();
 
-  void init(double rate);
+    void init(double rate);
 
-  float get();
-  double set(double rate);
-  void calc();
-  void delay();
-  void select_sleep(long usec);
+    float get();
+    double set(double rate);
+    void calc();
+    void delay();
+    void select_sleep(long usec);
 
-  double fps, fps_old;
+    double fps, fps_old;
 
- private:
+private:
 
-  struct fps_data_t {
-    int i;
-    int n;
-    float sum;
-    float *data;
-  } fpsd;
+    struct fps_data_t {
+        int i;
+        int n;
+        float sum;
+        float *data;
+    } fpsd;
 
-  struct timespec wake_ts;  
-  double _fps, _passes, _ratio;
-  struct timeval start_tv, m_OldTime, m_OrgTime;
-  long int _period;
-  bool m_OrgSets;
+    struct timespec wake_ts;
+    double _fps, _passes, _ratio;
+    struct timeval start_tv, m_OldTime, m_OrgTime;
+    long int _period;
+    bool m_OrgSets;
 };
 
 #endif

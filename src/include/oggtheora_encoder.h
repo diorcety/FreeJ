@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Silvano Galliani aka kysucix <kysucix@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -59,43 +59,43 @@ class Context;
 
 class OggTheoraEncoder: public VideoEncoder {
 
- public:
-  
-  OggTheoraEncoder();
-  ~OggTheoraEncoder();
-  
-  bool init(ViewPort *scr);
-  
-  int Mux(int nframes);
-  void setMixCoef(float val);
-  long getAvBitRate();
-  int encode_frame();
+public:
+
+    OggTheoraEncoder();
+    ~OggTheoraEncoder();
+
+    bool init(ViewPort *scr);
+
+    int Mux(int nframes);
+    void setMixCoef(float val);
+    long getAvBitRate();
+    int encode_frame();
 //   size_t	rv;
-  
+
 private:
-  float m_MixVal;
-  oggmux_info oggmux; // theorautils object
+    float m_MixVal;
+    oggmux_info oggmux; // theorautils object
 
-  int encode_video(int end_of_stream);
-  int encode_audio(int end_of_stream, size_t sizeInBuff);
+    int encode_video(int end_of_stream);
+    int encode_audio(int end_of_stream, size_t sizeInBuff);
 
-  // void *enc_rgb24;
+    // void *enc_rgb24;
 
-  /* video size */
-  int video_x;
-  int video_y;
-  /* offsets for theora size constraints */
-  int frame_x_offset; 
-  int frame_y_offset;
+    /* video size */
+    int video_x;
+    int video_y;
+    /* offsets for theora size constraints */
+    int frame_x_offset;
+    int frame_y_offset;
 
 
-  unsigned char *yuvframe[2]; /* yuv 420 */
-  
-  float *m_buffStream;
-  
-  float	*m_MixBuffer;
-  float	*m_MixBufferOperation;
-  ringbuffer_t *m_MixedRing;
+    unsigned char *yuvframe[2]; /* yuv 420 */
+
+    float *m_buffStream;
+
+    float	*m_MixBuffer;
+    float	*m_MixBufferOperation;
+    ringbuffer_t *m_MixedRing;
 };
 
 #endif

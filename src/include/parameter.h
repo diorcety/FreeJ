@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -31,54 +31,54 @@ typedef void (layer_param_f)(Layer *lay, Parameter *param, int idx);
 typedef void (filter_param_f)(FilterInstance *filt, Parameter *param, int idx);
 
 class Parameter : public Entry {
-  friend class Iterator;
-  // TODO: different iterator beahaviour for different parameter types
- public:
-  enum Type {
-	  /* Parameter type for boolean values */
-	  BOOL,
-	  /* Parameter type for doubles */
-	  NUMBER,
-	  /* Parameter type for color */
-	  COLOR,
-	  /* Parameter type for position */
-	  POSITION,
-	  /* Parameter type for string */
-	  STRING
-  };
+    friend class Iterator;
+    // TODO: different iterator beahaviour for different parameter types
+public:
+    enum Type {
+        /* Parameter type for boolean values */
+        BOOL,
+        /* Parameter type for doubles */
+        NUMBER,
+        /* Parameter type for color */
+        COLOR,
+        /* Parameter type for position */
+        POSITION,
+        /* Parameter type for string */
+        STRING
+    };
 
-  Parameter(Type param_type);
-  ~Parameter();
+    Parameter(Type param_type);
+    ~Parameter();
 
-  bool set(void *val);
+    bool set(void *val);
 
-  void *get();
-  ///< calling  function should  do correct type-casting
-  ///< according to the parameter type
-  
-  bool parse(char *p);
+    void *get();
+    ///< calling  function should  do correct type-casting
+    ///< according to the parameter type
 
-  Type type;
+    bool parse(char *p);
 
-  // TODO - following properties should be made private 
-  //        and we should expose accessors to deal with
-  //        the actual data, possibly doing conversions 
-  //        and typecasts for the caller (hiding complexity)
-  char description[512];
-  void *value;
-  void *min_value;
-  void *max_value;
-  size_t value_size;
+    Type type;
 
-  layer_param_f *layer_get_f;
-  layer_param_f *layer_set_f;
+    // TODO - following properties should be made private
+    //        and we should expose accessors to deal with
+    //        the actual data, possibly doing conversions
+    //        and typecasts for the caller (hiding complexity)
+    char description[512];
+    void *value;
+    void *min_value;
+    void *max_value;
+    size_t value_size;
 
-  filter_param_f *filter_get_f;
-  filter_param_f *filter_set_f;
+    layer_param_f *layer_get_f;
+    layer_param_f *layer_set_f;
 
-  bool changed; ///< can be used externally by application caller
-  float multiplier; ///< multiplier to adjust the value on set (none if 1.0)
-  
+    filter_param_f *filter_get_f;
+    filter_param_f *filter_set_f;
+
+    bool changed; ///< can be used externally by application caller
+    float multiplier; ///< multiplier to adjust the value on set (none if 1.0)
+
 };
 
 #endif

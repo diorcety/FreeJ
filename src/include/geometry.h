@@ -30,21 +30,21 @@
 */
 class Geometry {
 
- public:
+public:
 
-  Geometry();
-  ~Geometry();
+    Geometry();
+    ~Geometry();
 
-  void init(int nw, int nh, int nbpp);
+    void init(int nw, int nh, int nbpp);
 
-  int16_t x; ///< x axis position coordinate
-  int16_t y; ///< y axis position coordinate
-  uint16_t w; ///< width of frame in pixels
-  uint16_t h; ///< height of frame in pixels
-  uint8_t bpp; ///< bits per pixel
-  uint32_t pixelsize; ///< size of the whole frame in pixels
-  uint32_t bytesize; ///< size of the whole frame in bytes
-  uint16_t bytewidth; ///< width of frame in bytes (also called pitch or stride)
+    int16_t x; ///< x axis position coordinate
+    int16_t y; ///< y axis position coordinate
+    uint16_t w; ///< width of frame in pixels
+    uint16_t h; ///< height of frame in pixels
+    uint8_t bpp; ///< bits per pixel
+    uint32_t pixelsize; ///< size of the whole frame in pixels
+    uint32_t bytesize; ///< size of the whole frame in bytes
+    uint16_t bytewidth; ///< width of frame in bytes (also called pitch or stride)
 
 };
 

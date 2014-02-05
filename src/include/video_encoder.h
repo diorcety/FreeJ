@@ -3,7 +3,7 @@
  *                2007 Denis Roio       <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 3 of the License,
  * or (at your option) any later version.
  *
@@ -47,7 +47,7 @@ class ViewPort;
 /**
  * Abstract class describing the general interface of a VideoEncoder
  *
- * 
+ *
  * Method implemented are:
  *   - VideoEncoder::set_output_name()
  *   - VideoEncoder::set_sdl_surface()
@@ -64,72 +64,72 @@ class ViewPort;
 //class VideoEncoder: public Entry,public JSyncThread{
 class VideoEncoder: public Entry, public JSyncThread {
 
- public:
-  
-  VideoEncoder ();
-  virtual ~VideoEncoder ();
+public:
 
-  double getStreamRate();
+    VideoEncoder ();
+    virtual ~VideoEncoder ();
 
-  virtual bool init (ViewPort *scr) = 0;  ///< pure virtual function to implement
-  virtual int encode_frame ()       = 0;  ///< pure virtual function to implement
+    double getStreamRate();
 
-  void thread_setup(); ///< setup data needed in encoding thread
-  void thread_loop(); ///< encoding thread main loop
-  void thread_teardown(); ///< ending phase of encoding thread
+    virtual bool init (ViewPort *scr) = 0;  ///< pure virtual function to implement
+    virtual int encode_frame ()       = 0;  ///< pure virtual function to implement
 
-  bool set_filedump(const char *filename); ///< start to dump to filename, call with NULL to stop
-  bool filedump_close(); ///stops to dump in the file and close it
-  char filedump[512]; ////< filename to which encoder is writing dump
+    void thread_setup(); ///< setup data needed in encoding thread
+    void thread_loop(); ///< encoding thread main loop
+    void thread_teardown(); ///< ending phase of encoding thread
 
-  char *status; ///< string updated with encoder status
+    bool set_filedump(const char *filename); ///< start to dump to filename, call with NULL to stop
+    bool filedump_close(); ///stops to dump in the file and close it
+    char filedump[512]; ////< filename to which encoder is writing dump
 
-  int video_quality; ///< quality of video encoding: range 0-100
-  int video_bitrate; ///< video encoding bitrate (default is 0: VBR on the quality value)
-  int audio_quality; ///<  quality of audio encoding: range 0-100
-  int audio_bitrate; ///< audio encoding bitrate (default is 0: VBR on the quality value)
+    char *status; ///< string updated with encoder status
 
-  int audio_kbps; ///< encoded audio, kilobit per second 
-  int video_kbps; ///< encoded video, kilobit per second
-  int bytes_encoded; ///< encoded bytes in total in the last encoding pass
+    int video_quality; ///< quality of video encoding: range 0-100
+    int video_bitrate; ///< video encoding bitrate (default is 0: VBR on the quality value)
+    int audio_quality; ///<  quality of audio encoding: range 0-100
+    int audio_bitrate; ///< audio encoding bitrate (default is 0: VBR on the quality value)
 
-  // now in jsync
-  // bool quit; ///< flag it up if encoder has to quit
+    int audio_kbps; ///< encoded audio, kilobit per second
+    int video_kbps; ///< encoded video, kilobit per second
+    int bytes_encoded; ///< encoded bytes in total in the last encoding pass
 
-  bool active; ////< flag to de/activate the encoder
+    // now in jsync
+    // bool quit; ///< flag it up if encoder has to quit
 
-  bool initialized; ///< true if encoder had been initialized
-  bool write_to_disk; ///< true if encoder should write to a file
-  bool write_to_stream; ///< true if encoder should write to a stream
-  
-  bool use_audio; ///< true if the encoded data should include also audio
-  AudioCollector *audio; ///< holding the pointer to the @AudioCollector class
-  float *audio_buf; ///< audio buffer (local copy for the encoder)
+    bool active; ////< flag to de/activate the encoder
 
-  bool streaming; ///< set true when streaming by js start_stream()
+    bool initialized; ///< true if encoder had been initialized
+    bool write_to_disk; ///< true if encoder should write to a file
+    bool write_to_stream; ///< true if encoder should write to a stream
 
-  ringbuffer_t *ringbuffer; ///< FIFO ringbuffer pipe from Jack
+    bool use_audio; ///< true if the encoded data should include also audio
+    AudioCollector *audio; ///< holding the pointer to the @AudioCollector class
+    float *audio_buf; ///< audio buffer (local copy for the encoder)
 
-  FPS *fps;
+    bool streaming; ///< set true when streaming by js start_stream()
 
-  shout_t *ice;
+    ringbuffer_t *ringbuffer; ///< FIFO ringbuffer pipe from Jack
 
-  ViewPort *screen;
+    FPS *fps;
 
-  void *enc_y;
-  void *enc_u;
-  void *enc_v;
-  void *enc_yuyv;
+    shout_t *ice;
 
- private:
-  FILE *filedump_fd;
+    ViewPort *screen;
+
+    void *enc_y;
+    void *enc_u;
+    void *enc_v;
+    void *enc_yuyv;
+
+private:
+    FILE *filedump_fd;
 //   char encbuf[1024*128];
 //   char encbuf[1024*2096];
-  char *encbuf;
-  struct timeval m_ActualTime, m_OldTime, m_lastTime;
-  double m_StreamRate;
-  int 	 m_Streamed;
-  double m_ElapsedTime;
+    char *encbuf;
+    struct timeval m_ActualTime, m_OldTime, m_lastTime;
+    double m_StreamRate;
+    int 	 m_Streamed;
+    double m_ElapsedTime;
 
 
 };

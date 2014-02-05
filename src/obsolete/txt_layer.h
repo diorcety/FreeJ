@@ -2,7 +2,7 @@
  *  Silvano Galliani aka kysucix <silvano.galliani@milug.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -34,117 +34,116 @@
 #define SPEED 5
 #define MAX_FONTS 512
 
-typedef struct TGlyph_
-{
-     FT_UInt    glyph_index;    // glyph index
-     FT_Vector  baseline_position;      // glyph origin on the baseline
-     FT_Glyph   image;    // glyph image
+typedef struct TGlyph_ {
+    FT_UInt    glyph_index;    // glyph index
+    FT_Vector  baseline_position;      // glyph origin on the baseline
+    FT_Glyph   image;    // glyph image
 
 } TGlyph, *PGlyph;
 
 typedef struct wordlist_t {
-  char word[MAX_WORD];
-  struct wordlist_t *next;
-  struct wordlist_t *prev;
-  int len;
+    char word[MAX_WORD];
+    struct wordlist_t *next;
+    struct wordlist_t *prev;
+    int len;
 };
 
 class TxtLayer: public Layer {
- private:
-  FILE *fd;
-  
-  /* handle to library     */
-  FT_Library library;   
-  
-  /* handle to face object */
-  FT_Face face;      
+private:
+    FILE *fd;
 
-  /* handle to glyph image */
-  FT_Glyph glyph;
+    /* handle to library     */
+    FT_Library library;
 
-  /* Transformation matrix for FT_Glyph_Transform()*/
-  FT_Matrix matrix; /* neo sux */
-  
-  /* Translation vector for FT_Glyph_To_Bitmap() */
-  FT_UInt num_glyphs;
-  int x,y;
+    /* handle to face object */
+    FT_Face face;
 
-  /* glyphs table */
-  TGlyph glyphs[ MAX_GLYPHS ]; 
+    /* handle to glyph image */
+    FT_Glyph glyph;
 
-  /* current glyph in table */
-  PGlyph glyph_current; 
-  FT_UInt glyphs_numbers;
+    /* Transformation matrix for FT_Glyph_Transform()*/
+    FT_Matrix matrix; /* neo sux */
 
+    /* Translation vector for FT_Glyph_To_Bitmap() */
+    FT_UInt num_glyphs;
+    int x,y;
 
-  // linked list of words
-  Linklist words;
-  Entry *current_word;
+    /* glyphs table */
+    TGlyph glyphs[ MAX_GLYPHS ];
 
-  char *chunk;
-  int chunk_len;
-  char *pword, *punt;
-  
-  int text_dimension;
-  
-  /* image buffer */
-  void *buf;
-  
-
-  bool draw_character(FT_BitmapGlyph bitmap, int left_side_bearing, int top_side_bearing,uint8_t *dstp);
-
-  //  int word_rw(int pos);
-
-  int scanfonts(char *path, int depth);
-  char *fonts[MAX_FONTS];
-  int num_fonts;
-  int sel_font;
+    /* current glyph in table */
+    PGlyph glyph_current;
+    FT_UInt glyphs_numbers;
 
 
-  void render();
+    // linked list of words
+    Linklist words;
+    Entry *current_word;
+
+    char *chunk;
+    int chunk_len;
+    char *pword, *punt;
+
+    int text_dimension;
+
+    /* image buffer */
+    void *buf;
+
+
+    bool draw_character(FT_BitmapGlyph bitmap, int left_side_bearing, int top_side_bearing,uint8_t *dstp);
+
+    //  int word_rw(int pos);
+
+    int scanfonts(char *path, int depth);
+    char *fonts[MAX_FONTS];
+    int num_fonts;
+    int sel_font;
+
+
+    void render();
 
 public:
-  TxtLayer();
-  ~TxtLayer();
-  
-  bool init(int width, int height);
+    TxtLayer();
+    ~TxtLayer();
 
-  // operations on file 
-  bool open(char *file);
-  char *get_word(int num);
-  int  wordcount();
+    bool init(int width, int height);
 
-  void *feed();
-  void *get_buffer();
-  void close();
-  void advance();
+    // operations on file
+    bool open(char *file);
+    char *get_word(int num);
+    int  wordcount();
 
-  bool print(const char *s);
-  int word_ff(int pos);
+    void *feed();
+    void *get_buffer();
+    void close();
+    void advance();
+
+    bool print(const char *s);
+    int word_ff(int pos);
 
 
-  bool set_character_size(int _text_dimension);
-  bool set_font(int c);
+    bool set_character_size(int _text_dimension);
+    bool set_font(int c);
 
-  bool set_blink(int c);
-  bool set_blink_off(int c);
-  bool set_blink_on(int c);
+    bool set_blink(int c);
+    bool set_blink_off(int c);
+    bool set_blink_on(int c);
 
-  bool keypress(int key);
-  void compute_string_bbox( FT_BBox  *abbox,FT_Glyph image );
-  int string_width, string_height;
+    bool keypress(int key);
+    void compute_string_bbox( FT_BBox  *abbox,FT_Glyph image );
+    int string_width, string_height;
 
-  bool next_word;
-  bool inject_word;
-  bool clear_screen;
-  bool onscreen;
-  bool blinking;
-  bool use_kerning;
-  int onscreen_blink;
-  int offscreen_blink;
-  int blink;
+    bool next_word;
+    bool inject_word;
+    bool clear_screen;
+    bool onscreen;
+    bool blinking;
+    bool use_kerning;
+    int onscreen_blink;
+    int offscreen_blink;
+    int blink;
 
-  uint32_t color;
+    uint32_t color;
 
 };
 

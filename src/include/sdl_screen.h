@@ -2,7 +2,7 @@
  *  (c) Copyright 2001 Denis Roio aka jaromil <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -28,56 +28,58 @@
 #include <factory.h>
 
 class SdlScreen : public ViewPort {
- public:
-  SdlScreen();
-  ~SdlScreen();
+public:
+    SdlScreen();
+    ~SdlScreen();
 
 
-  void resize(int resize_w, int resize_h);
-  void setup_blits(Layer *lay);
-  void blit(Layer *src);
+    void resize(int resize_w, int resize_h);
+    void setup_blits(Layer *lay);
+    void blit(Layer *src);
 
 
-  void show();
-  void clear();
+    void show();
+    void clear();
 
-  void fullscreen();
-  void *get_surface();
-  fourcc get_pixel_format() { return BGRA32; };
+    void fullscreen();
+    void *get_surface();
+    fourcc get_pixel_format() {
+        return BGRA32;
+    };
 
-  SDL_Event event;
-  SDL_Surface *sdl_screen;
+    SDL_Event event;
+    SDL_Surface *sdl_screen;
 
-  void *coords(int x, int y);
+    void *coords(int x, int y);
 
-  bool lock();
-  bool unlock();
- 
+    bool lock();
+    bool unlock();
 
- private:
 
-  bool _init();
+private:
 
-  int setres(int wx, int hx);
-  SDL_Surface *emuscr;
+    bool _init();
 
-  bool switch_fullscreen;  
-  bool dbl;
-  uint32_t sdl_flags;
+    int setres(int wx, int hx);
+    SDL_Surface *emuscr;
 
-  SDL_Surface *sdl_dest;
+    bool switch_fullscreen;
+    bool dbl;
+    uint32_t sdl_flags;
 
-  SDL_Surface *pre_rotozoom;
-  SDL_Surface *rotozoom; ///< pointer to blittable surface (rotated and zoomed if necessary)
+    SDL_Surface *sdl_dest;
 
-  // small vars used in blits
-  int chan, c, cc;
-  uint32_t *scr, *off, *poff, *pastoff, *ppastoff;
-  uint32_t *pscr, *play, *ppast;  // generic blit buffer pointers
+    SDL_Surface *pre_rotozoom;
+    SDL_Surface *rotozoom; ///< pointer to blittable surface (rotated and zoomed if necessary)
 
-  // allow to use Factory on this class
-  FACTORY_ALLOWED;
+    // small vars used in blits
+    int chan, c, cc;
+    uint32_t *scr, *off, *poff, *pastoff, *ppastoff;
+    uint32_t *pscr, *play, *ppast;  // generic blit buffer pointers
+
+    // allow to use Factory on this class
+    FACTORY_ALLOWED;
 
 };
 
-#endif 
+#endif

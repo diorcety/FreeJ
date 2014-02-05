@@ -26,15 +26,15 @@
  */
 
 typedef	union {
-	long long		q;	/* Quadword (64-bit) value */
-	unsigned long long	uq;	/* Unsigned Quadword */
-	int			d[2];	/* 2 Doubleword (32-bit) values */
-	unsigned int		ud[2];	/* 2 Unsigned Doubleword */
-	short			w[4];	/* 4 Word (16-bit) values */
-	unsigned short		uw[4];	/* 4 Unsigned Word */
-	char			b[8];	/* 8 Byte (8-bit) values */
-	unsigned char		ub[8];	/* 8 Unsigned Byte */
-	float			s[2];	/* Single-precision (32-bit) value */
+    long long		q;	/* Quadword (64-bit) value */
+    unsigned long long	uq;	/* Unsigned Quadword */
+    int			d[2];	/* 2 Doubleword (32-bit) values */
+    unsigned int		ud[2];	/* 2 Unsigned Doubleword */
+    short			w[4];	/* 4 Word (16-bit) values */
+    unsigned short		uw[4];	/* 4 Unsigned Word */
+    char			b[8];	/* 8 Byte (8-bit) values */
+    unsigned char		ub[8];	/* 8 Unsigned Byte */
+    float			s[2];	/* Single-precision (32-bit) value */
 } ATTR_ALIGN(8) mmx_t;	/* On an 8-byte (64-bit) boundary */
 
 
