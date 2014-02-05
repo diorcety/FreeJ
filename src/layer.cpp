@@ -326,6 +326,24 @@ void Layer::set_position(int x, int y) {
   deferred_calls->add_job(job);
 }
 
+int Layer::get_x_position() const {
+  return geo.x;
+}
+
+void Layer::set_x_position(int x) {
+  Closure *job = NewClosure(this, &Layer::_set_position, x, (int)geo.y);
+  deferred_calls->add_job(job);
+}
+
+int Layer::get_y_position() const {
+  return geo.y;
+}
+
+void Layer::set_y_position(int y) {
+  Closure *job = NewClosure(this, &Layer::_set_position, (int)geo.x, y);
+  deferred_calls->add_job(job);
+}
+
 
 void Layer::_set_zoom(double x, double y) {
   if ((x == 1) && (y == 1)) {

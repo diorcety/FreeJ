@@ -136,6 +136,10 @@ class Layer: public Entry, public JSyncThread {
      @param y vertical coordinate
   */
   virtual void set_position(int x, int y);
+  virtual int get_x_position() const;
+  virtual void set_x_position(int x);
+  virtual int get_y_position() const;
+  virtual void set_y_position(int y);
   ///< Set Layer's position on screen
 
   /**
