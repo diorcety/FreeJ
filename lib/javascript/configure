@@ -5208,7 +5208,7 @@ if test "$GNU_CXX"; then
 
     echo $ac_n "checking whether the compiler supports -Wno-invalid-offsetof""... $ac_c" 1>&6
 echo "configure:5211: checking whether the compiler supports -Wno-invalid-offsetof" >&5
-if eval "test \"`echo '$''{'ac_has_wno_invalid_offsetof'+set}'`\" = set"; then
+if eval "test \"`echo '$''{'ac_cv_has_wno_invalid_offsetof'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   
@@ -5232,12 +5232,12 @@ return(0);
 EOF
 if { (eval echo configure:5234: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
-  ac_has_wno_invalid_offsetof="yes"
+  ac_cv_has_wno_invalid_offsetof="yes"
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
   rm -rf conftest*
-  ac_has_wno_invalid_offsetof="no"
+  ac_cv_has_wno_invalid_offsetof="no"
 fi
 rm -f conftest*
             CXXFLAGS="$_SAVE_CXXFLAGS"
@@ -5251,8 +5251,8 @@ cross_compiling=$ac_cv_prog_cc_cross
         
 fi
 
-echo "$ac_t""$ac_has_wno_invalid_offsetof" 1>&6
-    if test "$ac_has_wno_invalid_offsetof" = "yes"; then
+echo "$ac_t""$ac_cv_has_wno_invalid_offsetof" 1>&6
+    if test "$ac_cv_has_wno_invalid_offsetof" = "yes"; then
         _WARNINGS_CXXFLAGS="${_WARNINGS_CXXFLAGS} ${_COMPILER_PREFIX}-Wno-invalid-offsetof"
     fi
 else
@@ -6583,31 +6583,31 @@ EOF
 
     echo $ac_n "checking for __declspec(dllexport)""... $ac_c" 1>&6
 echo "configure:6586: checking for __declspec(dllexport)" >&5
-if eval "test \"`echo '$''{'ac_os2_declspec'+set}'`\" = set"; then
+if eval "test \"`echo '$''{'ac_cv_os2_declspec'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
 #line 6591 "configure"
 #include "confdefs.h"
-__declspec(dllexport) void ac_os2_declspec(void) {}
+__declspec(dllexport) void ac_cv_os2_declspec(void) {}
 int main() {
 return 0;
 ; return 0; }
 EOF
 if { (eval echo configure:6598: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
-  ac_os2_declspec="yes"
+  ac_cv_os2_declspec="yes"
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
   rm -rf conftest*
-  ac_os2_declspec="no"
+  ac_cv_os2_declspec="no"
 fi
 rm -f conftest*
 fi
 
-echo "$ac_t""$ac_os2_declspec" 1>&6
-    if test "$ac_os2_declspec" = "yes"; then
+echo "$ac_t""$ac_cv_os2_declspec" 1>&6
+    if test "$ac_cv_os2_declspec" = "yes"; then
         FILTER='true'
         MOZ_OS2_USE_DECLSPEC='1'
     fi
@@ -12889,7 +12889,7 @@ _SAVE_CXXFLAGS=$CXXFLAGS
 CXXFLAGS="$CXXFLAGS ${_WARNINGS_CXXFLAGS}"
 echo $ac_n "checking for correct overload resolution with const and templates""... $ac_c" 1>&6
 echo "configure:12892: checking for correct overload resolution with const and templates" >&5
-if eval "test \"`echo '$''{'ac_nscap_nonconst_opeq_bug'+set}'`\" = set"; then
+if eval "test \"`echo '$''{'ac_cv_nscap_nonconst_opeq_bug'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
@@ -12925,20 +12925,20 @@ int main() {
 EOF
 if { (eval echo configure:12927: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
-  ac_nscap_nonconst_opeq_bug="no"
+  ac_cv_nscap_nonconst_opeq_bug="no"
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
   rm -rf conftest*
-  ac_nscap_nonconst_opeq_bug="yes"
+  ac_cv_nscap_nonconst_opeq_bug="yes"
 fi
 rm -f conftest*
 fi
 
-echo "$ac_t""$ac_nscap_nonconst_opeq_bug" 1>&6
+echo "$ac_t""$ac_cv_nscap_nonconst_opeq_bug" 1>&6
 CXXFLAGS="$_SAVE_CXXFLAGS"
 
-if test "$ac_nscap_nonconst_opeq_bug" = "yes" ; then
+if test "$ac_cv_nscap_nonconst_opeq_bug" = "yes" ; then
     cat >> confdefs.h <<\EOF
 #define NSCAP_DONT_PROVIDE_NONCONST_OPEQ 1
 EOF

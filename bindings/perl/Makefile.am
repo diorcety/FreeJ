@@ -1,3 +1,4 @@
+.NOTPARALLEL: 
 swig_source = freej_perl.cpp
 perl_module = freej.pm
 

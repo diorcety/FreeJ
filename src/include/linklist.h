@@ -55,7 +55,7 @@ public:
         pthread_mutex_init (&mutex,&mattr);
 #endif
     };
-    ~BaseLinklist() {
+    virtual ~BaseLinklist() {
 #ifdef THREADSAFE
         pthread_mutex_destroy(&mutex);
         pthread_mutexattr_destroy (&mattr);

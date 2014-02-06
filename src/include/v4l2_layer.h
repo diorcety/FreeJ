@@ -28,18 +28,18 @@
 
 class Res {
 public:
-    Res(int sz);
+    Res(unsigned int sz);
     ~Res();
-    bool addRes(int, int, int);
-    int getNb();
-    int getX(int);
-    int getY(int);
-    void setsX(int);
-    int getCurIdx();
+    bool addRes(unsigned int, unsigned int, int);
+    unsigned int getNb();
+    unsigned int getX(unsigned int);
+    unsigned int getY(unsigned int);
+    void setsX(unsigned int);
+    unsigned int getCurIdx();
 
 private:
-    int m_idx, m_curIdx, m_size, m_fd;
-    int (*m_sizes)[2];
+    unsigned int m_idx, m_curIdx, m_size, m_fd;
+    unsigned int (*m_sizes)[2];
     bool m_dec;
     struct v4l2_format m_format;
 };

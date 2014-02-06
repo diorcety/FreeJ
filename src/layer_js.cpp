@@ -244,7 +244,7 @@ JS(layer_set_blit_value) {
 
     GET_LAYER(Layer);
 
-    Parameter *p;
+    Parameter *p = NULL;
     // when this function is used we
     // assume blit has only one parameter
     // (basically we keep this for backward compat)
@@ -267,7 +267,7 @@ JS(layer_fade_blit_value) {
     if(argc<2)
         JS_ERROR("missing argument");
     jsint value = js_get_double(argv[0]);
-    jsint step = js_get_double(argv[1]);
+    // jsint step = js_get_double(argv[1]);
 
     GET_LAYER(Layer);
 

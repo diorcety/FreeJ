@@ -60,8 +60,6 @@ TriggerController::~TriggerController() {
 int TriggerController::poll() {
 
     if(javascript) {
-        jsval ret = JSVAL_VOID;
-        JSBool res;
         ControllerListener *listener = listeners.begin();
         while (listener) {
             listener->frame();

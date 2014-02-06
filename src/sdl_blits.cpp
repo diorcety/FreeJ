@@ -94,7 +94,7 @@ BLIT sdl_chromakey(void *src, SDL_Rect *src_rect,
                 geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
     // TODO
-    SDL_SetColorKey( sdl_surf, SDL_SRCCOLORKEY | SDL_RLEACCEL, NULL);
+    SDL_SetColorKey( sdl_surf, SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
 
     //  SDL_SetAlpha(sdl_surf, SDL_RLEACCEL, 0);
 

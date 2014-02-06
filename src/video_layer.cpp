@@ -218,7 +218,6 @@ bool VideoLayer::open(const char *file) {
                 else
                     frame_rate = enc -> time_base.den / enc -> time_base.num;
 
-                AVRational rational = enc -> time_base;
                 func ("VideoLayer :: frame_rate den: %d", enc -> time_base .den);
                 func ("VideoLayer :: frame_rate num: %d", enc -> time_base .num);
 #else
@@ -588,7 +587,6 @@ int VideoLayer::decode_audio_packet(int *data_size) {
 }
 
 int VideoLayer::decode_video_packet(int *got_picture) {
-    double pts1 = 0;
     /**
      * Decode the packet and put i(n)t in(t) av_frame
      */
@@ -612,7 +610,6 @@ int VideoLayer::decode_video_packet(int *got_picture) {
                                      got_picture, &pkt);
 #endif
 
-    pts1 = packet_pts;
     if (packet_pts != 0) {
         /* update video clock with pts, if present */
         video_clock = packet_pts;
@@ -639,6 +636,7 @@ int VideoLayer::decode_video_packet(int *got_picture) {
     }
     video_clock += frame_delay;
 
+#if 0
     /* Debug pts code */
     {
         int ftype;
@@ -648,9 +646,9 @@ int VideoLayer::decode_video_packet(int *got_picture) {
             ftype = 'I';
         else
             ftype = 'P';
-        /*		func("frame_type=%c clock=%0.3f pts=%0.3f",
-                        ftype, get_master_clock(), pts1); */
+        func("frame_type=%c clock=%0.3f pts=%0.3f", ftype, get_master_clock(), pts1);
     }
+#endif
     return lien;
 }
 

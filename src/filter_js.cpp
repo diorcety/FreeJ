@@ -107,8 +107,8 @@ JS(filter_activate) {
 
 JS(filter_set_parameter) {
     func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-    int idx;
-    char *name;
+    int idx = 0;
+    char *name = NULL;
     Parameter *param;
     jsdouble val[3];
 
@@ -129,7 +129,8 @@ JS(filter_set_parameter) {
     if(JSVAL_IS_DOUBLE(argv[0])) {
 
         double *argidx = JSVAL_TO_DOUBLE(argv[0]);
-        param = (Parameter*) filter_instance->parameters.pick((int)*argidx);
+        idx = *argidx;
+        param = (Parameter*) filter_instance->parameters.pick(idx);
 
     } else { // get it by the param name
 
@@ -194,7 +195,6 @@ JS(filter_set_parameter) {
 JSP(filter_list_parameters) {
     func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
     JSObject *arr, *otmp;
-    JSString *str;
     jsval val;
 
     //JS_SetContextThread(cx);

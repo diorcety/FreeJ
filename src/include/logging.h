@@ -61,6 +61,7 @@ class Logger {
 public:
     virtual int printlog(LogLevel level, const char *format, ...);
     virtual int vprintlog(LogLevel level, const char *format, va_list arg);
+    virtual ~Logger();
 };
 
 // This class has to be inherited by all the classes which expect to print on a

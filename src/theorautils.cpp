@@ -164,7 +164,6 @@ void add_fishead_packet (oggmux_info *info) {
     write64le(op.packet+36, (ogg_int64_t)1000); /* basetime denominator (means ms)*/
     /* both the numerator are zero hence handled by the memset */
 //     write32le(op.packet+44, 0); /* UTC time, set to zero for now */
-    char  timeStart[21];
     time_t result;
     struct tm *tim;
 
@@ -355,7 +354,6 @@ double *sampleOut, samplesA;
 void oggmux_init (oggmux_info *info) {
     ogg_page og;
     ogg_packet op;
-    TIMER *timer;
     src_state = NULL;
     src_data = NULL;
     ratio = 1.0;
@@ -731,9 +729,8 @@ void oggmux_add_video (oggmux_info *info, yuv_buffer *yuv, int e_o_s) {
  */
 void oggmux_add_audio (oggmux_info *info, float * buffer, int bytes, int samples, int e_o_s) {
     ogg_packet op;
-    float *ptr = buffer;
     float *sampleOut = NULL;
-    int i,j, c, count = 0;
+    int i,j,c;
     float **vorbis_buffer;
 
     if (bytes <= 0 && samples <= 0) {
@@ -988,7 +985,7 @@ void oggmux_flush (oggmux_info *info, int e_o_s) {
     int len;
 //     ogg_page ogv, ogt;
     ogg_page og;
-    int best;
+//    int best;
 
     /* flush out the ogg pages to info->outfile */
     while(1) {
@@ -1101,7 +1098,7 @@ void oggmux_flush (oggmux_info *info, int e_o_s) {
 #define CHECK_KATE_OUTPUT(which) ((void)0)
 #endif
 
-        best=find_best_valid_kate_page(info);
+        /*best=*/find_best_valid_kate_page(info);
 
         if(info->video_only && info->videopage_valid) {
 //         CHECK_KATE_OUTPUT(video);

@@ -59,9 +59,8 @@ JS(txt_layer_color) {
     //  uint32_t r,g,b,a;
 
     if(JSVAL_IS_DOUBLE(argv[0])) {
-
-        double *hex;
-        hex = JSVAL_TO_DOUBLE(argv[0]);
+        //double *hex;
+        //hex = JSVAL_TO_DOUBLE(argv[0]);
 
         warning("TODO: assign colors to text layer in hex form");
         //    lay->color = (uint32_t)*hex;
@@ -158,8 +157,10 @@ JS(txt_layer_calculate_size) {
 
     // fill the array with [0]w [1]h
     num = JS_NewNumberValue(cx, (double)w, &val);
+    if(!num) warning("Can't fill the array");
     JS_SetElement(cx, arr, 0, &val);
     num = JS_NewNumberValue(cx, (double)h, &val);
+    if(!num) warning("Can't fill the array");
     JS_SetElement(cx, arr, 1, &val);
 
     *rval = OBJECT_TO_JSVAL( arr);

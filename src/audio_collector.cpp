@@ -80,14 +80,14 @@ AudioCollector::AudioCollector(char *port, int n_BufferLength, unsigned int n_Sa
     m_Gain(1),
     m_SmoothingBias(1.2),
     m_FFT(n_BufferLength),
+    m_Buffer(NULL),
+    m_AudioBuffer(NULL),
     m_FFTBuffers(FFTBuffers),
     m_JackBuffer(NULL),
     m_OSSBuffer(NULL),
     m_OneOverSHRT_MAX(1/(float)SHRT_MAX),
     m_Processing(false),
-    m_ProcessPos(0),
-    m_Buffer(NULL),
-    m_AudioBuffer(NULL) {
+    m_ProcessPos(0) {
     buffersize = n_BufferLength;
     samplerate = n_Samplerate;
     m_BufferTime = buffersize/(float)samplerate;
@@ -134,14 +134,14 @@ AudioCollector::AudioCollector(int n_BufferLength, unsigned int n_Samplerate, Ja
     m_Gain(1),
     m_SmoothingBias(1.2),
     m_FFT(n_BufferLength),
+    m_Buffer(NULL),
+    m_AudioBuffer(NULL),
     m_FFTBuffers(FFTBuffers),
     m_JackBuffer(NULL),
     m_OSSBuffer(NULL),
     m_OneOverSHRT_MAX(1/(float)SHRT_MAX),
     m_Processing(false),
-    m_ProcessPos(0),
-    m_Buffer(NULL),
-    m_AudioBuffer(NULL) {
+    m_ProcessPos(0) {
     buffersize = n_BufferLength;
     samplerate = n_Samplerate;
     m_BufferTime = buffersize/(float)samplerate;

@@ -126,19 +126,18 @@ VideoEncoder::VideoEncoder()
 
 VideoEncoder::~VideoEncoder() {
     // flush all the ringbuffer to file and stream
-    int encnum = 0;
+    unsigned int encnum = 0;
 
     if (encbuf) {
         do {
-            if (encnum = ringbuffer_read_space(ringbuffer))
+            if ((encnum = ringbuffer_read_space(ringbuffer)) > 0)
                 encnum = ringbuffer_read(ringbuffer, encbuf, encnum);
 // 			     ((audio_kbps + video_kbps)*1024)/24);
 
             if(encnum <=0) break;
 
             if(write_to_disk && filedump_fd) {
-                size_t nn;
-                nn = fwrite(encbuf, 1, encnum, filedump_fd);
+                fwrite(encbuf, 1, encnum, filedump_fd);
             }
 
             if(write_to_stream && ice) {
@@ -201,9 +200,8 @@ void VideoEncoder::thread_loop() {
     if (!surface) {
         fps->calc();
         fps->delay();
-        //std::cout << "fps->start_tv.tv_sec :" << fps->start_tv.tv_sec << \
-        " tv_usec :"
-                << fps->start_tv.tv_usec << "   \r" << std::endl;
+        /* std::cout << "fps->start_tv.tv_sec :" << fps->start_tv.tv_sec << \
+        " tv_usec :" << fps->start_tv.tv_usec << "   \r" << std::endl; */
         return;
     }
     fps->calc();
@@ -248,12 +246,13 @@ void VideoEncoder::thread_loop() {
 
     ////// got the YUV, do the encoding
     res = encode_frame();
+    if (res != 0) error("Can't encode frame");
 
     /// proceed writing and streaming encoded data in encpipe
 
     encnum = 0;
     if(write_to_disk || write_to_stream) {
-        if (encnum = ringbuffer_read_space(ringbuffer)) {
+        if ((encnum = ringbuffer_read_space(ringbuffer)) > 0) {
             encbuf = (char *)realloc(encbuf, encnum);
 // 	encbuf = (char *)realloc(encbuf, (((audio_kbps + video_kbps)*1024)/24)); //doesn't change anything for shifting problem
             encnum = ringbuffer_read(ringbuffer, encbuf, encnum);
@@ -381,5 +380,7 @@ bool VideoEncoder::filedump_close() {
             std::cerr << "----- can't close :" << filedump << " " << errno << std::endl;
             return (false);
         }
+    } else {
+        return (true);
     }
 }

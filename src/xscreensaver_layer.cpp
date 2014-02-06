@@ -62,7 +62,7 @@ bool XScreenSaverLayer::open(const char *file) {
     // Get some colors
 
     int blackColor = BlackPixel(dpy, DefaultScreen(dpy));
-    int whiteColor = WhitePixel(dpy, DefaultScreen(dpy));
+    //int whiteColor = WhitePixel(dpy, DefaultScreen(dpy));
 
     // Create the window
     // Window XCreateSimpleWindow(display, parent, x, y, width, height,

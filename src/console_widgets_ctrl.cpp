@@ -219,7 +219,7 @@ bool SlwSelector::feed(int key) {
 }
 
 bool SlwSelector::refresh() {
-    int sellayercol, layercol, pos;
+    int sellayercol = 0, layercol, pos;
 
     /* print info the selected layer */
     blank();

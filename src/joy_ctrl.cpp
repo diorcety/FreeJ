@@ -186,7 +186,7 @@ int JoyController::dispatch() {
 #define LONG(x) ((x)/BITS_PER_LONG)
 #define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
 
-
+/*
 static const char* effect_names[] = {
     (const char*)"Sine vibration",
     (const char*)"Constant Force",
@@ -195,6 +195,7 @@ static const char* effect_names[] = {
     (const char*)"Strong Rumble",
     (const char*)"Weak Rumble"
 };
+*/
 
 bool JoyController::init_rumble(char *devfile) {
     unsigned long features[4];

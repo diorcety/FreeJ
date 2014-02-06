@@ -31,7 +31,6 @@ $Id: $
 
 Filter::Filter()
     : Entry() {
-    int i;
 
     initialized = false;
     active = false;
@@ -41,6 +40,7 @@ Filter::Filter()
 
 }
 
+/*
 static const char *KnownFilters[] = {
 #ifdef WITH_FREI0R
     "Freior",
@@ -50,6 +50,7 @@ static const char *KnownFilters[] = {
 #endif
     "FreeFrame"
 };
+*/
 
 Filter::~Filter() {
 

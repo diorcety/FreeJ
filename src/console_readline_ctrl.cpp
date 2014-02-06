@@ -183,7 +183,7 @@ int SlwReadline::readline(const char *msg,cmd_process_t *proc,cmd_complete_t *co
 
 
 bool SlwReadline::parser_default(int key) {
-    Entry *le, *fe;
+    Entry *le;
     bool res = true;
 
     commandline = false; // print statusline
@@ -198,8 +198,6 @@ bool SlwReadline::parser_default(int key) {
             env->screens.selected()->layers.begin();
             le->sel(true);
         }
-
-        fe = ((Layer*)le)->filters.selected();
 
         // switch over operations and perform
         switch(key) {

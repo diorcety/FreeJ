@@ -41,7 +41,7 @@ ringbuffer_create (size_t sz) {
 
     rb = (ringbuffer_t*) malloc (sizeof (ringbuffer_t));
 
-    for (power_of_two = 1; 1 << power_of_two < sz; power_of_two++);
+    for (power_of_two = 1; (((unsigned int) 1) << power_of_two) < sz; power_of_two++);
 
     rb->size = 1 << power_of_two;
     rb->size_mask = rb->size;

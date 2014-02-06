@@ -44,9 +44,9 @@
 
 FACTORY_REGISTER_INSTANTIATOR(Layer, V4L2CamLayer, CamLayer, v4l2);
 
-Res::Res(int sz) {
+Res::Res(unsigned int sz) {
     m_size = sz;
-    m_sizes = (int(*)[2]) malloc(sz * sizeof(*m_sizes));
+    m_sizes = (unsigned int(*)[2]) malloc(sz * sizeof(*m_sizes));
     m_idx = 0;
     m_curIdx = 0;
 }
@@ -55,7 +55,7 @@ Res::~Res() {
     if(m_sizes) free(m_sizes);
 }
 
-bool Res::addRes(int x, int y, int type) {
+bool Res::addRes(unsigned int x, unsigned int y, int type) {
     if (type == V4L2_FRMSIZE_TYPE_DISCRETE) {
         if (m_idx < (m_size -1)) {
             m_sizes[m_idx][0] = x;
@@ -63,33 +63,33 @@ bool Res::addRes(int x, int y, int type) {
 //       notice( "%dx%d", x, y) ;
             m_idx++;
             return (true);
-        } else
-            return (false);
+        }
     }
+    return (false);
 }
 
-int Res::getNb() {
+unsigned int Res::getNb() {
     return (m_idx);
 }
 
-int Res::getX(int val) {
-    if ((val < m_idx) && (val >= 0))
+unsigned int Res::getX(unsigned int val) {
+    if (val < m_idx) {
         return (m_sizes[val][0]);
-    else {
+    } else {
         return (0);
     }
 }
 
-int Res::getY(int val) {
-    if ((val < m_idx) && (val >= 0))
+unsigned int Res::getY(unsigned int val) {
+    if (val < m_idx) {
         return (m_sizes[val][1]);
-    else {
+    } else {
         return (0);
     }
 }
 
-void Res::setsX(int x) {
-    for (int i; i < m_idx; i++) {
+void Res::setsX(unsigned int x) {
+    for (unsigned int i = 0; i < m_idx; i++) {
         if (x == m_sizes[i][0]) {
             m_curIdx = i;
             break;
@@ -97,7 +97,7 @@ void Res::setsX(int x) {
     }
 }
 
-int Res::getCurIdx() {
+unsigned int Res::getCurIdx() {
     return (m_curIdx);
 }
 
@@ -183,7 +183,7 @@ bool V4L2CamLayer::open(const char *devfile) {
         notice ("format description :%s", fmtdesc.description);
         if (!m_res)
             m_res = new Res (ARRAY_RESOLUTION_SIZE);
-        for (int i=0; ; i++) {
+        for (unsigned int i=0; ; i++) {
             memset(&framesize, 0, sizeof framesize);
             framesize.pixel_format = fmtdesc.pixelformat;
             framesize.index = i;

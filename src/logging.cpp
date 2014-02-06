@@ -36,6 +36,9 @@ int Logger::vprintlog(LogLevel level, const char *format, va_list arg) {
     return 0;
 }
 
+Logger::~Logger() {
+}
+
 Loggable::Loggable() : logger_(NULL), loglevel_(INFO) {
     int r;
     if ((r=pthread_mutex_init(&logger_mutex_, NULL)) != 0)

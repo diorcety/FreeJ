@@ -1,4 +1,5 @@
 # XXX(godog) what's missing? compilation and jar packaging?
+.NOTPARALLEL: 
 swig_source = freej_java.cpp
 swig_header = freej_java.h
 

@@ -69,7 +69,6 @@ void FPS::init(double rate) {
 void FPS::calc() {
 
     timeval done, now_tv;
-    float curr_fps;
 
     gettimeofday(&now_tv, NULL);
 

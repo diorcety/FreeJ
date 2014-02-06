@@ -1,3 +1,4 @@
+.NOTPARALLEL: 
 swig_source = freej_ruby.cpp
 swig_header = freej_ruby.h
 

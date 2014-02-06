@@ -307,6 +307,7 @@ void Context::handle_controllers() {
 
     // peep if there are quit or fullscreen events
     res = SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_KEYEVENTMASK|SDL_QUITMASK);
+    if (res < 0) warning("SDL_PeepEvents error");
 
     // force quit when SDL does
     if (event.type == SDL_QUIT) {
@@ -322,6 +323,7 @@ void Context::handle_controllers() {
                     ViewPort *scr = screens.selected();
                     scr->fullscreen();
                     res = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYEVENTMASK|SDL_QUITMASK);
+                    if (res < 0) warning("SDL_PeepEvents error");
                 }
 
     ctrl = (Controller *)controllers.begin();

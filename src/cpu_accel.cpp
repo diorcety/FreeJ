@@ -57,8 +57,11 @@
 
 #ifdef ARCH_X86
 static __u32 arch_accel (void) {
-    __u32 eax, ebx, ecx, edx;
+#ifndef HAVE_64BIT // XXX HACK!
+    __u32 eax, ebx, ecx;
     int AMD;
+#endif
+    __u32 edx = 0;
     __u32 caps = 0;
 
 #ifndef HAVE_64BIT // XXX HACK!

@@ -86,7 +86,7 @@ JS(js_gc) {
 JS(cafudda) {
     //  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
     double *pdouble;
-    double seconds;
+    double seconds = 0.0;
     int isecs;
 
     if(argc>0) {

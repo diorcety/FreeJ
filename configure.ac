@@ -5,16 +5,11 @@ dnl ==============================================================
 dnl require autoconf 2.62 (AS_ECHO/AS_ECHO_N)
 AC_PREREQ([2.62])
 
-AC_INIT([FreeJ],[1.0],[freej@lists.dyne.org],[freej])
+AC_INIT([FreeJ],[1.0],[freej@lists.dyne.org],[freej],[http://freej.dyne.org])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([.])
 
 AC_CANONICAL_HOST
-
-dnl backwards compatibility for autoconf >= 2.64
-dnl PACKAGE_URL should be the fifth argument of AC_INIT
-m4_define([AC_PACKAGE_URL], [http://freej.dyne.org])
-AC_DEFINE(PACKAGE_URL, "AC_PACKAGE_URL", [Package URL])
-AC_SUBST(PACKAGE_URL, AC_PACKAGE_URL)
 
 dnl ==============================================================
 dnl Get the operating system and version number...
@@ -92,7 +87,7 @@ dnl ==============================================================
 dnl Setup for automake
 dnl ==============================================================
 
-AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
+AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_CONFIG_SRCDIR([src/freej.cpp])
@@ -682,12 +677,12 @@ if test x$have_mozjs = xyes; then
   CPPFLAGS="$MOZJS_CFLAGS"
   dnl strip -L<arg> from MOZJS_LIBS
   LDFLAGS=`echo $MOZJS_LIBS | sed 's/-L \?[^ ]*//g'`
-  AC_RUN_IFELSE([
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <jsapi.h>
 int main() {
  JSRuntime *jsr = JS_NewRuntime(8L * 1024L * 1024L);
 return 0;
-}],
+}]])],
   [have_mozjs_linkable=yes], [have_mozjs_linkable=no],
   [have_mozjs_linkable=no]) dnl action if cross-compiling
   FREEJ_RESTORE_FLAGS
@@ -966,6 +961,8 @@ FREEJ_CFLAGS="\$(FREEJ_STATIC_CFLAGS) \
     \$(UNICAP_CFLAGS)   \
     \$(CAIRO_CFLAGS)    \
     \$(XIPH_CFLAGS)"
+dnl Strict
+FREEJ_CFLAGS="$FREEJ_CFLAGS -Wall -Wno-unused-function -Wno-deprecated-declarations -Werror"
 AC_SUBST(FREEJ_CFLAGS)
 
 FREEJ_STATIC_LIBS="\$(top_builddir)/lib/ccvt/libccvt.la \

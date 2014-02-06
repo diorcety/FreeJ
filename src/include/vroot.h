@@ -91,7 +91,7 @@ VirtualRootWindowOfScreen(screen) Screen *screen;
     if (screen != save_screen) {
         Display *dpy = DisplayOfScreen(screen);
         Atom __SWM_VROOT = None;
-        int i;
+        unsigned int i;
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
 

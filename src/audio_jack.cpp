@@ -41,11 +41,11 @@ std::map<int,JackClient::JackPort*> JackClient::m_OutputPortMap;
 ///////////////////////////////////////////////////////
 
 JackClient::JackClient() :
+    audio_mix_ring(NULL),
+    m_ringbuffer(NULL),
+    m_inbuf(NULL),
     m_NextInputID(0),
     m_NextOutputID(0),
-    m_inbuf(NULL),
-    m_ringbuffer(NULL),
-    audio_mix_ring(NULL),
     m_Encoded(false) {
 }
 
@@ -164,7 +164,7 @@ int JackClient::Process(jack_nframes_t nframes, void *self) {
                 //the encoder is in action
                 if (!j) {	//only streams the 1st Jack Input port
                     if (ringbuffer_write_space (((JackClient*) self)->first) >= (sizeof (sample_t) * nframes)) {
-                        size_t rf = ringbuffer_write (((JackClient*) self)->first, (char *)in, (sizeof (sample_t) * nframes));
+                        ringbuffer_write (((JackClient*) self)->first, (char *)in, (sizeof (sample_t) * nframes));
                     }
                     /*		    else
                     		    {

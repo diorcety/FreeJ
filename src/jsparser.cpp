@@ -466,8 +466,6 @@ int JsParser::open(const char* script_file) {
 
 int JsParser::open(JSContext *cx, JSObject *obj, const char* script_file) {
     func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-    jsval res;
-    JSBool eval_res = JS_TRUE;
     FILE *fd;
     char *buf = NULL;
     int len;
@@ -503,8 +501,8 @@ JSClass UseScriptClass = {
 // compile a script and root it to an object
 int JsParser::use(JSContext *cx, JSObject *obj, const char* script_file) {
     func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-    JSObject *scriptObject;
-    JSScript *script;
+    JSObject *scriptObject = NULL;
+    JSScript *script = NULL;
     FILE *fd;
     char *buf = NULL;
     int len;
@@ -594,8 +592,6 @@ void js_usescript_gc(JSContext *cx, JSObject *obj) {
 int JsParser::parse(const char *command) {
     func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
     int eval_res;
-    jsval res;
-    JSString *str;
 
     if(!command) { /* true paranoia */
         warning("NULL command passed to javascript parser");
@@ -653,7 +649,6 @@ char* JsParser::readFile(FILE *file, int *len) {
 }
 
 int JsParser::reset() {
-    JSContext *cx = NULL;
     int i = 0;
 
     JsExecutionContext *ecx = runtimes.begin();
@@ -668,7 +663,7 @@ int JsParser::reset() {
 int JsParser::evaluate(JSContext *cx, JSObject *obj,
                        const char *name, const char *buf, unsigned int len) {
     jsval res;
-    unsigned int lineno;
+    unsigned int lineno = 0;
     JSBool eval_res = JS_TRUE;
 
     func("JS evaluating script on object %p", __PRETTY_FUNCTION__, obj);

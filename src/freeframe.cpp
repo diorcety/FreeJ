@@ -78,7 +78,7 @@ void Freeframe::init_parameters(Linklist<Parameter> &parameters) {
 }
 
 int Freeframe::open(char *file) {
-    plugMainType *plgMain;
+    plugMainType *plgMain = NULL;
 
     if(opened) {
         error("Freeframe object %p has already opened file %s",this, filename);

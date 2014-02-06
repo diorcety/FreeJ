@@ -82,7 +82,7 @@ bool XGrabLayer::open(uint32_t win_id_new) {
         return 0;
 
     char errmsg[MAX_ERR_MSG];
-    XErrorHandler old_h = XSetErrorHandler(bad_window_handler);
+    /*XErrorHandler old_h =*/ XSetErrorHandler(bad_window_handler);
 // check win id ok
 //set_filename(display_name); <- win title ...
 

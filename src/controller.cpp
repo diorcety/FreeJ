@@ -114,7 +114,7 @@ int Controller::JSCall(const char *funcname, int argc, jsval *argv) {
 }
 
 int Controller::JSCall(const char *funcname, int argc, const char *format, ...) {
-    int res;
+    int res = 0;
     jsval *argv;
     va_list args;
     ControllerListener *listener = listeners.begin();
@@ -140,7 +140,7 @@ int Controller::JSCall(const char *funcname, int argc, const char *format, ...) 
 ControllerListener::ControllerListener(JSContext *cx, JSObject *obj) {
     jsContext = cx;
     jsObject = obj;
-    frameFunc = NULL;
+    frameFunc = (int)NULL;
 }
 
 ControllerListener::~ControllerListener() {

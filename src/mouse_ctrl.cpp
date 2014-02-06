@@ -129,8 +129,6 @@ typedef struct{
 */
 
 int MouseController::motion(int state, int x, int y, int xrel, int yrel) {
-    jsval ret = JSVAL_VOID;
-
     jsval js_data[] = {
         INT_TO_JSVAL(state),
         INT_TO_JSVAL(x), INT_TO_JSVAL(y),
@@ -144,8 +142,6 @@ int MouseController::motion(int state, int x, int y, int xrel, int yrel) {
 }
 
 int MouseController::button(int button, int state, int x, int y) {
-    jsval ret = JSVAL_VOID;
-
     jsval js_data[] = {
         INT_TO_JSVAL(button),
         INT_TO_JSVAL(state),

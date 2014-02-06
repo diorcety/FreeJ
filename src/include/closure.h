@@ -157,7 +157,7 @@ public:
                 throw Error("Preliminary lock of cond_mutex_", r);
         }
     }
-    ~Closure() {
+    virtual ~Closure() {
         if (synchronized_) {
             int r;
             if ((r=pthread_mutex_unlock(&cond_mutex_)) != 0)
