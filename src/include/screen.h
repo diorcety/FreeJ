@@ -31,6 +31,7 @@
 
 
 #include <closure.h>
+#include <sharedptr.h>
 #include <linklist.h>
 #include <ringbuffer.h>
 
@@ -90,6 +91,7 @@ class VideoEncoder;
 */
 
 class ViewPort : public Entry {
+    SHARED_PTR(ViewPort);
     friend class Layer;
 public:
     ViewPort();

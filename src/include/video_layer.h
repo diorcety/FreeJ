@@ -22,7 +22,9 @@
 #include <config.h>
 #include <inttypes.h>
 
+#ifndef UINT64_C
 #define UINT64_C uint64_t
+#endif //UINT64_C
 extern "C" {
 #ifdef HAVE_LIBAVCODEC_AVCODEC_H
 #   include <libavcodec/avcodec.h>
