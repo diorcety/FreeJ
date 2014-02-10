@@ -52,7 +52,7 @@ FPS::FPS() {
 }
 
 FPS::~FPS() {
-    free(fpsd.data);
+    delete[] fpsd.data;
 
 }
 void FPS::init(double rate) {
