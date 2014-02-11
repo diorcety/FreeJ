@@ -154,7 +154,7 @@ JS(js_audio_jack_add_layer) {
     if(!lay) JS_ERROR("Layer core data is NULL");
 
     if(!lay->screen) {
-        error("layer %s is not added to any screen", lay->name);
+        error("layer %s is not added to any screen", lay->getName().c_str());
         *rval = JSVAL_FALSE;
         return JS_TRUE;
     }

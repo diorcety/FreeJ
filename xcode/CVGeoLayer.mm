@@ -30,7 +30,7 @@ CVGeoLayer::CVGeoLayer()
     type = Layer::GL_COCOA;
     blendMode = [[NSString stringWithFormat:@"Overlay"] retain];
     input = [[CVLayerController alloc] init]; // create a new layer-controller
-    set_name("CVGeoLayer"); // and set our name
+    setName("CVGeoLayer"); // and set our name
     if (input)
         setController(input);
 }
@@ -41,7 +41,7 @@ CVGeoLayer::CVGeoLayer(CVLayerController *vin) : CVCocoaLayer(this, vin), GeoLay
     type = Layer::GL_COCOA;
     blendMode = [[NSString stringWithFormat:@"Overlay"] retain];
     input = [vin retain];
-    set_name("CVGeoLayer");
+    setName("CVGeoLayer");
     if (input)
         setController(input);
 }

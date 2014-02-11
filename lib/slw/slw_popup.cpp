@@ -27,7 +27,7 @@
 SLW_Popup::SLW_Popup()
 	: SLangWidget() {
 
-	set_name("popup");
+	setName("popup");
 	txt = NULL;
 	len = 0;
 
@@ -42,8 +42,7 @@ SLW_Popup::~SLW_Popup() {
 bool SLW_Popup::init() {
 
 	if(!console) {
-		fprintf(stderr, "can't initialize widget '%s': not places on console",
-				name);
+		fprintf(stderr, "can't initialize widget '%s': not places on console", name.c_str());
 		return false;
 	}
 

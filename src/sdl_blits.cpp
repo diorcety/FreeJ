@@ -113,7 +113,7 @@ void setup_sdl_blits(Blitter *blitter) {
 
     // SDL blits
     b = new Blit();
-    b->set_name("SDL");
+    b->setName("SDL");
     sprintf(b->desc,"RGB blit (SDL)");
     b->type = Blit::SDL;
     b->sdl_fun = sdl_rgb;
@@ -124,14 +124,14 @@ void setup_sdl_blits(Blitter *blitter) {
     /////////////
 
     b = new Blit();
-    b->set_name("ALPHA");
+    b->setName("ALPHA");
     sprintf(b->desc,"alpha blit (SDL)");
     b->type = Blit::SDL;
     b->sdl_fun = sdl_alpha;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "alpha");
+    p->setName("alpha");
     strcpy(p->description, "level of transparency of alpha channel (0.0 - 1.0)");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -139,19 +139,19 @@ void setup_sdl_blits(Blitter *blitter) {
     /////////////
 
     b = new Blit();
-    b->set_name("SRCALPHA");
+    b->setName("SRCALPHA");
     sprintf(b->desc,"source alpha blit (SDL)");
     b->type = Blit::SDL;
     b->sdl_fun = sdl_srcalpha;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "alpha");
+    p->setName("alpha");
     strcpy(p->description, "level of transparency of alpha channel (0.0 - 1.0)");
     p->multiplier = 255.0;
     b->parameters.append(p);
 
-//   b = new Blit(); b->set_name("CHROMAKEY");
+//   b = new Blit(); b->setName("CHROMAKEY");
 //   sprintf(b->desc,"chromakey blit (SDL)");
 //   b->type = Blit::SDL; b->has_value = true;
 //   b->sdl_fun = sdl_chromakey;

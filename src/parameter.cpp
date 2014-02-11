@@ -64,7 +64,7 @@ Parameter::Parameter(Parameter::Type param_type)
     filter_set_f = NULL;
     filter_get_f = NULL;
 
-    set_name("unnamed");
+    setName("unnamed");
     strcpy(description, " ");
 }
 
@@ -82,13 +82,13 @@ bool Parameter::set(void *val) {
         func("%s NUMBER %g (mult %g)",__PRETTY_FUNCTION__, v, multiplier);
         // range check (input is always 0.0 - 1.0)
         if((v<0.0) || (v>1.0)) {
-            error("%s parameter: value %.2f out of range", name, v);
+            error("%s parameter: value %.2f out of range", name.c_str(), v);
             return(false);
         }
         // apply multiplier for internal value storage
         if(multiplier!= 1.0)
             v = v * multiplier;
-        func("parameter %s set to %.2f", name, v);
+        func("parameter %s set to %.2f", name.c_str(), v);
         // store value
         *(double*)value = v;
 
@@ -147,7 +147,7 @@ bool Parameter::parse(char *p) {
         double val;
         func("parsing number parameter");
         if( sscanf(p, "%le", &val) < 1 ) {
-            error("error parsing value [%s] for parameter %s", p, name);
+            error("error parsing value [%s] for parameter %s", p, name.c_str());
             return false;
         }
         func("parameter %s parsed to %g", p, val);
@@ -160,7 +160,7 @@ bool Parameter::parse(char *p) {
         char *pp;
         for( pp=p; (*pp!='1') & (*pp!='0') ; pp++) {
             if(pp-p>128) {
-                error("error parsing value [%s] for parameter %s", p, name);
+                error("error parsing value [%s] for parameter %s", p, name.c_str());
                 return false;
             }
         }
@@ -176,7 +176,7 @@ bool Parameter::parse(char *p) {
         double val[2];
 
         if( sscanf(p, "%le %le", &val[0], &val[1]) < 1 ) {
-            error("error parsing position [%s] for parameter %s", p, name);
+            error("error parsing position [%s] for parameter %s", p, name.c_str());
             return false;
         }
         func("parameter %s parsed to %g %g",p, val[0], val[1]);
@@ -188,7 +188,7 @@ bool Parameter::parse(char *p) {
         double val[3];
 
         if( sscanf(p, "%le %le %le", &val[0], &val[1], &val[2]) < 1 ) {
-            error("error parsing position [%s] for parameter %s", p, name);
+            error("error parsing position [%s] for parameter %s", p, name.c_str());
             return false;
         }
         func("parameter %s parsed to %le %le %le",p, val[0], val[1], val[2]);

@@ -202,7 +202,7 @@ void setup_linear_blits(Blitter *blitter) {
     Parameter *p;
 
     b = new Blit();
-    b->set_name("RGB");
+    b->setName("RGB");
     sprintf(b->desc, "RGB blit (jmemcpy)");
     b->type = Blit::LINEAR;
     b->fun = rgb_jmemcpy;
@@ -211,119 +211,119 @@ void setup_linear_blits(Blitter *blitter) {
     blitter->default_blit = b; // default is RGB
 
     b = new Blit();
-    b->set_name("ADD");
+    b->setName("ADD");
     sprintf(b->desc,"bytewise addition");
     b->type = Blit::LINEAR;
     b->fun = schiffler_add;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("SUB");
+    b->setName("SUB");
     sprintf(b->desc,"bytewise subtraction");
     b->type = Blit::LINEAR;
     b->fun = schiffler_sub;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("MEAN");
+    b->setName("MEAN");
     sprintf(b->desc,"bytewise mean");
     b->type = Blit::LINEAR;
     b->fun = schiffler_add;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("ABSDIFF");
+    b->setName("ABSDIFF");
     sprintf(b->desc,"absolute difference");
     b->type = Blit::LINEAR;
     b->fun = schiffler_absdiff;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("MULT");
+    b->setName("MULT");
     sprintf(b->desc,"multiplication");
     b->type = Blit::LINEAR;
     b->fun = schiffler_mult;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("MULTNOR");
+    b->setName("MULTNOR");
     sprintf(b->desc,"normalized multiplication");
     b->type = Blit::LINEAR;
     b->fun = schiffler_multnor;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("DIV");
+    b->setName("DIV");
     sprintf(b->desc,"division");
     b->type = Blit::LINEAR;
     b->fun = schiffler_div;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("MULTDIV2");
+    b->setName("MULTDIV2");
     sprintf(b->desc,"multiplication and division by 2");
     b->type = Blit::LINEAR;
     b->fun = schiffler_multdiv2;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("MULTDIV4");
+    b->setName("MULTDIV4");
     sprintf(b->desc,"multiplication and division by 4");
     b->type = Blit::LINEAR;
     b->fun = schiffler_multdiv4;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("AND");
+    b->setName("AND");
     sprintf(b->desc,"bitwise and");
     b->type = Blit::LINEAR;
     b->fun = schiffler_and;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("OR");
+    b->setName("OR");
     sprintf(b->desc,"bitwise or");
     b->type = Blit::LINEAR;
     b->fun = schiffler_or;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("XOR");
+    b->setName("XOR");
     sprintf(b->desc,"bitwise xor");
     b->type = Blit::LINEAR;
     b->fun = blit_xor;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("RED");
+    b->setName("RED");
     sprintf(b->desc,"red channel only blit");
     b->type = Blit::LINEAR;
     b->fun = red_channel;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("GREEN");
+    b->setName("GREEN");
     sprintf(b->desc,"green channel only blit");
     b->type = Blit::LINEAR;
     b->fun = green_channel;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("BLUE");
+    b->setName("BLUE");
     sprintf(b->desc,"blue channel only blit");
     b->type = Blit::LINEAR;
     b->fun = blue_channel;
     blitter->blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("REDMASK");
+    b->setName("REDMASK");
     sprintf(b->desc,"red channel threshold mask");
     b->type = Blit::LINEAR;
     b->fun = red_mask;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "bit threshold");
+    p->setName("bit threshold");
     strcpy(p->description, "bitmask threshold to apply to the red channel");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -331,14 +331,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("GREENMASK");
+    b->setName("GREENMASK");
     sprintf(b->desc,"green channel threshold mask");
     b->type = Blit::LINEAR;
     b->fun = green_mask;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "bit threshold");
+    p->setName("bit threshold");
     strcpy(p->description, "bitmask threshold to apply to the green channel");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -346,14 +346,14 @@ void setup_linear_blits(Blitter *blitter) {
     ////////
 
     b = new Blit();
-    b->set_name("BLUEMASK");
+    b->setName("BLUEMASK");
     sprintf(b->desc,"blue channel threshold mask");
     b->type = Blit::LINEAR;
     b->fun = blue_mask;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "bit threshold");
+    p->setName("bit threshold");
     strcpy(p->description, "bitmask threshold to apply to the blue channel");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -361,7 +361,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("NEG");
+    b->setName("NEG");
     sprintf(b->desc,"bitwise negation");
     b->type = Blit::LINEAR;
     b->fun = schiffler_neg;
@@ -370,14 +370,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("ADDB");
+    b->setName("ADDB");
     sprintf(b->desc,"add byte to bytes");
     b->type = Blit::LINEAR;
     b->fun = schiffler_addbyte;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "byte increment");
+    p->setName("byte increment");
     strcpy(p->description, "amount to sum to the byte");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -385,14 +385,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("ADDBH");
+    b->setName("ADDBH");
     sprintf(b->desc,"add byte to half");
     b->type = Blit::LINEAR;
     b->fun = schiffler_addbytetohalf;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "half byte increment");
+    p->setName("half byte increment");
     strcpy(p->description, "amount to sum to the half byte");
     p->multiplier = 127.0;
     b->parameters.append(p);
@@ -400,14 +400,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("SUBB");
+    b->setName("SUBB");
     sprintf(b->desc,"subtract byte to bytes");
     b->type = Blit::LINEAR;
     b->fun = schiffler_subbyte;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "byte decrement");
+    p->setName("byte decrement");
     strcpy(p->description, "amount to substract to the pixel bytes");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -415,14 +415,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("SHL");
+    b->setName("SHL");
     sprintf(b->desc,"shift left bits");
     b->type = Blit::LINEAR;
     b->fun = schiffler_shl;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "byte decrement");
+    p->setName("byte decrement");
     strcpy(p->description, "amount to substract to the pixel bytes");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -430,14 +430,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("SHLB");
+    b->setName("SHLB");
     sprintf(b->desc,"shift left byte");
     b->type = Blit::LINEAR;
     b->fun = schiffler_shlb;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "shift bits");
+    p->setName("shift bits");
     strcpy(p->description, "amount of left bit shifts to apply on each pixel's byte");
     p->multiplier = 8.0;
     b->parameters.append(p);
@@ -445,14 +445,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("SHR");
+    b->setName("SHR");
     sprintf(b->desc,"shift right bits");
     b->type = Blit::LINEAR;
     b->fun = schiffler_shr;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "shift bits");
+    p->setName("shift bits");
     strcpy(p->description, "amount of right bit shifts to apply on each pixel's byte");
     p->multiplier = 8.0;
     b->parameters.append(p);
@@ -460,14 +460,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("MULB");
+    b->setName("MULB");
     sprintf(b->desc,"multiply by byte");
     b->type = Blit::LINEAR;
     b->fun = schiffler_mulbyte;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "byte multiplier");
+    p->setName("byte multiplier");
     strcpy(p->description, "amount to multiply on each pixel's byte");
     p->multiplier = 255.0;
     b->parameters.append(p);
@@ -475,14 +475,14 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     b = new Blit();
-    b->set_name("BIN");
+    b->setName("BIN");
     sprintf(b->desc,"binarize using threshold");
     b->type = Blit::LINEAR;
     b->fun = schiffler_binarize;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
-    strcpy(p->name, "threshold");
+    p->setName("threshold");
     strcpy(p->description, "binary threshold value");
     p->multiplier = 255.0;
     b->parameters.append(p);

@@ -68,8 +68,8 @@ bool Filter::apply(Layer *lay, FilterInstance *instance) {
     errno=0;
     instance->outframe = (uint32_t*) calloc(lay->geo.bytesize, 1);
     if(errno != 0) {
-        error("calloc outframe failed (%i) applying filter %s",errno, name);
-        error("Filter %s cannot be instantiated", name);
+        error("calloc outframe failed (%i) applying filter %s", errno, name.c_str());
+        error("Filter %s cannot be instantiated", name.c_str());
         delete instance;
         return NULL;
     }
@@ -78,7 +78,7 @@ bool Filter::apply(Layer *lay, FilterInstance *instance) {
 
     lay->filters.append(instance);
 
-    act("initialized filter %s on layer %s", name, lay->name);
+    act("initialized filter %s on layer %s", name.c_str(), lay->getName().c_str());
 
     instance->set_layer(lay);
 

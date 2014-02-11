@@ -54,7 +54,7 @@ JSP(parameter_get_name) {
         JS_ERROR("Parameter used has no internal data");
     } else {
         JS_BeginRequest(cx);
-        str  = JS_NewStringCopyZ(cx, param->name);
+        str  = JS_NewStringCopyZ(cx, param->getName().c_str());
         *vp = STRING_TO_JSVAL(str);
         JS_EndRequest(cx);
     }

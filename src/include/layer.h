@@ -127,9 +127,6 @@ public:
 
     virtual bool set_parameter(int idx); ///< activate the setting on parameter pointed by idx index number
 
-    char *get_name() {
-        return name;
-    };
     char *get_filename() {
         return filename;
     };

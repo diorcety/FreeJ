@@ -147,12 +147,12 @@ int Plugger::refresh(Context *env) {
                         if(fr->info.plugin_type == F0R_PLUGIN_TYPE_FILTER) {
                             env->filters.append(fr);
 
-                            func("found frei0r filter: %s (%p)", fr->name, fr);
+                            func("found frei0r filter: %s (%p)", fr->getName().c_str(), fr);
                             continue;
 
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_SOURCE) {
                             env->generators.append(fr);
-                            func("found frei0r generator: %s (%p)", fr->name, fr);
+                            func("found frei0r generator: %s (%p)", fr->getName().c_str(), fr);
                             continue;
 
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_MIXER2) {

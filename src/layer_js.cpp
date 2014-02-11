@@ -79,7 +79,7 @@ void js_layer_gc (JSContext *cx, JSObject *obj) {
     l = (Layer *) JS_GetPrivate(cx, obj);
 
     if(l) {
-        func("js gc deleting layer %s", l->name);
+        func("js gc deleting layer %s", l->getName().c_str());
         //	l->data = NULL; // Entry~ calls free(data)
         delete l;
     }
@@ -176,7 +176,7 @@ JS(layer_list_blits) {
     b = lay->blitter->blitlist.begin();
     while(b) {
 
-        str = JS_NewStringCopyZ(cx, b->name);
+        str = JS_NewStringCopyZ(cx, b->getName().c_str());
         val = STRING_TO_JSVAL(str);
         JS_SetElement(cx, arr, c, &val);
         c++;
@@ -212,7 +212,7 @@ JS(layer_get_blit) {
 
     GET_LAYER(Layer);
 
-    char *blit_type=lay->current_blit->name;
+    const char *blit_type=lay->current_blit->getName().c_str();
     JSString *str = JS_NewStringCopyZ(cx, blit_type);
     *rval = STRING_TO_JSVAL(str);
 
@@ -250,12 +250,12 @@ JS(layer_set_blit_value) {
     // (basically we keep this for backward compat)
 
     if(!lay->current_blit)
-        error("layer %s has no blit selected (not added yet?)", lay->name);
+        error("layer %s has no blit selected (not added yet?)", lay->getName().c_str());
     else
         p = lay->current_blit->parameters.begin();
 
     if(!p)
-        warning("no blit parameter found on layer %s", lay->name);
+        warning("no blit parameter found on layer %s", lay->getName().c_str());
     else
         p->set((void*)&value);
 
@@ -337,7 +337,7 @@ JS(layer_add_filter) {
     JS_EndRequest(cx);
 
     if(filter_instance->inuse()) {
-        error("filter %s is already in use", filter_instance->proto->name);
+        error("filter %s is already in use", filter_instance->proto->getName().c_str());
         return JS_TRUE;
     }
 
@@ -480,13 +480,13 @@ JSP(layer_set_name) {
     func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
     GET_LAYER(Layer);
     char *nn = js_get_string(*vp);
-    lay->set_name(nn);
+    lay->setName(nn);
     return JS_TRUE;
 }
 JSP(layer_get_name) {
     func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
     GET_LAYER(Layer);
-    JSString *nn = JS_NewStringCopyZ(cx, lay->get_name());
+    JSString *nn = JS_NewStringCopyZ(cx, lay->getName().c_str());
     *vp = STRING_TO_JSVAL(nn);
     return JS_TRUE;
 }
@@ -565,7 +565,7 @@ JSP(layer_list_parameters) {
     Parameter *parm = (Parameter*)lay->parameters->begin();
     int c = 0;
     while(parm) {
-        str = JS_NewStringCopyZ(cx, parm->name);
+        str = JS_NewStringCopyZ(cx, parm->getName().c_str());
         val = STRING_TO_JSVAL(str);
         JS_SetElement(cx, arr, c, &val);
         c++;

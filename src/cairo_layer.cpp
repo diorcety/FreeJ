@@ -59,7 +59,7 @@ CairoLayer::CairoLayer()
     color = NULL;
     saved_color = NULL;
 
-    set_name("VEC");
+    setName("VEC");
     set_filename("/vector layer");
     jsclass = &vector_layer_class;
 }

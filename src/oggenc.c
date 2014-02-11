@@ -87,7 +87,7 @@ int myOggfwd_init( const char* outIceIp, int outIcePort, const char* outIcePass,
 	
   if (description)  shout_set_description(myShout, description);
   if (genre)        shout_set_genre(myShout, genre);
-  if (name)         shout_set_name(myShout, name);
+  if (name)         shout_setName(myShout, name);
   if (url)          shout_set_url(myShout, url);
 	
   if (shout_open(myShout) == SHOUTERR_SUCCESS) {

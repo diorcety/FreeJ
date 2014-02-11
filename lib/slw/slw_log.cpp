@@ -28,7 +28,7 @@
 SLW_Log::SLW_Log()
 	: SLangWidget() {
 
-	set_name("log");
+	setName("log");
 	textconsole = NULL;
 	scrolling = false;
 
@@ -43,7 +43,7 @@ SLW_Log::~SLW_Log() {
 bool SLW_Log::init() {
 
   if(!console) {
-    fprintf(stderr, "can't initialize widget '%s': not placed on console", name);
+    fprintf(stderr, "can't initialize widget '%s': not placed on console", name.c_str());
     return false;
   }
 

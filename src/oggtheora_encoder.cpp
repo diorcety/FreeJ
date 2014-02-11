@@ -60,7 +60,7 @@ OggTheoraEncoder::OggTheoraEncoder()
     theora_comment_init(&oggmux.tc);
 
 
-    set_name("encoder/theora");
+    setName("encoder/theora");
 
 }
 

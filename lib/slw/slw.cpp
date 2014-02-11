@@ -29,7 +29,7 @@ SLangWidget::SLangWidget()
   int c;
   
   // real name will be set by inheriting widget
-  set_name("unknown");
+  setName("unknown");
   
   // reset geometry
   w = 0;
@@ -205,18 +205,17 @@ void SLangWidget::blank() {
 bool SLangWidget::check(int x, int y) {
 
   if(!console) { // check if its placed
-    fprintf(stderr, "can't draw on unplaced widget '%s'", name);
+    fprintf(stderr, "can't draw on unplaced widget '%s'", name.c_str());
     return false;
   }
   
   if(!initialized) { // check if its initialized
-    fprintf(stderr, "can't operate on non initialized widget '%s'",name);
+    fprintf(stderr, "can't operate on non initialized widget '%s'", name.c_str());
     return false;
   }
   
   if( x>w || y>h ) { // check bounds
-    fprintf(stderr, "position out of bounds (%u,%u) in widget '%s'",
-	    x, y, name);
+    fprintf(stderr, "position out of bounds (%u,%u) in widget '%s'", x, y, name.c_str());
     return false;
   }
   return true;
@@ -253,11 +252,11 @@ void SLangWidget::set_color(int col) {
   case 35:
   case 36:
   case 37:
-    func("color of widget %s set to %u",name, col);
+    func("color of widget %s set to %u", name.c_str(), col);
     color = col;
     break;
   default:
-    fprintf(stderr, "invalid color %u selected for widget %s", col, name);
+    fprintf(stderr, "invalid color %u selected for widget %s", col, name.c_str());
     break;
   }
 }

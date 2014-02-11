@@ -185,7 +185,7 @@ Context::~Context() {
 bool Context::add_screen(ViewPort *scr) {
 
     if(!scr->initialized) {
-        error("can't add screen %s - not initialized yet",scr->name);
+        error("can't add screen %s - not initialized yet",scr->getName().c_str());
         error("use init( width, height, bits_per_pixel )");
         return false;
     }
@@ -193,8 +193,8 @@ bool Context::add_screen(ViewPort *scr) {
     screens.sel(0);
     scr->sel(true);
     screen = screens.begin();
-    func("screen %s successfully added", scr->name);
-    act("screen %s now on top",screen->name);
+    func("screen %s successfully added", scr->getName().c_str());
+    act("screen %s now on top",screen->getName().c_str());
 
     return(true);
 }
@@ -353,7 +353,7 @@ bool Context::register_controller(Controller *ctrl) {
     }
 
     if(! ctrl->initialized ) {
-        func("initialising controller %s (%p)",ctrl->name, ctrl);
+        func("initialising controller %s (%p)",ctrl->getName().c_str(), ctrl);
 
         ctrl->init(this);
 
@@ -364,13 +364,13 @@ bool Context::register_controller(Controller *ctrl) {
     } else
         warning("controller was already initialised on this context");
 
-    func("controller %s initialized", ctrl->name);
+    func("controller %s initialized", ctrl->getName().c_str());
 
     ctrl->active = true;
 
     controllers.append(ctrl);
 
-    act("registered %s controller", ctrl->name);
+    act("registered %s controller", ctrl->getName().c_str());
     return true;
 }
 
@@ -385,7 +385,7 @@ bool Context::rem_controller(Controller *ctrl) {
 
     ctrl->active = false;
     ctrl->rem();
-    act("removed controller %s", ctrl->name);
+    act("removed controller %s", ctrl->getName().c_str());
     delete ctrl;
 
     return true;
@@ -397,7 +397,7 @@ bool Context::add_encoder(VideoEncoder *enc) {
     ViewPort *scr;
     scr = screens.selected();
     if(!scr) {
-        error("no screen initialized, can't add encoder %s", enc->name);
+        error("no screen initialized, can't add encoder %s", enc->getName().c_str());
         return(false);
     }
     return( scr->add_encoder(enc) );
@@ -413,7 +413,7 @@ bool Context::add_layer(Layer *lay) {
 
     ViewPort *scr = screens.selected();
     if(!scr) {
-        error("no screen initialized, can't add layer %s", lay->name);
+        error("no screen initialized, can't add layer %s", lay->getName().c_str());
         return(false);
     }
     return( scr->add_layer(lay) );
@@ -621,7 +621,7 @@ Layer *Context::open(char *file, int w, int h) {
             return NULL;
         }
         if(! nlayer->init( uw, uh, 32 ) ) {
-            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+            error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
             delete nlayer;
             return NULL;
         }
@@ -643,7 +643,7 @@ Layer *Context::open(char *file, int w, int h) {
 #ifdef WITH_FFMPEG
             nlayer = Factory<Layer>::new_instance("MovieLayer");
             if(!nlayer->init()) {
-                error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+                error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                 delete nlayer;
                 return NULL;
             }
@@ -661,7 +661,7 @@ Layer *Context::open(char *file, int w, int h) {
 //		strncasecmp((end_file_ptr-4),".png",4)==0)
                 nlayer = new ImageLayer();
                 if(!nlayer->init()) {
-                    error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+                    error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                     delete nlayer;
                     return NULL;
                 }
@@ -676,7 +676,7 @@ Layer *Context::open(char *file, int w, int h) {
                     nlayer = new TextLayer();
 
                     if(!nlayer->init()) {
-                        error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+                        error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                         delete nlayer;
                         return NULL;
                     }
@@ -698,7 +698,7 @@ Layer *Context::open(char *file, int w, int h) {
                         nlayer = new XScreenSaverLayer();
 
                         if(!nlayer->init(w, h, 32)) {
-                            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+                            error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                             delete nlayer;
                             return NULL;
                         }
@@ -719,7 +719,7 @@ Layer *Context::open(char *file, int w, int h) {
                         nlayer = new GoomLayer();
 
                         if(!nlayer->init( this )) {
-                            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+                            error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                             delete nlayer;
                             return NULL;
                         }
@@ -735,7 +735,7 @@ Layer *Context::open(char *file, int w, int h) {
 
                         nlayer = new FlashLayer();
                         if(!nlayer->init( )) {
-                            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+                            error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                             delete nlayer;
                             return NULL;
                         }

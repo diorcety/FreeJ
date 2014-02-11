@@ -47,7 +47,7 @@ FACTORY_REGISTER_INSTANTIATOR(Controller, TriggerController, TriggerController, 
 
 TriggerController::TriggerController()
     :Controller() {
-    set_name("Trigger");
+    setName("Trigger");
     /* we are going to be used as a singleton, so we don't want
        our instance to be destruncted before the program ends */
     indestructible = true;

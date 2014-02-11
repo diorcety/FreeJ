@@ -112,7 +112,7 @@ V4L2CamLayer::V4L2CamLayer()
     buffers = NULL;
     nb_sizes = 0;
     m_res = NULL;
-    set_name("V4L2");
+    setName("V4L2");
 }
 
 V4L2CamLayer::~V4L2CamLayer() {

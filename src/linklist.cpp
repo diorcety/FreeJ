@@ -42,15 +42,18 @@ Entry::Entry() {
     jsclass = NULL;
     jsobj = NULL;
     select = false;
-    memset(name, 0, sizeof(name));
 }
 
 Entry::~Entry() {
     rem();
 }
 
-void Entry::set_name(const char *nn) {
-    strncpy(name,nn,sizeof(name)-1);
+void Entry::setName(const std::string &name) {
+    this->name = name;
+}
+
+const std::string &Entry::getName() const {
+    return name;
 }
 
 bool Entry::up() {

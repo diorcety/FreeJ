@@ -273,7 +273,7 @@ JSP(screen_list_layers) {
             func("TESTING: reusing layer jsobj %p", lay->jsobj);
             objtmp = lay->jsobj;
         } else {
-            func("TESTING: creating a jsobj for layer %s", lay->name);
+            func("TESTING: creating a jsobj for layer %s", lay->getName().c_str());
             objtmp = JS_NewObject(cx, lay->jsclass, NULL, obj);
             JS_SetPrivate(cx,objtmp,(void*) lay);
         }

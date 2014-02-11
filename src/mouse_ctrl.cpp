@@ -83,7 +83,7 @@ JS(js_mouse_grab) {
 
 MouseController::MouseController()
     :SdlController() {
-    set_name("Mouse");
+    setName("Mouse");
     indestructible = true;
 }
 

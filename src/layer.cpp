@@ -48,7 +48,7 @@ Layer::Layer()
     audio = NULL;
     opened = false;
     bgcolor = 0;
-    set_name("???");
+    setName("???");
     filename[0] = 0;
     buffer = NULL;
     screen = NULL;
@@ -114,13 +114,13 @@ bool Layer::init(int wdt, int hgt, int bpp) {
     geo.init(wdt, hgt, bpp);
 
     func("initialized %s layer %ix%i",
-         get_name(), geo.w, geo.h);
+         getName().c_str(), geo.w, geo.h);
 
     if (!geo.bytesize) {
         // if  the   size  is  still  unknown   at  init  then   it  is  the
         // responsability for the layer implementation to create the buffer
         // (see for instance text_layer)
-        act("initialized %s layer with dynamic size", get_name());
+        act("initialized %s layer with dynamic size", getName().c_str());
 
     }
 
@@ -133,11 +133,11 @@ bool Layer::init(int wdt, int hgt, int bpp) {
 }
 
 void Layer::thread_setup() {
-    func("ok, layer %s in rolling loop",get_name());
+    func("ok, layer %s in rolling loop",getName().c_str());
 
     //while(!feed()) fps.calc();
 
-    func(" layer %s entering loop",get_name());
+    func(" layer %s entering loop",getName().c_str());
 }
 
 void Layer::thread_loop() {
@@ -167,16 +167,16 @@ void Layer::thread_loop() {
 }
 
 void Layer::thread_teardown() {
-    func("%s this=%p thread end: %p %s",__PRETTY_FUNCTION__, this, pthread_self(), name);
+    func("%s this=%p thread end: %p %s",__PRETTY_FUNCTION__, this, pthread_self(), name.c_str());
 }
 
 char *Layer::get_blit() {
 
     if(!current_blit) {
-        error("no blit currently selected for layer %s",name);
+        error("no blit currently selected for layer %s", name.c_str());
         return((char*)"unknown");
     }
-    return current_blit->name;
+    return (char*)current_blit->getName().c_str(); // TODO remove that cast
 }
 
 bool Layer::set_blit(const char *bname) {
@@ -187,20 +187,20 @@ bool Layer::set_blit(const char *bname) {
         b = (Blit*)blitter->blitlist.search(bname, &idx);
 
         if(!b) {
-            error("blit %s not found in screen %s",bname, screen->name);
+            error("blit %s not found in screen %s", bname, screen->name.c_str());
             return(false);
         }
 
-        func("blit for layer %s set to %s",name, b->name);
+        func("blit for layer %s set to %s", name.c_str(), b->getName().c_str());
 
         current_blit = b; // start using
         need_crop = true;
         blitter->crop(this, screen);
         blitter->blitlist.sel(0);
         b->sel(true);
-        act("blit %s set for layer %s", current_blit->name, name);
+        act("blit %s set for layer %s", current_blit->getName().c_str(), name.c_str());
     } else {
-        warning("can't set blit for layer %s: not added on any screen yet", name);
+        warning("can't set blit for layer %s: not added on any screen yet", name.c_str());
         return(false);
     }
 
@@ -211,10 +211,10 @@ void Layer::blit() {
     if(!buffer) {
         // check threshold of tolerated null feeds
         // deactivate the layer when too many
-        func("feed returns NULL on layer %s",get_name());
+        func("feed returns NULL on layer %s",getName().c_str());
         null_feeds++;
         if(null_feeds > max_null_feeds) {
-            warning("layer %s has no video, deactivating", get_name());
+            warning("layer %s has no video, deactivating", getName().c_str());
             active = false;
             return;
         }
@@ -290,11 +290,11 @@ bool Layer::set_parameter(int idx) {
     Parameter *param;
     param = (Parameter*)parameters->pick(idx);
     if( ! param) {
-        error("parameter %s not found in layer %s", param->name, name );
+        error("parameter %s not found in layer %s", param->getName().c_str(), name.c_str());
         return false;
-    } else
-        func("parameter %s found in layer %s at position %u",
-             param->name, name, idx);
+    } else {
+        func("parameter %s found in layer %s at position %u", param->getName().c_str(), name.c_str(), idx);
+    }
 
     if(!param->layer_set_f) {
         error("no layer callback function registered in this parameter");
@@ -349,13 +349,12 @@ void Layer::_set_zoom(double x, double y) {
     if ((x == 1) && (y == 1)) {
         zooming = false;
         zoom_x = zoom_y = 1.0;
-        act("%s layer %s zoom deactivated", name, filename);
+        act("%s layer %s zoom deactivated", name.c_str(), filename);
     } else {
         zoom_x = x;
         zoom_y = y;
         zooming = true;
-        func("%s layer %s zoom set to x%.2f y%.2f",
-             name, filename, zoom_x, zoom_y);
+        func("%s layer %s zoom set to x%.2f y%.2f", name.c_str(), filename, zoom_x, zoom_y);
     }
     need_crop = true;
 }
@@ -370,11 +369,11 @@ void Layer::_set_rotate(double angle) {
     if(!angle) {
         rotating = false;
         rotate = 0;
-        act("%s layer %s rotation deactivated", name, filename);
+        act("%s layer %s rotation deactivated", name.c_str(), filename);
     } else {
         rotate = angle;
         rotating = true;
-        func("%s layer %s rotation set to %.2f", name, filename, rotate);
+        func("%s layer %s rotation set to %.2f", name.c_str(), filename, rotate);
     }
     need_crop = true;
 }

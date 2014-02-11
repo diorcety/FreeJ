@@ -165,7 +165,7 @@ int SLangConsole::getkey() {
 
 void SLangConsole::feed(int key) {
 
-///	func("feeding '%c' to widget %s", key, focused->name);
+///	func("feeding '%c' to widget %s", key, focused->getName().c_str());
 
 	if(focused)
 		focused->feed(key);
@@ -198,7 +198,7 @@ bool SLangConsole::place(SLangWidget *wid, int hx, int hy, int lx, int ly) {
 	widgets.append( wid );
 
 	func("s-lang widget %s sized %ux%u placed at %u,%u",
-			wid->name, wid->w, wid->h,
+			wid->getName().c_str(), wid->w, wid->h,
 			wid->orig_x, wid->orig_y);
 
 	// draw border if requested
@@ -218,7 +218,7 @@ bool SLangConsole::place(SLangWidget *wid, int hx, int hy, int lx, int ly) {
 
 	// focus the first widget
 	if(!focused) {
-	  func("setting focus on widget %s",wid->name);
+	  func("setting focus on widget %s",wid->getName().c_str());
 	  focused = wid;
 	}
 

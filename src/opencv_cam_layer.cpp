@@ -38,7 +38,7 @@ OpenCVCamLayer::OpenCVCamLayer()
     frame = NULL;
     rgba = NULL;
 
-    set_name("CAM");
+    setName("CAM");
 }
 
 OpenCVCamLayer::~OpenCVCamLayer() {

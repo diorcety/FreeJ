@@ -37,7 +37,7 @@ FACTORY_REGISTER_INSTANTIATOR(Controller, KbdController, KeyboardController, sdl
 
 KbdController::KbdController()
     :SdlController() {
-    set_name("Keyboard");
+    setName("Keyboard");
     indestructible = true; // we are going to be used as a singleton
     func("%s this=%p",__PRETTY_FUNCTION__, this);
 }

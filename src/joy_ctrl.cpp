@@ -51,7 +51,7 @@ JSFunctionSpec js_joy_ctrl_methods[] = {
 JoyController::JoyController()
     :SdlController() {
 
-    set_name("Joystick");
+    setName("Joystick");
 
     num = 0;
 }

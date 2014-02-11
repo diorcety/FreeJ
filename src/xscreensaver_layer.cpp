@@ -19,7 +19,7 @@
 
 XScreenSaverLayer::XScreenSaverLayer()
     :Layer() {
-    set_name("XSS");
+    setName("XSS");
 }
 
 XScreenSaverLayer::~XScreenSaverLayer() {

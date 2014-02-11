@@ -236,7 +236,7 @@ bool SlwSelector::refresh() {
     layer = env->screens.selected()->layers.selected();
     if(layer) {
         snprintf(tmp, w, "Layer: %s blit: %s [%.0f] geometry x%i y%i w%u h%u",
-                 layer->get_filename(), layer->current_blit->name, layer->current_blit->value,
+                 layer->get_filename(), layer->current_blit->getName().c_str(), layer->current_blit->value,
                  layer->geo.x, layer->geo.y, layer->geo.w, layer->geo.h);
         //    SLsmg_erase_eol();
     } else {
@@ -272,9 +272,9 @@ bool SlwSelector::refresh() {
             if( l == layer && !filter) color+=20;
             if(l->fade | l->active) color+=10;
 
-            //      snprintf(tmp, w, " -> %s",l->get_name());
-            tmpsize = strlen(l->get_name());
-            putnch(l->get_name(), layercol+4, 2, tmpsize);
+            //      snprintf(tmp, w, " -> %s",l->getName().c_str());
+            tmpsize = strlen(l->getName().c_str());
+            putnch((char*)l->getName().c_str(), layercol+4, 2, tmpsize);
             // save position of selected layer
             if( l == layer) sellayercol = layercol;
 
@@ -299,7 +299,7 @@ bool SlwSelector::refresh() {
         } else {
             if(filter->proto)
                 snprintf(tmp, w, "Filter: %s :: %s",
-                         filter->name, filter->proto->description());
+                         filter->getName().c_str(), filter->proto->description());
 
             //      SLsmg_set_color(FILTERS_COLOR+10);
 
@@ -319,7 +319,7 @@ bool SlwSelector::refresh() {
             if( f == filter ) color+=20;
             if( f->active) color+=10;
 //       SLsmg_set_color (color);
-            putnch(f->name, sellayercol+4, pos, 0);
+            putnch((char*)f->getName().c_str(), sellayercol+4, pos, 0);
             pos++;
             f = (FilterInstance*)f->next;
         }

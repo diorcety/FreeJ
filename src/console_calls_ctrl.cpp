@@ -72,22 +72,22 @@ int console_param_selection(Context *env, char *cmd) {
         // find the parameter
         param = (Parameter*)filt->parameters.search(cmd, &idx);
         if( ! param) {
-            error("parameter %s not found in filter %s", cmd, filt->proto->name);
+            error("parameter %s not found in filter %s", cmd, filt->proto->getName().c_str());
             return 0;
         } else
             func("parameter %s found in filter %s at position %u",
-                 param->name, filt->proto->name, idx);
+                 param->getName().c_str(), filt->proto->getName().c_str(), idx);
 
     } else if(lay->parameters) { /////// parameters for layer
         param = (Parameter*)lay->parameters->search(cmd, &idx);
         if( ! param) {
-            error("parameter %s not found in layers %s", cmd, lay->name);
+            error("parameter %s not found in layers %s", cmd, lay->getName().c_str());
             return 0;
         } else
             func("parameter %s found in layer %s at position %u",
-                 param->name, lay->name, idx);
+                 param->getName().c_str(), lay->getName().c_str(), idx);
     } else {
-        warning("no parameters found in layer %s", lay->name);
+        warning("no parameters found in layer %s", lay->getName().c_str());
         return 0;
     }
 
@@ -98,7 +98,7 @@ int console_param_selection(Context *env, char *cmd) {
 
         if( ! filt->set_parameter(idx) ) {
             error("error setting value %s for parameter %s on filter %s",
-                  p, param->name, filt->proto->name);
+                  p, param->getName().c_str(), filt->proto->getName().c_str());
             return 0;
         }
 
@@ -106,7 +106,7 @@ int console_param_selection(Context *env, char *cmd) {
 
         if( ! lay->set_parameter(idx) ) {
             error("error setting value %s for parameter %s on layer %s",
-                  p, param->name, lay->name);
+                  p, param->getName().c_str(), lay->getName().c_str());
             return 0;
         }
 
@@ -138,8 +138,8 @@ int console_param_completion(Context *env, char *cmd) {
 
     if(!params[1]) { // exact match, then fill in command
         p = (Parameter*)params[0];
-        //    ::notice("%s :: %s",p->name,p->description);
-        snprintf(cmd,MAX_CMDLINE,"%s = ",p->name);
+        //    ::notice("%s :: %s",p->getName().c_str(),p->description);
+        snprintf(cmd,MAX_CMDLINE,"%s = ",p->getName().c_str());
         //    return 1;
     } else {
 
@@ -152,30 +152,30 @@ int console_param_completion(Context *env, char *cmd) {
         p = (Parameter*)params[c];
         switch(p->type) {
         case Parameter::BOOL:
-            ::act("(bool) %s = %s ::  %s", p->name,
+            ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
                   (*(bool*)p->get() == true) ? "true" : "false",
                   p->description);
             break;
         case Parameter::NUMBER:
-            ::act("(number) %s = %.2f :: %s", p->name,
+            ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
                   *(float*)p->get(),
                   p->description);
             break;
         case Parameter::STRING:
-            ::act("(string) %s = %s :: %s", p->name, (char*)p->get(), p->description);
+            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->description);
             break;
         case Parameter::POSITION: {
             float *val = (float*)p->get();
-            ::act("(position) %s = %.2f x %.2f :: %s", p->name,
+            ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
                   val[0], val[1],
                   p->description);
         }
         break;
         case Parameter::COLOR:
-            ::act("%s (color) %s", p->name, p->description);
+            ::act("%s (color) %s", p->getName().c_str(), p->description);
             break;
         default:
-            ::error("%s (unknown) %s", p->name, p->description);
+            ::error("%s (unknown) %s", p->getName().c_str(), p->description);
             break;
         }
     }
@@ -214,8 +214,8 @@ int console_blit_completion(Context *env, char *cmd) {
 
     if(!blits[1]) { // exact match, then fill in command
         b = (Blit*) blits[0];
-        ::notice("%s :: %s",b->name,b->desc);
-        snprintf(cmd,MAX_CMDLINE,"%s",b->name);
+        ::notice("%s :: %s",b->getName().c_str(),b->desc);
+        snprintf(cmd,MAX_CMDLINE,"%s",b->getName().c_str());
         return 1;
     }
 
@@ -230,24 +230,24 @@ int console_blit_completion(Context *env, char *cmd) {
 
         b = (Blit*)blits[c];
         if(!b) break;
-        snprintf(tmp,255,"%s", b->name);
+        snprintf(tmp,255,"%s", b->getName().c_str());
 
         b = (Blit*)blits[c+1];
         if(b) {
             strncat(tmp, "\t", 255);
-            strncat(tmp, b->name, 255);
+            strncat(tmp, b->getName().c_str(), 255);
         }
 
         b = (Blit*)blits[c+2];
         if(b) {
             strncat(tmp, "\t", 255);
-            strncat(tmp, b->name, 255);
+            strncat(tmp, b->getName().c_str(), 255);
         }
 
         b = (Blit*)blits[c+3];
         if(b) {
             strncat(tmp, "\t", 255);
-            strncat(tmp, b->name, 255);
+            strncat(tmp, b->getName().c_str(), 255);
         }
 
         ::act("%s",tmp);
@@ -272,7 +272,7 @@ int console_blit_param_selection(Context *env, char *cmd) {
     }
     b = lay->current_blit;
     if(!b) {
-        ::error("no blit selected on layer %s",lay->name);
+        ::error("no blit selected on layer %s",lay->getName().c_str());
         return 0;
     }
     // find the values after the first blank space
@@ -290,11 +290,11 @@ int console_blit_param_selection(Context *env, char *cmd) {
     if(*p=='\0') return 0; // no value was given
     param = (Parameter*)b->parameters.search(cmd, &idx);
     if(! param) {
-        error("parameter %s not found in blit %s", cmd, b->name);
+        error("parameter %s not found in blit %s", cmd, b->getName().c_str());
         return 0;
     } else
         func("parameter %s found in blit %s at position %u",
-             param->name, b->name, idx);
+             param->getName().c_str(), b->getName().c_str(), idx);
 
     param->parse(p);
     return 1;
@@ -313,7 +313,7 @@ int console_blit_param_completion(Context *env, char *cmd) {
     }
     b = lay->current_blit;
     if(!b) {
-        ::error("no blit selected on layer %s",lay->name);
+        ::error("no blit selected on layer %s",lay->getName().c_str());
         return 0;
     }
     params = b->parameters.completion(cmd);
@@ -321,8 +321,8 @@ int console_blit_param_completion(Context *env, char *cmd) {
 
     if(!params[1]) { // exact match, then fill in command
         p = (Parameter*)params[0];
-        //    ::notice("%s :: %s",p->name,p->description);
-        snprintf(cmd,MAX_CMDLINE,"%s = ",p->name);
+        //    ::notice("%s :: %s",p->getName().c_str(),p->description);
+        snprintf(cmd,MAX_CMDLINE,"%s = ",p->getName().c_str());
         //    return 1;
     } else {
 
@@ -338,30 +338,30 @@ int console_blit_param_completion(Context *env, char *cmd) {
         p = (Parameter*)params[c];
         switch(p->type) {
         case Parameter::BOOL:
-            ::act("(bool) %s = %s ::  %s", p->name,
+            ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
                   (*(bool*)p->get() == true) ? "true" : "false",
                   p->description);
             break;
         case Parameter::NUMBER:
-            ::act("(number) %s = %.2f :: %s", p->name,
+            ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
                   *(float*)p->get(),
                   p->description);
             break;
         case Parameter::STRING:
-            ::act("(string) %s = %s :: %s", p->name, (char*)p->get(), p->description);
+            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->description);
             break;
         case Parameter::POSITION: {
             float *val = (float*)p->get();
-            ::act("(position) %s = %.2f x %.2f :: %s", p->name,
+            ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
                   val[0], val[1],
                   p->description);
         }
         break;
         case Parameter::COLOR:
-            ::act("%s (color) %s", p->name, p->description);
+            ::act("%s (color) %s", p->getName().c_str(), p->description);
             break;
         default:
-            ::error("%s (unknown) %s", p->name, p->description);
+            ::error("%s (unknown) %s", p->getName().c_str(), p->description);
             break;
         }
     }
@@ -382,12 +382,12 @@ int console_filter_selection(Context *env, char *cmd) {
 
     Layer *lay = (Layer*)env->screens.selected()->layers.selected();
     if(!lay) {
-        ::error("no layer selected for effect %s",filt->name);
+        ::error("no layer selected for effect %s",filt->getName().c_str());
         return 0;
     }
 
     if( ! filt->apply(lay) ) {
-        ::error("error applying filter %s on layer %s",filt->name, lay->name);
+        ::error("error applying filter %s on layer %s",filt->getName().c_str(), lay->getName().c_str());
         return 0;
     }
 
@@ -409,8 +409,8 @@ int console_filter_completion(Context *env, char *cmd) {
     if(!res[1]) { // exact match: fill in the command
         filt = res[0];
         if(!filt) return 0; // doublecheck safety fix
-        ::notice("%s :: %s",filt->name,filt->description());
-        snprintf(cmd,511,"%s",res[0]->name);
+        ::notice("%s :: %s",filt->getName().c_str(),filt->description());
+        snprintf(cmd,511,"%s",res[0]->getName().c_str());
         c=1;
     } else { // list all matches
         for(c=0; res[c]; c+=4) {
@@ -418,27 +418,27 @@ int console_filter_completion(Context *env, char *cmd) {
 
             filt = res[c];
             if(!filt) break;
-            snprintf(tmp,255,"%s", filt->name);
+            snprintf(tmp,255,"%s", filt->getName().c_str());
 
             filt = res[c+1];
             if(filt) {
                 strncat(tmp, "\t", 255);
-                strncat(tmp, filt->name, 255);
+                strncat(tmp, filt->getName().c_str(), 255);
             }
 
             filt = res[c+2];
             if(filt) {
                 strncat(tmp, "\t", 255);
-                strncat(tmp, filt->name, 255);
+                strncat(tmp, filt->getName().c_str(), 255);
             }
 
             filt = res[c+3];
             if(filt) {
                 strncat(tmp, "\t", 255);
-                strncat(tmp, filt->name, 255);
+                strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            //      ::act("%s :: %s",filt->name,filt->description());
+            //      ::act("%s :: %s",filt->getName().c_str(),filt->description());
 
             ::act("%s",tmp);
         }
@@ -627,7 +627,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
 
     for(c=found-1; c>0; c--) { // insert each entry found in a linklist
         e = new Entry();
-        e->set_name(filelist[c]->d_name);
+        e->setName(filelist[c]->d_name);
         files.append(e);
     }
 
@@ -643,7 +643,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
             if(!comps[1]) { // exact match
 
                 e = comps[0];
-                snprintf(cmd,MAX_CMDLINE,"%s%s",path,e->name);
+                snprintf(cmd,MAX_CMDLINE,"%s%s",path,e->getName().c_str());
 
                 c = 1;
 
@@ -651,7 +651,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
 
                 notice("list of %s* files in %s:",needle,path);
                 for(c=0; comps[c]; c++) {
-                    ::act(" %s",comps[c]->name);
+                    ::act(" %s",comps[c]->getName().c_str());
                 }
 
             }
@@ -665,7 +665,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
         e = files.begin();
         for(c=0, e=files.begin();
                 e; e=e->next, c++)
-            ::act("%s",e->name);
+            ::act("%s",e->getName().c_str());
 
     }
     // free entries allocated in memory
@@ -714,8 +714,8 @@ int console_generator_completion(Context *env, char *cmd) {
 
     if(!res[1]) { // exact match: fill in the command
         filt = res[0];
-        ::notice("%s :: %s",filt->name,filt->description());
-        snprintf(cmd,511,"%s",filt->name);
+        ::notice("%s :: %s",filt->getName().c_str(),filt->description());
+        snprintf(cmd,511,"%s",filt->getName().c_str());
         c=1;
     } else { // list all matches
         for(c=0; res[c]; c+=4) {
@@ -724,27 +724,27 @@ int console_generator_completion(Context *env, char *cmd) {
 
             filt = res[c];
             if(!filt) break;
-            snprintf(tmp,255,"%s", filt->name);
+            snprintf(tmp,255,"%s", filt->getName().c_str());
 
             filt = res[c+1];
             if(filt) {
                 strncat(tmp, "\t", 255);
-                strncat(tmp, filt->name, 255);
+                strncat(tmp, filt->getName().c_str(), 255);
             }
 
             filt = res[c+2];
             if(filt) {
                 strncat(tmp, "\t", 255);
-                strncat(tmp, filt->name, 255);
+                strncat(tmp, filt->getName().c_str(), 255);
             }
 
             filt = res[c+3];
             if(filt) {
                 strncat(tmp, "\t", 255);
-                strncat(tmp, filt->name, 255);
+                strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            //      ::act("%s :: %s",filt->name,filt->description());
+            //      ::act("%s :: %s",filt->getName().c_str(),filt->description());
 
             ::act("%s",tmp);
         }
@@ -778,6 +778,6 @@ int console_generator_selection(Context *env, char *cmd) {
     env->screen->add_layer(tmp);
     tmp->active=true;
 
-    notice("generator %s successfully created", tmp->name);
+    notice("generator %s successfully created", tmp->getName().c_str());
     return 1;
 }

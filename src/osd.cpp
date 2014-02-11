@@ -249,9 +249,9 @@ void Osd::_selection() {
 
     Filter *filt = (Filter*) lay->filters.selected();
     sprintf(msg,"%s::%s %s[%.1f] [%s]",
-            lay->get_name(),
+            lay->getName().c_str(),
             (filt)?filt->name:" ",
-            lay->blitter.current_blit->get_name(),
+            lay->blitter.current_blit->getName().c_str(),
             lay->blitter.current_blit->value,
             (env->clear_all)?"0":" ");
 
@@ -295,7 +295,7 @@ void Osd::_layerlist() {
             continue;
         }
 
-        lname = l->get_name();
+        lname = l->getName().c_str();
 
 
         if( l == laysel) {

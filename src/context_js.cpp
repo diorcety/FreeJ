@@ -209,7 +209,7 @@ JS(list_filters) {
 
     f = global_environment->filters.begin();
     while(f) {
-        str = JS_NewStringCopyZ(cx, f->name);
+        str = JS_NewStringCopyZ(cx, f->getName().c_str());
         val = STRING_TO_JSVAL(str);
         JS_SetElement(cx, arr, c, &val);
         c++;
@@ -614,7 +614,7 @@ JS(entry_down) {
     GET_LAYER(Layer);
 
     if(! lay->down() )
-        warning("cannot move %s down", lay->name);
+        warning("cannot move %s down", lay->getName().c_str());
 
     return JS_TRUE;
 }
@@ -624,7 +624,7 @@ JS(entry_up) {
     GET_LAYER(Layer);
 
     if(! lay->up() )
-        warning("cannot move %s up", lay->name);
+        warning("cannot move %s up", lay->getName().c_str());
 
     return JS_TRUE;
 }
@@ -636,7 +636,7 @@ JS(entry_move) {
 
     int pos = JSVAL_TO_INT(argv[0]);
     if( ! lay->move(pos) )
-        warning("cannot move %s to position %u", lay->name, pos);
+        warning("cannot move %s to position %u", lay->getName().c_str(), pos);
 
     return JS_TRUE;
 }

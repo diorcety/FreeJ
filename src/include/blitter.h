@@ -85,8 +85,6 @@ public:
 //#define PAST_BLIT 3
     BlitType type; ///< LINEAR|SDL|PAST type
 
-    //  char *get_name();
-
 
     int32_t scr_stride_dx;
     int32_t scr_stride_sx;

@@ -55,7 +55,7 @@ SdlScreen::SdlScreen()
 
     switch_fullscreen = false;
 
-    set_name("SDL");
+    setName("SDL");
 }
 
 SdlScreen::~SdlScreen() {

@@ -82,7 +82,7 @@ int osc_command_handler(const char *path, const char *types,
     // check that types are matching
     if(strcmp(types, cmd->proto_cmd) != 0) {
         error("OSC path %s called with wrong types: \"%s\" instead of \"%s\"",
-              cmd->name, types, cmd->proto_cmd);
+              cmd->getName().c_str(), types, cmd->proto_cmd);
         return -1;
     }
 
@@ -94,7 +94,7 @@ int osc_command_handler(const char *path, const char *types,
     // the jsval is not valid as such in JS_CallFunction
 
     JsCommand *jscmd = new JsCommand();
-    jscmd->set_name(cmd->js_cmd);
+    jscmd->setName(cmd->js_cmd);
     jscmd->format = cmd->proto_cmd;
     jscmd->argc = argc;
     jscmd->argv = (jsval*)calloc(argc+1, sizeof(jsval));
@@ -124,7 +124,7 @@ int osc_command_handler(const char *path, const char *types,
         }
         default:
             error("OSC unrecognized type '%c' in arg %u of path %s",
-                  types[c], c, cmd->name);
+                  types[c], c, cmd->getName().c_str());
         }
     }
 
@@ -140,7 +140,7 @@ OscController::OscController()
     srv = NULL;
     sendto = NULL;
 
-    set_name("OscCtrl");
+    setName("OscCtrl");
 }
 
 OscController::~OscController() {
@@ -168,10 +168,10 @@ int OscController::dispatch() {
         //    int res = JS_CallFunctionValue
         //      (jsenv, jsobj, jscmd->function, jscmd->argc, jscmd->argv, &ret);
 
-        func("OSC controller dispatching %s(%s)", jscmd->name, jscmd->format);
-        res = JSCall(jscmd->name, jscmd->argc, jscmd->argv);
-        if (res) func("OSC dispatched call to %s", jscmd->name);
-        else error("OSC failed JSCall to %s", jscmd->name);
+        func("OSC controller dispatching %s(%s)", jscmd->getName().c_str(), jscmd->format);
+        res = JSCall(jscmd->getName().c_str(), jscmd->argc, jscmd->argv);
+        if (res) func("OSC dispatched call to %s", jscmd->getName().c_str());
+        else error("OSC failed JSCall to %s", jscmd->getName().c_str());
 
 
         free(jscmd->argv); // must free previous callod on argv
@@ -312,7 +312,7 @@ JS(js_osc_ctrl_add_method) {
 
     // queue metods in commands_handled linklist
     OscCommand *cmd = new OscCommand();
-    cmd->set_name(osc_cmd);
+    cmd->setName(osc_cmd);
     strncpy(cmd->proto_cmd, proto_cmd, 128);
     strncpy(cmd->js_cmd, js_cmd, 512);
     osc->commands_handled.append(cmd);

@@ -31,21 +31,21 @@ void setup_past_blits(Blitter *blitter) {
 
     // PAST blits
     b = new Blit();
-    b->set_name("PAST_ADD");
+    b->setName("PAST_ADD");
     sprintf(b->desc,"add to past frame");
     b->type = Blit::PAST;
     b->past_fun = past_add;
     blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("PAST_ADDNEG");
+    b->setName("PAST_ADDNEG");
     sprintf(b->desc,"add to past frame and negate");
     b->type = Blit::PAST;
     b->past_fun = past_addneg;
     blitlist.prepend(b);
 
     b = new Blit();
-    b->set_name("PAST_ABSDIFF");
+    b->setName("PAST_ABSDIFF");
     sprintf(b->desc,"absolute difference on past frame");
     b->type = Blit::PAST;
     b->past_fun = past_absdiff;

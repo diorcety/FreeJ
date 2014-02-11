@@ -53,7 +53,7 @@ TextLayer::TextLayer()
     bgcolor.b = 0x00;
 
     type = Layer::TEXT;
-    set_name("TXT");
+    setName("TXT");
     surf = NULL;
     jsclass = &txt_layer_class;
 
@@ -63,7 +63,7 @@ TextLayer::TextLayer()
         Parameter *param;
 
         param = new Parameter(Parameter::NUMBER);
-        strcpy(param->name, "size");
+        param->setName("size");
         strcpy(param->description, "set the size of the font");
         parameters->append(param);
     }
@@ -223,7 +223,7 @@ void TextLayer::write(const char *str) {
     // choose first font and initialize ready for printing
 
     if(!font) {
-        error("no font selected on text layer %s, please choose one!", this->name);
+        error("no font selected on text layer %s, please choose one!", name.c_str());
         return;
     }
 

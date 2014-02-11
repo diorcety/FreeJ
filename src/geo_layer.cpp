@@ -35,7 +35,7 @@ GeoLayer::GeoLayer()
     fsurf[0] = NULL;
     fsurf[1] = NULL;
     color = 0xffffffff;
-    set_name("GEO");
+    setName("GEO");
     set_filename("/geometrical layer");
     is_native_sdl_surface = true;
     jsclass = &geometry_layer_class;

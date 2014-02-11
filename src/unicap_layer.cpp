@@ -42,7 +42,7 @@ UnicapLayer::UnicapLayer()
     rgba[1] = NULL;
     feed_ready = NULL;
 
-    set_name("CAM");
+    setName("CAM");
 
     // change this to UNICAP_USER_CAPTURE
     // to switch the way unicap captures..
@@ -254,7 +254,7 @@ bool UnicapLayer::open(const char *devfile) {
         case UNICAP_PROPERTY_TYPE_VALUE_LIST: {
             sprintf(tmp,"%s = %.2f", tmp, m_property.value );
             p = new Parameter(Parameter::NUMBER);
-            p->set_name(m_property.identifier);
+            p->setName(m_property.identifier);
             //	size_t s = 512;
             //	unicap_describe_property(&m_property, p->description, &s);
             p->set((void*)&m_property.value);
@@ -265,7 +265,7 @@ bool UnicapLayer::open(const char *devfile) {
         case UNICAP_PROPERTY_TYPE_MENU: {
             sprintf(tmp,"%s = %s", tmp, m_property.menu_item );
             p = new Parameter(Parameter::STRING);
-            p->set_name(m_property.identifier);
+            p->setName(m_property.identifier);
             //	size_t s = 512;
             //	unicap_describe_property(&m_property, p->description, &s);
             p->set((void*)&m_property.value);
@@ -303,7 +303,7 @@ bool UnicapLayer::open(const char *devfile) {
         unicap_queue_buffer(m_handle, & m_buffer);
     }
 
-    //  set_name(m_device.device);
+    //  setName(m_device.device);
     opened = true;
     return(res);
 }

@@ -75,7 +75,7 @@ CVF0rLayer::CVF0rLayer(CVLayerController *controller)
     input = controller;
     generator = NULL;
     type = Layer::GL_COCOA;   
-    set_name([input name]);
+    setName([input name]);
     [input setLayer:this];
 }
 

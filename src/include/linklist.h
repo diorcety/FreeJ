@@ -21,6 +21,7 @@
 #define __linklist_h__
 
 #include <string.h>
+#include <string>
 
 /* void warning(const char *format, ...); */
 void func(const char *format, ...);
@@ -125,27 +126,20 @@ public:
 
 
 private:
-
-
     T *compbuf[MAX_COMPLETION*sizeof(T*)]; // completion buffer
 };
 
 
 
 class Entry {
-    //  friend class Linklist<Entry>;
+    friend class Linklist<Entry>;
 
 public:
     Entry();
     virtual ~Entry();
 
-    void set_name(const char *nn);
-
-    Entry *next;
-    Entry *prev;
-
-    BaseLinklist *list;
-
+    void setName(const std::string &name);
+    const std::string &getName() const;
     bool up();
     bool down();
     bool move(int pos);
@@ -153,9 +147,17 @@ public:
     void rem();
     void sel(bool on);
 
+    Entry *next;
+    Entry *prev;
+
+    BaseLinklist *list;
+
     bool select;
 
-    char name[256];
+protected:
+    std::string name;
+
+public:
 
     // generic data pointer, so far only used in console
     // and now also as JSObject -> jsval
@@ -226,7 +228,7 @@ template <class T> void Linklist<T>::prepend(T *addr) {
     T *ptr = NULL;
     if(addr->list) {
         func("Entry %s is already present in linklist %p - skipping duplicate prepend",
-             addr->name, this);
+             addr->getName().c_str(), this);
         return;
     }
 #ifdef THREADSAFE
@@ -377,7 +379,7 @@ template <class T> T *Linklist<T>::search(const char *name, int *idx) {
     int c = 1;
     T *ptr = (T*)first;
     while(ptr) {
-        if( strcasecmp(ptr->name,name)==0 ) {
+        if( strcasecmp(ptr->getName().c_str(),name)==0 ) {
             if(idx) *idx = c;
             return(ptr);
         }
@@ -406,7 +408,7 @@ template <class T> T **Linklist<T>::completion(char *needle) {
         if(!len) { // 0 lenght needle: return the full list
             compbuf[found] = ptr;
             found++;
-        } else if( strncasecmp(needle,ptr->name,len)==0 ) {
+        } else if( strncasecmp(needle,ptr->getName().c_str(),len)==0 ) {
             compbuf[found] = ptr;
             found++;
         }

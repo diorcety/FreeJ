@@ -91,7 +91,7 @@ FlashLayer::FlashLayer()
         return;
     }
 
-    set_name("SWF");
+    setName("SWF");
 
     jsclass = &flash_layer_class;
 }

@@ -62,9 +62,9 @@ FilterInstance::~FilterInstance() {
 }
 
 void FilterInstance::init(Filter *fr) {
-    func("initializing instance for filter %s",fr->name);
+    func("initializing instance for filter %s", fr->getName().c_str());
     proto = fr;
-    set_name(proto->name);
+    setName(proto->name);
     fr->init_parameters(parameters);
     active = true;
 }
@@ -83,11 +83,10 @@ bool FilterInstance::set_parameter(int idx) {
     param = (Parameter*)parameters[idx];
 
     if( ! param) {
-        error("parameter [%u] not found in filter %s", idx, proto->name );
+        error("parameter [%u] not found in filter %s", idx, proto->getName().c_str());
         return false;
     } else {
-        func("parameter %s found in filter %s at position %u",
-             param->name, proto->name, idx);
+        func("parameter %s found in filter %s at position %u", param->getName().c_str(), proto->getName().c_str(), idx);
     }
 
     if(!param->filter_set_f) {
@@ -105,11 +104,10 @@ bool FilterInstance::get_parameter(int idx) {
     param = (Parameter*)parameters[idx];
 
     if( ! param) {
-        error("parameter %s not found in filter %s", param->name, proto->name );
+        error("parameter %s not found in filter %s", param->getName().c_str(), proto->getName().c_str());
         return false;
     } else {
-        func("parameter %s found in filter %s at position %u",
-             param->name, proto->name, idx);
+        func("parameter %s found in filter %s at position %u", param->getName().c_str(), proto->getName().c_str(), idx);
     }
 
     if(!param->filter_get_f) {

@@ -134,7 +134,7 @@ CVFilter::CVFilter()
     opened = false;
     //filterDescr = NULL;
     //filterName = NULL;
-    set_name((char *)"Unknown");
+    setName((char *)"Unknown");
 }
 
 CVFilter::~CVFilter()
@@ -159,7 +159,7 @@ int CVFilter::open(char *name)
         return 0;
     }
     //filterName = [[NSString stringWithFormat:@"CI%s", name] retain];
-    set_name(name);
+    setName(name);
     for (i = 0; i < FILTERS_MAX; i++) {
         if (strcmp(fNames[i], name) == 0) {
             desc = &fParams[i];

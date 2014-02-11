@@ -54,11 +54,11 @@ Freeframe::Freeframe()
     opened = false;
 
 
-    set_name((char*)info->pluginName);
+    setName((char*)info->pluginName);
 
     // init freeframe filter
     if(plugmain(FF_INITIALISE, NULL, 0).ivalue == FF_FAIL)
-        error("cannot initialise freeframe plugin %s",name);
+        error("cannot initialise freeframe plugin %s", name.c_str());
 
     if(get_debug()>2)
         print_info();
@@ -181,7 +181,7 @@ bool Freeframe::apply(Layer *lay, FilterInstance *instance) {
     vidinfo.bitDepth = FF_CAP_32BITVIDEO;
     instance->intcore = plugmain(FF_INSTANTIATE, &vidinfo, 0).ivalue;
     if(instance->intcore == FF_FAIL) {
-        error("Filter %s cannot be instantiated", name);
+        error("Filter %s cannot be instantiated", name.c_str());
         return false;
     }
     return Filter::apply(lay, instance);

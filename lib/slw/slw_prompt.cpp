@@ -28,7 +28,7 @@
 SLW_Prompt::SLW_Prompt()
 	: SLangWidget() {
 
-	set_name("prompt");
+	setName("prompt");
 	textconsole = NULL;
 
 }
@@ -42,7 +42,7 @@ SLW_Prompt::~SLW_Prompt() {
 bool SLW_Prompt::init() {
 
   if(!console) {
-    fprintf(stderr, "can't initialize widget '%s': not placed on console", name);
+    fprintf(stderr, "can't initialize widget '%s': not placed on console", name.c_str());
     return false;
   }
 

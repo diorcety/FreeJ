@@ -44,7 +44,7 @@ ImageLayer::ImageLayer()
     image = NULL;
     black_image = NULL;
 
-    set_name("IMG");
+    setName("IMG");
     is_native_sdl_surface = true;
     jsclass = &image_layer_class;
 

@@ -83,8 +83,7 @@ static void get_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx
 
 static void set_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx) {
 
-    func("set_frei0r_param callback on %s for parameter %s at pos %u",
-         filt->proto->name, param->name, idx);
+    func("set_frei0r_param callback on %s for parameter %s at pos %u", filt->proto->getName().c_str(), param->getName().c_str(), idx);
 
     Freior *f = (Freior *)filt->proto;
     double *val = (double*)param->value;
@@ -140,7 +139,7 @@ Freior::Freior()
     handle = NULL;
     opened = false;
 
-    set_name((char *)"Unknown");
+    setName((char *)"Unknown");
 }
 
 Freior::~Freior() {
@@ -230,7 +229,7 @@ int Freior::open(char *file) {
 
     f0r_init();
 
-    set_name((char*)info.name);
+    setName((char*)info.name);
 
     if(get_debug()>2)
         print_info();
@@ -247,8 +246,8 @@ void Freior::init_parameters(Linklist<Parameter> &parameters) {
         (f0r_get_param_info)(&param_infos[i], i);
 
         Parameter *param = new Parameter((Parameter::Type)param_infos[i].type);
-        snprintf(param->name, 255, "%s", param_infos[i].name);
-        func("registering parameter %s for filter %s\n", param->name, info.name);
+        param->setName(param_infos[i].name);
+        func("registering parameter %s for filter %s\n", param->getName().c_str(), info.name);
 
         snprintf(param->description, 512, "%s", param_infos[i].explanation);
         param->filter_set_f = set_frei0r_parameter;

@@ -35,7 +35,7 @@ Controller::Controller() {
 }
 
 Controller::~Controller() {
-    func("%s %s (%p)",__PRETTY_FUNCTION__, name, this);
+    func("%s %s (%p)",__PRETTY_FUNCTION__, name.c_str(), this);
     ControllerListener *listener = listeners.begin();
     while (listener) {
         delete listener;
@@ -200,7 +200,7 @@ bool ControllerListener::call(const char *funcname, int argc, const char *format
     jsval fval = JSVAL_VOID;
     jsval ret = JSVAL_VOID;
 
-    func("%s try calling method %s.%s(argc:%i)", __func__, name, funcname, argc);
+    func("%s try calling method %s.%s(argc:%i)", __func__, name.c_str(), funcname, argc);
     JS_SetContextThread(jsContext);
     JS_BeginRequest(jsContext);
     int res = JS_GetProperty(jsContext, jsObject, funcname, &fval);
@@ -242,7 +242,7 @@ bool ControllerListener::call(const char *funcname, int argc, jsval *argv) {
     jsval ret = JSVAL_VOID;
     JSBool res;
 
-    func("calling js %s.%s()", name, funcname);
+    func("calling js %s.%s()", name.c_str(), funcname);
     JS_SetContextThread(jsContext);
     JS_BeginRequest(jsContext);
     res = JS_GetProperty(jsContext, jsObject, funcname, &fval);
@@ -251,7 +251,7 @@ bool ControllerListener::call(const char *funcname, int argc, jsval *argv) {
         // controller could ask for unregistered functions ...
         // for instance in the case of a keyboardcontroller which propagates keystrokes
         // for unregistered keys
-        func("method %s not found in %s controller", funcname, name);
+        func("method %s not found in %s controller", funcname, name.c_str());
         JS_EndRequest(jsContext);
         JS_ClearContextThread(jsContext);
         return(false);

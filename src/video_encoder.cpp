@@ -170,8 +170,8 @@ VideoEncoder::~VideoEncoder() {
 }
 
 void VideoEncoder::thread_setup() {
-    func("ok, encoder %s in rolling loop",name);
-    func("VideoEncoder::run : begin thread %p",pthread_self());
+    func("ok, encoder %s in rolling loop", name.c_str());
+    func("VideoEncoder::run : begin thread %p", pthread_self());
 }
 
 void VideoEncoder::thread_loop() {
@@ -237,7 +237,7 @@ void VideoEncoder::thread_loop() {
 
     default:
         error("Video Encoder %s doesn't supports Screen %s pixel format",
-              name, screen->name);
+              name.c_str(), screen->getName().c_str());
     }
 
     screen->unlock();
@@ -311,7 +311,7 @@ bool VideoEncoder::set_filedump(const char *filename) {
             fclose(filedump_fd);
             filedump_fd = NULL;
         }
-        act("Encoder %s stopped recording to file %s", name, filedump);
+        act("Encoder %s stopped recording to file %s", name.c_str(), filedump);
         write_to_disk = false;
     }
 
@@ -360,7 +360,7 @@ bool VideoEncoder::set_filedump(const char *filename) {
         return false;
     }
 
-    act("Encoder %s recording to file %s", name, filedump);
+    act("Encoder %s recording to file %s", name.c_str(), filedump);
     write_to_disk = true;
 
     // if it's a number handle it as a file descriptor

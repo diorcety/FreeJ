@@ -29,7 +29,7 @@ CVCocoaLayer::CVCocoaLayer(Layer *lay, CVLayerController *vin)
     if (input)
         [input setLayer:this];
     if (layer) {
-        layer->set_name(input ? [input name] : "CVCocoaLayer");
+        layer->setName(input ? [input name] : "CVCocoaLayer");
         layer->set_data((void *)this); // XXX
     }
 }

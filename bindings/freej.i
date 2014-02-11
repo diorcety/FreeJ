@@ -1,4 +1,6 @@
 %module(directors="1") freej
+%include <std_shared_ptr.i>
+%include <std_string.i>
 
 %{
 

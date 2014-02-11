@@ -74,7 +74,7 @@ JS(js_midi_ctrl_constructor) {
 }
 
 MidiController::MidiController():SdlController() {
-    set_name("Midi Controller");
+    setName("Midi Controller");
     seq_handle = NULL;
     jsenv = NULL;
     jsobj = NULL;

@@ -82,7 +82,7 @@ Blitter::~Blitter() {
 
 
 
-// char *Blitter::get_name() {
+// char *Blitter::getName().c_str() {
 //   return name;
 // }
 
@@ -149,15 +149,15 @@ void Blitter::crop(Layer *lay, ViewPort *scr) {
     }
 
     if(!lay->current_blit) {
-        warning("no blit selected for layer %s", lay->name);
+        warning("no blit selected for layer %s", lay->getName().c_str());
         return;
     }
 
     b = lay->current_blit;
 
     func("crop on layer %s x%i y%i w%i h%i for blit %s",
-         lay->name, lay->geo.x, lay->geo.y,
-         lay->geo.w, lay->geo.h, b->name);
+         lay->getName().c_str(), lay->geo.x, lay->geo.y,
+         lay->geo.w, lay->geo.h, b->getName().c_str());
 
     // assign the right pointer to the *geo used in crop
     // we use the normal geometry if not roto|zoom

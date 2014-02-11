@@ -142,7 +142,7 @@ JS(filter_set_parameter) {
     if(!param) {
         JS_EndRequest(cx);
         //JS_ClearContextThread(cx);
-        error("parameter %s not found in filter %s", name, filter_instance->proto->name);
+        error("parameter %s not found in filter %s", name, filter_instance->proto->getName().c_str());
         return JS_TRUE;
     }
 
@@ -152,11 +152,11 @@ JS(filter_set_parameter) {
     case Parameter::NUMBER: {
         if(!JS_ValueToNumber(cx, argv[1], &val[0])) {
             error("set parameter called with an invalid value for filter %s",
-                  filter_instance->proto->name);
+                  filter_instance->proto->getName().c_str());
             break;
         }
         func("javascript %s->%s to [%.5f]",
-             filter_instance->proto->name, param->name, val[0]);
+             filter_instance->proto->getName().c_str(), param->getName().c_str(), val[0]);
         //  filter_instance->proto->set_parameter_value( filter_instance->instance, &val, it->second );
 
         param->set(&val);
@@ -166,16 +166,16 @@ JS(filter_set_parameter) {
     case Parameter::POSITION:
         if(!JS_ValueToNumber(cx, argv[1], &val[0])) {
             error("set parameter called with an invalid value for filter %s",
-                  filter_instance->proto->name);
+                  filter_instance->proto->getName().c_str());
             break;
         }
         if(!JS_ValueToNumber(cx, argv[2], &val[1])) {
             error("set parameter called with an invalid value for filter %s",
-                  filter_instance->proto->name);
+                  filter_instance->proto->getName().c_str());
             break;
         }
         func("javascript %s->%s to x[%.1f] y[%.1f]",
-             filter_instance->proto->name, param->name, val[0], val[1]);
+             filter_instance->proto->getName().c_str(), param->getName().c_str(), val[0], val[1]);
         //  filter_instance->proto->set_parameter_value( filter_instance->instance, &val, it->second );
 
         param->set(&val[0]);
@@ -183,7 +183,7 @@ JS(filter_set_parameter) {
         break;
 
     default:
-        error("parameter of unknown type: %s->%s", filter_instance->proto->name, param->name);
+        error("parameter of unknown type: %s->%s", filter_instance->proto->getName().c_str(), param->getName().c_str());
         break;
     }
     JS_EndRequest(cx);

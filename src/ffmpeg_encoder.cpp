@@ -37,7 +37,7 @@ FFmpegEncoder::FFmpegEncoder()
 
     func("FFmpegEncoder object created");
 
-    set_name("encoder/ffmpeg");
+    setName("encoder/ffmpeg");
 
 }
 FFmpegEncoder::~FFmpegEncoder() {

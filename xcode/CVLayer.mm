@@ -33,7 +33,7 @@ CVLayer::CVLayer(CVLayerController *vin) : Layer(), CVCocoaLayer(this, vin)
     buffer = NULL;
 	frame = NULL;
 	pixelBuffer = NULL;
-	set_name([input name]);
+	setName([input name]);
     [input setLayer:this];
 }
 

@@ -99,7 +99,7 @@ ViMoController::ViMoController()
     jsobj = NULL;
     filename = NULL;
     fd = 0;
-    set_name("Video Mouse");
+    setName("Video Mouse");
     vmd = (ViMoData*)malloc(2*sizeof(ViMoData));
     vmd_old = vmd+1;
     // NULL setting: k: 00 wi: 03 wo: 0f

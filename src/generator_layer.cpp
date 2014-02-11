@@ -39,7 +39,7 @@ GeneratorLayer::GeneratorLayer()
     generators = NULL;
 
     type = Layer::GENERATOR;
-    set_name("GEN");
+    setName("GEN");
     //jsclass = &gen0r_layer_class;
     //  set_filename("/particle generator");
     swap_buffer = NULL;
@@ -158,7 +158,7 @@ bool GeneratorLayer::open(const char *file) {
         vidinfo.bitDepth = FF_CAP_32BITVIDEO;
         generator->intcore = ((Freeframe *)proto)->plugmain(FF_INSTANTIATE, &vidinfo, 0).ivalue;
         if(generator->intcore == FF_FAIL) {
-            error("Freeframe generator %s cannot be instantiated", name);
+            error("Freeframe generator %s cannot be instantiated", name.c_str());
             delete generator;
             generator = NULL;
             return false;

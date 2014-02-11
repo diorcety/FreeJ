@@ -44,7 +44,7 @@ XGrabLayer::XGrabLayer()
     autosize = true;
     //gc = NULL;
 
-    set_name("XGR");
+    setName("XGR");
     jsclass = &js_xgrab_class;
     int r = XInitThreads();
     func("XinitThread: %i", r);

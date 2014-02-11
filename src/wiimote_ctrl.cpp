@@ -288,7 +288,7 @@ WiiController::WiiController() {
     _buttons = 0;
     _x = _y = _z = 0;
 
-    set_name("WiiCtrl");
+    setName("WiiCtrl");
 }
 
 WiiController::~WiiController() {

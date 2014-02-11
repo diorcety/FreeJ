@@ -59,7 +59,7 @@ ViewPort::ViewPort()
 
 ViewPort::~ViewPort() {
 
-    func("screen %s deleting %u layers", name, layers.len() );
+    func("screen %s deleting %u layers", name.c_str(), layers.len());
     Layer *lay;
     lay = layers.begin();
     while(lay) {
@@ -77,7 +77,7 @@ ViewPort::~ViewPort() {
 
     if(audio) ringbuffer_free(audio);
 
-    func("screen %s deleting %u encoders", name, encoders.len() );
+    func("screen %s deleting %u encoders", name.c_str(), encoders.len());
     VideoEncoder *enc;
     enc = encoders.begin();
     while(enc) {
@@ -100,8 +100,7 @@ bool ViewPort::init(int w, int h, int bpp) {
 
     geo.init(w,h,bpp);
     initialized = _init();
-    act("screen %s initialized with size %ux%u",
-        name, geo.w, geo.h);
+    act("screen %s initialized with size %ux%u", name.c_str(), geo.w, geo.h);
 
     return initialized;
 
@@ -139,7 +138,7 @@ bool ViewPort::add_layer(Layer *lay) {
     layers.sel(0);
     lay->sel(true);
     lay->active = true;
-    func("layer %s added to screen %s",lay->name, name);
+    func("layer %s added to screen %s", lay->getName().c_str(), name.c_str());
     return(true);
 }
 
@@ -158,7 +157,7 @@ bool ViewPort::add_audio(JackClient *jcl) {
 void ViewPort::rem_layer(Layer *lay) {
     lay->screen = NULL; // symmetry
     lay->rem();
-    notice("removed layer %s (but still present as an instance)", lay->name);
+    notice("removed layer %s (but still present as an instance)", lay->getName().c_str());
 }
 
 void ViewPort::reset() {
@@ -180,7 +179,7 @@ bool ViewPort::add_encoder(VideoEncoder *enc) {
         return(false);
     }
 
-    func("initializing encoder %s",enc->name);
+    func("initializing encoder %s", enc->getName().c_str());
     if(!enc->init(this)) {
         error("%s : failed initialization", __PRETTY_FUNCTION__);
         return(false);
@@ -197,7 +196,7 @@ bool ViewPort::add_encoder(VideoEncoder *enc) {
 
     enc->sel(true);
 
-    act("encoder %s added to screen %s", enc->name, name);
+    act("encoder %s added to screen %s", enc->getName().c_str(), name.c_str());
     return true;
 }
 

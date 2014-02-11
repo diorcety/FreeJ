@@ -182,8 +182,8 @@ bool Shouter::apply_profile() {
     if( shout_set_format(ice,SHOUT_FORMAT_OGG) )
         error("shout_set_format: %s",shout_get_error(ice));
 
-    if( shout_set_name(ice,name()) )
-        error("shout_set_name: %s",shout_get_error(ice));
+    if( shout_setName(ice,name()) )
+        error("shout_setName: %s",shout_get_error(ice));
 
     if( shout_set_url(ice,url()) )
         error("shout_set_url: %s",shout_get_error(ice));

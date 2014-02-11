@@ -75,7 +75,7 @@ SdlGlScreen::SdlGlScreen()
 
     // add above | SDL_FULLSCREEN to go fullscreen from the start
 
-    set_name("SDLGL");
+    setName("SDLGL");
 }
 
 SdlGlScreen::~SdlGlScreen() {

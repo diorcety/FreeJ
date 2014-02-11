@@ -40,7 +40,7 @@ AaScreen::AaScreen()
     screen_buffer = NULL;
 
     ascii_context = NULL;
-    set_name("ASCII");
+    setName("ASCII");
 }
 
 AaScreen::~AaScreen() {

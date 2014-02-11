@@ -37,7 +37,7 @@ SoftScreen::SoftScreen()
     : ViewPort() {
 
     screen_buffer = NULL;
-    set_name("SOFT");
+    setName("SOFT");
 }
 
 SoftScreen::~SoftScreen() {

@@ -28,7 +28,7 @@
 SLW_Text::SLW_Text()
   : SLangWidget() {
   
-  set_name("text");
+  setName("text");
   
   textconsole = NULL;
 }
@@ -42,7 +42,7 @@ SLW_Text::~SLW_Text() {
 bool SLW_Text::init() {
   
   if(!console) {
-    fprintf(stderr, "can't initialize widget '%s': not placed on console", name);
+    fprintf(stderr, "can't initialize widget '%s': not placed on console", name.c_str());
     return false;
   }
   
