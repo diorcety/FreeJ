@@ -138,7 +138,7 @@ int console_param_completion(Context *env, char *cmd) {
 
     if(!params[1]) { // exact match, then fill in command
         p = (Parameter*)params[0];
-        //    ::notice("%s :: %s",p->getName().c_str(),p->description);
+        //    ::notice("%s :: %s",p->getName().c_str(),p->getDescription().c_str());
         snprintf(cmd,MAX_CMDLINE,"%s = ",p->getName().c_str());
         //    return 1;
     } else {
@@ -154,28 +154,28 @@ int console_param_completion(Context *env, char *cmd) {
         case Parameter::BOOL:
             ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
                   (*(bool*)p->get() == true) ? "true" : "false",
-                  p->description);
+                  p->getDescription().c_str());
             break;
         case Parameter::NUMBER:
             ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
                   *(float*)p->get(),
-                  p->description);
+                  p->getDescription().c_str());
             break;
         case Parameter::STRING:
-            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->description);
+            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->getDescription().c_str());
             break;
         case Parameter::POSITION: {
             float *val = (float*)p->get();
             ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
                   val[0], val[1],
-                  p->description);
+                  p->getDescription().c_str());
         }
         break;
         case Parameter::COLOR:
-            ::act("%s (color) %s", p->getName().c_str(), p->description);
+            ::act("%s (color) %s", p->getName().c_str(), p->getDescription().c_str());
             break;
         default:
-            ::error("%s (unknown) %s", p->getName().c_str(), p->description);
+            ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
             break;
         }
     }
@@ -214,7 +214,7 @@ int console_blit_completion(Context *env, char *cmd) {
 
     if(!blits[1]) { // exact match, then fill in command
         b = (Blit*) blits[0];
-        ::notice("%s :: %s",b->getName().c_str(),b->desc);
+        ::notice("%s :: %s",b->getName().c_str(),b->getDescription().c_str());
         snprintf(cmd,MAX_CMDLINE,"%s",b->getName().c_str());
         return 1;
     }
@@ -321,7 +321,7 @@ int console_blit_param_completion(Context *env, char *cmd) {
 
     if(!params[1]) { // exact match, then fill in command
         p = (Parameter*)params[0];
-        //    ::notice("%s :: %s",p->getName().c_str(),p->description);
+        //    ::notice("%s :: %s",p->getName().c_str(),p->getDescription().c_str());
         snprintf(cmd,MAX_CMDLINE,"%s = ",p->getName().c_str());
         //    return 1;
     } else {
@@ -340,28 +340,28 @@ int console_blit_param_completion(Context *env, char *cmd) {
         case Parameter::BOOL:
             ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
                   (*(bool*)p->get() == true) ? "true" : "false",
-                  p->description);
+                  p->getDescription().c_str());
             break;
         case Parameter::NUMBER:
             ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
                   *(float*)p->get(),
-                  p->description);
+                  p->getDescription().c_str());
             break;
         case Parameter::STRING:
-            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->description);
+            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->getDescription().c_str());
             break;
         case Parameter::POSITION: {
             float *val = (float*)p->get();
             ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
                   val[0], val[1],
-                  p->description);
+                  p->getDescription().c_str());
         }
         break;
         case Parameter::COLOR:
-            ::act("%s (color) %s", p->getName().c_str(), p->description);
+            ::act("%s (color) %s", p->getName().c_str(), p->getDescription().c_str());
             break;
         default:
-            ::error("%s (unknown) %s", p->getName().c_str(), p->description);
+            ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
             break;
         }
     }
@@ -409,7 +409,7 @@ int console_filter_completion(Context *env, char *cmd) {
     if(!res[1]) { // exact match: fill in the command
         filt = res[0];
         if(!filt) return 0; // doublecheck safety fix
-        ::notice("%s :: %s",filt->getName().c_str(),filt->description());
+        ::notice("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str());
         snprintf(cmd,511,"%s",res[0]->getName().c_str());
         c=1;
     } else { // list all matches
@@ -438,7 +438,7 @@ int console_filter_completion(Context *env, char *cmd) {
                 strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            //      ::act("%s :: %s",filt->getName().c_str(),filt->description());
+            //      ::act("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str()());
 
             ::act("%s",tmp);
         }
@@ -714,7 +714,7 @@ int console_generator_completion(Context *env, char *cmd) {
 
     if(!res[1]) { // exact match: fill in the command
         filt = res[0];
-        ::notice("%s :: %s",filt->getName().c_str(),filt->description());
+        ::notice("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str());
         snprintf(cmd,511,"%s",filt->getName().c_str());
         c=1;
     } else { // list all matches
@@ -744,7 +744,7 @@ int console_generator_completion(Context *env, char *cmd) {
                 strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            //      ::act("%s :: %s",filt->getName().c_str(),filt->description());
+            //      ::act("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str()());
 
             ::act("%s",tmp);
         }

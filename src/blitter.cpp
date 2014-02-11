@@ -36,7 +36,7 @@
 
 
 Blit::Blit() :Entry() {
-    sprintf(desc,"none");
+    setDescription("none");
 
     value = 0.0;
 

@@ -64,7 +64,6 @@ public:
     Blit();
     ~Blit();
 
-    char desc[512];    ///< long description
     float value;    ///< parameter value
 
     Linklist<Parameter> parameters; ///< linklist of blit parameters

@@ -65,7 +65,7 @@ Parameter::Parameter(Parameter::Type param_type)
     filter_get_f = NULL;
 
     setName("unnamed");
-    strcpy(description, " ");
+    setDescription(" ");
 }
 
 Parameter::~Parameter() {

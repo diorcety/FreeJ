@@ -249,7 +249,7 @@ void Freior::init_parameters(Linklist<Parameter> &parameters) {
         param->setName(param_infos[i].name);
         func("registering parameter %s for filter %s\n", param->getName().c_str(), info.name);
 
-        snprintf(param->description, 512, "%s", param_infos[i].explanation);
+        param->setDescription(param_infos[i].explanation);
         param->filter_set_f = set_frei0r_parameter;
         param->filter_get_f = get_frei0r_parameter;
         parameters.append(param);

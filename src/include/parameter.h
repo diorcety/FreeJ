@@ -59,12 +59,7 @@ public:
     bool parse(char *p);
 
     Type type;
-
-    // TODO - following properties should be made private
-    //        and we should expose accessors to deal with
-    //        the actual data, possibly doing conversions
-    //        and typecasts for the caller (hiding complexity)
-    char description[512];
+public:
     void *value;
     void *min_value;
     void *max_value;

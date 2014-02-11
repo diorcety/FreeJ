@@ -69,7 +69,7 @@ JSP(parameter_get_desc) {
         JS_ERROR("Parameter used has no internal data");
     } else {
         JS_BeginRequest(cx);
-        str  = JS_NewStringCopyZ(cx, param->description);
+        str  = JS_NewStringCopyZ(cx, param->getDescription().c_str());
         *vp = STRING_TO_JSVAL(str);
         JS_EndRequest(cx);
     }

@@ -140,6 +140,8 @@ public:
 
     void setName(const std::string &name);
     const std::string &getName() const;
+    void setDescription(const std::string &description);
+    const std::string &getDescription() const;
     bool up();
     bool down();
     bool move(int pos);
@@ -156,6 +158,7 @@ public:
 
 protected:
     std::string name;
+    std::string description;
 
 public:
 

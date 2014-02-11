@@ -56,6 +56,14 @@ const std::string &Entry::getName() const {
     return name;
 }
 
+void Entry::setDescription(const std::string &description) {
+    this->description = description;
+}
+
+const std::string &Entry::getDescription() const {
+    return description;
+}
+
 bool Entry::up() {
     if(!list) return(false);
     if(!prev) return(false);

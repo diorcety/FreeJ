@@ -64,7 +64,7 @@ TextLayer::TextLayer()
 
         param = new Parameter(Parameter::NUMBER);
         param->setName("size");
-        strcpy(param->description, "set the size of the font");
+        param->setDescription("set the size of the font");
         parameters->append(param);
     }
 }

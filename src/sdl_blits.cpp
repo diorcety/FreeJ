@@ -114,7 +114,7 @@ void setup_sdl_blits(Blitter *blitter) {
     // SDL blits
     b = new Blit();
     b->setName("SDL");
-    sprintf(b->desc,"RGB blit (SDL)");
+    b->setDescription("RGB blit (SDL)");
     b->type = Blit::SDL;
     b->sdl_fun = sdl_rgb;
     blitter->blitlist.prepend(b);
@@ -125,14 +125,14 @@ void setup_sdl_blits(Blitter *blitter) {
 
     b = new Blit();
     b->setName("ALPHA");
-    sprintf(b->desc,"alpha blit (SDL)");
+    b->setDescription("alpha blit (SDL)");
     b->type = Blit::SDL;
     b->sdl_fun = sdl_alpha;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
     p->setName("alpha");
-    strcpy(p->description, "level of transparency of alpha channel (0.0 - 1.0)");
+    p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
     p->multiplier = 255.0;
     b->parameters.append(p);
 
@@ -140,14 +140,14 @@ void setup_sdl_blits(Blitter *blitter) {
 
     b = new Blit();
     b->setName("SRCALPHA");
-    sprintf(b->desc,"source alpha blit (SDL)");
+    b->setDescription("source alpha blit (SDL)");
     b->type = Blit::SDL;
     b->sdl_fun = sdl_srcalpha;
     blitter->blitlist.prepend(b);
 
     p = new Parameter(Parameter::NUMBER);
     p->setName("alpha");
-    strcpy(p->description, "level of transparency of alpha channel (0.0 - 1.0)");
+    p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
     p->multiplier = 255.0;
     b->parameters.append(p);
 
