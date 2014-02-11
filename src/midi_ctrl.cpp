@@ -39,7 +39,7 @@
 
 JS(js_midi_ctrl_constructor);
 
-DECLARE_CLASS_GC("MidiController", js_midi_ctrl_class, js_midi_ctrl_constructor,js_ctrl_gc);
+DECLARE_CLASS_GC("MidiController", js_midi_ctrl_class, js_midi_ctrl_constructor, js_ctrl_gc);
 
 JS(midi_connect);
 JS(midi_connect_from);
@@ -50,16 +50,16 @@ JSFunctionSpec js_midi_ctrl_methods[] = {
 };
 
 JS(js_midi_ctrl_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     MidiController *midi = new MidiController();
     // assign instance into javascript object
     // initialize with javascript context
-    if(! midi->init(global_environment) ) {
+    if(! midi->init(global_environment)) {
         error("failed initializing midi controller");
         delete midi;
         return JS_FALSE;
     }
-    if( ! JS_SetPrivate(cx, obj, (void*)midi) ) {
+    if(! JS_SetPrivate(cx, obj, (void*)midi)) {
         error("failed assigning midi controller to javascript");
         delete midi;
         return JS_FALSE;
@@ -73,7 +73,7 @@ JS(js_midi_ctrl_constructor) {
     return JS_TRUE;
 }
 
-MidiController::MidiController():SdlController() {
+MidiController::MidiController(): SdlController() {
     setName("Midi Controller");
     seq_handle = NULL;
     jsenv = NULL;
@@ -82,19 +82,19 @@ MidiController::MidiController():SdlController() {
 
 MidiController::~MidiController() {
     notice("midi close client %u", seq_client_id);
-    if (seq_handle)
+    if(seq_handle)
         snd_seq_close(seq_handle);
 }
 
 JS(midi_connect_from) {
-    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    func("%u:%s:%s argc: %u", __LINE__, __FILE__, __FUNCTION__, argc);
     JS_CHECK_ARGC(3);
     int res = 0;
 
-    MidiController *midi = (MidiController *) JS_GetPrivate(cx,obj);
+    MidiController *midi = (MidiController *) JS_GetPrivate(cx, obj);
     if(!midi) {
         error("%u:%s:%s :: Midi core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -111,7 +111,7 @@ JS(midi_connect_from) {
 int MidiController::connect_from(int myport, int dest_client, int dest_port) {
     // Returns: 0 on success or negative error code
     int ret = snd_seq_connect_from(seq_handle, myport, dest_client, dest_port);
-    if (ret != 0) {
+    if(ret != 0) {
         error("midi connect: %i %s", ret, snd_strerror(ret));
     }
     return ret;
@@ -121,22 +121,22 @@ int MidiController::dispatch() {
     snd_seq_event_t *ev;
     int ret = 0;
 
-    if (!seq_handle) {
+    if(!seq_handle) {
         error("%s invalid ALSA seq handler, did you init?");
         return ret;
     }
-    while (snd_seq_event_input(seq_handle, &ev) >=0) {
-        func ("midi action type/channel/param/value/time/src:port/dest:port %5d/%5d/%5d/%5d/%5d/%u:%u/%u:%u",
-              ev->type,
-              ev->data.control.channel,
-              ev->data.control.param,
-              ev->data.control.value,
-              ev->time.tick, // time
-              ev->source.client, ev->source.port,
-              ev->dest.client, ev->dest.port
-             );
+    while(snd_seq_event_input(seq_handle, &ev) >= 0) {
+        func("midi action type/channel/param/value/time/src:port/dest:port %5d/%5d/%5d/%5d/%5d/%u:%u/%u:%u",
+             ev->type,
+             ev->data.control.channel,
+             ev->data.control.param,
+             ev->data.control.value,
+             ev->time.tick, // time
+             ev->source.client, ev->source.port,
+             ev->dest.client, ev->dest.port
+            );
 
-        switch (ev->type) {
+        switch(ev->type) {
         case SND_SEQ_EVENT_CONTROLLER:
             ret = event_ctrl(ev->data.control.channel, ev->data.control.param, ev->data.control.value);
             break;
@@ -164,7 +164,7 @@ int MidiController::dispatch() {
 
 int MidiController::event_ctrl(int channel, int param, int value) {
     func("midi Control event on Channel\t%2d: %5d %5d (param/value)", channel, param, value);
-    if (jsenv == NULL) {
+    if(jsenv == NULL) {
         error("Midi handle action: jsobj is null");
         return(0);
     }
@@ -175,7 +175,7 @@ int MidiController::event_ctrl(int channel, int param, int value) {
 
 int MidiController::event_pitch(int channel, int param, int value) {
     func("midi Pitchbender event on Channel\t%2d: %5d %5d   ",  channel, param, value);
-    if (jsenv == NULL) {
+    if(jsenv == NULL) {
         error("Midi handle action: jsobj is null");
         return(0);
     }
@@ -186,7 +186,7 @@ int MidiController::event_pitch(int channel, int param, int value) {
 
 int MidiController::event_noteon(int channel, int note, int velocity) {
     func("midi Note On event on Channel\t%2d: %5d %5d      ", channel, note, velocity);
-    if (jsenv == NULL) {
+    if(jsenv == NULL) {
         error("Midi handle action: jsobj is null");
         return(0);
     }
@@ -198,7 +198,7 @@ int MidiController::event_noteon(int channel, int note, int velocity) {
 int MidiController::event_noteoff(int channel, int note, int velocity) {
     func("midi Note Off event on Channel\t%2d: %5d      ", channel, note);
 
-    if (jsenv == NULL) {
+    if(jsenv == NULL) {
         error("Midi handle action: jsobj is null");
         return(0);
     }
@@ -210,7 +210,7 @@ int MidiController::event_noteoff(int channel, int note, int velocity) {
 
 int MidiController::event_pgmchange(int channel, int param, int value) {
     func("midi PGM change event on Channel\t%2d: %5d %5d ", channel, param, value);
-    if (jsenv == NULL) {
+    if(jsenv == NULL) {
         error("Midi handle action: jsobj is null");
         return(0);
     }
@@ -246,20 +246,20 @@ typedef struct snd_seq_event {
 */
 
 bool MidiController::init(Context *freej) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     int portid;
-    int result=snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK);
-    if (result<0) {
+    int result = snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK);
+    if(result < 0) {
         error("Error opening ALSA sequencer: %s\n", snd_strerror(result));
         return(false);
     }
     snd_seq_set_client_name(seq_handle, CLIENT_NAME);
     seq_client_id = snd_seq_client_id(seq_handle);
     // port name 16 chars
-    if ((portid = snd_seq_create_simple_port(seq_handle, "MIDI IN",
-                  SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
-                  SND_SEQ_PORT_TYPE_APPLICATION)) < 0) {
+    if((portid = snd_seq_create_simple_port(seq_handle, "MIDI IN",
+                                            SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
+                                            SND_SEQ_PORT_TYPE_APPLICATION)) < 0) {
         error("Error creating sequencer port.\n");
         return(false);
     }

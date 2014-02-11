@@ -47,7 +47,7 @@ public:
     /* void set_hex(uint32_t h); */
     /* void set_hex_alpha(uint32_t h, uint8_t a); */
 
-    virtual void set() =0;
+    virtual void set() = 0;
 
 };
 

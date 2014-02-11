@@ -82,7 +82,7 @@ bool FilterInstance::set_parameter(int idx) {
     Parameter *param;
     param = (Parameter*)parameters[idx];
 
-    if( ! param) {
+    if(! param) {
         error("parameter [%u] not found in filter %s", idx, proto->getName().c_str());
         return false;
     } else {
@@ -103,7 +103,7 @@ bool FilterInstance::get_parameter(int idx) {
     Parameter *param;
     param = (Parameter*)parameters[idx];
 
-    if( ! param) {
+    if(! param) {
         error("parameter %s not found in filter %s", param->getName().c_str(), proto->getName().c_str());
         return false;
     } else {
@@ -122,7 +122,7 @@ bool FilterInstance::get_parameter(int idx) {
 
 bool FilterInstance::apply(Layer *lay) {
     bool ret = false;
-    if (!layer && proto)
+    if(!layer && proto)
         ret = proto->apply(lay, this);
     return ret;
 }
@@ -136,7 +136,7 @@ Layer *FilterInstance::get_layer() {
 }
 
 bool FilterInstance::inuse() {
-    if (layer)
+    if(layer)
         return true;
     return false;
 }

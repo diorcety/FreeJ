@@ -49,7 +49,7 @@ SdlScreen::SdlScreen()
     pre_rotozoom = NULL;
 
     dbl = false;
-    sdl_flags = (SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL );
+    sdl_flags = (SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL);
     //| SDL_DOUBLEBUF | SDL_HWACCEL | SDL_RESIZABLE);
     // add above | SDL_FULLSCREEN to go fullscreen from the start
 
@@ -70,29 +70,29 @@ bool SdlScreen::_init() {
     setenv("SDL_VIDEO_HWACCEL", "1", 1);
 
 
-    if( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK ) < 0 ) {
-        error("Can't initialize SDL: %s",SDL_GetError());
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+        error("Can't initialize SDL: %s", SDL_GetError());
         return(false);
     }
 
-    setres(geo.w,geo.h);
+    setres(geo.w, geo.h);
     sdl_screen = SDL_GetVideoSurface();
 
-    SDL_VideoDriverName(temp,120);
+    SDL_VideoDriverName(temp, 120);
 
     notice("SDL Viewport is %s %ix%i %ibpp",
-           temp,geo.w,geo.h,geo.bpp);
+           temp, geo.w, geo.h, geo.bpp);
 
     /* be nice with the window manager */
-    sprintf(temp,"%s %s",PACKAGE,VERSION);
-    SDL_WM_SetCaption (temp, temp);
+    sprintf(temp, "%s %s", PACKAGE, VERSION);
+    SDL_WM_SetCaption(temp, temp);
 
     /* hide mouse cursor */
     //SDL_ShowCursor(SDL_DISABLE);
 
     // optimise sdl_gfx blits
-    if( SDL_imageFilterMMXdetect () )
-        act ("SDL using MMX accelerated blit");
+    if(SDL_imageFilterMMXdetect())
+        act("SDL using MMX accelerated blit");
 
     return(true);
 }
@@ -138,7 +138,7 @@ void SdlScreen::blit(Layer *src) {
 
         offset = rotozoom->pixels;
         // free the temporary surface (needed again in sdl blits)
-        src->geo_rotozoom.init( rotozoom->w, rotozoom->h, src->geo.bpp);
+        src->geo_rotozoom.init(rotozoom->w, rotozoom->h, src->geo.bpp);
 
 
     } else offset = src->buffer;
@@ -146,7 +146,7 @@ void SdlScreen::blit(Layer *src) {
 
 
     if(src->need_crop)
-        src->blitter->crop( src, this );
+        src->blitter->crop(src, this);
 
     b = src->current_blit;
 
@@ -156,13 +156,13 @@ void SdlScreen::blit(Layer *src) {
 //   }
 
     // executes LINEAR blit
-    if( b->type == Blit::LINEAR ) {
+    if(b->type == Blit::LINEAR) {
 
         pscr = (uint32_t*) get_surface() + b->scr_offset;
         play = (uint32_t*) offset        + b->lay_offset;
 
         // iterates the blit on each horizontal line
-        for( c = b->lay_height ; c > 0 ; c-- ) {
+        for(c = b->lay_height ; c > 0 ; c--) {
 
             (*b->fun)
             ((void*)play, (void*)pscr,
@@ -175,9 +175,9 @@ void SdlScreen::blit(Layer *src) {
         }
 
         // executes SDL blit
-    } else if (b->type == Blit::SDL) {
+    } else if(b->type == Blit::SDL) {
 
-        if (src->blitter->geo)
+        if(src->blitter->geo)
             (*b->sdl_fun)
             (offset, &b->sdl_rect, sdl_screen,
              NULL, src->blitter->geo, &b->parameters);
@@ -222,15 +222,15 @@ void SdlScreen::blit(Layer *src) {
 }
 
 void SdlScreen::resize(int resize_w, int resize_h) {
-    act("resizing viewport to %u x %u",resize_w, resize_h);
-    sdl_screen = SDL_SetVideoMode(resize_w,resize_h,32,sdl_flags);
-    geo.init( resize_w, resize_h, 32);
+    act("resizing viewport to %u x %u", resize_w, resize_h);
+    sdl_screen = SDL_SetVideoMode(resize_w, resize_h, 32, sdl_flags);
+    geo.init(resize_w, resize_h, 32);
 }
 
 void *SdlScreen::coords(int x, int y) {
     return
-        ( x + geo.pixelsize*y +
-          (uint32_t*)sdl_screen->pixels );
+        (x + geo.pixelsize * y +
+         (uint32_t*)sdl_screen->pixels);
 }
 
 void SdlScreen::show() {
@@ -238,7 +238,7 @@ void SdlScreen::show() {
     if(switch_fullscreen) {
 #ifdef HAVE_DARWIN
 #ifndef WITH_COCOA
-        if((sdl_flags&SDL_FULLSCREEN) == SDL_FULLSCREEN)
+        if((sdl_flags & SDL_FULLSCREEN) == SDL_FULLSCREEN)
             sdl_flags &= ~SDL_FULLSCREEN;
         else
             sdl_flags |= SDL_FULLSCREEN;
@@ -263,15 +263,15 @@ void *SdlScreen::get_surface() {
 }
 
 void SdlScreen::clear() {
-    SDL_FillRect(sdl_screen,NULL,0x0);
+    SDL_FillRect(sdl_screen, NULL, 0x0);
 }
 void SdlScreen::fullscreen() {
     switch_fullscreen = true;
 }
 
 bool SdlScreen::lock() {
-    if (!SDL_MUSTLOCK(sdl_screen)) return true;
-    if (SDL_LockSurface(sdl_screen) < 0) {
+    if(!SDL_MUSTLOCK(sdl_screen)) return true;
+    if(SDL_LockSurface(sdl_screen) < 0) {
         error("%s", SDL_GetError());
         return false;
     }
@@ -279,7 +279,7 @@ bool SdlScreen::lock() {
 }
 
 bool SdlScreen::unlock() {
-    if (SDL_MUSTLOCK(sdl_screen)) {
+    if(SDL_MUSTLOCK(sdl_screen)) {
         SDL_UnlockSurface(sdl_screen);
     }
     return true;
@@ -295,19 +295,19 @@ int SdlScreen::setres(int wx, int hx) {
 
     sdl_screen = SDL_SetVideoMode(wx, hx, bpp, sdl_flags);
     //  screen = SDL_SetVideoMode(wx, hx, 0, sdl_flags);
-    if( sdl_screen == NULL ) {
+    if(sdl_screen == NULL) {
         error("can't set video mode: %s\n", SDL_GetError());
         return(false);
     }
 
 
-    if(res!=bpp) {
-        act("your screen does'nt support %ubpp",bpp);
+    if(res != bpp) {
+        act("your screen does'nt support %ubpp", bpp);
         act("doing video surface software conversion");
 
         emuscr = SDL_GetVideoSurface();
         act("emulated surface geometry %ux%u %ubpp",
-            emuscr->w,emuscr->h,emuscr->format->BitsPerPixel);
+            emuscr->w, emuscr->h, emuscr->format->BitsPerPixel);
     }
 
 

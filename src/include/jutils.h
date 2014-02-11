@@ -26,7 +26,7 @@
 // FIXME: Cheap way to get logging included everywhere
 #include <logging.h>
 
-extern void *(*jmemcpy)( void *to, const void *from, size_t len );
+extern void *(*jmemcpy)(void *to, const void *from, size_t len);
 
 uint32_t fastrand();
 void fastsrand(uint32_t seed);

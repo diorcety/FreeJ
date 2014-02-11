@@ -45,9 +45,9 @@ public:
     }
     void set_color(uint16_t r, uint16_t g, uint16_t b, uint16_t a) {
         if(SDL_BYTEORDER == SDL_LIL_ENDIAN)
-            color = a|(b<<8)|(g<<16)|(r<<24);
+            color = a | (b << 8) | (g << 16) | (r << 24);
         else
-            color = a|(r<<8)|(g<<16)|(b<<24);
+            color = a | (r << 8) | (g << 16) | (b << 24);
     }
     uint32_t get_color() {
         return color;

@@ -112,7 +112,7 @@ private:
     static FInstancesMap *instances_map;
 
     static inline bool make_tag(const char *category, const char *id, char *out, unsigned int outlen) {
-        if (strlen(category)+strlen(id)+3 > outlen) { // check the size of the requested id
+        if(strlen(category) + strlen(id) + 3 > outlen) { // check the size of the requested id
             error("Factory::new_instance : requested ID (%s::%s) exceedes maximum size", category, id);
             return false;
         }
@@ -124,10 +124,10 @@ public:
 
     // Define a default class for a certain category
     static int set_default_classtype(const char *category, const char *id) {
-        if (!defaults_map) // create on first use
+        if(!defaults_map)  // create on first use
             defaults_map = new FDefaultClassesMap();
         FTagMap::iterator pair = defaults_map->find(category);
-        if (pair != defaults_map->end()) // remove old default (if any)
+        if(pair != defaults_map->end())  // remove old default (if any)
             defaults_map->erase(pair);
         // set new default
         defaults_map->insert(FTagPair(category, id));
@@ -140,7 +140,7 @@ public:
     // will be returned.
     static inline T *new_instance(const char *category) {
         FTagMap::iterator pair = defaults_map->find(category);
-        if (pair != defaults_map->end())
+        if(pair != defaults_map->end())
             return new_instance(category, pair->second);
         return NULL;
     }
@@ -148,18 +148,18 @@ public:
     // Create (and return) a new instance of the class which matches 'id' within a certain category.
     static inline T *new_instance(const char *category, const char *id) {
         char tag[FACTORY_ID_MAXLEN];
-        if (!category || !id) // safety belts
+        if(!category || !id)  // safety belts
             return NULL;
 
         func("(new_instance) Looking for %s::%s", category, id);
-        if (!make_tag(category, id, tag, sizeof(tag)))
+        if(!make_tag(category, id, tag, sizeof(tag)))
             return NULL;
         func("Looking for %s in instantiators_map (%d)", tag, instantiators_map->size());
         FInstantiatorsMap::iterator instantiators_pair = instantiators_map->find(tag);
-        if (instantiators_pair != instantiators_map->end()) { // check if we have a match
+        if(instantiators_pair != instantiators_map->end()) {  // check if we have a match
             func("id %s found", id);
             Instantiator create_instance = instantiators_pair->second;
-            if (create_instance)
+            if(create_instance)
                 return (T*)create_instance();
         }
         return NULL;
@@ -167,7 +167,7 @@ public:
 
     static inline T*get_instance(const char *category) {
         FTagMap::iterator pair = defaults_map->find(category);
-        if (pair != defaults_map->end())
+        if(pair != defaults_map->end())
             return get_instance(category, pair->second);
         return NULL;
     }
@@ -176,18 +176,18 @@ public:
     //        (move common code in a private method used by both (get|new)_instance()
     static inline T *get_instance(const char *category, const char *id) {
         char tag[FACTORY_ID_MAXLEN];
-        if (!category || !id) // safety belts
+        if(!category || !id)  // safety belts
             return NULL;
 
         func("(get_instance) Looking for %s::%s", category, id);
 
-        if (!make_tag(category, id, tag, sizeof(tag)))
+        if(!make_tag(category, id, tag, sizeof(tag)))
             return NULL;
 
-        if (instances_map) {
+        if(instances_map) {
             func("Looking for %s in instantiators_map (%d)", tag, instances_map->size());
             FInstancesMap::iterator instance_pair = instances_map->find(tag);
-            if (instance_pair != instances_map->end()) {
+            if(instance_pair != instances_map->end()) {
                 void *instance = instance_pair->second;
                 func("Returning instance of %s at address %p", tag, instance);
                 return (T *)instance;
@@ -211,25 +211,25 @@ public:
     static int register_instantiator(const char *category, const char *id, Instantiator func) {
         char tag[FACTORY_ID_MAXLEN];
 
-        if (!make_tag(category, id, tag, sizeof(tag)))
+        if(!make_tag(category, id, tag, sizeof(tag)))
             return 0;
 
-        if (!instantiators_map) { // create on first use
+        if(!instantiators_map) {  // create on first use
             instantiators_map = new FInstantiatorsMap();
         }
-        if (instantiators_map) {
+        if(instantiators_map) {
             FInstantiatorsMap::iterator instantiators_pair = instantiators_map->find(tag);
-            if (instantiators_pair != instantiators_map->end()) {
+            if(instantiators_pair != instantiators_map->end()) {
                 error("Can't register new class. Tag '%s' already exists!", tag);
                 return 0;
             }
             instantiators_map->insert(FInstantiatorPair(tag, func));
             // check if we already have a default_map
-            if (!defaults_map)
+            if(!defaults_map)
                 defaults_map = new FDefaultClassesMap();
 
             FTagMap::iterator pair = defaults_map->find(category);
-            if (pair != defaults_map->end())
+            if(pair != defaults_map->end())
                 set_default_classtype(category, id);
             return 1;
         }

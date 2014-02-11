@@ -77,20 +77,20 @@ GlScreen::GlScreen()
 
 
 bool GlScreen::check_opengl_error() {
-    GLenum err = glGetError ();
+    GLenum err = glGetError();
     if(err == GL_INVALID_ENUM)
         notice("GL_INVALID_ENUM");
-    else if (err == GL_INVALID_VALUE)
+    else if(err == GL_INVALID_VALUE)
         notice("GL_INVALID_VALUE di glTexImage2D");
-    else if (err == GL_INVALID_OPERATION)
+    else if(err == GL_INVALID_OPERATION)
         notice("GL_INVALID_OPERATION");
-    else if (err == GL_STACK_OVERFLOW)
+    else if(err == GL_STACK_OVERFLOW)
         notice("GL_STACK_OVERFLOW");
-    else if (err == GL_STACK_UNDERFLOW)
+    else if(err == GL_STACK_UNDERFLOW)
         notice("GL_STACK_UNDERFLOW");
-    else if (err == GL_OUT_OF_MEMORY)
+    else if(err == GL_OUT_OF_MEMORY)
         notice("GL_OUT_OF_MEMORY");
-    else if (err == GL_TABLE_TOO_LARGE)
+    else if(err == GL_TABLE_TOO_LARGE)
         notice("GL_TABLE_TOO_LARGE");
     else
         return (true);
@@ -112,7 +112,7 @@ void GlScreen::blit(Layer *layer) {
     //glColor3f (0., 0., 0.);
     //glRasterPos2i (0,0);
     layer->lock();
-    glDrawPixels (layer->geo.w, layer->geo.h, GL_BGRA, GL_UNSIGNED_BYTE, layer->buffer);
+    glDrawPixels(layer->geo.w, layer->geo.h, GL_BGRA, GL_UNSIGNED_BYTE, layer->buffer);
     layer->unlock();
 }
 

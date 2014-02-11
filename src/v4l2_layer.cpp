@@ -56,8 +56,8 @@ Res::~Res() {
 }
 
 bool Res::addRes(unsigned int x, unsigned int y, int type) {
-    if (type == V4L2_FRMSIZE_TYPE_DISCRETE) {
-        if (m_idx < (m_size -1)) {
+    if(type == V4L2_FRMSIZE_TYPE_DISCRETE) {
+        if(m_idx < (m_size - 1)) {
             m_sizes[m_idx][0] = x;
             m_sizes[m_idx][1] = y;
 //       notice( "%dx%d", x, y) ;
@@ -73,7 +73,7 @@ unsigned int Res::getNb() {
 }
 
 unsigned int Res::getX(unsigned int val) {
-    if (val < m_idx) {
+    if(val < m_idx) {
         return (m_sizes[val][0]);
     } else {
         return (0);
@@ -81,7 +81,7 @@ unsigned int Res::getX(unsigned int val) {
 }
 
 unsigned int Res::getY(unsigned int val) {
-    if (val < m_idx) {
+    if(val < m_idx) {
         return (m_sizes[val][1]);
     } else {
         return (0);
@@ -89,8 +89,8 @@ unsigned int Res::getY(unsigned int val) {
 }
 
 void Res::setsX(unsigned int x) {
-    for (unsigned int i = 0; i < m_idx; i++) {
-        if (x == m_sizes[i][0]) {
+    for(unsigned int i = 0; i < m_idx; i++) {
+        if(x == m_sizes[i][0]) {
             m_curIdx = i;
             break;
         }
@@ -102,11 +102,11 @@ unsigned int Res::getCurIdx() {
 }
 
 V4L2CamLayer::V4L2CamLayer()
-    :Layer() {
+    : Layer() {
 
     buftype = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    renderhop=2; // renderhop is how many frames to guzzle before rendering
-    framenum=0;
+    renderhop = 2; // renderhop is how many frames to guzzle before rendering
+    framenum = 0;
     fd = 0;
     frame = NULL;
     buffers = NULL;
@@ -125,16 +125,16 @@ V4L2CamLayer::~V4L2CamLayer() {
 
 bool V4L2CamLayer::open(const char *devfile) {
     int errno;
-    if (-1 == (fd = ::open(devfile,O_RDWR|O_NONBLOCK))) {
+    if(-1 == (fd = ::open(devfile, O_RDWR | O_NONBLOCK))) {
         error("error in opening video capture device: %s", devfile);
         return(false);
     } else {
         ::close(fd);
-        fd = ::open(devfile,O_RDWR);
+        fd = ::open(devfile, O_RDWR);
     }
-    notice("Video4Linux2 device opened: %s",devfile);
+    notice("Video4Linux2 device opened: %s", devfile);
 
-    strcpy (m_devfile, devfile);
+    strcpy(m_devfile, devfile);
     // Check that streaming is supported
 
     memset(&capability, 0, sizeof(capability));
@@ -152,7 +152,7 @@ bool V4L2CamLayer::open(const char *devfile) {
     }
 
     // Switch to the first video input (example 1-2)
-    int index=0;
+    int index = 0;
     if(-1 == ioctl(fd, VIDIOC_G_INPUT, &index)) {		//gets the current video input
         error("VIDIOC_G_INPUT: %s", strerror(errno));
         return(false);
@@ -169,48 +169,48 @@ bool V4L2CamLayer::open(const char *devfile) {
     // example 1-6
     memset(&standard, 0, sizeof(standard));
     standard.index = 0;
-    while(0 == ioctl (fd, VIDIOC_ENUMSTD, &standard)) {
+    while(0 == ioctl(fd, VIDIOC_ENUMSTD, &standard)) {
         if(standard.id & input.std)
             act(" + standard: %s", standard.name);
         standard.index++;
     }
 
     //fills the frame size the format description
-    memset (&fmtdesc, 0, sizeof (fmtdesc));
+    memset(&fmtdesc, 0, sizeof(fmtdesc));
     fmtdesc.index = 0;
     fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    while (0 == ioctl (fd, VIDIOC_ENUM_FMT, &fmtdesc)) {
-        notice ("format description :%s", fmtdesc.description);
-        if (!m_res)
-            m_res = new Res (ARRAY_RESOLUTION_SIZE);
-        for (unsigned int i=0; ; i++) {
+    while(0 == ioctl(fd, VIDIOC_ENUM_FMT, &fmtdesc)) {
+        notice("format description :%s", fmtdesc.description);
+        if(!m_res)
+            m_res = new Res(ARRAY_RESOLUTION_SIZE);
+        for(unsigned int i = 0; ; i++) {
             memset(&framesize, 0, sizeof framesize);
             framesize.pixel_format = fmtdesc.pixelformat;
             framesize.index = i;
             int ret = ioctl(fd, VIDIOC_ENUM_FRAMESIZES, &framesize);
-            if (ret < 0)
+            if(ret < 0)
                 break;
-            if (i != framesize.index)
-                error ("Warning: driver returned wrong frame index "
-                       "%u.\n", framesize.index);
-            if (fmtdesc.pixelformat != framesize.pixel_format)
+            if(i != framesize.index)
+                error("Warning: driver returned wrong frame index "
+                      "%u.\n", framesize.index);
+            if(fmtdesc.pixelformat != framesize.pixel_format)
                 error("Warning: driver returned wrong frame pixel "
                       "format %08x.\n", framesize.pixel_format);
 
-            switch (framesize.type) {
+            switch(framesize.type) {
             case V4L2_FRMSIZE_TYPE_DISCRETE:
-                m_res->addRes (framesize.discrete.width, framesize.discrete.height, V4L2_FRMSIZE_TYPE_DISCRETE);
+                m_res->addRes(framesize.discrete.width, framesize.discrete.height, V4L2_FRMSIZE_TYPE_DISCRETE);
                 break;
 
             case V4L2_FRMSIZE_TYPE_CONTINUOUS:
-                m_res->addRes (framesize.stepwise.max_width, framesize.stepwise.max_height, V4L2_FRMSIZE_TYPE_CONTINUOUS);
-                m_res->addRes (framesize.stepwise.min_width, framesize.stepwise.min_height, V4L2_FRMSIZE_TYPE_CONTINUOUS);
+                m_res->addRes(framesize.stepwise.max_width, framesize.stepwise.max_height, V4L2_FRMSIZE_TYPE_CONTINUOUS);
+                m_res->addRes(framesize.stepwise.min_width, framesize.stepwise.min_height, V4L2_FRMSIZE_TYPE_CONTINUOUS);
                 break;
 
             case V4L2_FRMSIZE_TYPE_STEPWISE:
-                m_res->addRes (framesize.stepwise.max_width, framesize.stepwise.max_height, V4L2_FRMSIZE_TYPE_STEPWISE);
-                m_res->addRes (framesize.stepwise.min_width, framesize.stepwise.min_height, V4L2_FRMSIZE_TYPE_STEPWISE);
-                m_res->addRes (framesize.stepwise.step_width, framesize.stepwise.step_height, V4L2_FRMSIZE_TYPE_STEPWISE);
+                m_res->addRes(framesize.stepwise.max_width, framesize.stepwise.max_height, V4L2_FRMSIZE_TYPE_STEPWISE);
+                m_res->addRes(framesize.stepwise.min_width, framesize.stepwise.min_height, V4L2_FRMSIZE_TYPE_STEPWISE);
+                m_res->addRes(framesize.stepwise.step_width, framesize.stepwise.step_height, V4L2_FRMSIZE_TYPE_STEPWISE);
                 break;
 
             default:
@@ -221,11 +221,11 @@ bool V4L2CamLayer::open(const char *devfile) {
     }
 
 //gets the current resolution
-    memset (&format, 0, sizeof (format));
+    memset(&format, 0, sizeof(format));
     format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    if (-1 == ioctl (fd, VIDIOC_G_FMT, &format)) {
-        perror ("VIDIOC_G_FMT");
+    if(-1 == ioctl(fd, VIDIOC_G_FMT, &format)) {
+        perror("VIDIOC_G_FMT");
         return (false);
     }
 
@@ -242,7 +242,7 @@ bool V4L2CamLayer::open(const char *devfile) {
         }
     }
 
-    if (m_res) {
+    if(m_res) {
         m_res->setsX(format.fmt.pix.width);
     }
 
@@ -263,47 +263,47 @@ bool V4L2CamLayer::open(const char *devfile) {
     geo.init(format.fmt.pix.width, format.fmt.pix.height, 32);
 
     frame = malloc(geo.bytesize);
-    memset (&reqbuf, 0, sizeof (reqbuf));
+    memset(&reqbuf, 0, sizeof(reqbuf));
     reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     reqbuf.memory = V4L2_MEMORY_MMAP;
     reqbuf.count = 4;	//reduced to reduce the display delay (thanks snawrocki)
-    if (-1 == ioctl (fd, VIDIOC_REQBUFS, &reqbuf)) {
-        if (errno == EINVAL)
+    if(-1 == ioctl(fd, VIDIOC_REQBUFS, &reqbuf)) {
+        if(errno == EINVAL)
             error("video capturing by mmap-streaming is not supported");
         else
-            error ("VIDIOC_REQBUFS: %s", strerror(errno));
+            error("VIDIOC_REQBUFS: %s", strerror(errno));
         return(false);
     }
     act("this cam supports %i buffers", reqbuf.count);
-    buffers = (bufs*)calloc (reqbuf.count, sizeof (*buffers));
+    buffers = (bufs*)calloc(reqbuf.count, sizeof(*buffers));
 
     if(format.fmt.pix.pixelformat != V4L2_PIX_FMT_YUYV) { // YUYV
         warning("pixel format not recognized, trying anyway as YUYV");
         warning("the system might become instable...");
     }
 
-    for (unsigned int i = 0; i < reqbuf.count; i++) {
+    for(unsigned int i = 0; i < reqbuf.count; i++) {
 
-        memset (&buffer, 0, sizeof (buffer));
+        memset(&buffer, 0, sizeof(buffer));
         buffer.type = reqbuf.type;
         buffer.memory = V4L2_MEMORY_MMAP;
         buffer.index = i;
 
-        if (-1 == ioctl (fd, VIDIOC_QUERYBUF, &buffer)) {
-            error ("VIDIOC_QUERYBUF: %s", strerror(errno));
+        if(-1 == ioctl(fd, VIDIOC_QUERYBUF, &buffer)) {
+            error("VIDIOC_QUERYBUF: %s", strerror(errno));
             return(false);
         }
         buffers[i].length = buffer.length; /* remember for munmap() */
 
-        buffers[i].start = mmap (NULL, buffer.length,
-                                 PROT_READ | PROT_WRITE, /* recommended */
-                                 MAP_SHARED,             /* recommended */
-                                 fd, buffer.m.offset);
+        buffers[i].start = mmap(NULL, buffer.length,
+                                PROT_READ | PROT_WRITE, /* recommended */
+                                MAP_SHARED,             /* recommended */
+                                fd, buffer.m.offset);
 
-        if (MAP_FAILED == buffers[i].start) {
+        if(MAP_FAILED == buffers[i].start) {
             /* If you do not exit here you should unmap() and free()
              *                    the buffers mapped so far. */
-            error ("mmap: %s", strerror(errno));
+            error("mmap: %s", strerror(errno));
             return(false);
         }
     }
@@ -312,16 +312,16 @@ bool V4L2CamLayer::open(const char *devfile) {
     // streaming, and do the business
 
     // queue up all the buffers for the first time
-    for (unsigned int i = 0; i < reqbuf.count; i++) {
+    for(unsigned int i = 0; i < reqbuf.count; i++) {
 
-        memset (&buffer, 0, sizeof (buffer));
+        memset(&buffer, 0, sizeof(buffer));
         buffer.type = reqbuf.type;
         buffer.memory = V4L2_MEMORY_MMAP;
         buffer.index = i;
         buffer.length = buffers[i].length;
 
-        if (-1 == ioctl (fd, VIDIOC_QBUF, &buffer)) {
-            error ("first VIDIOC_QBUF: %s", strerror(errno));
+        if(-1 == ioctl(fd, VIDIOC_QBUF, &buffer)) {
+            error("first VIDIOC_QBUF: %s", strerror(errno));
             return(false);
         }
     }
@@ -366,19 +366,19 @@ void *V4L2CamLayer::feed() {
     memset(&buffer, 0, sizeof buffer);
     buffer.type = (v4l2_buf_type)buftype;
     buffer.memory = V4L2_MEMORY_MMAP;
-    if (-1 == ioctl (fd, VIDIOC_DQBUF, &buffer)) {
-        error ("VIDIOC_DQBUF: %s", strerror(errno));
+    if(-1 == ioctl(fd, VIDIOC_DQBUF, &buffer)) {
+        error("VIDIOC_DQBUF: %s", strerror(errno));
         //    return NULL;
     }
 
     //multiply height by 2 seems to solve the upper half screen crop
-    ccvt_yuyv_bgr32(geo.w, geo.h*2, buffers[buffer.index].start, frame);
+    ccvt_yuyv_bgr32(geo.w, geo.h * 2, buffers[buffer.index].start, frame);
 
 
 
     // Thanks for lending us your buffer, you may have it back again:
-    if (-1 == ioctl (fd, VIDIOC_QBUF, &buffer)) {
-        error ("VIDIOC_QBUF: %s", strerror(errno));
+    if(-1 == ioctl(fd, VIDIOC_QBUF, &buffer)) {
+        error("VIDIOC_QBUF: %s", strerror(errno));
 
     }
 //	sleep(0.1);
@@ -395,37 +395,37 @@ void V4L2CamLayer::chgRes(int idx, Res *res) {
         error("VIDIOC_STREAMOFF: %s", errno);
     }
     /* Cleanup. */
-    for (unsigned int i = 0; i < reqbuf.count; i++)
-        munmap (buffers[i].start, buffers[i].length);
+    for(unsigned int i = 0; i < reqbuf.count; i++)
+        munmap(buffers[i].start, buffers[i].length);
 
-    if (-1 == ::close (fd)) {
-        error ("can't close the v4l2 opened device : %s", strerror (errno));
+    if(-1 == ::close(fd)) {
+        error("can't close the v4l2 opened device : %s", strerror(errno));
         this->start();
         return;
     }
-    if (-1 == (fd = ::open(m_devfile,O_RDWR|O_NONBLOCK))) {
+    if(-1 == (fd = ::open(m_devfile, O_RDWR | O_NONBLOCK))) {
         error("error in opening video capture device: %s", m_devfile);
         this->start();
         return;
     } else {
         ::close(fd);
-        fd = ::open(m_devfile,O_RDWR);
+        fd = ::open(m_devfile, O_RDWR);
     }
 
 
     // Switch to the first video input (example 1-2)
-    int index=0;
+    int index = 0;
     if(-1 == ioctl(fd, VIDIOC_G_INPUT, &index)) {		//gets the current video input
         error("VIDIOC_G_INPUT: %s", strerror(errno));
         this->start();
         return;
     }
     // change the resolution
-    memset (&format, 0, sizeof (format));
+    memset(&format, 0, sizeof(format));
     format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    if (-1 == ioctl (fd, VIDIOC_G_FMT, &format)) {
-        perror ("VIDIOC_G_FMT");
+    if(-1 == ioctl(fd, VIDIOC_G_FMT, &format)) {
+        perror("VIDIOC_G_FMT");
         this->start();
         return;
     }
@@ -442,68 +442,68 @@ void V4L2CamLayer::chgRes(int idx, Res *res) {
             return;
         }
     }
-    memset (&format, 0, sizeof (format));
+    memset(&format, 0, sizeof(format));
     format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    if (-1 == ioctl (fd, VIDIOC_G_FMT, &format)) {
-        perror ("VIDIOC_G_FMT");
+    if(-1 == ioctl(fd, VIDIOC_G_FMT, &format)) {
+        perror("VIDIOC_G_FMT");
         this->start();
         return;
     }
-    if ((format.fmt.pix.width != res->getX(idx)) || (format.fmt.pix.height != res->getY(idx))) {
-        error ("couldn't change the resolution, still : %dx%d", format.fmt.pix.width, format.fmt.pix.height);
+    if((format.fmt.pix.width != res->getX(idx)) || (format.fmt.pix.height != res->getY(idx))) {
+        error("couldn't change the resolution, still : %dx%d", format.fmt.pix.width, format.fmt.pix.height);
         this->start();
         return;
     }
     geo.init(format.fmt.pix.width, format.fmt.pix.height, 32);
-    free (frame);
+    free(frame);
     frame = malloc(geo.bytesize);
 
     //////// init buffers
-    memset (&reqbuf, 0, sizeof (reqbuf));
+    memset(&reqbuf, 0, sizeof(reqbuf));
     reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     reqbuf.memory = V4L2_MEMORY_MMAP;
     reqbuf.count = 4;	//reduced to reduce the display delay (thanks snawrocki)
-    if (-1 == ioctl (fd, VIDIOC_REQBUFS, &reqbuf)) {
-        if (errno == EINVAL)
+    if(-1 == ioctl(fd, VIDIOC_REQBUFS, &reqbuf)) {
+        if(errno == EINVAL)
             error("video capturing by mmap-streaming is not supported");
         else
-            error ("VIDIOC_REQBUFS: %s", strerror(errno));
+            error("VIDIOC_REQBUFS: %s", strerror(errno));
         this->start();
         return;
     }
     act("this cam supports %i buffers", reqbuf.count);
-    free (buffers);
-    buffers = (bufs*)calloc (reqbuf.count, sizeof (*buffers));
+    free(buffers);
+    buffers = (bufs*)calloc(reqbuf.count, sizeof(*buffers));
 
     if(format.fmt.pix.pixelformat != V4L2_PIX_FMT_YUYV) { // YUYV
         warning("pixel format not recognized, trying anyway as YUYV");
         warning("the system might become instable...");
     }
 
-    for (unsigned int i = 0; i < reqbuf.count; i++) {
+    for(unsigned int i = 0; i < reqbuf.count; i++) {
 
-        memset (&buffer, 0, sizeof (buffer));
+        memset(&buffer, 0, sizeof(buffer));
         buffer.type = reqbuf.type;
         buffer.memory = V4L2_MEMORY_MMAP;
         buffer.index = i;
 
-        if (-1 == ioctl (fd, VIDIOC_QUERYBUF, &buffer)) {
-            error ("VIDIOC_QUERYBUF: %s", strerror(errno));
+        if(-1 == ioctl(fd, VIDIOC_QUERYBUF, &buffer)) {
+            error("VIDIOC_QUERYBUF: %s", strerror(errno));
             this->start();
             return;
         }
         buffers[i].length = buffer.length; /* remember for munmap() */
 
-        buffers[i].start = mmap (NULL, buffer.length,
-                                 PROT_READ | PROT_WRITE, /* recommended */
-                                 MAP_SHARED,             /* recommended */
-                                 fd, buffer.m.offset);
+        buffers[i].start = mmap(NULL, buffer.length,
+                                PROT_READ | PROT_WRITE, /* recommended */
+                                MAP_SHARED,             /* recommended */
+                                fd, buffer.m.offset);
 
-        if (MAP_FAILED == buffers[i].start) {
+        if(MAP_FAILED == buffers[i].start) {
             /* If you do not exit here you should unmap() and free()
              *                    the buffers mapped so far. */
-            error ("mmap: %s", strerror(errno));
+            error("mmap: %s", strerror(errno));
             this->start();
             return;
         }
@@ -513,16 +513,16 @@ void V4L2CamLayer::chgRes(int idx, Res *res) {
     // streaming, and do the business
 
     // queue up all the buffers for the first time
-    for (unsigned int i = 0; i < reqbuf.count; i++) {
+    for(unsigned int i = 0; i < reqbuf.count; i++) {
 
-        memset (&buffer, 0, sizeof (buffer));
+        memset(&buffer, 0, sizeof(buffer));
         buffer.type = reqbuf.type;
         buffer.memory = V4L2_MEMORY_MMAP;
         buffer.index = i;
         buffer.length = buffers[i].length;
 
-        if (-1 == ioctl (fd, VIDIOC_QBUF, &buffer)) {
-            error ("first VIDIOC_QBUF: %s", strerror(errno));
+        if(-1 == ioctl(fd, VIDIOC_QBUF, &buffer)) {
+            error("first VIDIOC_QBUF: %s", strerror(errno));
             this->start();
             return;
         }
@@ -547,8 +547,8 @@ void V4L2CamLayer::close() {
 
 
     /* Cleanup. */
-    for (unsigned int i = 0; i < reqbuf.count; i++)
-        munmap (buffers[i].start, buffers[i].length);
+    for(unsigned int i = 0; i < reqbuf.count; i++)
+        munmap(buffers[i].start, buffers[i].length);
 
 
 }

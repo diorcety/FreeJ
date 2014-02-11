@@ -48,7 +48,7 @@ ViewPort::ViewPort()
     jsobj = NULL;
 
     audio = NULL;
-    m_SampleRate=NULL;
+    m_SampleRate = NULL;
     indestructible = false;
 #ifdef WITH_AUDIO
     // if compiled with audio initialize the audio data pipe
@@ -91,14 +91,14 @@ ViewPort::~ViewPort() {
 
 bool ViewPort::init(int w, int h, int bpp) {
 
-    if(bpp!=32) {
+    if(bpp != 32) {
         warning("FreeJ is forced to use 32bit pixel formats, hardcoded internally");
         warning("you are initializing a ViewPort with a different bpp value");
         warning("please submit a patch if you can make it :)");
         return false;
     }
 
-    geo.init(w,h,bpp);
+    geo.init(w, h, bpp);
     initialized = _init();
     act("screen %s initialized with size %ux%u", name.c_str(), geo.w, geo.h);
 
@@ -107,7 +107,7 @@ bool ViewPort::init(int w, int h, int bpp) {
 }
 
 bool ViewPort::add_layer(Layer *lay) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     if(lay->list) {
         warning("passing a layer from a screen to another is not (yet) supported");
@@ -121,10 +121,10 @@ bool ViewPort::add_layer(Layer *lay) {
 
     lay->screen = this;
 
-    setup_blits( lay );
+    setup_blits(lay);
 
     // setup default blit (if any)
-    if (lay->blitter) {
+    if(lay->blitter) {
         lay->current_blit =
             (Blit*)lay->blitter->default_blit;
         lay->blitter->blitlist.sel(0);
@@ -144,9 +144,9 @@ bool ViewPort::add_layer(Layer *lay) {
 
 #ifdef WITH_AUDIO
 bool ViewPort::add_audio(JackClient *jcl) {
-    if (layers.len() == 0 ) return false;
+    if(layers.len() == 0) return false;
 
-    jcl->SetRingbufferPtr(audio, (int) ((VideoLayer*) layers.begin())->audio_samplerate, (int) ((VideoLayer*) layers.begin())->audio_channels);
+    jcl->SetRingbufferPtr(audio, (int)((VideoLayer*) layers.begin())->audio_samplerate, (int)((VideoLayer*) layers.begin())->audio_channels);
     std::cerr << "------ audio_samplerate :" << ((VideoLayer*) layers.begin())->audio_samplerate \
               << " audio_channels :" << ((VideoLayer*) layers.begin())->audio_channels << std::endl;
     m_SampleRate = &jcl->m_SampleRate;
@@ -172,7 +172,7 @@ void ViewPort::reset() {
 }
 
 bool ViewPort::add_encoder(VideoEncoder *enc) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     if(enc->list) {
         error("moving an encoder from one screen to another is not supported");
@@ -205,19 +205,19 @@ void ViewPort::save_frame(char *file) {
     FILE *fp;
     gdImagePtr im;
     int *src;
-    int x,y;
+    int x, y;
 
     im = gdImageCreateTrueColor(geo.w, geo.h);
-    src = (int*)coords(0,0);
-    for(y=0; y < geo.h; y++) {
-        for (x=0; x < geo.w; x++) {
+    src = (int*)coords(0, 0);
+    for(y = 0; y < geo.h; y++) {
+        for(x = 0; x < geo.w; x++) {
             gdImageSetPixel(im, x, y, src[x] & 0x00FFFFFF);
             //im->tpixels[y][x] = src[x] & 0x00FFFFFF;
         }
         src += geo.w;
     }
     fp = fopen(file, "wb");
-    gdImagePng(im,fp);
+    gdImagePng(im, fp);
     fclose(fp);
 }
 #endif
@@ -227,13 +227,13 @@ void ViewPort::blit_layers() {
     Layer *lay;
 
     lay = layers.end();
-    if (lay) {
-        layers.lock ();
-        while (lay) {
+    if(lay) {
+        layers.lock();
+        while(lay) {
 
             if(lay->buffer) {
 
-                if (lay->active & lay->opened) {
+                if(lay->active & lay->opened) {
 
                     lay->lock();
                     lock();
@@ -245,7 +245,7 @@ void ViewPort::blit_layers() {
             }
             lay = (Layer *)lay->prev;
         }
-        layers.unlock ();
+        layers.unlock();
     }
     /////////// finish processing layers
 
@@ -253,19 +253,19 @@ void ViewPort::blit_layers() {
 
 
 void ViewPort::handle_resize() {
-    lock ();
+    lock();
     if(resizing) {
-        resize (resize_w, resize_h);
+        resize(resize_w, resize_h);
         resizing = false;
     }
     unlock();
 
     /* crop all layers to new screen size */
-    Layer *lay = layers.begin ();
-    while (lay) {
-        lay -> lock ();
+    Layer *lay = layers.begin();
+    while(lay) {
+        lay -> lock();
         lay -> blitter->crop(lay, this);
-        lay -> unlock ();
+        lay -> unlock();
         lay = (Layer*) lay -> next;
     }
 }

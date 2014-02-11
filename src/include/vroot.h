@@ -88,7 +88,7 @@ VirtualRootWindowOfScreen(screen) Screen *screen;
     static Screen *save_screen = (Screen *)0;
     static Window root = (Window)0;
 
-    if (screen != save_screen) {
+    if(screen != save_screen) {
         Display *dpy = DisplayOfScreen(screen);
         Atom __SWM_VROOT = None;
         unsigned int i;
@@ -97,11 +97,11 @@ VirtualRootWindowOfScreen(screen) Screen *screen;
 
         /* first check for a hex or decimal window ID in the environment */
         const char *xss_id = getenv("XSCREENSAVER_WINDOW");
-        if (xss_id && *xss_id) {
+        if(xss_id && *xss_id) {
             unsigned long id = 0;
             char c;
-            if (1 == sscanf (xss_id, " 0x%lx %c", &id, &c) ||
-                    1 == sscanf (xss_id, " %lu %c",   &id, &c)) {
+            if(1 == sscanf(xss_id, " 0x%lx %c", &id, &c) ||
+                    1 == sscanf(xss_id, " %lu %c",   &id, &c)) {
                 root = (Window) id;
                 save_screen = screen;
                 return root;
@@ -112,25 +112,25 @@ VirtualRootWindowOfScreen(screen) Screen *screen;
 
         /* go look for a virtual root */
         __SWM_VROOT = XInternAtom(dpy, "__SWM_VROOT", False);
-        if (XQueryTree(dpy, root, &rootReturn, &parentReturn,
-                       &children, &numChildren)) {
-            for (i = 0; i < numChildren; i++) {
+        if(XQueryTree(dpy, root, &rootReturn, &parentReturn,
+                      &children, &numChildren)) {
+            for(i = 0; i < numChildren; i++) {
                 Atom actual_type;
                 int actual_format;
                 unsigned long nitems, bytesafter;
                 Window *newRoot = (Window *)0;
 
-                if (XGetWindowProperty(dpy, children[i],
-                                       __SWM_VROOT, 0, 1, False, XA_WINDOW,
-                                       &actual_type, &actual_format,
-                                       &nitems, &bytesafter,
-                                       (unsigned char **) &newRoot) == Success
+                if(XGetWindowProperty(dpy, children[i],
+                                      __SWM_VROOT, 0, 1, False, XA_WINDOW,
+                                      &actual_type, &actual_format,
+                                      &nitems, &bytesafter,
+                                      (unsigned char **) &newRoot) == Success
                         && newRoot) {
                     root = *newRoot;
                     break;
                 }
             }
-            if (children)
+            if(children)
                 XFree((char *)children);
         }
 

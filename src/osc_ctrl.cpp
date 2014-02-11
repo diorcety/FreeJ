@@ -70,10 +70,10 @@ int osc_command_handler(const char *path, const char *types,
 
     func("OSC call path %s type %s", path, types);
 
-    cmd = (OscCommand*) osc->commands_handled.search((char*)path,NULL);
+    cmd = (OscCommand*) osc->commands_handled.search((char*)path, NULL);
 
     // check that path is handled
-    if(cmd) func("OSC path handled by %s",cmd->js_cmd);
+    if(cmd) func("OSC path handled by %s", cmd->js_cmd);
     else {
         warning("OSC path %s called, but no method is handling it", path);
         return -1;
@@ -87,7 +87,7 @@ int osc_command_handler(const char *path, const char *types,
     }
 
 
-    func("OSC call to %s with argc %u",cmd->js_cmd, argc);
+    func("OSC call to %s with argc %u", cmd->js_cmd, argc);
 
     // TODO: arguments are not supported
     // the code below correctly parses them, but then
@@ -97,24 +97,24 @@ int osc_command_handler(const char *path, const char *types,
     jscmd->setName(cmd->js_cmd);
     jscmd->format = cmd->proto_cmd;
     jscmd->argc = argc;
-    jscmd->argv = (jsval*)calloc(argc+1, sizeof(jsval));
+    jscmd->argv = (jsval*)calloc(argc + 1, sizeof(jsval));
 
     // put values into a jsval array
     int c;
-    for(c=0; c<argc; c++) {
+    for(c = 0; c < argc; c++) {
         switch(types[c]) {
         case 'i':
-            func("OSC arg %u is int: %i",c, argv[c]->i32 );
-            JS_NewNumberValue(osc->jsenv,(double)argv[c]->i32, &jscmd->argv[c]);
+            func("OSC arg %u is int: %i", c, argv[c]->i32);
+            JS_NewNumberValue(osc->jsenv, (double)argv[c]->i32, &jscmd->argv[c]);
             break;
         case 'f':
-            func("OSC arg %u is float: %.2f",c, argv[c]->f);
-            JS_NewNumberValue(osc->jsenv,(double)argv[c]->f, &jscmd->argv[c]);
+            func("OSC arg %u is float: %.2f", c, argv[c]->f);
+            JS_NewNumberValue(osc->jsenv, (double)argv[c]->f, &jscmd->argv[c]);
             //      jsargv[c] = DOUBLE_TO_JSVAL((double)argv[c]->f);
             // TODO
             break;
         case 's': {
-            func("OSC arg %u is string: %s",c, argv[c]);
+            func("OSC arg %u is string: %s", c, argv[c]);
             JSString *tmp = JS_NewStringCopyZ(osc->jsenv, (const char*)argv[c]);
             jscmd->argv[c] = STRING_TO_JSVAL(tmp);
             //      JS_NewString
@@ -135,7 +135,7 @@ int osc_command_handler(const char *path, const char *types,
 
 
 OscController::OscController()
-    :Controller() {
+    : Controller() {
 
     srv = NULL;
     sendto = NULL;
@@ -170,7 +170,7 @@ int OscController::dispatch() {
 
         func("OSC controller dispatching %s(%s)", jscmd->getName().c_str(), jscmd->format);
         res = JSCall(jscmd->getName().c_str(), jscmd->argc, jscmd->argv);
-        if (res) func("OSC dispatched call to %s", jscmd->getName().c_str());
+        if(res) func("OSC dispatched call to %s", jscmd->getName().c_str());
         else error("OSC failed JSCall to %s", jscmd->getName().c_str());
 
 
@@ -208,20 +208,20 @@ JSFunctionSpec js_osc_ctrl_methods[] = {
 };
 
 JS(js_osc_ctrl_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     char excp_msg[MAX_ERR_MSG + 1];
     char *port;
 
-    OscController *osc = (OscController *)Factory<Controller>::new_instance( "OscController" );
+    OscController *osc = (OscController *)Factory<Controller>::new_instance("OscController");
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     // assign instance into javascript object
-    if( ! JS_SetPrivate(cx, obj, (void*)osc) ) {
+    if(! JS_SetPrivate(cx, obj, (void*)osc)) {
         sprintf(excp_msg, "failed assigning OSC controller to javascript");
         goto error;
     }
     // initialize with javascript context
-    if(! osc->init(global_environment) ) {
+    if(! osc->init(global_environment)) {
         sprintf(excp_msg, "failed initializing OSC controller");
         goto error;
     }
@@ -243,7 +243,7 @@ JS(js_osc_ctrl_constructor) {
     // as we use our own marshaller instead of liblo's
     lo_server_thread_add_method(osc->srv, NULL, NULL, osc_command_handler, osc);
 
-    notice("OSC controller created: %s",lo_server_thread_get_url(osc->srv));
+    notice("OSC controller created: %s", lo_server_thread_get_url(osc->srv));
 
     *rval = OBJECT_TO_JSVAL(obj);
     JS_EndRequest(cx);
@@ -262,7 +262,7 @@ error:
 }
 
 JS(js_osc_ctrl_start) {
-    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    func("%u:%s:%s argc: %u", __LINE__, __FILE__, __FUNCTION__, argc);
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     OscController *osc = (OscController *)JS_GetPrivate(cx, obj);
@@ -272,13 +272,13 @@ JS(js_osc_ctrl_start) {
     //JS_ClearContextThread(cx);
     lo_server_thread_start(osc->srv);
 
-    act("OSC controller listening on port %s",osc->port);
+    act("OSC controller listening on port %s", osc->port);
 
     return JS_TRUE;
 }
 
 JS(js_osc_ctrl_stop) {
-    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    func("%u:%s:%s argc: %u", __LINE__, __FILE__, __FUNCTION__, argc);
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     OscController *osc = (OscController *)JS_GetPrivate(cx, obj);
@@ -294,7 +294,7 @@ JS(js_osc_ctrl_stop) {
 }
 
 JS(js_osc_ctrl_add_method) {
-    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    func("%u:%s:%s argc: %u", __LINE__, __FILE__, __FUNCTION__, argc);
 
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
@@ -324,9 +324,9 @@ JS(js_osc_ctrl_add_method) {
 }
 
 JS(js_osc_ctrl_send_to) {
-    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    func("%u:%s:%s argc: %u", __LINE__, __FILE__, __FUNCTION__, argc);
 
-    warning("%s TODO",__PRETTY_FUNCTION__);
+    warning("%s TODO", __PRETTY_FUNCTION__);
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     JS_CHECK_ARGC(2);
@@ -341,16 +341,16 @@ JS(js_osc_ctrl_send_to) {
     char *port = js_get_string(argv[1]);
 
     if(osc->sendto) lo_address_free(osc->sendto);
-    osc->sendto = lo_address_new(host,port);
+    osc->sendto = lo_address_new(host, port);
 
-    act("OSC controller sends messages to %s port %s",host,port);
+    act("OSC controller sends messages to %s port %s", host, port);
 
     return JS_TRUE;
     // TODO
 }
 
 JS(js_osc_ctrl_send) {
-    func("%u:%s:%s argc: %u",__LINE__,__FILE__,__FUNCTION__, argc);
+    func("%u:%s:%s argc: %u", __LINE__, __FILE__, __FUNCTION__, argc);
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
 
@@ -365,7 +365,7 @@ JS(js_osc_ctrl_send) {
     char *path = js_get_string(argv[0]);
     char *type = js_get_string(argv[1]);
 
-    func("generating OSC message path %s type %s",path,type);
+    func("generating OSC message path %s type %s", path, type);
     // we use the internal functions:
     // int lo_send_message_from
     // (lo_address a, lo_server from, const char *path, lo_message msg)
@@ -374,25 +374,25 @@ JS(js_osc_ctrl_send) {
 
     // put values into a jsval array
     unsigned int c;
-    for(c=2; c<argc; c++) {
+    for(c = 2; c < argc; c++) {
 
         switch(type[c]) {
         case 'i': {
             jsint i = js_get_int(argv[c]);
-            func("OSC add message arg %i with value %i",c,i);
-            lo_message_add_int32(osc->outmsg,i);
+            func("OSC add message arg %i with value %i", c, i);
+            lo_message_add_int32(osc->outmsg, i);
         }
         break;
         case 'f': {
             jsdouble f = js_get_double(argv[c]);
-            func("OSC add message arg %u with value %.2f",c,f);
-            lo_message_add_float(osc->outmsg,(float)f);
+            func("OSC add message arg %u with value %.2f", c, f);
+            lo_message_add_float(osc->outmsg, (float)f);
         }
         break;
         case 's': {
-            char *s = js_get_string(argv[c+1]);
-            func("OSC add message arg %u with value %s",c,s);
-            lo_message_add_string(osc->outmsg,s);
+            char *s = js_get_string(argv[c + 1]);
+            func("OSC add message arg %u with value %s", c, s);
+            lo_message_add_string(osc->outmsg, s);
         }
         break;
         default:

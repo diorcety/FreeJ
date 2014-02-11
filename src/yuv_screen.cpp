@@ -33,7 +33,7 @@ YuvScreen::YuvScreen()
 }
 
 YuvScreen::~YuvScreen() {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     if(yuv_buffer) delete yuv_buffer;
     if(rgb_buffer) delete rgb_buffer;
 }
@@ -43,8 +43,8 @@ bool YuvScreen::init(int w, int h) {
     this->w = w;
     this->h = h;
     bpp = 32;
-    size = w*h*(bpp>>3);
-    pitch = w*(bpp>>3);
+    size = w * h * (bpp >> 3);
+    pitch = w * (bpp >> 3);
 
     yuv_buffer = malloc(size);
     rgb_buffer = malloc(size);

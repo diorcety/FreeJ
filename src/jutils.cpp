@@ -105,7 +105,7 @@ uint32_t fastrand() {
     //	return (randval=randval*1103515245+12345);
     //15:55  <salsaman2> mine uses two prime numbers and the cycling is much reduced
     //15:55  <salsaman2>   return (randval=randval*1073741789+32749);
-    return(randval = randval * 1073741789 + 32749 );
+    return(randval = randval * 1073741789 + 32749);
 }
 
 void fastsrand(uint32_t seed) {
@@ -114,8 +114,8 @@ void fastsrand(uint32_t seed) {
 
 double dtime() {
     struct timeval mytv;
-    gettimeofday(&mytv,NULL);
-    return((double)mytv.tv_sec+1.0e-6*(double)mytv.tv_usec);
+    gettimeofday(&mytv, NULL);
+    return((double)mytv.tv_sec + 1.0e-6 * (double)mytv.tv_usec);
 }
 
 #ifdef linux
@@ -134,7 +134,7 @@ bool set_rtpriority(bool max) {
     else
         schp.sched_priority = sched_get_priority_min(SCHED_RR);
 
-    if (sched_setscheduler(0, SCHED_RR, &schp) != 0)
+    if(sched_setscheduler(0, SCHED_RR, &schp) != 0)
         return false;
     else
         return true;
@@ -152,12 +152,12 @@ bool set_rtpriority(bool max) {
  * again and complete the specified pause.
  */
 void jsleep(int sec, long nsec) {
-    struct timespec tmp_rem,*rem;
+    struct timespec tmp_rem, *rem;
     rem = &tmp_rem;
     timespec timelap;
     timelap.tv_sec = sec;
     timelap.tv_nsec = nsec;
-    while (nanosleep (&timelap, rem) == -1 && (errno == EINTR));
+    while(nanosleep(&timelap, rem) == -1 && (errno == EINTR));
 }
 
 
@@ -167,18 +167,18 @@ void jsleep(int sec, long nsec) {
 /* better to use /dev/rtc */
 static int rtcfd = -1;
 static fd_set readfds;
-static timeval rtctv = { 0,0 };
+static timeval rtctv = { 0, 0 };
 static unsigned long rtctime;
 int rtc_open() {
     int res;
-    rtcfd = open("/dev/rtc",O_RDONLY);
+    rtcfd = open("/dev/rtc", O_RDONLY);
     if(!rtcfd) {
         perror("/dev/rtc");
         return 0;
     }
     /* set the alarm event to 1 second */
     res = ioctl(rtcfd, RTC_UIE_ON, 0);
-    if(res<0) {
+    if(res < 0) {
         perror("rtc ioctl");
         return 0;
     }
@@ -189,29 +189,29 @@ int rtc_open() {
    positive number if 1 second passed */
 unsigned long rtc_tick() {
     FD_ZERO(&readfds);
-    FD_SET(rtcfd,&readfds);
-    if ( ! select(rtcfd+1,&readfds,NULL,NULL,&rtctv) )
+    FD_SET(rtcfd, &readfds);
+    if(! select(rtcfd + 1, &readfds, NULL, NULL, &rtctv))
         return 0; /* a second didn't passed yet */
-    read(rtcfd,&rtctime,sizeof(unsigned long));
+    read(rtcfd, &rtctime, sizeof(unsigned long));
     return rtctime;
 }
 void rtc_freq_set(unsigned long freq) {
     int res;
 
-    res = ioctl(rtcfd,RTC_IRQP_SET,freq);
-    if(res<0) {
+    res = ioctl(rtcfd, RTC_IRQP_SET, freq);
+    if(res < 0) {
         perror("rtc freq set");
     }
 
-    res = ioctl(rtcfd,RTC_IRQP_READ,&freq);
-    if(res<0) {
+    res = ioctl(rtcfd, RTC_IRQP_READ, &freq);
+    if(res < 0) {
         perror("rtc freq read");
     }
 
-    act("realtime clock frequency set to %ld",freq);
+    act("realtime clock frequency set to %ld", freq);
 
-    res = ioctl(rtcfd,RTC_PIE_ON,0);
-    if(res<0) {
+    res = ioctl(rtcfd, RTC_PIE_ON, 0);
+    if(res < 0) {
         perror("rtc freq on");
         return;
     }
@@ -219,14 +219,14 @@ void rtc_freq_set(unsigned long freq) {
 }
 void rtc_freq_wait() {
     int res;
-    res = read(rtcfd,&rtctime,sizeof(unsigned long));
+    res = read(rtcfd, &rtctime, sizeof(unsigned long));
     if(res < 0) {
         perror("read rtc frequency interrupt");
         return;
     }
 }
 void rtc_close() {
-    if(rtcfd<=0) return;
+    if(rtcfd <= 0) return;
     ioctl(rtcfd, RTC_UIE_OFF, 0);
     //  ioctl(rtcfd,RTC_PIE_OFF,0);
     close(rtcfd);
@@ -238,7 +238,7 @@ void *(* jmemcpy)(void *to, const void *from, size_t len);
 
 bool filecheck(const char *file) {
     bool res = true;
-    FILE *f = fopen(file,"r");
+    FILE *f = fopen(file, "r");
     if(!f) res = false;
     else fclose(f);
     return(res);

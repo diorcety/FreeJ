@@ -48,7 +48,7 @@ JsExecutionContext::JsExecutionContext(JsParser *jsParser) {
     parser = jsParser;
     /* Create a new runtime environment. */
     rt = JS_NewRuntime(8L * 1024L * 1024L);
-    if (!rt) {
+    if(!rt) {
         error("JsParser :: error creating runtime");
         return; /* XXX should return int or ptr! */
     }
@@ -56,7 +56,7 @@ JsExecutionContext::JsExecutionContext(JsParser *jsParser) {
     /* Create a new context. */
     cx = JS_NewContext(rt, STACK_CHUNK_SIZE);
     /* if global_context does not have a value, end the program here */
-    if (cx == NULL) {
+    if(cx == NULL) {
         error("JsParser :: error creating context");
         return;
     }
@@ -117,7 +117,7 @@ void JsExecutionContext::init_class() {
     JS_InitStandardClasses(cx, obj);
 
     /* Declare shell functions */
-    if (!JS_DefineFunctions(cx, obj, global_functions)) {
+    if(!JS_DefineFunctions(cx, obj, global_functions)) {
         JS_EndRequest(cx);
         error("JsParser :: error defining global functions");
         return ;
@@ -346,8 +346,8 @@ void JsExecutionContext::init_class() {
 /////////////// JsParser ////////////////
 
 JsParser::JsParser(Context *_env) {
-    if(_env!=NULL)
-        global_environment=_env;
+    if(_env != NULL)
+        global_environment = _env;
     init();
     act("javascript parser initialized");
 }
@@ -362,7 +362,7 @@ JsParser::~JsParser() {
 
 void JsParser::gc() {
     JsExecutionContext *ecx = runtimes.begin();
-    while (ecx) {
+    while(ecx) {
         ecx->gc();
         ecx = (JsExecutionContext *)ecx->next;
     }
@@ -370,7 +370,7 @@ void JsParser::gc() {
 
 void JsParser::init() {
     //JSBool ret;
-    stop_script=false;
+    stop_script = false;
 
     notice("Initializing %s", JS_GetImplementationVersion());
 
@@ -380,7 +380,7 @@ void JsParser::init() {
 
     /* Create a new runtime environment. */
     js_runtime = global_runtime->rt; // XXX - for retrocompatibilty
-    if (!js_runtime) {
+    if(!js_runtime) {
         return ; /* XXX should return int or ptr! */
     }
 
@@ -388,7 +388,7 @@ void JsParser::init() {
     global_context = global_runtime->cx; // XXX - for retrocompatibilty
 
     /* if global_context does not have a value, end the program here */
-    if (global_context == NULL) {
+    if(global_context == NULL) {
         return ;
     }
 
@@ -398,27 +398,27 @@ void JsParser::init() {
 }
 
 int JsParser::include(JSContext *cx, const char* jscript) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     const char *debian_path = "share/doc/freej/scripts/javascript/lib"; // WTF!!!
     int res = 0;
     char temp[512];
     FILE *fd;
 
-    snprintf(temp,512,"%s",jscript);
-    fd = fopen(temp,"r");
+    snprintf(temp, 512, "%s", jscript);
+    fd = fopen(temp, "r");
     if(!fd) {
-        snprintf(temp,511,"%s/%s/%s",PREFIX,debian_path,jscript);
-        fd = fopen(temp,"r");
+        snprintf(temp, 511, "%s/%s/%s", PREFIX, debian_path, jscript);
+        fd = fopen(temp, "r");
         if(!fd) {
             error("included file %s not found", jscript);
             error("locations checked: current and %s/%s",
-                  PREFIX,debian_path);
+                  PREFIX, debian_path);
             error("javascript include('%s') failed", jscript);
 
             return res;
         } else
-            func("included file %s",temp);
+            func("included file %s", temp);
     }
 
     fclose(fd);
@@ -426,7 +426,7 @@ int JsParser::include(JSContext *cx, const char* jscript) {
     JS_BeginRequest(cx);
     JSObject *gobj = JS_GetGlobalObject(cx);
     if(!gobj) {
-        error("JSParser missing global object in context %p",cx);
+        error("JSParser missing global object in context %p", cx);
         JS_EndRequest(cx);
         return false;
     }
@@ -435,7 +435,7 @@ int JsParser::include(JSContext *cx, const char* jscript) {
 
     JS_EndRequest(cx);
 
-    if (!res) {
+    if(!res) {
         // all errors already reported,
         // js->open talks a lot
         error("JS include('%s') failed", jscript);
@@ -455,7 +455,7 @@ int JsParser::open(const char* script_file) {
     int ret = open(new_script->cx, new_script->obj, script_file);
     JS_EndRequest(new_script->cx);
     JS_ClearContextThread(new_script->cx);
-    if (ret) {
+    if(ret) {
         new_script->setName(script_file);
         runtimes.append(new_script);
     } else {
@@ -465,12 +465,12 @@ int JsParser::open(const char* script_file) {
 }
 
 int JsParser::open(JSContext *cx, JSObject *obj, const char* script_file) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     FILE *fd;
     char *buf = NULL;
     int len;
 
-    fd = fopen(script_file,"r");
+    fd = fopen(script_file, "r");
     if(!fd) {
         //error("%s: %s : %s",__func__,script_file,strerror(errno));
         JS_ReportErrorNumber(
@@ -481,7 +481,7 @@ int JsParser::open(JSContext *cx, JSObject *obj, const char* script_file) {
     }
     buf = readFile(fd, &len);
     fclose(fd);
-    if (!buf) {
+    if(!buf) {
         JS_ReportErrorNumber(
             cx, JSFreej_GetErrorMessage, NULL,
             JSSMSG_FJ_WICKED, script_file, "No buffer for file .... out of memory?"
@@ -500,14 +500,14 @@ JSClass UseScriptClass = {
 
 // compile a script and root it to an object
 int JsParser::use(JSContext *cx, JSObject *obj, const char* script_file) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     JSObject *scriptObject = NULL;
     JSScript *script = NULL;
     FILE *fd;
     char *buf = NULL;
     int len;
 
-    fd = fopen(script_file,"r");
+    fd = fopen(script_file, "r");
     if(!fd) {
         JS_ReportErrorNumber(
             cx, JSFreej_GetErrorMessage, NULL,
@@ -518,7 +518,7 @@ int JsParser::use(JSContext *cx, JSObject *obj, const char* script_file) {
     buf = readFile(fd, &len);
     fclose(fd);
 
-    if (!buf) {
+    if(!buf) {
         JS_ReportErrorNumber(
             cx, JSFreej_GetErrorMessage, NULL,
             JSSMSG_FJ_WICKED, script_file, "No buffer for file .... out of memory?"
@@ -568,7 +568,7 @@ JS(ExecScript) {
 
     script = (JSScript*)p;
     notice("%s : obj:%p  sc:%p", __PRETTY_FUNCTION__, obj, script);
-    if (JS_ExecuteScriptPart(cx, obj, script, JSEXEC_MAIN, rval))
+    if(JS_ExecuteScriptPart(cx, obj, script, JSEXEC_MAIN, rval))
         *rval = JSVAL_TRUE;
 
     //JS_SetPrivate(cx, obj, NULL);
@@ -576,7 +576,7 @@ JS(ExecScript) {
 }
 
 void js_usescript_gc(JSContext *cx, JSObject *obj) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     JSScript *script;
     void *p = JS_GetInstancePrivate(cx, obj, &UseScriptClass, NULL);
     if(!p)
@@ -590,7 +590,7 @@ void js_usescript_gc(JSContext *cx, JSObject *obj) {
 }
 
 int JsParser::parse(const char *command) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     int eval_res;
 
     if(!command) { /* true paranoia */
@@ -607,7 +607,7 @@ int JsParser::parse(const char *command) {
                         (const char*)"parsed command", command, strlen(command));
     JS_EndRequest(new_script->cx);
     JS_ClearContextThread(new_script->cx);
-    if (eval_res)
+    if(eval_res)
         runtimes.append(new_script);
     else
         delete new_script;
@@ -617,33 +617,33 @@ int JsParser::parse(const char *command) {
 }
 
 void JsParser::stop() {
-    stop_script=true;
+    stop_script = true;
 }
 
 char* JsParser::readFile(FILE *file, int *len) {
     char *buf;
     int ch;
 
-    fseek(file,0,SEEK_END);
+    fseek(file, 0, SEEK_END);
     *len = ftell(file);
     rewind(file);
-    ch=fgetc(file);
+    ch = fgetc(file);
     /* ignore first line starting with # */
-    if(ch=='#') {
-        *len-=1;
-        while((ch=fgetc(file))!=EOF) {
-            *len-=1;
-            if(ch=='\n')
+    if(ch == '#') {
+        *len -= 1;
+        while((ch = fgetc(file)) != EOF) {
+            *len -= 1;
+            if(ch == '\n')
                 break;
         }
     } else {
-        ungetc(ch,file);
+        ungetc(ch, file);
     }
 
-    buf = (char*)calloc(*len,sizeof(char));
-    if (!buf)
+    buf = (char*)calloc(*len, sizeof(char));
+    if(!buf)
         return NULL;
-    fread(buf,*len,sizeof(char),file);
+    fread(buf, *len, sizeof(char), file);
 
     return buf;
 }
@@ -652,7 +652,7 @@ int JsParser::reset() {
     int i = 0;
 
     JsExecutionContext *ecx = runtimes.begin();
-    while (ecx) {
+    while(ecx) {
         delete ecx;
         ecx = runtimes.begin();
         i++;
@@ -677,24 +677,24 @@ int JsParser::evaluate(JSContext *cx, JSObject *obj,
 void js_debug_property(JSContext *cx, jsval vp) {
     func(" vp mem address %p", &vp);
     int tag = JSVAL_TAG(vp);
-    func(" type tag is %i: %s",tag,
-         (tag==0x0)?"object":
-         (tag==0x1)?"integer":
-         (tag==0x2)?"double":
-         (tag==0x4)?"string":
-         (tag==0x6)?"boolean":
+    func(" type tag is %i: %s", tag,
+         (tag == 0x0) ? "object" :
+         (tag == 0x1) ? "integer" :
+         (tag == 0x2) ? "double" :
+         (tag == 0x4) ? "string" :
+         (tag == 0x6) ? "boolean" :
          "unknown");
 
     switch(tag) {
     case 0x0: {
         JSObject *obj = JSVAL_TO_OBJECT(vp);
         jsval val;
-        if( JS_IsArrayObject(cx, obj) ) {
+        if(JS_IsArrayObject(cx, obj)) {
             jsuint len;
             JS_GetArrayLength(cx, obj, &len);
             func(" object is an array of %u elements", len);
-            for(jsuint c = 0; c<len; c++) {
-                func(" dumping element %u:",c);
+            for(jsuint c = 0; c < len; c++) {
+                func(" dumping element %u:", c);
                 JS_GetElement(cx, obj, c, &val);
                 if(val == JSVAL_VOID)
                     func(" content is VOID");
@@ -715,21 +715,21 @@ void js_debug_property(JSContext *cx, jsval vp) {
 
     case 0x2: {
         JS_PROP_DOUBLE(num, vp);
-        func("  double is %.4f",num);
+        func("  double is %.4f", num);
     }
     break;
 
     case 0x4: {
         char *cap = NULL;
         JS_PROP_STRING(cap);
-        func("  string is \"%s\"",cap);
+        func("  string is \"%s\"", cap);
     }
     break;
 
     case 0x6: {
         bool b = false;
         b = JSVAL_TO_BOOLEAN(vp);
-        func("  boolean is %i",b);
+        func("  boolean is %i", b);
     }
     break;
 
@@ -745,24 +745,24 @@ void js_debug_argument(JSContext *cx, jsval vp) {
     func(" arg mem address %p", &vp);
     int tag = JSVAL_TAG(vp);
 
-    func(" type tag is %i: %s",tag,
-         (tag==0x0)?"object":
-         (tag==0x1)?"integer":
-         (tag==0x2)?"double":
-         (tag==0x4)?"string":
-         (tag==0x6)?"boolean":
+    func(" type tag is %i: %s", tag,
+         (tag == 0x0) ? "object" :
+         (tag == 0x1) ? "integer" :
+         (tag == 0x2) ? "double" :
+         (tag == 0x4) ? "string" :
+         (tag == 0x6) ? "boolean" :
          "unknown");
 
     switch(tag) {
     case 0x0: {
         JSObject *obj = JSVAL_TO_OBJECT(vp);
         jsval val;
-        if( JS_IsArrayObject(cx, obj) ) {
+        if(JS_IsArrayObject(cx, obj)) {
             jsuint len;
             JS_GetArrayLength(cx, obj, &len);
             func(" object is an array of %u elements", len);
-            for(jsuint c = 0; c<len; c++) {
-                func(" dumping element %u:",c);
+            for(jsuint c = 0; c < len; c++) {
+                func(" dumping element %u:", c);
                 JS_GetElement(cx, obj, c, &val);
                 if(val == JSVAL_VOID)
                     func(" content is VOID");
@@ -789,11 +789,11 @@ void js_debug_argument(JSContext *cx, jsval vp) {
     case 0x4: {
         char *cap;
         if(JSVAL_IS_STRING(vp)) {
-            cap = JS_GetStringBytes( JS_ValueToString(cx, vp) );
-            func("  string is \"%s\"",cap);
+            cap = JS_GetStringBytes(JS_ValueToString(cx, vp));
+            func("  string is \"%s\"", cap);
         } else {
-            JS_ReportError(cx,"%s: argument value is not a string",__FUNCTION__);
-            ::error("%s: argument value is not a string",__FUNCTION__);
+            JS_ReportError(cx, "%s: argument value is not a string", __FUNCTION__);
+            ::error("%s: argument value is not a string", __FUNCTION__);
         }
     }
     break;
@@ -801,7 +801,7 @@ void js_debug_argument(JSContext *cx, jsval vp) {
     case 0x6: {
         bool b = false;
         b = JSVAL_TO_BOOLEAN(vp);
-        func("  boolean is %i",b);
+        func("  boolean is %i", b);
     }
     break;
 

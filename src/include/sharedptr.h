@@ -28,5 +28,5 @@ using shared_ptr = std::shared_ptr<T>;
 	public:                             \
 	typedef shared_ptr<CLASS> Ptr;      \
 	typedef shared_ptr<CLASS> WeakPtr;  \
-
+ 
 #endif //__shared_ptr_h__

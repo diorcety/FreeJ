@@ -94,7 +94,7 @@ JS(js_midi_ctrl_constructor);
 JS(js_trigger_ctrl_constructor);
 JS(js_osc_ctrl_constructor);
 JS(js_wii_ctrl_constructor);
-void js_ctrl_gc (JSContext *cx, JSObject *obj);
+void js_ctrl_gc(JSContext *cx, JSObject *obj);
 
 // encoder constructor
 #ifdef WITH_OGGTHEORA

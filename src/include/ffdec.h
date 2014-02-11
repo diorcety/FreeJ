@@ -25,7 +25,7 @@ uint8_t *get_bufptr(ffdec_t *ffp);
 void init_letterbox(uint8_t *d, int w, int h);
 void yuv_letterbox(void *dst, const void *src, int src_width, int src_height, int out_width, int out_height);
 void calc_letterbox(int src_w, int src_h, int out_w, int out_h, int *sca_w, int *sca_h);
-void select_sleep (int usec);
+void select_sleep(int usec);
 
 
 void yuv_memcpy(void *dst, const void *src, int src_width, int src_height, int out_width, int out_height, int xoff, int yoff);

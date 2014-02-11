@@ -31,7 +31,7 @@ FACTORY_REGISTER_INSTANTIATOR(Layer, UnicapLayer, CamLayer, unicap);
 
 
 UnicapLayer::UnicapLayer()
-    :Layer() {
+    : Layer() {
 
 
     m_handle = NULL;
@@ -56,8 +56,8 @@ UnicapLayer::~UnicapLayer() {
 }
 
 
-static void new_frame_bgr24_cb (unicap_event_t event, unicap_handle_t handle,
-                                unicap_data_buffer_t * buffer, void *usr_data) {
+static void new_frame_bgr24_cb(unicap_event_t event, unicap_handle_t handle,
+                               unicap_data_buffer_t * buffer, void *usr_data) {
     UnicapLayer *lay = (UnicapLayer*)usr_data;
 
     func("cam callback");
@@ -70,8 +70,8 @@ static void new_frame_bgr24_cb (unicap_event_t event, unicap_handle_t handle,
 }
 
 
-static void new_frame_yuyv_cb (unicap_event_t event, unicap_handle_t handle,
-                               unicap_data_buffer_t * buffer, void *usr_data) {
+static void new_frame_yuyv_cb(unicap_event_t event, unicap_handle_t handle,
+                              unicap_data_buffer_t * buffer, void *usr_data) {
     UnicapLayer *lay = (UnicapLayer*)usr_data;
 
     func("cam callback");
@@ -96,14 +96,14 @@ bool UnicapLayer::open(const char *devfile) {
         return(false);
     }
 
-    while( unicap_enumerate_devices( &m_device_spec, &m_device, i++)
+    while(unicap_enumerate_devices(&m_device_spec, &m_device, i++)
             == STATUS_SUCCESS) {
 
         func("checking device match \"%s\" == \"%s\"", m_device.device, devfile);
 
-        if(strcasecmp(devfile,m_device.device)==0) { // found
+        if(strcasecmp(devfile, m_device.device) == 0) { // found
 
-            if( unicap_open(&m_handle, &m_device ) == STATUS_SUCCESS ) {
+            if(unicap_open(&m_handle, &m_device) == STATUS_SUCCESS) {
                 res = true;
                 break;
             } else {
@@ -120,25 +120,25 @@ bool UnicapLayer::open(const char *devfile) {
         return(false);
     }
 
-    notice("Unicap device opened: %s",m_device.identifier);
+    notice("Unicap device opened: %s", m_device.identifier);
 
     act("available video formats:");
-    unicap_void_format( &format_spec );
+    unicap_void_format(&format_spec);
 
-    i=0;
-    fourcc=0;
-    while(SUCCESS(unicap_enumerate_formats( m_handle, &format_spec, &m_format, i++))) {
-        act("%u - %s - 0x%x - %u bpp",i, m_format.identifier, m_format.fourcc, m_format.bpp);
+    i = 0;
+    fourcc = 0;
+    while(SUCCESS(unicap_enumerate_formats(m_handle, &format_spec, &m_format, i++))) {
+        act("%u - %s - 0x%x - %u bpp", i, m_format.identifier, m_format.fourcc, m_format.bpp);
         switch(m_format.fourcc) {
 
         case 0x33524742: // BGR24
             fourcc = m_format.fourcc;
             bpp = 24;
-            if(capture_type==UNICAP_SYSTEM_CAPTURE) {
-                unicap_register_callback (m_handle,
-                                          UNICAP_EVENT_NEW_FRAME,
-                                          (unicap_callback_t) new_frame_bgr24_cb,
-                                          (void*)this);
+            if(capture_type == UNICAP_SYSTEM_CAPTURE) {
+                unicap_register_callback(m_handle,
+                                         UNICAP_EVENT_NEW_FRAME,
+                                         (unicap_callback_t) new_frame_bgr24_cb,
+                                         (void*)this);
                 func("registered conversion callback BGR24");
             }
             break;
@@ -156,11 +156,11 @@ bool UnicapLayer::open(const char *devfile) {
         case 0x56595559: // YUYV and equivalents
         case 0x32595559:
             fourcc = m_format.fourcc;
-            if(capture_type==UNICAP_SYSTEM_CAPTURE) {
-                unicap_register_callback (m_handle,
-                                          UNICAP_EVENT_NEW_FRAME,
-                                          (unicap_callback_t) new_frame_yuyv_cb,
-                                          (void*)this);
+            if(capture_type == UNICAP_SYSTEM_CAPTURE) {
+                unicap_register_callback(m_handle,
+                                         UNICAP_EVENT_NEW_FRAME,
+                                         (unicap_callback_t) new_frame_yuyv_cb,
+                                         (void*)this);
                 func("registered conversion callback YUYV");
             }
             break;
@@ -168,11 +168,11 @@ bool UnicapLayer::open(const char *devfile) {
         case 0x30323449:
         case 0x56555949:
             fourcc = m_format.fourcc;
-            if(capture_type==UNICAP_SYSTEM_CAPTURE) {
-                unicap_register_callback (m_handle,
-                                          UNICAP_EVENT_NEW_FRAME,
-                                          (unicap_callback_t) new_frame_yuyv_cb,
-                                          (void*)this);
+            if(capture_type == UNICAP_SYSTEM_CAPTURE) {
+                unicap_register_callback(m_handle,
+                                         UNICAP_EVENT_NEW_FRAME,
+                                         (unicap_callback_t) new_frame_yuyv_cb,
+                                         (void*)this);
                 func("registered conversion callback YUYV");
             }
             break;
@@ -188,7 +188,7 @@ bool UnicapLayer::open(const char *devfile) {
         fourcc = 0x56595559;
     }
 
-    if( ! SUCCESS( unicap_get_format (m_handle, &m_format) ))
+    if(! SUCCESS(unicap_get_format(m_handle, &m_format)))
         error("format get failed on capture device");
 
     // list sizes
@@ -197,7 +197,7 @@ bool UnicapLayer::open(const char *devfile) {
         m_format.min_size.width, m_format.min_size.height,
         m_format.max_size.width, m_format.max_size.height,
         m_format.h_stepping,     m_format.v_stepping);
-    for(i=0; i<m_format.size_count; i++)
+    for(i = 0; i < m_format.size_count; i++)
         act("%u - %u x %u", i,
             m_format.sizes[i].width, m_format.sizes[i].height);
 
@@ -205,7 +205,7 @@ bool UnicapLayer::open(const char *devfile) {
     m_format.size.width =  geo.w;
     m_format.size.height = geo.h;
 
-    if(capture_type==UNICAP_SYSTEM_CAPTURE) {
+    if(capture_type == UNICAP_SYSTEM_CAPTURE) {
         m_format.buffer_type = UNICAP_BUFFER_TYPE_SYSTEM;
     } else {
         m_format.buffer_type = UNICAP_BUFFER_TYPE_USER;
@@ -219,7 +219,7 @@ bool UnicapLayer::open(const char *devfile) {
         m_format.size.width, m_format.size.height,
         m_format.bpp, m_format.fourcc);
 
-    if( ! SUCCESS( unicap_set_format(m_handle, &m_format) )) {
+    if(! SUCCESS(unicap_set_format(m_handle, &m_format))) {
         error("format setting failed on capture device");
         error("maybe the size is not supported by this camera");
         error("else report your model and format strings");
@@ -239,20 +239,20 @@ bool UnicapLayer::open(const char *devfile) {
     // properties
 
     // Initialize a property specifier structure
-    unicap_void_property( &m_property_spec );
+    unicap_void_property(&m_property_spec);
 
-    i=0;
-    while(SUCCESS(unicap_enumerate_properties( m_handle, &m_property_spec, &m_property, i++))) {
+    i = 0;
+    while(SUCCESS(unicap_enumerate_properties(m_handle, &m_property_spec, &m_property, i++))) {
 
         char tmp[512];
 
         unicap_get_property(m_handle,  &m_property);
 
-        sprintf(tmp,"%i - %s", i, m_property.identifier);
-        switch( m_property.type ) {
+        sprintf(tmp, "%i - %s", i, m_property.identifier);
+        switch(m_property.type) {
         case UNICAP_PROPERTY_TYPE_RANGE:
         case UNICAP_PROPERTY_TYPE_VALUE_LIST: {
-            sprintf(tmp,"%s = %.2f", tmp, m_property.value );
+            sprintf(tmp, "%s = %.2f", tmp, m_property.value);
             p = new Parameter(Parameter::NUMBER);
             p->setName(m_property.identifier);
             //	size_t s = 512;
@@ -263,7 +263,7 @@ bool UnicapLayer::open(const char *devfile) {
         break;
 
         case UNICAP_PROPERTY_TYPE_MENU: {
-            sprintf(tmp,"%s = %s", tmp, m_property.menu_item );
+            sprintf(tmp, "%s = %s", tmp, m_property.menu_item);
             p = new Parameter(Parameter::STRING);
             p->setName(m_property.identifier);
             //	size_t s = 512;
@@ -274,15 +274,15 @@ bool UnicapLayer::open(const char *devfile) {
         break;
 
         case UNICAP_PROPERTY_TYPE_FLAGS: {
-            sprintf(tmp,"%s =",tmp);
+            sprintf(tmp, "%s =", tmp);
             unsigned int j;
             const char *flags[] = {
                 "MANUAL", "AUTO", "ONE_PUSH", "READ_OUT",
                 "ON_OFF", "READ_ONLY", "FORMAT_CHANGE"
             };
-            for( j = 0; j < ( sizeof( flags ) / sizeof( char* ) ); j++ ) {
-                if( ( (unsigned int)m_property.flags & ( 1<<j ) ) == ( 1<<j ) ) {
-                    sprintf("%s %s",tmp, (char*)flags[j] );
+            for(j = 0; j < (sizeof(flags) / sizeof(char*)); j++) {
+                if(((unsigned int)m_property.flags & (1 << j)) == (1 << j)) {
+                    sprintf("%s %s", tmp, (char*)flags[j]);
                 }
             }
         }
@@ -291,15 +291,15 @@ bool UnicapLayer::open(const char *devfile) {
         default:
             break;
         }
-        act("%s",tmp);
+        act("%s", tmp);
     }
-    act("%u capture device properties found", i-1);
+    act("%u capture device properties found", i - 1);
 
-    if( ! SUCCESS( unicap_start_capture( m_handle ) ))
+    if(! SUCCESS(unicap_start_capture(m_handle)))
         error("start capture failed on capture device");
     else func("capture started for CAM layer");
 
-    if(capture_type==UNICAP_USER_CAPTURE) {
+    if(capture_type == UNICAP_USER_CAPTURE) {
         unicap_queue_buffer(m_handle, & m_buffer);
     }
 
@@ -309,15 +309,15 @@ bool UnicapLayer::open(const char *devfile) {
 }
 
 bool UnicapLayer::_init() {
-    func("%s %ux%u",__PRETTY_FUNCTION__,geo.w, geo.h);
+    func("%s %ux%u", __PRETTY_FUNCTION__, geo.w, geo.h);
 
     notice("Unicap layer initialized, devices detected:");
 
-    unicap_void_device( &m_device_spec );
+    unicap_void_device(&m_device_spec);
 
     detected = 0;
-    while( SUCCESS(unicap_enumerate_devices( &m_device_spec, &m_device, detected))) {
-        act("%u - %s",detected,m_device.identifier);
+    while(SUCCESS(unicap_enumerate_devices(&m_device_spec, &m_device, detected))) {
+        act("%u - %s", detected, m_device.identifier);
         detected++;
     }
 
@@ -339,18 +339,18 @@ void *UnicapLayer::feed() {
     p = parameters->begin();
     while(p) {
         if(p->changed)
-            unicap_set_property_value( m_handle, p->name, *(double*)p->value);
+            unicap_set_property_value(m_handle, p->name, *(double*)p->value);
         p->changed = false;
         p = (Parameter*)p->next;
     }
 
     func("unicap feed() on %s (%ux%u)", name, geo.w, geo.h);
 
-    if(capture_type==UNICAP_USER_CAPTURE) {
+    if(capture_type == UNICAP_USER_CAPTURE) {
         unicap_data_buffer_t *res;
-        unicap_wait_buffer(m_handle,&res);
+        unicap_wait_buffer(m_handle, &res);
         ccvt_yuyv_bgr32(geo.w, geo.h, res->data, rgba[0]);
-        unicap_queue_buffer(m_handle,res);
+        unicap_queue_buffer(m_handle, res);
     }
     return rgba[0];
 }
@@ -366,7 +366,7 @@ void UnicapLayer::close() {
 
     if(m_handle) {
         status = unicap_stop_capture(m_handle);
-        if( ! SUCCESS( status ) ) {
+        if(! SUCCESS(status)) {
             error("unicap reports error in stop_capture: 0x%x", status);
             unicap_stop_capture(m_handle);
         }

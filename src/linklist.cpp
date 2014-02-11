@@ -145,13 +145,13 @@ bool Entry::move(int pos) {
     // find our position
     Entry *search = list->first;
     int mypos = 1;
-    while (search && search != this) {
+    while(search && search != this) {
         mypos++;
         search = search->next;
     }
 
     // no move is necessary
-    if (mypos == pos) {
+    if(mypos == pos) {
 #ifdef THREADSAFE
         list->unlock();
 #endif
@@ -160,18 +160,18 @@ bool Entry::move(int pos) {
     displaced = list->_pick(pos);
 
     // detach ourselves from the list
-    if (next) {
+    if(next) {
         next->prev = prev;
-        if (prev)
+        if(prev)
             prev->next = next;
         else
             list->first = next;
     } else {
         list->last = prev;
     }
-    if (prev) {
+    if(prev) {
         prev->next = next;
-        if (next)
+        if(next)
             next->prev = prev;
         else
             list->last = prev;
@@ -182,26 +182,26 @@ bool Entry::move(int pos) {
     prev = NULL;
     next = NULL;
     // now insert ourselves at the new position
-    if (pos >= list->length) { // shortcut if we are going to be the last entry
+    if(pos >= list->length) {  // shortcut if we are going to be the last entry
         list->last->next = this;
         prev = list->last;
         list->last = this;
-    } else if (pos == 1) { // shortcut if we are going to be the first entry
+    } else if(pos == 1) {  // shortcut if we are going to be the first entry
         list->first->prev = this;
         next = list->first;
         list->first = this;
     } else {
-        if (mypos > pos) {
+        if(mypos > pos) {
             prev = displaced->prev;
-            if (prev)
+            if(prev)
                 prev->next = this;
             else
                 list->first = this;
             next = displaced;
             displaced->prev = this;
-        } else if (mypos < pos) {
+        } else if(mypos < pos) {
             next = displaced->next;
-            if (next)
+            if(next)
                 next->prev = this;
             else
                 list->last = this;
@@ -226,14 +226,14 @@ bool Entry::swap(int pos) {
 
     Entry *swapping = list->_pick(pos);
 
-    if (!swapping) {
+    if(!swapping) {
 #ifdef THREADSAFE
         list->unlock();
 #endif
         return(false);
     }
 
-    if (swapping == this) {
+    if(swapping == this) {
 #ifdef THREADSAFE
         list->unlock();
 #endif
@@ -243,27 +243,27 @@ bool Entry::swap(int pos) {
     tn = swapping->next;
     tp = swapping->prev;
 
-    swapping->next = (next == swapping)?this:next;
-    next = (tn == this)?swapping:tn;
-    swapping->prev = (prev == swapping)?this:prev;
-    prev = (tp == this)?swapping:tp;
+    swapping->next = (next == swapping) ? this : next;
+    next = (tn == this) ? swapping : tn;
+    swapping->prev = (prev == swapping) ? this : prev;
+    prev = (tp == this) ? swapping : tp;
 
     // update head of the list if necessary
-    if (!prev) {
+    if(!prev) {
         list->first = this;
     } else {
         prev->next = this;
-        if (!swapping->prev)
+        if(!swapping->prev)
             list->first = swapping;
         else
             swapping->prev->next = swapping;
     }
     // update the tail of the list if necessary
-    if (!next) {
+    if(!next) {
         list->last = this;
     } else {
         next->prev = this;
-        if (!swapping->next)
+        if(!swapping->next)
             list->last = swapping;
         else
             swapping->next->prev = swapping;

@@ -203,7 +203,7 @@ typedef plugMainUnion plugMainType(DWORD, LPVOID, DWORD);
 
 #if defined(WIN32)
 
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, DWORD lpReserved );
+BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, DWORD lpReserved);
 
 __declspec(dllexport) LPVOID __stdcall plugMain(DWORD functionCode, LPVOID pParam, DWORD reserved);
 

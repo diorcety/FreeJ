@@ -60,7 +60,7 @@ Freeframe::Freeframe()
     if(plugmain(FF_INITIALISE, NULL, 0).ivalue == FF_FAIL)
         error("cannot initialise freeframe plugin %s", name.c_str());
 
-    if(get_debug()>2)
+    if(get_debug() > 2)
         print_info();
 
 }
@@ -81,7 +81,7 @@ int Freeframe::open(char *file) {
     plugMainType *plgMain = NULL;
 
     if(opened) {
-        error("Freeframe object %p has already opened file %s",this, filename);
+        error("Freeframe object %p has already opened file %s", this, filename);
         return 0;
     }
 
@@ -94,14 +94,14 @@ int Freeframe::open(char *file) {
         CFStringRef filestring = CFStringCreateWithCString(NULL, file, kCFStringEncodingUTF8);
         CFURLRef filepath = CFURLCreateWithFileSystemPath(NULL, filestring, kCFURLPOSIXPathStyle, 1);;
         CFBundleRef bundle = CFBundleCreate(NULL, filepath);
-        plgMain = (plugMainUnion (*)(DWORD, void*, DWORD))CFBundleGetFunctionPointerForName(bundle, CFSTR("plugMain"));
+        plgMain = (plugMainUnion(*)(DWORD, void*, DWORD))CFBundleGetFunctionPointerForName(bundle, CFSTR("plugMain"));
         CFRelease(filestring);
         CFRelease(filepath);
 #endif
     } else {
         dlerror(); //clear up previous errors
 #if 0
-        if (!dlopen_preflight(file)) {
+        if(!dlopen_preflight(file)) {
             warning("plugin '%s' failed: %s", file, dlerror());
             return 0;
         }
@@ -126,19 +126,19 @@ int Freeframe::open(char *file) {
 
     /// WARNING:  if  compiled  without  -freg-struct-return  this  will
     /// return an invalid address ...
-    PlugInfoStruct *pis = (plgMain(FF_GETINFO,NULL, 0)).PISvalue;
+    PlugInfoStruct *pis = (plgMain(FF_GETINFO, NULL, 0)).PISvalue;
 
     //  func("freeframe plugin: %s",pis->pluginName);
     // ... and here will segfault
-    if ((plgMain(FF_GETPLUGINCAPS,
-                 (LPVOID) FF_CAP_32BITVIDEO, 0)).ivalue != FF_TRUE) {
+    if((plgMain(FF_GETPLUGINCAPS,
+                (LPVOID) FF_CAP_32BITVIDEO, 0)).ivalue != FF_TRUE) {
         func("plugin %s: no 32 bit support", file);
         dlclose(handle);
         handle = NULL;
         return 0;
     }
 
-    if (pis->APIMajorVersion < 1) {
+    if(pis->APIMajorVersion < 1) {
         error("plugin %s: old api version", file);
         dlclose(handle);
         handle = NULL;
@@ -152,7 +152,7 @@ int Freeframe::open(char *file) {
     //  extinfo = plgMain(FF_GETEXTENDEDINFO, NULL, 0)
     plugmain = plgMain;
     opened = true;
-    snprintf(filename,255,"%s",file);
+    snprintf(filename, 255, "%s", file);
 
     return 1;
 
@@ -193,7 +193,7 @@ void Freeframe::destruct(FilterInstance *inst) {
 
 void Freeframe::update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe) {
     Filter::update(inst, time, inframe, outframe);
-    jmemcpy(outframe,inframe,bytesize);
+    jmemcpy(outframe, inframe, bytesize);
     plugmain(FF_PROCESSFRAME, (void*)outframe, inst->intcore);
 }
 

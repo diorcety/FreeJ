@@ -44,7 +44,7 @@ void DumbCall::notify() {
 
 void DumbCall::enqueue() {
     pthread_mutex_lock(&refcount_mutex_);
-    if (refcount_ == 0)
+    if(refcount_ == 0)
         pthread_mutex_lock(&pending_);
     refcount_++;
     pthread_mutex_unlock(&refcount_mutex_);
@@ -53,7 +53,7 @@ void DumbCall::enqueue() {
 void DumbCall::dequeue() {
     pthread_mutex_lock(&refcount_mutex_);
     refcount_--;
-    if (refcount_ == 0)
+    if(refcount_ == 0)
         pthread_mutex_unlock(&pending_);
     pthread_mutex_unlock(&refcount_mutex_);
 }
@@ -68,7 +68,7 @@ DumbCallback::~DumbCallback() {
 }
 
 bool DumbCallback::add_call(DumbCall *call) {
-    if (get_call_(call)) {
+    if(get_call_(call)) {
         warning("%s, callback already present", __PRETTY_FUNCTION__);
         return false;
     }
@@ -77,7 +77,7 @@ bool DumbCallback::add_call(DumbCall *call) {
 }
 
 bool DumbCallback::rem_call(DumbCall *call) {
-    if (!get_call_(call)) {
+    if(!get_call_(call)) {
         warning("%s, callback not present", __PRETTY_FUNCTION__);
         return false;
     }
@@ -87,7 +87,7 @@ bool DumbCallback::rem_call(DumbCall *call) {
 
 void DumbCallback::notify() {
     std::list<DumbCall *>::iterator i;
-    for (i=calls_.begin() ; i!=calls_.end() ; i++) {
+    for(i = calls_.begin() ; i != calls_.end() ; i++) {
         (*i)->enqueue();
         dispatcher_->add_job(NewClosure(*i, &DumbCall::notify));
     }
@@ -96,8 +96,8 @@ void DumbCallback::notify() {
 DumbCall *DumbCallback::get_call_(DumbCall *call) {
     DumbCall *fun = NULL;
     std::list<DumbCall *>::iterator i;
-    for (i=calls_.begin() ; i!=calls_.end() ; i++)
-        if (*i == call) fun = call;
+    for(i = calls_.begin() ; i != calls_.end() ; i++)
+        if(*i == call) fun = call;
     return fun;
 }
 

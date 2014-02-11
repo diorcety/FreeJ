@@ -22,13 +22,13 @@
 #define _MLT_FRAME_H_
 
 /* convenience functions */
-extern int mlt_convert_yuv422_to_rgb24a( uint8_t *yuv, uint8_t *rgba, unsigned int total );
-extern int mlt_convert_rgb24a_to_yuv422( uint8_t *rgba, int width, int height, int stride, uint8_t *yuv, uint8_t *alpha );
-extern int mlt_convert_rgb24_to_yuv422( uint8_t *rgb, int width, int height, int stride, uint8_t *yuv );
-extern int mlt_convert_bgr24a_to_yuv422( uint8_t *rgba, int width, int height, int stride, uint8_t *yuv, uint8_t *alpha );
-extern int mlt_convert_argb_to_yuv422( uint8_t *rgba, int width, int height, int stride, uint8_t *yuv, uint8_t *alpha );
-extern int mlt_convert_bgr24_to_yuv422( uint8_t *rgb, int width, int height, int stride, uint8_t *yuv );
-extern int mlt_convert_yuv420p_to_yuv422( uint8_t *yuv420p, int width, int height, int stride, uint8_t *yuv );
+extern int mlt_convert_yuv422_to_rgb24a(uint8_t *yuv, uint8_t *rgba, unsigned int total);
+extern int mlt_convert_rgb24a_to_yuv422(uint8_t *rgba, int width, int height, int stride, uint8_t *yuv, uint8_t *alpha);
+extern int mlt_convert_rgb24_to_yuv422(uint8_t *rgb, int width, int height, int stride, uint8_t *yuv);
+extern int mlt_convert_bgr24a_to_yuv422(uint8_t *rgba, int width, int height, int stride, uint8_t *yuv, uint8_t *alpha);
+extern int mlt_convert_argb_to_yuv422(uint8_t *rgba, int width, int height, int stride, uint8_t *yuv, uint8_t *alpha);
+extern int mlt_convert_bgr24_to_yuv422(uint8_t *rgb, int width, int height, int stride, uint8_t *yuv);
+extern int mlt_convert_yuv420p_to_yuv422(uint8_t *yuv420p, int width, int height, int stride, uint8_t *yuv);
 
 /* this macro scales rgb into the yuv gamut, y is scaled by 219/255 and uv by 224/255 */
 #define RGB2YUV(r, g, b, y, u, v)\

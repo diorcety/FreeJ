@@ -176,8 +176,8 @@ private:
 
     /** private methods */
     int seek(int64_t timestamp);
-    int decode_video_packet( int *got_picture);
-    int decode_audio_packet( int *data_size);
+    int decode_video_packet(int *got_picture);
+    int decode_audio_packet(int *data_size);
     int decode_audio_packet();
 
     void set_speed(int speed);

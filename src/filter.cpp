@@ -58,14 +58,14 @@ Filter::~Filter() {
 
 FilterInstance *Filter::new_instance() {
     FilterInstance *instance = Factory<FilterInstance>::new_instance("FilterInstance");
-    if (instance)
+    if(instance)
         instance->init(this);
     return instance;
 }
 
 bool Filter::apply(Layer *lay, FilterInstance *instance) {
 
-    errno=0;
+    errno = 0;
     instance->outframe = (uint32_t*) calloc(lay->geo.bytesize, 1);
     if(errno != 0) {
         error("calloc outframe failed (%i) applying filter %s", errno, name.c_str());
@@ -89,7 +89,7 @@ FilterInstance *Filter::apply(Layer *lay) {
 
     FilterInstance *instance = new_instance();
 
-    if (apply(lay, instance))
+    if(apply(lay, instance))
         return instance;
     delete instance;
     return NULL;
@@ -124,8 +124,8 @@ void Filter::apply_parameters(FilterInstance *inst) {
     int idx = 1; // linklist starts from 1
     inst->parameters.lock();
     Parameter *param = inst->parameters.begin();
-    while (param) {
-        if (param->changed) {
+    while(param) {
+        if(param->changed) {
             inst->set_parameter(idx);
             param->changed = false; // XXX
         }

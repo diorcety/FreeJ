@@ -37,21 +37,21 @@
 
 
 Layer *create_layer(Context *env, char *file) {
-    char *end_file_ptr,*file_ptr;
+    char *end_file_ptr, *file_ptr;
     FILE *tmp;
     Layer *nlayer = NULL;
 
     warning("create_layer is deprecated! use Context::open instead");
 
     /* check that file exists */
-    if(strncasecmp(file,"/dev/",5)!=0
-            && strncasecmp(file,"http://",7)!=0
-            && strncasecmp(file,"ftp://",6)!=0
-            && strncasecmp(file,"layer_",6)!=0) {
-        tmp = fopen(file,"r");
+    if(strncasecmp(file, "/dev/", 5) != 0
+            && strncasecmp(file, "http://", 7) != 0
+            && strncasecmp(file, "ftp://", 6) != 0
+            && strncasecmp(file, "layer_", 6) != 0) {
+        tmp = fopen(file, "r");
         if(!tmp) {
             error("can't open %s to create a Layer: %s",
-                  file,strerror(errno));
+                  file, strerror(errno));
             return NULL;
         } else fclose(tmp);
     }
@@ -61,20 +61,20 @@ Layer *create_layer(Context *env, char *file) {
 //  while(*end_file_ptr!='\0' && *end_file_ptr!='\n') end_file_ptr++; *end_file_ptr='\0';
 
     /* ==== Unified caputure API (V4L & V4L2) */
-    if( strncasecmp ( file_ptr,"/dev/video",10)==0) {
+    if(strncasecmp(file_ptr, "/dev/video", 10) == 0) {
 #ifdef WITH_UNICAP
-        unsigned int w=env->screen->w, h=env->screen->h;
-        while(end_file_ptr!=file_ptr) {
-            if(*end_file_ptr!='%') end_file_ptr--;
+        unsigned int w = env->screen->w, h = env->screen->h;
+        while(end_file_ptr != file_ptr) {
+            if(*end_file_ptr != '%') end_file_ptr--;
             else { /* size is specified */
-                *end_file_ptr='\0';
+                *end_file_ptr = '\0';
                 end_file_ptr++;
-                sscanf(end_file_ptr,"%ux%u",&w,&h);
+                sscanf(end_file_ptr, "%ux%u", &w, &h);
                 end_file_ptr = file_ptr;
             }
         }
         nlayer = new UnicapLayer();
-        if(! ((UnicapLayer*)nlayer)->init( env, (int)w, (int)h) ) {
+        if(!((UnicapLayer*)nlayer)->init(env, (int)w, (int)h)) {
             error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
             delete nlayer;
             return NULL;
@@ -90,12 +90,12 @@ Layer *create_layer(Context *env, char *file) {
         }
 #else
         error("Video4Linux layer support not compiled");
-        act("can't load %s",file_ptr);
+        act("can't load %s", file_ptr);
 #endif
 
     } else /* VIDEO LAYER */
 
-        if( ((IS_VIDEO_EXTENSION(end_file_ptr)) | (IS_FIREWIRE_DEVICE(file_ptr))) ) {
+        if(((IS_VIDEO_EXTENSION(end_file_ptr)) | (IS_FIREWIRE_DEVICE(file_ptr)))) {
             func("is a movie layer");
 
             // // MLT experiments
@@ -114,7 +114,7 @@ Layer *create_layer(Context *env, char *file) {
 
 #ifdef WITH_FFMPEG
             nlayer = new VideoLayer();
-            if(!nlayer->init( )) {
+            if(!nlayer->init()) {
                 error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
                 delete nlayer;
                 return NULL;
@@ -138,7 +138,7 @@ Layer *create_layer(Context *env, char *file) {
 //       }
 #else
             error("VIDEO and AVI layer support not compiled");
-            act("can't load %s",file_ptr);
+            act("can't load %s", file_ptr);
 #endif
 // } else /* Audio LAYER */
 //     if(strncasecmp(file_ptr,"/tmp/test",9)==0) {
@@ -152,10 +152,10 @@ Layer *create_layer(Context *env, char *file) {
 // 	  delete nlayer; nlayer = NULL;
 //       }
         } else /* IMAGE LAYER */
-            if( (IS_IMAGE_EXTENSION(end_file_ptr))) {
+            if((IS_IMAGE_EXTENSION(end_file_ptr))) {
 //		strncasecmp((end_file_ptr-4),".png",4)==0)
                 nlayer = new ImageLayer();
-                if(!nlayer->init( )) {
+                if(!nlayer->init()) {
                     error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
                     delete nlayer;
                     return NULL;
@@ -166,11 +166,11 @@ Layer *create_layer(Context *env, char *file) {
                     nlayer = NULL;
                 }
             } else /* TXT LAYER */
-                if(strncasecmp((end_file_ptr-4),".txt",4)==0) {
+                if(strncasecmp((end_file_ptr - 4), ".txt", 4) == 0) {
 #if defined WITH_TEXTLAYER
                     nlayer = new TextLayer();
 
-                    if(!nlayer->init( env )) {
+                    if(!nlayer->init(env)) {
                         error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
                         delete nlayer;
                         return NULL;
@@ -183,37 +183,37 @@ Layer *create_layer(Context *env, char *file) {
                     }
 #else
                     error("TXT layer support not compiled");
-                    act("can't load %s",file_ptr);
+                    act("can't load %s", file_ptr);
                     return(NULL);
 #endif
 
                 } else /* XSCREENSAVER LAYER */
-                    if(strstr(file_ptr,"xscreensaver")) {
+                    if(strstr(file_ptr, "xscreensaver")) {
 #ifdef WITH_XSCREENSAVER
                         nlayer = new XScreenSaverLayer();
 
-                        if(!nlayer->init( env )) {
+                        if(!nlayer->init(env)) {
                             error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
                             delete nlayer;
                             return NULL;
                         }
 
-                        if (!nlayer->open(file_ptr)) {
+                        if(!nlayer->open(file_ptr)) {
                             error("create_layer : XScreenSaver open failed");
                             delete nlayer;
                             nlayer = NULL;
                         }
 #else
                         error("no xscreensaver layer support");
-                        act("can't load %s",file_ptr);
+                        act("can't load %s", file_ptr);
                         return(NULL);
 #endif
-                    }  else if(strncasecmp(file_ptr,"layer_goom",10)==0) {
+                    }  else if(strncasecmp(file_ptr, "layer_goom", 10) == 0) {
 
 #ifdef WITH_GOOM
                         nlayer = new GoomLayer();
 
-                        if(!nlayer->init( env )) {
+                        if(!nlayer->init(env)) {
                             error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
                             delete nlayer;
                             return NULL;
@@ -226,10 +226,10 @@ Layer *create_layer(Context *env, char *file) {
 
                     }
 #ifdef WITH_FLASH
-                    else if(strncasecmp(end_file_ptr-4,".swf",4)==0) {
+                    else if(strncasecmp(end_file_ptr - 4, ".swf", 4) == 0) {
 
                         nlayer = new FlashLayer();
-                        if(!nlayer->init( env )) {
+                        if(!nlayer->init(env)) {
                             error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
                             delete nlayer;
                             return NULL;
@@ -261,9 +261,9 @@ Layer *create_layer(Context *env, char *file) {
 //   }
 
     if(!nlayer)
-        error("can't create a layer with %s",file);
+        error("can't create a layer with %s", file);
     else
-        func("create_layer successful, returns %p",nlayer);
+        func("create_layer successful, returns %p", nlayer);
     return nlayer;
 }
 

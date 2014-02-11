@@ -37,7 +37,7 @@
 SlwReadline::SlwReadline()
     : SLangWidget() {
 
-    movestep=2;
+    movestep = 2;
     parser = DEFAULT;
     commandline = false;
     memset(command, EOL, MAX_CMDLINE);
@@ -90,21 +90,21 @@ bool SlwReadline::refresh() {
     switch(parser) {
     case DEFAULT:
     case MOVELAYER:
-        color = TITLE_COLOR+20;
+        color = TITLE_COLOR + 20;
         putnch((char*)
                " use arrows to move selection, press ctrl-h for help with hotkeys"
-               ,0,0,0);
+               , 0, 0, 0);
         break;
 
     case COMMANDLINE:
         blank_row(0);
         color = PLAIN_COLOR;
         putnch((char*)": ", 0, 0, 2);
-        if(command[0]!=EOL)
+        if(command[0] != EOL)
             putnch(command, 2, 0, 0);
         else
             cursor = 0;
-        gotoxy(cursor+2, 0);
+        gotoxy(cursor + 2, 0);
         break;
 
     default:
@@ -148,7 +148,7 @@ void SlwReadline::set_parser(parser_t pars) {
 /* setup the flags and environment to read a new input
    saves the pointer to the command processing function
    to use it once the input is completed */
-int SlwReadline::readline(const char *msg,cmd_process_t *proc,cmd_complete_t *comp) {
+int SlwReadline::readline(const char *msg, cmd_process_t *proc, cmd_complete_t *comp) {
     ::notice(msg);
     //  update_scroll();
     color = PLAIN_COLOR;
@@ -161,7 +161,7 @@ int SlwReadline::readline(const char *msg,cmd_process_t *proc,cmd_complete_t *co
     //   SLsmg_erase_eol();
 
 
-    memset(command,EOL,MAX_CMDLINE);
+    memset(command, EOL, MAX_CMDLINE);
 
     cmd_process = proc;
     cmd_complete = comp;
@@ -240,7 +240,7 @@ bool SlwReadline::parser_default(int key) {
         case KEY_CTRL_Y:
             if(((Layer*)le)->type == Layer::TEXT)
                 readline("print a new word in Text Layer, type your words:",
-                         &console_print_text_layer,NULL);
+                         &console_print_text_layer, NULL);
             break;
 #endif
 
@@ -320,7 +320,7 @@ bool SlwReadline::parser_default(int key) {
 
     case KEY_CTRL_X:
         readline("execute javascript command:",
-                 &console_exec_script_command,NULL);
+                 &console_exec_script_command, NULL);
         break;
 
     case KEY_CTRL_J:
@@ -331,7 +331,7 @@ bool SlwReadline::parser_default(int key) {
 
     case KEY_CTRL_O:
         readline("open a file in a new Layer:",
-                 &console_open_layer,&console_filebrowse_completion);
+                 &console_open_layer, &console_filebrowse_completion);
         break;
 
 
@@ -344,7 +344,7 @@ bool SlwReadline::parser_default(int key) {
 #if defined WITH_TEXTLAYER
     case KEY_CTRL_T:
         readline("create a new Text Layer, type your words:",
-                 &console_open_text_layer,NULL);
+                 &console_open_text_layer, NULL);
         break;
 #endif
 
@@ -375,23 +375,23 @@ bool SlwReadline::parser_movelayer(int key) {
 
         // zoom
     case KEY_PLUS:
-        layer->set_zoom( layer->zoom_x + 0.01,
-                         layer->zoom_y + 0.01);
+        layer->set_zoom(layer->zoom_x + 0.01,
+                        layer->zoom_y + 0.01);
         break;
     case KEY_MINUS:
-        layer->set_zoom( layer->zoom_x - 0.01,
-                         layer->zoom_y - 0.01);
+        layer->set_zoom(layer->zoom_x - 0.01,
+                        layer->zoom_y - 0.01);
         break;
     case '.':
-        layer->set_zoom(1,1);
+        layer->set_zoom(1, 1);
         break;
 
         // rotation
     case '<':
-        layer->set_rotate( layer->rotate + 0.5 );
+        layer->set_rotate(layer->rotate + 0.5);
         break;
     case '>':
-        layer->set_rotate( layer->rotate - 0.5 );
+        layer->set_rotate(layer->rotate - 0.5);
         break;
     case ',':
         layer->set_rotate(0);
@@ -405,46 +405,46 @@ bool SlwReadline::parser_movelayer(int key) {
     case '8':
     case 'k':
     case SL_KEY_UP:
-        layer->set_position(layer->geo.x,layer->geo.y-movestep);
+        layer->set_position(layer->geo.x, layer->geo.y - movestep);
         break;
     case '2':
     case 'j':
     case SL_KEY_DOWN:
-        layer->set_position(layer->geo.x,layer->geo.y+movestep);
+        layer->set_position(layer->geo.x, layer->geo.y + movestep);
         break;
     case '4':
     case 'h':
     case SL_KEY_LEFT:
-        layer->set_position(layer->geo.x-movestep,layer->geo.y);
+        layer->set_position(layer->geo.x - movestep, layer->geo.y);
         break;
     case '6':
     case 'l':
     case SL_KEY_RIGHT:
-        layer->set_position(layer->geo.x+movestep,layer->geo.y);
+        layer->set_position(layer->geo.x + movestep, layer->geo.y);
         break;
     case '7':
     case 'y': // up+left
-        layer->set_position(layer->geo.x-movestep,layer->geo.y-movestep);
+        layer->set_position(layer->geo.x - movestep, layer->geo.y - movestep);
         break;
     case '9':
     case 'u': // up+right
-        layer->set_position(layer->geo.x+movestep,layer->geo.y-movestep);
+        layer->set_position(layer->geo.x + movestep, layer->geo.y - movestep);
         break;
     case '1':
     case 'b': // down+left
-        layer->set_position(layer->geo.x-movestep,layer->geo.y+movestep);
+        layer->set_position(layer->geo.x - movestep, layer->geo.y + movestep);
         break;
     case '3':
     case 'n': // down+right
-        layer->set_position(layer->geo.x+movestep,layer->geo.y+movestep);
+        layer->set_position(layer->geo.x + movestep, layer->geo.y + movestep);
         break;
 
     case '5':
     case KEY_SPACE:
         // place at the center
         layer->set_position
-        ( (env->screens.selected()->geo.w - layer->geo.w)/2,
-          (env->screens.selected()->geo.h - layer->geo.h)/2 );
+        ((env->screens.selected()->geo.w - layer->geo.w) / 2,
+         (env->screens.selected()->geo.h - layer->geo.h) / 2);
         break;
 
     case SL_KEY_ENTER:
@@ -472,7 +472,7 @@ bool SlwReadline::parser_commandline(int key) {
     commandline = true; // don't print statusline
 
     /* =============== console command input */
-    if(cursor>MAX_CMDLINE) {
+    if(cursor > MAX_CMDLINE) {
         error("command too long, can't type more.");
         return(parsres);
     }
@@ -485,20 +485,20 @@ bool SlwReadline::parser_commandline(int key) {
     case SL_KEY_ENTER:
     case KEY_ENTER:
         // a blank commandline aborts the input
-        if(command[0]==EOL || command[0]==EOT) {
+        if(command[0] == EOL || command[0] == EOT) {
             set_parser(DEFAULT);
             break;
         }
         // otherwise process the input
-        res = (*cmd_process)(env,command);
-        if(res<0) break;
+        res = (*cmd_process)(env, command);
+        if(res < 0) break;
         // reset the parser
         set_parser(DEFAULT);
         // save in commandline history
         entr = new Entry();
         entr->data = strdup(command);
-        history.append( entr );
-        if(history.len()>32) // histsize
+        history.append(entr);
+        if(history.len() > 32) // histsize
             delete history.begin();
         // cleanup the command
         memset(command, EOL, MAX_CMDLINE);
@@ -518,7 +518,7 @@ bool SlwReadline::parser_commandline(int key) {
             }
         }
         if(!entr) break; // no hist
-        strncpy(command,(char*)entr->data,MAX_CMDLINE);
+        strncpy(command, (char*)entr->data, MAX_CMDLINE);
         // type the command on the consol
         cursor = strlen(command);
         //    GOTO_CURSOR;
@@ -529,7 +529,7 @@ bool SlwReadline::parser_commandline(int key) {
         if(!entr) break;
         if(!entr->next) break;
         entr = entr->next;
-        strncpy(command,(char*)entr->data,MAX_CMDLINE);
+        strncpy(command, (char*)entr->data, MAX_CMDLINE);
         // type the command on the console
         cursor = strlen(command);
 
@@ -544,8 +544,8 @@ bool SlwReadline::parser_commandline(int key) {
 
     case KEY_TAB:
         if(!cmd_complete) break;
-        if(command[0]=='\n') command[0]=0x0;
-        res = (*cmd_complete)(env,command);
+        if(command[0] == '\n') command[0] = 0x0;
+        res = (*cmd_complete)(env, command);
         if(!res) break;
         //    else if(res==1) { // exact match!
         //      putnch(command,3,0,0);
@@ -563,9 +563,9 @@ bool SlwReadline::parser_commandline(int key) {
     case KEY_BACKSPACE_SOMETIMES:
         if(!cursor) break;
 
-        for(c=cursor; c<MAX_CMDLINE; c++) {
-            command[c-1] = command[c];
-            if(command[c]==EOL) break;
+        for(c = cursor; c < MAX_CMDLINE; c++) {
+            command[c - 1] = command[c];
+            if(command[c] == EOL) break;
         }
         cursor--;
         //    putnch(command,3,0,cursor);
@@ -590,8 +590,8 @@ bool SlwReadline::parser_commandline(int key) {
         break;
 
     case KEY_CTRL_D:
-        for(c=cursor; command[c]!=EOL; c++)
-            command[c] = command[c+1];
+        for(c = cursor; command[c] != EOL; c++)
+            command[c] = command[c + 1];
         //    putnch(command,1,0,0);
         //    gotoxy(cursor,0);
 //     GOTO_CURSOR;
@@ -602,28 +602,28 @@ bool SlwReadline::parser_commandline(int key) {
 
     case KEY_CTRL_A:
     case KEY_HOME:
-        cursor=0;
+        cursor = 0;
         //    gotoxy(cursor,0);
         break;
 
     case KEY_CTRL_E:
-        while(command[cursor]!=EOL) cursor++;
+        while(command[cursor] != EOL) cursor++;
         //    gotoxy(cursor,0);
         break;
 
     case KEY_CTRL_K:
-        for(c=cursor; command[c]!=EOL; c++)
+        for(c = cursor; command[c] != EOL; c++)
             command[c] = EOL;
         //    putnch(command,1,0,0);
         //    gotoxy(cursor,0);
         break;
 
     case KEY_CTRL_U:
-        for(c=0; command[cursor+c]!=EOL; c++)
-            command[c] = command[cursor+c];
-        for(; command[c]!=EOL; c++)
+        for(c = 0; command[cursor + c] != EOL; c++)
+            command[c] = command[cursor + c];
+        for(; command[c] != EOL; c++)
             command[c] = EOL;
-        cursor=0;
+        cursor = 0;
         //    putnch(command,1,0,0);
         //    gotoxy(cursor,0);
         break;
@@ -637,13 +637,13 @@ bool SlwReadline::parser_commandline(int key) {
        insert mode       FIX ME!
        must save temporarly the chars to advance
     */
-    if( key >= 32 && key < 127) {
-        for(c=cursor; command[c]!=EOL; c++); // go to the EOL
+    if(key >= 32 && key < 127) {
+        for(c = cursor; command[c] != EOL; c++); // go to the EOL
 
-        command[c+1] = EOL; // be sure we have a EOL
+        command[c + 1] = EOL; // be sure we have a EOL
 
-        for(; c>cursor; c--)
-            command[c] = command[c-1]; // move backwards switching right
+        for(; c > cursor; c--)
+            command[c] = command[c - 1]; // move backwards switching right
 
         command[cursor] = key; // insert new char
 

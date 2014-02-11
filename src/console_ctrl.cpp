@@ -52,19 +52,19 @@
 
 
 static bool screen_size_changed;
-static void sigwinch_handler (int sig) {
+static void sigwinch_handler(int sig) {
     screen_size_changed = true;
-    SLsignal (SIGWINCH, sigwinch_handler);
+    SLsignal(SIGWINCH, sigwinch_handler);
 }
 
 static bool real_quit;
 static bool keyboard_quit = false;
-static void sigint_handler (int sig) {
-    SLsignal_intr (SIGINT, sigint_handler);
+static void sigint_handler(int sig) {
+    SLsignal_intr(SIGINT, sigint_handler);
     keyboard_quit = true;
     func("%s : keyboard quit", __PRETTY_FUNCTION__);
 #if SLANG_VERSION < 20000
-    if (SLang_Ignore_User_Abort == 0)
+    if(SLang_Ignore_User_Abort == 0)
         SLang_Error = USER_BREAK;
 #endif
 }
@@ -85,7 +85,7 @@ static int getkey_handler() {
 // confirm quit
 int quit_proc(Context *env, char *cmd) {
     if(!cmd) return 0;
-    if(cmd[0]=='y') {
+    if(cmd[0] == 'y') {
         real_quit = true;
         return 1;
     }
@@ -94,8 +94,8 @@ int quit_proc(Context *env, char *cmd) {
 }
 
 
-SlwConsole::SlwConsole() :ConsoleController() {
-    env=NULL;
+SlwConsole::SlwConsole() : ConsoleController() {
+    env = NULL;
     active = false;
     paramsel = 1;
 
@@ -131,13 +131,13 @@ bool SlwConsole::console_init() {
 }
 
 bool SlwConsole::slw_init() {
-    ::func("%s",__PRETTY_FUNCTION__);
+    ::func("%s", __PRETTY_FUNCTION__);
 
     slw = new SLangConsole();
     slw->init();
 
     /** register WINdow CHange signal handler (TODO) */
-    SLsignal (SIGWINCH, sigwinch_handler);
+    SLsignal(SIGWINCH, sigwinch_handler);
 
     /** register SIGINT signal */
     signal(SIGINT, sigint_handler);
@@ -166,7 +166,7 @@ bool SlwConsole::slw_init() {
     // log scroller
     log = new SLW_Log();
     log->setName("console log messages");
-    slw->place(log, 0, 10, slw->w, slw->h -3);
+    slw->place(log, 0, 10, slw->w, slw->h - 3);
     log->init();
     ////////////////////////////
 
@@ -175,7 +175,7 @@ bool SlwConsole::slw_init() {
     rdl = new SlwReadline();
     rdl->setName("console readline");
     rdl->env = env;
-    slw->place(rdl, 0, slw->h-1, slw->w, slw->h);
+    slw->place(rdl, 0, slw->h - 1, slw->w, slw->h);
     rdl->init();
     ////////////////////////////
 
@@ -197,18 +197,18 @@ int SlwConsole::dispatch() {
 //  else return; /* return if key is zero */
     if(!key) return(0);
 
-    if( key==KEY_CTRL_L) {
+    if(key == KEY_CTRL_L) {
         tit->blank();
         log->blank();
         sel->blank();
         rdl->blank();
     }
 
-    if( rdl->feed(key) ) return(1);
+    if(rdl->feed(key)) return(1);
 
-    if( log->feed(key) ) return(1);
+    if(log->feed(key)) return(1);
 
-    if( sel->feed(key) ) return(1);
+    if(sel->feed(key)) return(1);
 
 
 
@@ -217,7 +217,7 @@ int SlwConsole::dispatch() {
 
 int SlwConsole::poll() {
     if(keyboard_quit) {
-        rdl->readline("do you really want to quit? type yes to confirm:",&quit_proc,NULL);
+        rdl->readline("do you really want to quit? type yes to confirm:", &quit_proc, NULL);
         keyboard_quit = false;
         return 0;
     }

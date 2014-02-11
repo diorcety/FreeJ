@@ -25,7 +25,7 @@
 #include <blitter.h>
 #include <factory.h>
 
-DECLARE_CLASS("Screen",screen_class,screen_constructor);
+DECLARE_CLASS("Screen", screen_class, screen_constructor);
 
 JSFunctionSpec screen_methods[] = {
     ENTRY_METHODS,
@@ -46,24 +46,24 @@ JSPropertySpec screen_properties[] = {
 };
 
 JS(screen_constructor) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     char *type = NULL;
     ViewPort *screen = NULL;
 
     if(argc >= 1) {
         // a specific screen type has been requested
         char *type = js_get_string(argv[0]);
-        screen = Factory<ViewPort>::get_instance( "Screen", type );
+        screen = Factory<ViewPort>::get_instance("Screen", type);
     } else {
         // no screen type has been specified, return the default one
-        screen = Factory<ViewPort>::get_instance( "Screen" );
+        screen = Factory<ViewPort>::get_instance("Screen");
     }
 
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
 
     if(!screen) {
-        error("%s: cannot obtain current Screen",__FUNCTION__);
+        error("%s: cannot obtain current Screen", __FUNCTION__);
         JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
                              JSSMSG_FJ_CANT_CREATE, type,
                              strerror(errno));
@@ -71,7 +71,7 @@ JS(screen_constructor) {
         //JS_ClearContextThread(cx);
         return JS_FALSE;
     }
-    if (!JS_SetPrivate(cx, obj, (void *) screen))
+    if(!JS_SetPrivate(cx, obj, (void *) screen))
         JS_ERROR("internal error setting private value");
 
     *rval = OBJECT_TO_JSVAL(obj);
@@ -81,7 +81,7 @@ JS(screen_constructor) {
 }
 
 JS(screen_init) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
@@ -90,7 +90,7 @@ JS(screen_init) {
     jsint w = js_get_int(argv[0]);
     jsint h = js_get_int(argv[1]);
 
-    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
     if(!screen) {
@@ -105,7 +105,7 @@ JS(screen_init) {
 
 
 JS(screen_save_frame) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
 #ifndef WITH_GD
     error("libGD support not compiled, cannot save frame screenshot");
@@ -114,7 +114,7 @@ JS(screen_save_frame) {
     JS_BeginRequest(cx);
     JS_CHECK_ARGC(1);
 
-    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
     if(!screen) {
@@ -132,13 +132,13 @@ JS(screen_save_frame) {
 
 
 JS(screen_add_layer) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     JSObject *jslayer = NULL;
     Layer *lay;
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
-    if(argc<1)
+    if(argc < 1)
         JS_ERROR("missing argument");
     //  js_is_instanceOf(&layer_class, argv[0]);
 
@@ -147,7 +147,7 @@ JS(screen_add_layer) {
     if(!lay)
         JS_ERROR("Layer is NULL");
 
-    ViewPort *screen = (ViewPort *)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort *)JS_GetPrivate(cx, obj);
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
     if(!screen) {
@@ -156,20 +156,20 @@ JS(screen_add_layer) {
     }
 
     screen->add_layer(lay);
-    if (!lay->is_running())
+    if(!lay->is_running())
         lay->start();
 
     return JS_TRUE;
 }
 
 JS(screen_rem_layer) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     JSObject *jslayer = NULL;
     Layer *lay;
     JS_SetContextThread(cx);
     JS_BeginRequest(cx);
-    if(argc<1)
+    if(argc < 1)
         JS_ERROR("missing argument");
 
     jslayer =
@@ -178,7 +178,7 @@ JS(screen_rem_layer) {
     if(!lay)
         JS_ERROR("Layer is NULL");
 
-    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
     JS_EndRequest(cx);
     JS_ClearContextThread(cx);
     if(!screen) {
@@ -198,7 +198,7 @@ JS(screen_rem_layer) {
 JSP(screen_get_width) {
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
-    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
     if(!screen)
         JS_ERROR("Screen core data is NULL");
     else
@@ -211,7 +211,7 @@ JSP(screen_get_width) {
 JSP(screen_get_height) {
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
-    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
     if(!screen)
         JS_ERROR("Screen core data is NULL");
     else
@@ -222,16 +222,16 @@ JSP(screen_get_height) {
 }
 
 JSP(screen_initialized) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
-    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
     if(!screen) {
         JS_ERROR("Screen core data is NULL");
         JS_EndRequest(cx);
         return JS_FALSE;
     }
-    *vp = BOOLEAN_TO_JSVAL(screen->initialized?JS_TRUE:JS_FALSE);
+    *vp = BOOLEAN_TO_JSVAL(screen->initialized ? JS_TRUE : JS_FALSE);
     JS_EndRequest(cx);
     ///JS_ClearContextThread(cx);
     return JS_TRUE;
@@ -239,7 +239,7 @@ JSP(screen_initialized) {
 
 
 JSP(screen_list_layers) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     JSObject *arr;
     JSObject *objtmp;
 
@@ -249,7 +249,7 @@ JSP(screen_list_layers) {
     int c = 0;
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
-    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx,obj);
+    ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
     if(!screen) {
         JS_ERROR("Screen core data is NULL");
         JS_EndRequest(cx);
@@ -269,24 +269,24 @@ JSP(screen_list_layers) {
     // looks like here might be the hairy point
     lay = screen->layers.begin();
     while(lay) {
-        if (lay->jsobj) {
+        if(lay->jsobj) {
             func("TESTING: reusing layer jsobj %p", lay->jsobj);
             objtmp = lay->jsobj;
         } else {
             func("TESTING: creating a jsobj for layer %s", lay->getName().c_str());
             objtmp = JS_NewObject(cx, lay->jsclass, NULL, obj);
-            JS_SetPrivate(cx,objtmp,(void*) lay);
+            JS_SetPrivate(cx, objtmp, (void*) lay);
         }
 
         val = OBJECT_TO_JSVAL(objtmp);
 
-        JS_SetElement(cx, arr, c, &val );
+        JS_SetElement(cx, arr, c, &val);
 
         c++;
         lay = (Layer*)lay->next;
     }
 
-    *vp = OBJECT_TO_JSVAL( arr );
+    *vp = OBJECT_TO_JSVAL(arr);
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
     return JS_TRUE;

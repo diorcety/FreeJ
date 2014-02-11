@@ -79,28 +79,28 @@ public:
        the following macros declare two functions for each variable:
        set_variable(value); assign value to variable
        get_variable(); returns value of variable */
-    CHAR_SET(ip,_ip);
-    CHAR_SET(host,_host);
+    CHAR_SET(ip, _ip);
+    CHAR_SET(host, _host);
     char streamurl[MAX_VALUE_SIZE];
-    INT_SET(port,_port);
-    CHAR_SET(user,_user);
-    CHAR_SET(pass,_pass);
-    CHAR_SET(mount,_mount);
+    INT_SET(port, _port);
+    CHAR_SET(user, _user);
+    CHAR_SET(pass, _pass);
+    CHAR_SET(mount, _mount);
 
     /* setted by the encoder */
-    CHAR_SET(bps,_bps);
-    CHAR_SET(freq,_freq);
-    CHAR_SET(channels,_channels);
+    CHAR_SET(bps, _bps);
+    CHAR_SET(freq, _freq);
+    CHAR_SET(channels, _channels);
 
-    INT_SET(login,_login);
-    CHAR_SET(name,_name);
-    CHAR_SET(url,_url);
-    CHAR_SET(desc,_desc);
+    INT_SET(login, _login);
+    CHAR_SET(name, _name);
+    CHAR_SET(url, _url);
+    CHAR_SET(desc, _desc);
     int format;
 
     bool start();
     bool stop();
-    int send (unsigned char *buf, unsigned int enc);
+    int send(unsigned char *buf, unsigned int enc);
 
     bool running;
     time_t retry;

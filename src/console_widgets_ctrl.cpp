@@ -56,15 +56,15 @@ bool SlwTitle::feed(int key) {
 }
 
 bool SlwTitle::refresh() {
-    color = TITLE_COLOR+20;
+    color = TITLE_COLOR + 20;
     putnch(title, 0, 0, titlelen);
     /* this is RASTA SOFTWARE! */
     color = 32;
     putnch((char*)"RAS", titlelen, 0, 3);
     color = 34;
-    putnch((char*)"TAS", titlelen+3, 0, 3);
+    putnch((char*)"TAS", titlelen + 3, 0, 3);
     color = 33;
-    putnch((char*)"OFT", titlelen+6, 0, 3);
+    putnch((char*)"OFT", titlelen + 6, 0, 3);
     color = PLAIN_COLOR;
 
     return(true);
@@ -199,14 +199,14 @@ bool SlwSelector::feed(int key) {
             } else {
                 //	le->rem();
                 //	((Layer*)le)->close();
-                env->rem_layer( (Layer*)le );
+                env->rem_layer((Layer*)le);
             }
             break;
 
         case KEY_SPACE:
-            if(fe) ((FilterInstance*)fe)->active =
+            if(fe)((FilterInstance*)fe)->active =
                     !((FilterInstance*)fe)->active;
-            else  ((Layer*)le)->active =
+            else((Layer*)le)->active =
                     !((Layer*)le)->active;
             break;
 
@@ -240,7 +240,7 @@ bool SlwSelector::refresh() {
                  layer->geo.x, layer->geo.y, layer->geo.w, layer->geo.h);
         //    SLsmg_erase_eol();
     } else {
-        sprintf(tmp, "No Layer selected" );
+        sprintf(tmp, "No Layer selected");
     }
     ///////////////
     // layer print
@@ -269,14 +269,14 @@ bool SlwSelector::refresh() {
             color = LAYERS_COLOR;
             putnch((char*)" ->", layercol, 2, 3);
 
-            if( l == layer && !filter) color+=20;
-            if(l->fade | l->active) color+=10;
+            if(l == layer && !filter) color += 20;
+            if(l->fade | l->active) color += 10;
 
             //      snprintf(tmp, w, " -> %s",l->getName().c_str());
             tmpsize = strlen(l->getName().c_str());
-            putnch((char*)l->getName().c_str(), layercol+4, 2, tmpsize);
+            putnch((char*)l->getName().c_str(), layercol + 4, 2, tmpsize);
             // save position of selected layer
-            if( l == layer) sellayercol = layercol;
+            if(l == layer) sellayercol = layercol;
 
             l = (Layer *)l->next;
         }
@@ -316,10 +316,10 @@ bool SlwSelector::refresh() {
 
             color = FILTERS_COLOR;
 //       SLsmg_gotorc(pos,layercol);
-            if( f == filter ) color+=20;
-            if( f->active) color+=10;
+            if(f == filter) color += 20;
+            if(f->active) color += 10;
 //       SLsmg_set_color (color);
-            putnch((char*)f->getName().c_str(), sellayercol+4, pos, 0);
+            putnch((char*)f->getName().c_str(), sellayercol + 4, pos, 0);
             pos++;
             f = (FilterInstance*)f->next;
         }
@@ -333,7 +333,7 @@ bool SlwSelector::refresh() {
     } else snprintf(tmp, w, "No Filter selected");
 
     color = FILTERS_COLOR;
-    putnch(tmp,1,3,0);
+    putnch(tmp, 1, 3, 0);
     return true;
 }
 

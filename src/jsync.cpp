@@ -22,12 +22,12 @@
 
 JSyncThread::JSyncThread() {
 
-    if(pthread_mutex_init (&_mutex,NULL) == -1)
+    if(pthread_mutex_init(&_mutex, NULL) == -1)
         error("error initializing POSIX thread mutex");
-    if(pthread_attr_init (&_attr) == -1)
+    if(pthread_attr_init(&_attr) == -1)
         error("error initializing POSIX thread attribute");
 
-    pthread_attr_setdetachstate(&_attr,PTHREAD_CREATE_JOINABLE);
+    pthread_attr_setdetachstate(&_attr, PTHREAD_CREATE_JOINABLE);
 
     deferred_calls = new ClosureQueue();
 
@@ -48,16 +48,16 @@ JSyncThread::~JSyncThread() {
 }
 
 int JSyncThread::start() {
-    if (_running)
+    if(_running)
         return EBUSY;
     else _running = true;
     return pthread_create(&_thread, &_attr, &JSyncThread::_run, this);
 }
 
 void JSyncThread::stop() {
-    if (_running) {
+    if(_running) {
         _running = false;
-        pthread_join(_thread,NULL);
+        pthread_join(_thread, NULL);
     }
 }
 
@@ -72,7 +72,7 @@ void* JSyncThread::_run(void *arg) {
      */
     me->deferred_calls->do_jobs();
     me->thread_setup();
-    while (me->_running) {
+    while(me->_running) {
         me->deferred_calls->do_jobs();
         me->thread_loop();
     }

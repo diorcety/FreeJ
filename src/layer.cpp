@@ -38,8 +38,8 @@
 //#include <fps.h>
 
 Layer::Layer()
-    :Entry(), JSyncThread() {
-    func("%s this=%p",__PRETTY_FUNCTION__, this);
+    : Entry(), JSyncThread() {
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
     active = false;
     hidden = false;
     fade = false;
@@ -78,7 +78,7 @@ Layer::Layer()
 }
 
 Layer::~Layer() {
-    func("%s this=%p",__PRETTY_FUNCTION__, this);
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
 
     active = false;
     FilterInstance *f = (FilterInstance*)filters.begin();
@@ -116,7 +116,7 @@ bool Layer::init(int wdt, int hgt, int bpp) {
     func("initialized %s layer %ix%i",
          getName().c_str(), geo.w, geo.h);
 
-    if (!geo.bytesize) {
+    if(!geo.bytesize) {
         // if  the   size  is  still  unknown   at  init  then   it  is  the
         // responsability for the layer implementation to create the buffer
         // (see for instance text_layer)
@@ -133,11 +133,11 @@ bool Layer::init(int wdt, int hgt, int bpp) {
 }
 
 void Layer::thread_setup() {
-    func("ok, layer %s in rolling loop",getName().c_str());
+    func("ok, layer %s in rolling loop", getName().c_str());
 
     //while(!feed()) fps.calc();
 
-    func(" layer %s entering loop",getName().c_str());
+    func(" layer %s entering loop", getName().c_str());
 }
 
 void Layer::thread_loop() {
@@ -167,7 +167,7 @@ void Layer::thread_loop() {
 }
 
 void Layer::thread_teardown() {
-    func("%s this=%p thread end: %p %s",__PRETTY_FUNCTION__, this, pthread_self(), name.c_str());
+    func("%s this=%p thread end: %p %s", __PRETTY_FUNCTION__, this, pthread_self(), name.c_str());
 }
 
 char *Layer::get_blit() {
@@ -183,7 +183,7 @@ bool Layer::set_blit(const char *bname) {
     Blit *b;
     int idx;
 
-    if (screen && blitter) {
+    if(screen && blitter) {
         b = (Blit*)blitter->blitlist.search(bname, &idx);
 
         if(!b) {
@@ -211,7 +211,7 @@ void Layer::blit() {
     if(!buffer) {
         // check threshold of tolerated null feeds
         // deactivate the layer when too many
-        func("feed returns NULL on layer %s",getName().c_str());
+        func("feed returns NULL on layer %s", getName().c_str());
         null_feeds++;
         if(null_feeds > max_null_feeds) {
             warning("layer %s has no video, deactivating", getName().c_str());
@@ -245,7 +245,7 @@ bool Layer::cafudda() {
 }
 
 void *Layer::do_filters(void *tmp_buf) {
-    if( filters.len() ) {
+    if(filters.len()) {
         FilterInstance *filt;
         filters.lock();
         filt = (FilterInstance *)filters.begin();
@@ -268,8 +268,8 @@ int Layer::do_iterators() {
         while(iter) {
             res = iter->cafudda(); // if cafudda returns -1...
             itertmp = iter;
-            iter = (Iterator*) ((Entry*)iter)->next;
-            if(res<0) {
+            iter = (Iterator*)((Entry*)iter)->next;
+            if(res < 0) {
                 iterators.unlock();
                 delete itertmp; // ...iteration ended
                 iterators.lock();
@@ -289,7 +289,7 @@ bool Layer::set_parameter(int idx) {
 
     Parameter *param;
     param = (Parameter*)parameters->pick(idx);
-    if( ! param) {
+    if(! param) {
         error("parameter %s not found in layer %s", param->getName().c_str(), name.c_str());
         return false;
     } else {
@@ -309,9 +309,9 @@ bool Layer::set_parameter(int idx) {
 
 void Layer::set_filename(const char *f) {
     const char *p = f + strlen(f);
-    while(*p!='/' && (p >= f))
+    while(*p != '/' && (p >= f))
         p--;
-    strncpy(filename,p+1,256);
+    strncpy(filename, p + 1, 256);
 }
 
 
@@ -346,7 +346,7 @@ void Layer::set_y_position(int y) {
 
 
 void Layer::_set_zoom(double x, double y) {
-    if ((x == 1) && (y == 1)) {
+    if((x == 1) && (y == 1)) {
         zooming = false;
         zoom_x = zoom_y = 1.0;
         act("%s layer %s zoom deactivated", name.c_str(), filename);
@@ -388,13 +388,13 @@ void Layer::_fit(bool maintain_aspect_ratio) {
     double width_zoom, height_zoom;
     int new_x = 0;
     int new_y = 0;
-    if (this->screen == NULL) {
+    if(this->screen == NULL) {
         error("Cannot fit layer without a screen, add layer to a screen first");
         return;
     }
     width_zoom = (double)screen->geo.w / geo.w;
     height_zoom = (double)screen->geo.h / geo.h;
-    if (maintain_aspect_ratio) {
+    if(maintain_aspect_ratio) {
         //to maintain the aspect ratio we simply zoom to the smaller of the
         //two zoom values
         if(width_zoom > height_zoom) {
@@ -430,16 +430,16 @@ void *Layer::js_constructor(Context *env, JSContext *cx, JSObject *obj,
 
     jsval *argv = (jsval*)aargv;
     check_thread = JS_GetContextThread(cx);
-    if (!check_thread) // set the context thread only if none is already set
+    if(!check_thread)  // set the context thread only if none is already set
         JS_SetContextThread(cx);
     JS_BeginRequest(cx);
-    if(argc==0) {
+    if(argc == 0) {
         if(!init()) {
             sprintf(err_msg, "Layer constructor failed initialization");
             return NULL;
         }
 
-    } else if(argc==1) {
+    } else if(argc == 1) {
         filename = js_get_string(argv[0]);
         if(!init()) {
             sprintf(err_msg, "Layer constructor failed initialization");
@@ -452,7 +452,7 @@ void *Layer::js_constructor(Context *env, JSContext *cx, JSObject *obj,
             return NULL;
         }
 
-    } else if(argc==2) {
+    } else if(argc == 2) {
         JS_ValueToUint16(cx, argv[0], &width);
         JS_ValueToUint16(cx, argv[1], &height);
         if(!init(width, height, 32)) {
@@ -461,11 +461,11 @@ void *Layer::js_constructor(Context *env, JSContext *cx, JSObject *obj,
             return NULL;
         }
 
-    } else if(argc==3) {
+    } else if(argc == 3) {
         JS_ValueToUint16(cx, argv[0], &width);
         JS_ValueToUint16(cx, argv[1], &height);
         filename = js_get_string(argv[2]);
-        if(!init(width, height,32)) {
+        if(!init(width, height, 32)) {
             snprintf(err_msg, MAX_ERR_MSG,
                      "Layer constructor failed initializaztion w[%u] h[%u]", width, height);
             return NULL;
@@ -481,14 +481,14 @@ void *Layer::js_constructor(Context *env, JSContext *cx, JSObject *obj,
                 "Wrong numbers of arguments\n use (\"filename\") or (width, height, \"filename\") or ()");
         return NULL;
     }
-    if(JS_SetPrivate(cx,obj,(void*)this)) {
+    if(JS_SetPrivate(cx, obj, (void*)this)) {
         jsobj = obj; // save the JS instance object into the C++ instance object
         ret = (void*)OBJECT_TO_JSVAL(obj);
     } else {
         sprintf(err_msg, "%s", "JS_SetPrivate failed");
     }
     JS_EndRequest(cx);
-    if (!check_thread)
+    if(!check_thread)
         JS_ClearContextThread(cx);
     return ret;
 

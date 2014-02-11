@@ -51,20 +51,20 @@ class BaseLinklist {
 public:
     BaseLinklist() {
 #ifdef THREADSAFE
-        pthread_mutexattr_init (&mattr);
-        pthread_mutexattr_settype (&mattr, PTHREAD_MUTEX_RECURSIVE);
-        pthread_mutex_init (&mutex,&mattr);
+        pthread_mutexattr_init(&mattr);
+        pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_RECURSIVE);
+        pthread_mutex_init(&mutex, &mattr);
 #endif
     };
     virtual ~BaseLinklist() {
 #ifdef THREADSAFE
         pthread_mutex_destroy(&mutex);
-        pthread_mutexattr_destroy (&mattr);
+        pthread_mutexattr_destroy(&mattr);
 #endif
     };
 
     Entry *selection;
-    virtual Entry *_pick(int pos) =0;
+    virtual Entry *_pick(int pos) = 0;
 
 #ifdef THREADSAFE
     void lock() {
@@ -96,7 +96,7 @@ public:
         return((T*)first);
     };
     T *end() {
-        return(  (T*)last);
+        return((T*)last);
     };
     int len() {
         return(length);
@@ -115,7 +115,7 @@ public:
     Entry *_pick(int pos);
 
     T *pick(int pos);
-    T *search(const char *name, int *idx=NULL);
+    T *search(const char *name, int *idx = NULL);
     T **completion(char *needle);
 
     T *selected();
@@ -290,10 +290,10 @@ template <class T> void Linklist<T>::insert_after(T *addr, T *pos) {
    THIS FUNCTION IS NOT YET RELIABLE
 */
 template <class T> void Linklist<T>::insert(T *addr, int pos) {
-    if(length<=pos) { /* adds it at the end */
+    if(length <= pos) { /* adds it at the end */
         append(addr);
         return;
-    } else if(pos<=1) {
+    } else if(pos <= 1) {
         prepend(addr);
         return;
     }
@@ -338,7 +338,7 @@ template <class T> void Linklist<T>::clear() {
 // virtual implementation for typecasting workaround
 // internal use only by the Entry
 template <class T> Entry *Linklist<T>::_pick(int pos) {
-    return( (Entry*)pick(pos) );
+    return((Entry*)pick(pos));
 }
 
 /* takes one element from the list
@@ -348,28 +348,28 @@ template <class T> Entry *Linklist<T>::_pick(int pos) {
    this function is then overloading the operator[]
 */
 template <class T> T *Linklist<T>::pick(int pos) {
-    if(pos<1) {
+    if(pos < 1) {
         //	  warning("linklist access at element 0 while first element is 1");
         return(NULL);
     }
-    if(length<pos) {
+    if(length < pos) {
         //	  warning("linklist access out of boundary");
         return(NULL);
     }
     // shortcuts
-    if(pos==1) return((T*)first);
-    if(pos==length) return((T*)last);
+    if(pos == 1) return((T*)first);
+    if(pos == length) return((T*)last);
 
     T *ptr;
     int c;
     // start from beginning
-    if(pos < length/2) {
+    if(pos < length / 2) {
         ptr = (T*)first;
-        for(c=1; c<pos; c++)
+        for(c = 1; c < pos; c++)
             ptr = (T*)ptr->next;
     } else { /// | | | p | | |
         ptr = (T*)last;
-        for(c=length; c>pos; c--)
+        for(c = length; c > pos; c--)
             ptr = (T*)ptr->prev; // to be checked
     }
     return(ptr);
@@ -382,7 +382,7 @@ template <class T> T *Linklist<T>::search(const char *name, int *idx) {
     int c = 1;
     T *ptr = (T*)first;
     while(ptr) {
-        if( strcasecmp(ptr->getName().c_str(),name)==0 ) {
+        if(strcasecmp(ptr->getName().c_str(), name) == 0) {
             if(idx) *idx = c;
             return(ptr);
         }
@@ -401,23 +401,23 @@ template <class T> T **Linklist<T>::completion(char *needle) {
     int len = strlen(needle);
 
     /* cleanup */
-    memset(compbuf,0,MAX_COMPLETION*sizeof(T*));
+    memset(compbuf, 0, MAX_COMPLETION * sizeof(T*));
 
     /* check it */
     T *ptr = (T*)last;
     if(!ptr) return compbuf;
 
-    for( found=0, c=1 ; ptr ; c++ , ptr=(T*)ptr->prev ) {
+    for(found = 0, c = 1 ; ptr ; c++ , ptr = (T*)ptr->prev) {
         if(!len) { // 0 lenght needle: return the full list
             compbuf[found] = ptr;
             found++;
-        } else if( strncasecmp(needle,ptr->getName().c_str(),len)==0 ) {
+        } else if(strncasecmp(needle, ptr->getName().c_str(), len) == 0) {
             compbuf[found] = ptr;
             found++;
         }
     }
 
-    func("completion found %i hits",found);
+    func("completion found %i hits", found);
     return compbuf;
 }
 
@@ -427,23 +427,23 @@ template <class T> T **Linklist<T>::completion(char *needle) {
 template <class T> bool Linklist<T>::moveup(int pos) {
     T *p = pick(pos);
     if(!p) return(false);
-    return( p->up() );
+    return(p->up());
 }
 template <class T> bool Linklist<T>::movedown(int pos) {
     T *p = pick(pos);
     if(!p) return(false);
-    return( p->down() );
+    return(p->down());
 }
 template <class T> bool Linklist<T>::moveto(int num, int pos) {
     T
     *p = pick(num);
     if(!p) return(false);
-    return( p->move(pos) );
+    return(p->move(pos));
 }
 /* removes one element from the list */
 template <class T> void Linklist<T>::rem(int pos) {
     T *ptr = pick(pos);
-    if(ptr==NULL) return;
+    if(ptr == NULL) return;
     ptr->rem();
 }
 
@@ -454,7 +454,7 @@ template <class T> void Linklist<T>::sel(int pos) {
     T *ptr = (T*)first;
 
     if(!first) return;
-    if(pos>length) {
+    if(pos > length) {
         //    warning("selection out of range on linklist [%p]",this);
         return;
     }
@@ -468,8 +468,8 @@ template <class T> void Linklist<T>::sel(int pos) {
         return;
     }
 
-    for(c=1; c<=length; c++) {
-        if(c==pos) ptr->sel(true);
+    for(c = 1; c <= length; c++) {
+        if(c == pos) ptr->sel(true);
         else ptr->sel(false);
         ptr = (T*)ptr->prev;
     }

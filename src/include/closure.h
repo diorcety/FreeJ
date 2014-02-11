@@ -147,39 +147,39 @@ public:
     };
 
     Closure(bool synchronized) : synchronized_(synchronized) {
-        if (synchronized_) {
+        if(synchronized_) {
             int r;
-            if ((r=pthread_mutex_init(&cond_mutex_, NULL)) != 0)
+            if((r = pthread_mutex_init(&cond_mutex_, NULL)) != 0)
                 throw Error("Initializing cond_mutex_", r);
-            if ((r=pthread_cond_init(&cond_, NULL)) != 0)
+            if((r = pthread_cond_init(&cond_, NULL)) != 0)
                 throw Error("Initializing cond_", r);
-            if ((r=pthread_mutex_lock(&cond_mutex_)) != 0)
+            if((r = pthread_mutex_lock(&cond_mutex_)) != 0)
                 throw Error("Preliminary lock of cond_mutex_", r);
         }
     }
     virtual ~Closure() {
-        if (synchronized_) {
+        if(synchronized_) {
             int r;
-            if ((r=pthread_mutex_unlock(&cond_mutex_)) != 0)
+            if((r = pthread_mutex_unlock(&cond_mutex_)) != 0)
                 error("In %s , pthread_mutex_unlock(): %s",
                       __PRETTY_FUNCTION__, strerror(r));
-            if ((r=pthread_cond_destroy(&cond_)) != 0)
+            if((r = pthread_cond_destroy(&cond_)) != 0)
                 error("In %s , pthread_cond_destroy(): %s",
                       __PRETTY_FUNCTION__, strerror(r));
-            if ((r=pthread_mutex_destroy(&cond_mutex_)) != 0)
+            if((r = pthread_mutex_destroy(&cond_mutex_)) != 0)
                 error("In %s , pthread_mutex_destroy(): %s",
                       __PRETTY_FUNCTION__, strerror(r));
         }
     }
     void run() {
         run_();
-        if (synchronized_) {
+        if(synchronized_) {
             int r;
-            if ((r=pthread_mutex_lock(&cond_mutex_)) != 0)
+            if((r = pthread_mutex_lock(&cond_mutex_)) != 0)
                 throw Error("Pre-signal locking of cond_mutex_", r);
-            if ((r=pthread_cond_broadcast(&cond_)) != 0)
+            if((r = pthread_cond_broadcast(&cond_)) != 0)
                 throw Error("Signaling cond_", r);
-            if ((r=pthread_mutex_unlock(&cond_mutex_)) != 0)
+            if((r = pthread_mutex_unlock(&cond_mutex_)) != 0)
                 throw Error("Post-signal unlocking of cond_mutex_", r);
         }
     }
@@ -187,9 +187,9 @@ public:
         return synchronized_;
     }
     void wait() {
-        if (synchronized_) {
+        if(synchronized_) {
             int r;
-            if ((r=pthread_cond_wait(&cond_, &cond_mutex_)) != 0)
+            if((r = pthread_cond_wait(&cond_, &cond_mutex_)) != 0)
                 throw Error("Waiting cond_", r);
         }
     }
@@ -407,8 +407,8 @@ private:
 };
 
 
-template <typename Class, typename Arg1, typename Arg2, typename Arg3,
-         typename Arg4>
+template < typename Class, typename Arg1, typename Arg2, typename Arg3,
+         typename Arg4 >
 class MethodClosure4 : public Closure {
 public:
     typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2, Arg3 arg3,
@@ -553,8 +553,8 @@ inline Closure* NewSyncClosure(void (*function)(Arg1, Arg2, Arg3, Arg4),
                function, true, arg1, arg2, arg3, arg4);
 }
 
-template <typename Class, typename Arg1, typename Arg2, typename Arg3,
-         typename Arg4>
+template < typename Class, typename Arg1, typename Arg2, typename Arg3,
+         typename Arg4 >
 inline Closure* NewClosure(Class* object,
                            void (Class::*method)(Arg1, Arg2, Arg3, Arg4),
                            Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
@@ -562,8 +562,8 @@ inline Closure* NewClosure(Class* object,
                object, method, false, arg1, arg2, arg3, arg4);
 }
 
-template <typename Class, typename Arg1, typename Arg2, typename Arg3,
-         typename Arg4>
+template < typename Class, typename Arg1, typename Arg2, typename Arg3,
+         typename Arg4 >
 inline Closure* NewSyncClosure(Class* object,
                                void (Class::*method)(Arg1, Arg2, Arg3, Arg4),
                                Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {

@@ -36,7 +36,7 @@
 /////// Javascript JoystickController
 JS(js_joy_ctrl_constructor);
 
-DECLARE_CLASS_GC("JoystickController",js_joy_ctrl_class, js_joy_ctrl_constructor,js_ctrl_gc);
+DECLARE_CLASS_GC("JoystickController", js_joy_ctrl_class, js_joy_ctrl_constructor, js_ctrl_gc);
 
 JSFunctionSpec js_joy_ctrl_methods[] = {
 #ifdef HAVE_LINUX
@@ -49,7 +49,7 @@ JSFunctionSpec js_joy_ctrl_methods[] = {
 
 
 JoyController::JoyController()
-    :SdlController() {
+    : SdlController() {
 
     setName("Joystick");
 
@@ -59,7 +59,7 @@ JoyController::JoyController()
 JoyController::~JoyController() {
     int c;
 
-    for(c=0; c<num; c++)
+    for(c = 0; c < num; c++)
         SDL_JoystickClose(joy[c]);
 
 }
@@ -73,19 +73,19 @@ bool JoyController::init(Context *freej) {
     int c;
 
     num = SDL_NumJoysticks();
-    if(num>4) num = 4; // we support maximum 4 joysticks
+    if(num > 4) num = 4; // we support maximum 4 joysticks
 
-    func("num joysticks %i",num);
-    for(c=0; c<num; c++) {
+    func("num joysticks %i", num);
+    for(c = 0; c < num; c++) {
         joy[found] = SDL_JoystickOpen(c);
         if(joy[found]) {
-            if(strstr(SDL_JoystickName(c),"Keyboard")) {
+            if(strstr(SDL_JoystickName(c), "Keyboard")) {
                 /* this is not a joystick! it happens on MacOSX
                    to have "Apple Extended USB Keyboard" recognized as joystick */
                 SDL_JoystickClose(joy[found]);
                 continue;
             }
-            notice("Joystick: %s",SDL_JoystickName(c));
+            notice("Joystick: %s", SDL_JoystickName(c));
             axes = SDL_JoystickNumAxes(joy[found]);
             buttons = SDL_JoystickNumButtons(joy[found]);
             balls = SDL_JoystickNumBalls(joy[found]);
@@ -94,7 +94,7 @@ bool JoyController::init(Context *freej) {
                 axes, balls, hats, buttons);
             found++;
         } else {
-            error("error opening %s",SDL_JoystickName(c));
+            error("error opening %s", SDL_JoystickName(c));
         }
     }
 
@@ -106,7 +106,7 @@ bool JoyController::init(Context *freej) {
     } else
         SDL_JoystickEventState(SDL_ENABLE);
 
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     env = freej;
     jsenv = freej->js->global_context;
     jsobj = freej->js->global_object;
@@ -203,7 +203,7 @@ bool JoyController::init_rumble(char *devfile) {
 
     /* Open device */
     rumble_fd = open(devfile, O_RDWR);
-    if (rumble_fd == -1) {
+    if(rumble_fd == -1) {
         error("Cannot open rumble event device");
         return(false);
     }
@@ -211,11 +211,11 @@ bool JoyController::init_rumble(char *devfile) {
     act("Joystick rumble device open");
 
     /* Query device */
-    if (ioctl(rumble_fd, EVIOCGBIT(EV_FF, sizeof(unsigned long) * 4), features) == -1) {
+    if(ioctl(rumble_fd, EVIOCGBIT(EV_FF, sizeof(unsigned long) * 4), features) == -1) {
         perror("Ioctl query");
         exit(1);
     }
-    if (ioctl(rumble_fd, EVIOCGEFFECTS, &n_effects) == -1) {
+    if(ioctl(rumble_fd, EVIOCGEFFECTS, &n_effects) == -1) {
         error("Error on IOctl to get number of effects");
     }
 
@@ -223,7 +223,7 @@ bool JoyController::init_rumble(char *devfile) {
     effects[0].type = FF_PERIODIC;
     effects[0].id = -1;
     effects[0].u.periodic.waveform = FF_SINE;
-    effects[0].u.periodic.period = 0.1*0x100; /* 0.1 second */
+    effects[0].u.periodic.period = 0.1 * 0x100; /* 0.1 second */
     effects[0].u.periodic.magnitude = 0x4000; /* 0.5 * Maximum magnitude */
     effects[0].u.periodic.offset = 0;
     effects[0].u.periodic.phase = 0;
@@ -237,7 +237,7 @@ bool JoyController::init_rumble(char *devfile) {
     effects[0].replay.length = 20000;  /* 20 seconds */
     effects[0].replay.delay = 0;
 
-    if (ioctl(rumble_fd, EVIOCSFF, &effects[0]) == -1) {
+    if(ioctl(rumble_fd, EVIOCSFF, &effects[0]) == -1) {
         error("Error uploading effect 0");
     }
 
@@ -255,7 +255,7 @@ bool JoyController::init_rumble(char *devfile) {
     effects[1].replay.length = 20000;  /* 20 seconds */
     effects[1].replay.delay = 0;
 
-    if (ioctl(rumble_fd, EVIOCSFF, &effects[1]) == -1) {
+    if(ioctl(rumble_fd, EVIOCSFF, &effects[1]) == -1) {
         error("Error uploading effect 1");
     }
 
@@ -274,7 +274,7 @@ bool JoyController::init_rumble(char *devfile) {
     effects[2].replay.length = 20000;  /* 20 seconds */
     effects[2].replay.delay = 0;
 
-    if (ioctl(rumble_fd, EVIOCSFF, &effects[2]) == -1) {
+    if(ioctl(rumble_fd, EVIOCSFF, &effects[2]) == -1) {
         error("Error uploading effect 2");
     }
 
@@ -293,7 +293,7 @@ bool JoyController::init_rumble(char *devfile) {
     effects[3].replay.length = 20000;  /* 20 seconds */
     effects[3].replay.delay = 0;
 
-    if (ioctl(rumble_fd, EVIOCSFF, &effects[3]) == -1) {
+    if(ioctl(rumble_fd, EVIOCSFF, &effects[3]) == -1) {
         error("Error uploading effect 3");
     }
 
@@ -305,7 +305,7 @@ bool JoyController::init_rumble(char *devfile) {
     effects[4].replay.length = 5000;
     effects[4].replay.delay = 1000;
 
-    if (ioctl(rumble_fd, EVIOCSFF, &effects[4]) == -1) {
+    if(ioctl(rumble_fd, EVIOCSFF, &effects[4]) == -1) {
         error("Error uploading effect 4");
     }
 
@@ -317,7 +317,7 @@ bool JoyController::init_rumble(char *devfile) {
     effects[5].replay.length = 5000;
     effects[5].replay.delay = 0;
 
-    if (ioctl(rumble_fd, EVIOCSFF, &effects[5]) == -1) {
+    if(ioctl(rumble_fd, EVIOCSFF, &effects[5]) == -1) {
         error("Error uploading effect 5");
     }
 
@@ -328,14 +328,14 @@ bool JoyController::init_rumble(char *devfile) {
 bool JoyController::rumble(int intensity) {
 
     int i;
-    if(intensity <0) {
+    if(intensity < 0) {
         /* Stop the effects */
-        for (i=0; i<N_EFFECTS; ++i) {
+        for(i = 0; i < N_EFFECTS; ++i) {
             stop.type = EV_FF;
             stop.code =  effects[i].id;
             stop.value = 0;
 
-            if (write(rumble_fd, (const void*) &stop, sizeof(stop)) == -1)
+            if(write(rumble_fd, (const void*) &stop, sizeof(stop)) == -1)
                 error("Error stoping joystick rumble effect %u", i);
 
         }
@@ -343,7 +343,7 @@ bool JoyController::rumble(int intensity) {
     }
 
     if(intensity > N_EFFECTS) {
-        error("effect %u is out of bounds",intensity);
+        error("effect %u is out of bounds", intensity);
         return(false);
     }
 
@@ -351,7 +351,7 @@ bool JoyController::rumble(int intensity) {
     play.code = effects[intensity].id;
     play.value = 1;
 
-    if (write(rumble_fd, (const void*) &play, sizeof(play)) == -1) {
+    if(write(rumble_fd, (const void*) &play, sizeof(play)) == -1) {
         error("Error playing joystick rumble effect %u", intensity);
         return(false);
     }
@@ -365,19 +365,19 @@ bool JoyController::rumble(int intensity) {
 
 
 JS(js_joy_ctrl_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     char excp_msg[MAX_ERR_MSG + 1];
 
     JoyController *joy = new JoyController();
 
     // initialize with javascript context
-    if(! joy->init(global_environment) ) {
+    if(! joy->init(global_environment)) {
         sprintf(excp_msg, "failed initializing joystick controller");
         goto error;
     }
 
     // assign instance into javascript object
-    if( ! JS_SetPrivate(cx, obj, (void*)joy) ) {
+    if(! JS_SetPrivate(cx, obj, (void*)joy)) {
         sprintf(excp_msg, "failed assigning joystick controller to javascript");
         goto error;
     }
@@ -403,7 +403,7 @@ error:
 // joystick rumble is supported only under linux so far...
 
 JS(js_joy_init_rumble) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     JoyController *joy = (JoyController*) JS_GetPrivate(cx, obj);
     if(!joy) JS_ERROR("JOY code data is NULL");
@@ -412,7 +412,7 @@ JS(js_joy_init_rumble) {
 
     char *devfile = js_get_string(argv[0]);
 
-    if( joy->init_rumble(devfile) )
+    if(joy->init_rumble(devfile))
         act("Joystick controller opened rumble device %s", devfile);
 
     return JS_TRUE;

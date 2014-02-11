@@ -41,7 +41,7 @@ SoftScreen::SoftScreen()
 }
 
 SoftScreen::~SoftScreen() {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     if(screen_buffer) free(screen_buffer);
 }
 
@@ -74,7 +74,7 @@ void SoftScreen::blit(Layer *src) {
     }
 
     if(src->need_crop)
-        src->blitter->crop( src, this );
+        src->blitter->crop(src, this);
 
     b = src->current_blit;
 
@@ -82,7 +82,7 @@ void SoftScreen::blit(Layer *src) {
     play = (uint32_t*) src->buffer   + b->lay_offset;
 
     // iterates the blit on each horizontal line
-    for( c = b->lay_height ; c > 0 ; c-- ) {
+    for(c = b->lay_height ; c > 0 ; c--) {
 
         (*b->fun)
         ((void*)play, (void*)pscr,
@@ -108,8 +108,8 @@ void *SoftScreen::coords(int x, int y) {
 // use the .pixelsize geometric property for a pre-calculated stride
 // that is: number of bytes for one full line
     return
-        ( x + geo.pixelsize +
-          (uint32_t*)get_surface() );
+        (x + geo.pixelsize +
+         (uint32_t*)get_surface());
 }
 
 void *SoftScreen::get_surface() {

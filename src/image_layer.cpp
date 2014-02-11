@@ -38,7 +38,7 @@
 FACTORY_REGISTER_INSTANTIATOR(Layer, ImageLayer, ImageLayer, sdl);
 
 ImageLayer::ImageLayer()
-    :Layer() {
+    : Layer() {
 
     surf = NULL;
     image = NULL;
@@ -52,7 +52,7 @@ ImageLayer::ImageLayer()
 }
 
 ImageLayer::~ImageLayer() {
-    func("%u:%s:%s (%p)",__LINE__,__FILE__,__FUNCTION__, this);
+    func("%u:%s:%s (%p)", __LINE__, __FILE__, __FUNCTION__, this);
     close();
 }
 
@@ -64,7 +64,7 @@ bool ImageLayer::open(const char *file) {
 
     image = IMG_Load(file);
     if(!image) {
-        error("ImageLayer::open() error: %s", file,IMG_GetError());
+        error("ImageLayer::open() error: %s", file, IMG_GetError());
         return false;
     }
     set_filename(file);
@@ -77,7 +77,7 @@ bool ImageLayer::open(const char *file) {
     }
 
     // allocate the hw accelerated surface
-    surf = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCALPHA,
+    surf = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCALPHA,
                                 image->w, image->h, 32,
                                 red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
     if(!surf) {
@@ -103,14 +103,14 @@ bool ImageLayer::open(const char *file) {
 
     black_image = malloc(geo.bytesize);
     // paint it black!
-    black_image = memset(black_image,0,geo.bytesize);
+    black_image = memset(black_image, 0, geo.bytesize);
 
     // do not apply the mask,
     // copy image+alpha to surf
-    SDL_SetAlpha( image, 0, 0 );
+    SDL_SetAlpha(image, 0, 0);
 
     //SDL_FillRect(surf, NULL, alpha_bitmask);
-    SDL_BlitSurface(image,NULL,surf,NULL);
+    SDL_BlitSurface(image, NULL, surf, NULL);
 
     opened = true;
 
@@ -118,7 +118,7 @@ bool ImageLayer::open(const char *file) {
 }
 
 void *ImageLayer::feed() {
-    return ( (surf) ? surf->pixels : NULL );
+    return ((surf) ? surf->pixels : NULL);
 }
 
 void ImageLayer::close() {

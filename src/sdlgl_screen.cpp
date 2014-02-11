@@ -40,7 +40,7 @@ SdlGlScreen::SdlGlScreen()
 
     emuscr = NULL;
     dbl = false;
-    sdl_flags = (SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_OPENGLBLIT | SDL_RESIZABLE | SDL_HWPALETTE | SDL_HWSURFACE );
+    sdl_flags = (SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_OPENGLBLIT | SDL_RESIZABLE | SDL_HWPALETTE | SDL_HWSURFACE);
     x_translation = 0;
     y_translation = 0;
     x_rotation = 0;
@@ -89,12 +89,12 @@ bool SdlGlScreen::_init() {
 
     setenv("SDL_VIDEO_HWACCEL", "1", 1);
 
-    if( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_EVENTTHREAD) < 0 ) {
-        error("Can't initialize SDL: %s",SDL_GetError());
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_EVENTTHREAD) < 0) {
+        error("Can't initialize SDL: %s", SDL_GetError());
         return(false);
     }
 
-    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);   // Enable OpenGL Doublebuffering
 
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);		//Use at least 5 bits of Red
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);	//Use at least 5 bits of Green
@@ -110,11 +110,11 @@ bool SdlGlScreen::_init() {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
         glDisable(GL_CULL_FACE);
-        glEnable( GL_TEXTURE_2D );
+        glEnable(GL_TEXTURE_2D);
 
-        glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glClearColor( 0.0f,0.0f,0.0f,0.0f );
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         /* antialiasing
         glShadeModel (GL_SMOOTH);
@@ -133,23 +133,23 @@ bool SdlGlScreen::_init() {
 //		gluPerspective( 45.0f, (float)width / height, 0.1f, 10000.0f);
     }
     // generate texture
-    glGenTextures( 1, &textureID );
+    glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     surface = SDL_GetVideoSurface();
 
-    SDL_VideoDriverName(temp,120);
+    SDL_VideoDriverName(temp, 120);
 
     notice("SDLGL Viewport is %s %ix%i %ibpp",
-           temp,geo.w,geo.h,surface->format->BytesPerPixel<<3);
+           temp, geo.w, geo.h, surface->format->BytesPerPixel << 3);
 
     screen = SDL_CreateRGBSurface(sdl_flags, geo.w, geo.h, geo.bpp,
                                   blue_bitmask, green_bitmask, red_bitmask, alpha_bitmask);
     /* be nice with the window manager */
-    sprintf(temp,"%s %s",PACKAGE,VERSION);
-    SDL_WM_SetCaption (temp, temp);
+    sprintf(temp, "%s %s", PACKAGE, VERSION);
+    SDL_WM_SetCaption(temp, temp);
 
     /* hide mouse cursor */
     SDL_ShowCursor(SDL_DISABLE);
@@ -166,40 +166,40 @@ void SdlGlScreen::setup_blits(Layer *lay) {
 
 
 void SdlGlScreen::resize(int resize_w, int resize_h) {
-    surface = SDL_SetVideoMode(resize_w,resize_h,32,sdl_flags);
-    geo.init( resize_w, resize_h, 32);
+    surface = SDL_SetVideoMode(resize_w, resize_h, 32, sdl_flags);
+    geo.init(resize_w, resize_h, 32);
 }
 
 void *SdlGlScreen::coords(int x, int y) {
     return
-        ( x + geo.pixelsize*y +
-          (uint32_t*)screen->pixels );
+        (x + geo.pixelsize * y +
+         (uint32_t*)screen->pixels);
 }
 
 void SdlGlScreen::check_opengl_error() {
-    GLenum err = glGetError ();
+    GLenum err = glGetError();
     if(err == GL_INVALID_ENUM)
         notice("GL_INVALID_ENUM");
-    else if (err == GL_INVALID_VALUE)
+    else if(err == GL_INVALID_VALUE)
         notice("GL_INVALID_VALUE di glTexImage2D");
-    else if (err == GL_INVALID_OPERATION)
+    else if(err == GL_INVALID_OPERATION)
         notice("GL_INVALID_OPERATION");
-    else if (err == GL_STACK_OVERFLOW)
+    else if(err == GL_STACK_OVERFLOW)
         notice("GL_STACK_OVERFLOW");
-    else if (err == GL_STACK_UNDERFLOW)
+    else if(err == GL_STACK_UNDERFLOW)
         notice("GL_STACK_UNDERFLOW");
-    else if (err == GL_OUT_OF_MEMORY)
+    else if(err == GL_OUT_OF_MEMORY)
         notice("GL_OUT_OF_MEMORY");
-    else if (err == GL_TABLE_TOO_LARGE)
+    else if(err == GL_TABLE_TOO_LARGE)
         notice("GL_TABLE_TOO_LARGE");
 
 }
 
 void SdlGlScreen::blit(Layer *lay) {
     // bind freej texture and copy it
-    glBindTexture( GL_TEXTURE_2D, textureID );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, lay->geo.w, lay->geo.h,
-                  0, GL_RGBA, GL_UNSIGNED_BYTE, lay->buffer );
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, lay->geo.w, lay->geo.h,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, lay->buffer);
     check_opengl_error();
 
     // reset opengl environment.
@@ -243,15 +243,15 @@ void *SdlGlScreen::get_surface() {
 
 
 void SdlGlScreen::clear() {
-    SDL_FillRect(screen,NULL,0x0);
+    SDL_FillRect(screen, NULL, 0x0);
 }
 void SdlGlScreen::fullscreen() {
     SDL_WM_ToggleFullScreen(surface);
 }
 
 bool SdlGlScreen::lock() {
-    if (!SDL_MUSTLOCK(screen)) return true;
-    if (SDL_LockSurface(screen) < 0) {
+    if(!SDL_MUSTLOCK(screen)) return true;
+    if(SDL_LockSurface(screen) < 0) {
         error("%s", SDL_GetError());
         return false;
     }
@@ -259,7 +259,7 @@ bool SdlGlScreen::lock() {
 }
 
 bool SdlGlScreen::unlock() {
-    if (SDL_MUSTLOCK(screen)) {
+    if(SDL_MUSTLOCK(screen)) {
         SDL_UnlockSurface(screen);
     }
     return true;
@@ -274,19 +274,19 @@ int SdlGlScreen::setres(int wx, int hx) {
 
     surface = SDL_SetVideoMode(wx, hx, bpp, sdl_flags);
     //  screen = SDL_SetVideoMode(wx, hx, 0, sdl_flags);
-    if( surface == NULL ) {
+    if(surface == NULL) {
         error("can't set video mode: %s\n", SDL_GetError());
         return(false);
     }
 
 
-    if(res!=bpp) {
-        act("your screen does'nt support %ubpp",bpp);
+    if(res != bpp) {
+        act("your screen does'nt support %ubpp", bpp);
         act("doing video surface software conversion");
 
         emuscr = SDL_GetVideoSurface();
         act("emulated surface geometry %ux%u %ubpp",
-            emuscr->w,emuscr->h,emuscr->format->BitsPerPixel);
+            emuscr->w, emuscr->h, emuscr->format->BitsPerPixel);
     }
 
 

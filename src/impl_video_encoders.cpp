@@ -30,7 +30,7 @@ VideoEncoder *get_encoder(char *enctype) {
     VideoEncoder *e = NULL;
 
 #ifdef WITH_OGGTHEORA
-    if(strncasecmp(enctype,"theora",3) == 0)
+    if(strncasecmp(enctype, "theora", 3) == 0)
         e = new OggTheoraEncoder();
 #endif
 

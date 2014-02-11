@@ -49,7 +49,7 @@ JSErrorFormatString jsFreej_ErrorFormatString[JSFreejErr_Limit] = {
 
 const JSErrorFormatString *
 JSFreej_GetErrorMessage(void *userRef, const char *locale, const uintN errorNumber) {
-    if ((errorNumber > 0) && (errorNumber < JSFreejErr_Limit))
+    if((errorNumber > 0) && (errorNumber < JSFreejErr_Limit))
         return &jsFreej_ErrorFormatString[errorNumber];
     else
         return NULL;
@@ -76,7 +76,7 @@ JSFreej_GetErrorMessage(void *userRef, const char *locale, const uintN errorNumb
 bool stop_script;
 
 void js_sigint_handler(int sig) {
-    stop_script=true;
+    stop_script = true;
 }
 
 #if defined JSOPTION_NATIVE_BRANCH_CALLBACK
@@ -86,7 +86,7 @@ JSBool js_static_branch_callback(JSContext* Context)
 #endif
 {
     if(stop_script) {
-        stop_script=false;
+        stop_script = false;
         return JS_FALSE;
     }
     return JS_TRUE;
@@ -98,9 +98,9 @@ char *js_get_string(jsval val) {
     JS_SetContextThread(global_environment->js->global_context);
     JS_BeginRequest(global_environment->js->global_context);
     if(JSVAL_IS_STRING(val)) {
-        res = JS_GetStringBytes( JS_ValueToString(global_environment->js->global_context, val) );
+        res = JS_GetStringBytes(JS_ValueToString(global_environment->js->global_context, val));
     } else {
-        JS_ReportError(global_environment->js->global_context,"argument is not a string");
+        JS_ReportError(global_environment->js->global_context, "argument is not a string");
         ::error("argument is not a string");
     }
     JS_EndRequest(global_environment->js->global_context);
@@ -147,7 +147,7 @@ jsint js_get_int(jsval val) {
         }
         {
             jsdouble tmp;
-            if( !JS_ValueToNumber(global_environment->js->global_context, val, &tmp) ) {
+            if(!JS_ValueToNumber(global_environment->js->global_context, val, &tmp)) {
                 error("argument is of unknown type, cannot interpret");
             } else res = (int32)tmp;
         }
@@ -207,7 +207,7 @@ jsdouble js_get_double(jsval val) {
         }
         {
             jsdouble tmp;
-            if( ! JS_ValueToNumber(global_environment->js->global_context, val, &tmp) ) {
+            if(! JS_ValueToNumber(global_environment->js->global_context, val, &tmp)) {
                 error("argument is of unknown type, cannot interpret");
             } else res = tmp;
         }
@@ -236,22 +236,22 @@ jsdouble js_get_double(jsval val) {
 void js_error_reporter(JSContext* Context, const char *Message, JSErrorReport *Report) {
     ::func("JS Error Reporter called");
     if(Report->filename)
-        ::error("script error in %s:%i flag: %i",Report->filename, Report->lineno + 1, Report->flags);
+        ::error("script error in %s:%i flag: %i", Report->filename, Report->lineno + 1, Report->flags);
     else
         ::error("script error %i  flags: %i while parsing", Report->errorNumber, Report->flags);
 
     // this doesn't prints out the line reporting error :/
     if(Report->linebuf)
-        ::error("%u: %s",(uint32_t)Report->lineno, Report->linebuf);
+        ::error("%u: %s", (uint32_t)Report->lineno, Report->linebuf);
 
-    if(Message) ::error("JS Error Message: %s flag: %i",(char *)Message, Report->flags);
+    if(Message) ::error("JS Error Message: %s flag: %i", (char *)Message, Report->flags);
 }
 
 JSBool _js_is_instanceOf(JSContext* cx, JSClass* clasp, jsval v, const char* caller) {
     JSBool ret = JS_FALSE;
     JS_SetContextThread(global_environment->js->global_context);
     JS_BeginRequest(cx);
-    if (!v || !JSVAL_IS_OBJECT(v)) {
+    if(!v || !JSVAL_IS_OBJECT(v)) {
         JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
                              JSSMSG_FJ_WICKED , caller, "argument is not an object"
                             );

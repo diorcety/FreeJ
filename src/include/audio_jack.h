@@ -34,13 +34,13 @@ const int MAX_OUTPUTPORTS = 256;
 class JackClient {
 public:
     static JackClient *Get()      {
-        if(!m_Singleton) m_Singleton=new JackClient;
+        if(!m_Singleton) m_Singleton = new JackClient;
         return m_Singleton;
     }
     static void PackUpAndGoHome() {
         if(m_Singleton)  {
             delete m_Singleton;
-            m_Singleton=NULL;
+            m_Singleton = NULL;
         }
     }
 
@@ -49,11 +49,11 @@ public:
     bool   IsAttached()                   {
         return m_Attached;
     }
-    void   SetCallback(void(*Run)(void*, unsigned int),void *Context) {
-        RunCallback=Run;
-        RunContext=Context;
+    void   SetCallback(void(*Run)(void*, unsigned int), void *Context) {
+        RunCallback = Run;
+        RunContext = Context;
     }
-    void   GetPortNames(std::vector<std::string> &InputNames,std::vector<std::string> &OutputNames);
+    void   GetPortNames(std::vector<std::string> &InputNames, std::vector<std::string> &OutputNames);
     void   ConnectInput(int n, const std::string &JackPort);
     void   ConnectOutput(int n, const std::string &JackPort);
     void   DisconnectInput(int n);
@@ -92,7 +92,7 @@ private:
     class JackPort {
     public:
         JackPort() :
-            Connected(false),Buf(NULL),Port(NULL) {}
+            Connected(false), Buf(NULL), Port(NULL) {}
 
         std::string         Name;
         bool           Connected;
@@ -110,8 +110,8 @@ private:
 
     static JackClient*        m_Singleton;
     static jack_client_t*     m_Client;
-    static std::map<int,JackPort*> m_InputPortMap;
-    static std::map<int,JackPort*> m_OutputPortMap;
+    static std::map<int, JackPort*> m_InputPortMap;
+    static std::map<int, JackPort*> m_OutputPortMap;
     int m_NextInputID;
     int m_NextOutputID;
 

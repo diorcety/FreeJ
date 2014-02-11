@@ -58,10 +58,10 @@ public:
     float GetHarmonic(int h);
     bool  IsConnected();
     void  SetGain(float s) {
-        m_Gain=s;
+        m_Gain = s;
     }
     void  SetSmoothingBias(float s) {
-        if (s<2 && s>0) m_SmoothingBias=s;
+        if(s < 2 && s > 0) m_SmoothingBias = s;
     }
     //  void  Process(const string &filename);
     bool  IsProcessing() {

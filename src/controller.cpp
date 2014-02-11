@@ -26,7 +26,7 @@
 #include <callbacks_js.h>
 
 Controller::Controller() {
-    func("%s this=%p",__PRETTY_FUNCTION__, this);
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
     initialized = active = false;
     indestructible = false;
     javascript = false;
@@ -35,16 +35,16 @@ Controller::Controller() {
 }
 
 Controller::~Controller() {
-    func("%s %s (%p)",__PRETTY_FUNCTION__, name.c_str(), this);
+    func("%s %s (%p)", __PRETTY_FUNCTION__, name.c_str(), this);
     ControllerListener *listener = listeners.begin();
-    while (listener) {
+    while(listener) {
         delete listener;
         listener = listeners.begin();
     }
 }
 
 bool Controller::init(Context *freej) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     env = freej;
 
     if(freej->js) {
@@ -72,14 +72,14 @@ JS(controller_activate) {
     Controller *ctrl = (Controller *) JS_GetPrivate(cx, obj);
     if(!ctrl) {
         error("%u:%s:%s :: Controller core data is NULL",    \
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         \
         return JS_FALSE;
         \
     }
 
     *rval = BOOLEAN_TO_JSVAL(ctrl->active);
-    if (argc == 1) {
+    if(argc == 1) {
         jsint var = js_get_int(argv[0]);
         ctrl->active = var;
     }
@@ -95,7 +95,7 @@ bool Controller::add_listener(JSContext *cx, JSObject *obj) {
 void Controller::reset() {
     active = false;
     ControllerListener *listener = listeners.begin();
-    while (listener) {
+    while(listener) {
         delete listener;
         listener = listeners.begin();
     }
@@ -104,9 +104,9 @@ void Controller::reset() {
 int Controller::JSCall(const char *funcname, int argc, jsval *argv) {
     int res = 0;
     ControllerListener *listener = listeners.begin();
-    while (listener) {
+    while(listener) {
         // TODO - unregister listener if returns false
-        if (listener->call(funcname, argc, argv))
+        if(listener->call(funcname, argc, argv))
             res++;
         listener = (ControllerListener *)listener->next;
     }
@@ -120,7 +120,7 @@ int Controller::JSCall(const char *funcname, int argc, const char *format, ...) 
     ControllerListener *listener = listeners.begin();
     va_start(args, format);
     va_end(args);
-    while (listener) {
+    while(listener) {
         void *markp = NULL;
         JS_SetContextThread(listener->context());
         JS_BeginRequest(listener->context());
@@ -128,7 +128,7 @@ int Controller::JSCall(const char *funcname, int argc, const char *format, ...) 
         JS_EndRequest(listener->context());
         JS_ClearContextThread(listener->context());
         // TODO - unregister listener if returns false
-        if (listener->call(funcname, argc, argv))
+        if(listener->call(funcname, argc, argv))
             res++;
         listener = (ControllerListener *)listener->next;
     }
@@ -154,7 +154,7 @@ bool ControllerListener::frame() {
     JS_SetContextThread(jsContext);
     JS_BeginRequest(jsContext);
 
-    if (!frameFunc) {
+    if(!frameFunc) {
         res = JS_GetProperty(jsContext, jsObject, "frame", &frameFunc);
         if(!res || JSVAL_IS_VOID(frameFunc)) {
             error("method frame not found in TriggerController");
@@ -166,7 +166,7 @@ bool ControllerListener::frame() {
     res = JS_CallFunctionValue(jsContext, jsObject, frameFunc, 0, NULL, &ret);
     JS_EndRequest(jsContext);
     JS_ClearContextThread(jsContext);
-    if (res == JS_FALSE) {
+    if(res == JS_FALSE) {
         error("trigger call frame() failed, deactivate ctrl");
         //active = false;
         return false;
@@ -218,11 +218,11 @@ bool ControllerListener::call(const char *funcname, int argc, const char *format
         res = JS_CallFunctionValue(jsContext, jsObject, fval, argc, argv, &ret);
         JS_PopArguments(jsContext, &markp);
 
-        if (res) {
+        if(res) {
             if(!JSVAL_IS_VOID(ret)) {
                 JSBool ok;
                 JS_ValueToBoolean(jsContext, ret, &ok);
-                if (ok) { // JSfunc returned 'true', so event is done
+                if(ok) {  // JSfunc returned 'true', so event is done
                     JS_EndRequest(jsContext);
                     JS_ClearContextThread(jsContext);
                     return true;

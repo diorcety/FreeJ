@@ -26,9 +26,9 @@
 //#include <fps.h>
 #include <blitter.h>
 
-void js_layer_gc (JSContext *cx, JSObject *obj);
+void js_layer_gc(JSContext *cx, JSObject *obj);
 
-DECLARE_CLASS("Layer",layer_class,layer_constructor);
+DECLARE_CLASS("Layer", layer_class, layer_constructor);
 
 JSFunctionSpec layer_methods[] = {
     ENTRY_METHODS,
@@ -67,10 +67,10 @@ JSPropertySpec layer_properties[] = {
 };
 
 
-void js_layer_gc (JSContext *cx, JSObject *obj) {
-    func("%s",__PRETTY_FUNCTION__);
+void js_layer_gc(JSContext *cx, JSObject *obj) {
+    func("%s", __PRETTY_FUNCTION__);
     Layer* l;
-    if (!obj) {
+    if(!obj) {
         error("%n called with NULL object", __PRETTY_FUNCTION__);
         return;
     }
@@ -87,7 +87,7 @@ void js_layer_gc (JSContext *cx, JSObject *obj) {
 }
 
 JS(layer_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     //    JSObject *this_obj;
     char *filename;
 
@@ -102,9 +102,9 @@ JS(layer_constructor) {
     // recognize the extension and open the file given in argument
     filename = js_get_string(argv[0]);
 
-    layer = global_environment->open( filename );
+    layer = global_environment->open(filename);
     if(!layer) {
-        error("%s: cannot create a Layer using %s",__FUNCTION__,filename);
+        error("%s: cannot create a Layer using %s", __FUNCTION__, filename);
         JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
                              JSSMSG_FJ_CANT_CREATE, filename,
                              strerror(errno));
@@ -113,7 +113,7 @@ JS(layer_constructor) {
 
     //*rval is obj but wrong class. so we cheat here our autodetect ...
     JSObject *thisobj = JS_NewObject(cx, layer->jsclass, NULL, NULL);
-    if (!JS_SetPrivate(cx, thisobj, (void *) layer))
+    if(!JS_SetPrivate(cx, thisobj, (void *) layer))
         JS_ERROR("internal error setting private value");
 
     *rval = OBJECT_TO_JSVAL(thisobj);
@@ -121,13 +121,13 @@ JS(layer_constructor) {
 }
 
 JS(selected_layer) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     Layer *lay;
     JSObject *objtmp;
     jsval val;
 
-    if( global_environment->screens.selected()->layers.len() == 0 ) {
+    if(global_environment->screens.selected()->layers.len() == 0) {
         error("can't return selected layer: no layers are present");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -140,7 +140,7 @@ JS(selected_layer) {
         *rval = JSVAL_FALSE;
         return JS_TRUE;
     }
-    if (lay->data) {
+    if(lay->data) {
         val = (jsval)lay->data;
     } else {
         objtmp = JS_NewObject(cx, lay->jsclass, NULL, obj);
@@ -157,7 +157,7 @@ JS(selected_layer) {
 
 
 JS(layer_list_blits) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     JSObject *arr;
     JSString *str;
     jsval val;
@@ -183,7 +183,7 @@ JS(layer_list_blits) {
         b = b->next;
     }
 
-    *rval = OBJECT_TO_JSVAL( arr );
+    *rval = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
 }
 
@@ -194,7 +194,7 @@ JS(layer_list_blits) {
 // Generic Layer methods
 
 JS(layer_set_blit) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     char *blit_name;
 
@@ -202,17 +202,17 @@ JS(layer_set_blit) {
 
     blit_name = js_get_string(argv[0]);
 
-    lay->set_blit( blit_name );
+    lay->set_blit(blit_name);
 
     return JS_TRUE;
 }
 
 JS(layer_get_blit) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     GET_LAYER(Layer);
 
-    const char *blit_type=lay->current_blit->getName().c_str();
+    const char *blit_type = lay->current_blit->getName().c_str();
     JSString *str = JS_NewStringCopyZ(cx, blit_type);
     *rval = STRING_TO_JSVAL(str);
 
@@ -220,9 +220,9 @@ JS(layer_get_blit) {
 }
 
 JS(layer_set_position) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<2)
+    if(argc < 2)
         JS_ERROR("missing argument");
     GET_LAYER(Layer);
 
@@ -236,9 +236,9 @@ JS(layer_set_position) {
 }
 
 JS(layer_set_blit_value) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1)
+    if(argc < 1)
         JS_ERROR("missing argument");
     jsint value = js_get_double(argv[0]);
 
@@ -262,17 +262,17 @@ JS(layer_set_blit_value) {
     return JS_TRUE;
 }
 JS(layer_fade_blit_value) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<2)
+    if(argc < 2)
         JS_ERROR("missing argument");
     jsint value = js_get_double(argv[0]);
     // jsint step = js_get_double(argv[1]);
 
     GET_LAYER(Layer);
 
-    value = 255.0*value;
-    if(value>255) {
+    value = 255.0 * value;
+    if(value > 255) {
         warning("blit values should be float ranged between 0.0 and 1.0");
         value = 255;
     }
@@ -283,14 +283,14 @@ JS(layer_fade_blit_value) {
 }
 
 JS(layer_get_blit_value) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     GET_LAYER(Layer);
 
     return JS_NewNumberValue(cx, lay->current_blit->value, rval);
 }
 JS(layer_activate) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     GET_LAYER(Layer);
 
@@ -299,7 +299,7 @@ JS(layer_activate) {
     return JS_TRUE;
 }
 JS(layer_deactivate) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     GET_LAYER(Layer);
 
@@ -308,19 +308,19 @@ JS(layer_deactivate) {
     return JS_TRUE;
 }
 JS(layer_add_filter) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     JSObject *jsfilter = NULL;
     FilterInstance *filter_instance = NULL;
 
     JS_BeginRequest(cx);
 
-    if(argc<1)
+    if(argc < 1)
         JS_ERROR("missing argument");
     //  js_is_instanceOf(&filter_class, argv[0]);
 
     jsfilter = JSVAL_TO_OBJECT(argv[0]);
-    if (!jsfilter) {
+    if(!jsfilter) {
         error("Filter %s nt found", JSVAL_TO_STRING(argv[0]));
         JS_EndRequest(cx);
         JS_ClearContextThread(cx);
@@ -347,12 +347,12 @@ JS(layer_add_filter) {
 }
 
 JS(layer_rem_filter) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     JSObject *jsfilter = NULL;
     FilterInstance *filter_instance = NULL;
 
-    if(argc<1)
+    if(argc < 1)
         JS_ERROR("missing argument");
     //    js_is_instanceOf(&filter_class, argv[0]);
 
@@ -374,9 +374,9 @@ JS(layer_rem_filter) {
 
 /// rotozooming the layer
 JS(layer_rotate) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1)
+    if(argc < 1)
         JS_ERROR("missing argument");
 
     js_debug_argument(cx, argv[0]);
@@ -391,19 +391,19 @@ JS(layer_rotate) {
     return JS_TRUE;
 }
 JS(layer_zoom) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1)
+    if(argc < 1)
         JS_ERROR("missing argument");
     // take ymang=xmagn on .zoom(val)
     jsdouble xmagn, ymagn;
     xmagn = js_get_double(argv[0]);
-    if(argc>1) ymagn = js_get_double(argv[1]);
+    if(argc > 1) ymagn = js_get_double(argv[1]);
     else ymagn = xmagn;
 
     GET_LAYER(Layer);
 
-    lay->set_zoom(xmagn,ymagn);
+    lay->set_zoom(xmagn, ymagn);
 
     return JS_TRUE;
 }
@@ -435,7 +435,7 @@ JS(layer_fit) {
 //// Layer Properties
 
 JSP(layer_set_x) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     jsint nx = js_get_int(*vp);
     lay->set_position(nx, lay->geo.y);
@@ -443,68 +443,68 @@ JSP(layer_set_x) {
     //    return JS_NewNumberValue(cx, (double)lay->geo.x, rval);
 }
 JSP(layer_get_x) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.x, vp);
 }
 JSP(layer_set_y) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     jsint ny = js_get_int(*vp);
     lay->set_position(lay->geo.x, ny);
     return JS_TRUE;
 }
 JSP(layer_get_y) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.y, vp);
 }
 JSP(layer_get_width) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.w, vp);
 }
 JSP(layer_get_height) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.h, vp);
 }
 JSP(layer_get_filename) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     JSString *str = JS_NewStringCopyZ(cx, lay->get_filename());
     *vp = STRING_TO_JSVAL(str);
     return JS_TRUE;
 }
 JSP(layer_set_name) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     char *nn = js_get_string(*vp);
     lay->setName(nn);
     return JS_TRUE;
 }
 JSP(layer_get_name) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     JSString *nn = JS_NewStringCopyZ(cx, lay->getName().c_str());
     *vp = STRING_TO_JSVAL(nn);
     return JS_TRUE;
 }
 JSP(layer_set_fps) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     jsint nf = js_get_int(*vp);
     lay->fps.set(nf);
     return JS_TRUE;
 }
 JSP(layer_get_fps) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->fps.get(), vp);
 }
 
 JSP(layer_list_filters) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     JSObject *arr;
     JSObject *objtmp;
 
@@ -536,19 +536,19 @@ JSP(layer_list_filters) {
 
         val = OBJECT_TO_JSVAL(objtmp);
 
-        JS_SetElement(cx, arr, c, &val );
+        JS_SetElement(cx, arr, c, &val);
 
         c++;
 
         filter_instance = (FilterInstance*)filter_instance->next;
     }
 
-    *vp = OBJECT_TO_JSVAL( arr );
+    *vp = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
 }
 
 JSP(layer_list_parameters) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     JSObject *arr;
     JSString *str;
     jsval val;
@@ -572,6 +572,6 @@ JSP(layer_list_parameters) {
         parm = (Parameter*)parm->next;
     }
 
-    *vp = OBJECT_TO_JSVAL( arr );
+    *vp = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
 }

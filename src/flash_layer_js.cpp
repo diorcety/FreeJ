@@ -40,16 +40,16 @@ JSFunctionSpec flash_layer_methods[] = {
 JS_CONSTRUCTOR("FlashLayer", flash_layer_constructor, FlashLayer);
 
 JS(flash_layer_open) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1)
+    if(argc < 1)
         return JS_FALSE;
 
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     GET_LAYER(FlashLayer);
 
-    char *file = JS_GetStringBytes(JS_ValueToString(cx,argv[0]));
+    char *file = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     //JS_ClearContextThread(cx);
     JS_EndRequest(cx);
     if(!file) {
@@ -57,8 +57,8 @@ JS(flash_layer_open) {
         return JS_FALSE;
     }
 
-    if(! lay->open(file) ) {
-        error("can't open %s in layer %s",file, lay->name);
+    if(! lay->open(file)) {
+        error("can't open %s in layer %s", file, lay->name);
         return JS_FALSE;
     }
 

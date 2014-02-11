@@ -47,24 +47,24 @@ bool SdlXvScreen::init(int width, int height) {
     setenv("SDL_VIDEO_YUV_DIRECT", "1", 1);
     setenv("SDL_VIDEO_HWACCEL", "1", 1);
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if(SDL_Init(SDL_INIT_VIDEO) < 0)
         return false;
 
     scr = SDL_SetVideoMode
-          ( width, height, 0,
-            SDL_HWSURFACE |                // SDL_ASYNCBLIT |
-            SDL_DOUBLEBUF | SDL_HWACCEL );
+          (width, height, 0,
+           SDL_HWSURFACE |                // SDL_ASYNCBLIT |
+           SDL_DOUBLEBUF | SDL_HWACCEL);
     //SDL_RESIZABLE );
     if(!scr) {
-        error("%s",SDL_GetError());
+        error("%s", SDL_GetError());
         return(false);
     }
 
     w = width;
     h = height;
     bpp = 32;
-    size = w*h*(bpp>>3);
-    pitch = w*(bpp>>3);
+    size = w * h * (bpp >> 3);
+    pitch = w * (bpp >> 3);
 
     yuv_overlay = SDL_CreateYUVOverlay(w, h, SDL_YV12_OVERLAY, scr);
     if(!yuv_overlay)
@@ -72,7 +72,7 @@ bool SdlXvScreen::init(int width, int height) {
     if(!yuv_overlay)
         yuv_overlay = SDL_CreateYUVOverlay(w, h, SDL_UYVY_OVERLAY, scr);
     if(!yuv_overlay) {
-        error("can't create Xv YUV overlay : %s",SDL_GetError());
+        error("can't create Xv YUV overlay : %s", SDL_GetError());
         return false;
     }
 
@@ -84,14 +84,14 @@ bool SdlXvScreen::init(int width, int height) {
     }
     */
 
-    anal = malloc(w*h*4);
+    anal = malloc(w * h * 4);
 
     rect.x = 0;
     rect.y = 0;
     rect.w = w;
     rect.h = h;
 
-    notice("SDL XV Viewport is %ix%i %ibpp",w,h,scr->format->BytesPerPixel<<3);
+    notice("SDL XV Viewport is %ix%i %ibpp", w, h, scr->format->BytesPerPixel << 3);
     act("YUV overlay surface Y%i:U%i:V%i",
         yuv_overlay->pitches[0], yuv_overlay->pitches[1], yuv_overlay->pitches[2]);
     act("Overlay hardware acceleration is %s",
@@ -111,13 +111,13 @@ bool SdlXvScreen::init(int width, int height) {
 
     /* be nice with the window manager */
     char temp[120];
-    sprintf(temp,"%s %s",PACKAGE,VERSION);
-    SDL_WM_SetCaption (temp, temp);
+    sprintf(temp, "%s %s", PACKAGE, VERSION);
+    SDL_WM_SetCaption(temp, temp);
 
     /* hide mouse cursor */
     SDL_ShowCursor(SDL_DISABLE);
 
-    SDL_UpdateRect(scr,0,0,w,h);
+    SDL_UpdateRect(scr, 0, 0, w, h);
 
     return(true);
 }
@@ -128,8 +128,8 @@ void SdlXvScreen::show() {
 }
 
 bool SdlXvScreen::sdl_lock() {
-    if (!SDL_MUSTLOCK(scr)) return true;
-    if (SDL_LockSurface(scr) < 0) {
+    if(!SDL_MUSTLOCK(scr)) return true;
+    if(SDL_LockSurface(scr) < 0) {
         error("%s", SDL_GetError());
         return false;
     }
@@ -137,7 +137,7 @@ bool SdlXvScreen::sdl_lock() {
 }
 
 bool SdlXvScreen::yuv_lock() {
-    if (SDL_LockYUVOverlay(yuv_overlay) < 0) {
+    if(SDL_LockYUVOverlay(yuv_overlay) < 0) {
         error("%s", SDL_GetError());
         return false;
     }
@@ -145,7 +145,7 @@ bool SdlXvScreen::yuv_lock() {
 }
 
 bool SdlXvScreen::sdl_unlock() {
-    if (SDL_MUSTLOCK(scr)) {
+    if(SDL_MUSTLOCK(scr)) {
         SDL_UnlockSurface(scr);
     }
     return true;

@@ -37,7 +37,7 @@
 
 JS(js_trigger_ctrl_constructor);
 
-DECLARE_CLASS("TriggerController",js_trigger_ctrl_class, js_trigger_ctrl_constructor);
+DECLARE_CLASS("TriggerController", js_trigger_ctrl_class, js_trigger_ctrl_constructor);
 
 JSFunctionSpec js_trigger_ctrl_methods[] = {
     {0}
@@ -46,7 +46,7 @@ JSFunctionSpec js_trigger_ctrl_methods[] = {
 FACTORY_REGISTER_INSTANTIATOR(Controller, TriggerController, TriggerController, core);
 
 TriggerController::TriggerController()
-    :Controller() {
+    : Controller() {
     setName("Trigger");
     /* we are going to be used as a singleton, so we don't want
        our instance to be destruncted before the program ends */
@@ -61,7 +61,7 @@ int TriggerController::poll() {
 
     if(javascript) {
         ControllerListener *listener = listeners.begin();
-        while (listener) {
+        while(listener) {
             listener->frame();
             listener = (ControllerListener *)listener->next;
         }
@@ -85,23 +85,23 @@ int TriggerController::dispatch() {
 }
 
 JS(js_trigger_ctrl_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     int check_thread;
 
-    TriggerController *trigger = (TriggerController *)Factory<Controller>::get_instance( "TriggerController" );
-    if (!trigger)
+    TriggerController *trigger = (TriggerController *)Factory<Controller>::get_instance("TriggerController");
+    if(!trigger)
         return JS_FALSE;
 
     check_thread = JS_GetContextThread(cx);
-    if (!check_thread)
+    if(!check_thread)
         JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     // initialize with javascript context
-    if (!trigger->initialized) {
-        if(! trigger->init(global_environment) ) {
+    if(!trigger->initialized) {
+        if(! trigger->init(global_environment)) {
             error("failed initializing keyboard controller");
             JS_EndRequest(cx);
-            if (!check_thread)
+            if(!check_thread)
                 JS_ClearContextThread(cx);
             return JS_FALSE;
         }
@@ -110,10 +110,10 @@ JS(js_trigger_ctrl_constructor) {
     }
 
     // assign instance into javascript object
-    if( !JS_SetPrivate(cx, obj, (void*)trigger) ) {
+    if(!JS_SetPrivate(cx, obj, (void*)trigger)) {
         error("failed assigning trigger controller to javascript");
         JS_EndRequest(cx);
-        if (!check_thread)
+        if(!check_thread)
             JS_ClearContextThread(cx);
         return JS_FALSE;
     }
@@ -121,7 +121,7 @@ JS(js_trigger_ctrl_constructor) {
     *rval = OBJECT_TO_JSVAL(obj);
     trigger->add_listener(cx, obj);
     JS_EndRequest(cx);
-    if (!check_thread)
+    if(!check_thread)
         JS_ClearContextThread(cx);
     return JS_TRUE;
 }

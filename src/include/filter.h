@@ -42,12 +42,12 @@ public:
     // supported filter types
     enum Type {
 #ifdef WITH_FREI0R
-        FREIOR=0,
+        FREIOR = 0,
 #endif
 #ifdef WITH_COCOA
-        COREIMAGE=1,
+        COREIMAGE = 1,
 #endif
-        FREEFRAME=2
+        FREEFRAME = 2
     };
     Filter();
     virtual ~Filter();
@@ -64,7 +64,7 @@ public:
 
     virtual char *get_parameter_description(int i);
 
-    virtual int type()=0;
+    virtual int type() = 0;
 
     bool initialized;
     bool active;
@@ -74,7 +74,7 @@ protected:
     virtual void destruct(FilterInstance *inst);
     virtual void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
     virtual void apply_parameters(FilterInstance *inst);
-    virtual void init_parameters(Linklist<Parameter> &parameters)=0;
+    virtual void init_parameters(Linklist<Parameter> &parameters) = 0;
     int bytesize;
 
 };

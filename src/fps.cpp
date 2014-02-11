@@ -43,7 +43,7 @@ FPS::FPS() {
     _ratio = 1.0;
     m_OrgSets = false;
     fpsd.data = new float[fpsd.n];
-    gettimeofday(&start_tv,NULL);
+    gettimeofday(&start_tv, NULL);
     m_OldTime.tv_sec = start_tv.tv_sec;
     m_OldTime.tv_usec = start_tv.tv_usec;
 
@@ -60,7 +60,7 @@ void FPS::init(double rate) {
 
     this->set(rate);
 
-    for (int i=0; i<30; i++) {
+    for(int i = 0; i < 30; i++) {
         fpsd.data[i] = 0;
     }
 
@@ -82,8 +82,8 @@ void FPS::calc() {
     timersub(&now_tv, &start_tv, &done);
     _period = (1000000 / _fps) / _ratio;
 
-    if ( (done.tv_sec > 0)
-            || (done.tv_usec >= _period) ) {
+    if((done.tv_sec > 0)
+            || (done.tv_usec >= _period)) {
         start_tv.tv_sec = now_tv.tv_sec;
         start_tv.tv_usec = now_tv.tv_usec;
         // FIXME: statistics here, too ?!
@@ -91,8 +91,8 @@ void FPS::calc() {
     }
 
     wake_ts.tv_sec  = 0;
-    wake_ts.tv_nsec = (_period - done.tv_usec)*1000; // set the delay
-    if (wake_ts.tv_nsec >= 1000000000) {
+    wake_ts.tv_nsec = (_period - done.tv_usec) * 1000; // set the delay
+    if(wake_ts.tv_nsec >= 1000000000) {
         wake_ts.tv_sec = wake_ts.tv_nsec / 1000000000;
         wake_ts.tv_nsec = wake_ts.tv_nsec - (wake_ts.tv_sec * 1000000000);
     }
@@ -110,15 +110,15 @@ void FPS::calc() {
 }
 
 float FPS::get() {
-    return (_fps ? fpsd.sum / fpsd.n : 0 );
+    return (_fps ? fpsd.sum / fpsd.n : 0);
 }
 
 double FPS::set(double rate) {
-    func("FPS set to %f",rate);
-    if (rate < 0) // invalid
+    func("FPS set to %f", rate);
+    if(rate < 0)  // invalid
         return fps_old;
 
-    if (rate != _fps)
+    if(rate != _fps)
         fps_old = _fps;
     _passes = 0.0;
     fps = rate; // public
@@ -134,27 +134,27 @@ double FPS::set(double rate) {
 void FPS::delay() {
     struct timespec remaining = { 0, 0 };
     timeval did;
-    if (wake_ts.tv_nsec > 100000) {	//if > to 100 us
+    if(wake_ts.tv_nsec > 100000) {	//if > to 100 us
         wake_ts.tv_nsec = wake_ts.tv_nsec - 100000;	// - 100 us
     }
     do {
-        if (nanosleep(&wake_ts, &remaining) == -1) {
-            if (errno == EINTR) {
+        if(nanosleep(&wake_ts, &remaining) == -1) {
+            if(errno == EINTR) {
                 // we've been interrupted use remaining and then reset it
                 wake_ts.tv_nsec = remaining.tv_nsec;
                 remaining.tv_sec = remaining.tv_nsec = 0;
             } else {
                 error("nanosleep 2 returned an error, not performing delay!, remains :%lds %ldus: %s" \
-                      , remaining.tv_sec, remaining.tv_nsec, strerror (errno));
+                      , remaining.tv_sec, remaining.tv_nsec, strerror(errno));
                 wake_ts.tv_sec  = wake_ts.tv_nsec = 0;
             }
         } else {
             // nanosleep successful, reset wake_ts
             wake_ts.tv_sec  = wake_ts.tv_nsec = 0;
         }
-    } while (wake_ts.tv_nsec > 0);
-    gettimeofday(&start_tv,NULL);
-    if (!m_OrgSets) {
+    } while(wake_ts.tv_nsec > 0);
+    gettimeofday(&start_tv, NULL);
+    if(!m_OrgSets) {
         m_OrgSets = true;
         m_OrgTime.tv_sec = start_tv.tv_sec;
         m_OrgTime.tv_usec = start_tv.tv_usec;
@@ -162,9 +162,9 @@ void FPS::delay() {
         _passes++;
         _ratio = ((((start_tv.tv_sec - m_OrgTime.tv_sec) * 1000000) + (start_tv.tv_usec - m_OrgTime.tv_usec)) \
                   / _passes) / _period;
-        if (_ratio > 1.02)
+        if(_ratio > 1.02)
             _ratio = 1.02;
-        else if (_ratio < 0.98)
+        else if(_ratio < 0.98)
             _ratio = 0.98;
     }
     timersub(&start_tv, &m_OldTime, &did);
@@ -174,13 +174,13 @@ void FPS::delay() {
 #else
 
 void FPS::delay() {
-    select_sleep(wake_ts.tv_sec * 1000000 + wake_ts.tv_nsec/1000);
+    select_sleep(wake_ts.tv_sec * 1000000 + wake_ts.tv_nsec / 1000);
 }
 #endif
 
-void FPS::select_sleep (long usec) {
+void FPS::select_sleep(long usec) {
     fd_set fd;
-    int max_fd=0;
+    int max_fd = 0;
     struct timeval tv;
     FD_ZERO(&fd);
     tv.tv_sec = 0;

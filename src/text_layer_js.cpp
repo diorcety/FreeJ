@@ -26,7 +26,7 @@
 #if defined WITH_TEXTLAYER
 #include <text_layer.h>
 
-DECLARE_CLASS_GC("TextLayer",txt_layer_class,txt_layer_constructor,js_layer_gc);
+DECLARE_CLASS_GC("TextLayer", txt_layer_class, txt_layer_constructor, js_layer_gc);
 
 
 ////////////////////////////////
@@ -43,10 +43,10 @@ JSFunctionSpec txt_layer_methods[] = {
 };
 
 
-JS_CONSTRUCTOR("TextLayer",txt_layer_constructor,TextLayer);
+JS_CONSTRUCTOR("TextLayer", txt_layer_constructor, TextLayer);
 
 JS(txt_layer_color) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
@@ -79,7 +79,7 @@ JS(txt_layer_color) {
 }
 
 JS(txt_layer_print) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     JS_CHECK_ARGC(1);
@@ -94,9 +94,9 @@ JS(txt_layer_print) {
     return JS_TRUE;
 }
 JS(txt_layer_size) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1)
+    if(argc < 1)
         return JS_FALSE;
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
@@ -110,9 +110,9 @@ JS(txt_layer_size) {
     return JS_TRUE;
 }
 JS(txt_layer_font) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1)
+    if(argc < 1)
         return JS_FALSE;
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
@@ -122,7 +122,7 @@ JS(txt_layer_font) {
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
     // try full path to .ttf file
-    if (lay->set_font(font))
+    if(lay->set_font(font))
         *rval = JSVAL_TRUE;
     else
         *rval = JSVAL_FALSE;
@@ -131,9 +131,9 @@ JS(txt_layer_font) {
 }
 
 JS(txt_layer_calculate_size) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1)
+    if(argc < 1)
         return JS_FALSE;
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
@@ -163,7 +163,7 @@ JS(txt_layer_calculate_size) {
     if(!num) warning("Can't fill the array");
     JS_SetElement(cx, arr, 1, &val);
 
-    *rval = OBJECT_TO_JSVAL( arr);
+    *rval = OBJECT_TO_JSVAL(arr);
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
     return JS_TRUE;

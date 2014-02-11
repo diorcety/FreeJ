@@ -51,7 +51,7 @@
 #include <impl_video_encoders.h>
 #include <factory.h>
 
-void fsigpipe (int Sig);
+void fsigpipe(int Sig);
 int got_sigpipe;
 
 bool Context::factory_initialized = false;
@@ -66,8 +66,8 @@ static void init_factory() {
 
     Factory<Layer>::set_default_classtype("GeometryLayer", "basic");
     Factory<Layer>::set_default_classtype("MovieLayer", "ffmpeg");
-    Factory<Layer>::set_default_classtype("GeneratorLayer","ff_f0r");
-    Factory<Layer>::set_default_classtype("ImageLayer","sdl");
+    Factory<Layer>::set_default_classtype("GeneratorLayer", "ff_f0r");
+    Factory<Layer>::set_default_classtype("ImageLayer", "sdl");
 #ifdef WITH_UNICAP
     Factory<Layer>::set_default_classtype("CamLayer", "unicap");
 #endif
@@ -151,10 +151,10 @@ Context::Context() {
 #endif
                           "\n";
 
-    if (!factory_initialized)
+    if(!factory_initialized)
         init_factory();
 
-    assert( init() );
+    assert(init());
 
 }
 
@@ -169,7 +169,7 @@ Context::~Context() {
     //   invokes JSGC and all gc call on our JSObjects
     //  if(js) js->reset();
 
-    notice ("cu on %s", PACKAGE_URL);
+    notice("cu on %s", PACKAGE_URL);
 }
 
 
@@ -185,7 +185,7 @@ Context::~Context() {
 bool Context::add_screen(ViewPort *scr) {
 
     if(!scr->initialized) {
-        error("can't add screen %s - not initialized yet",scr->getName().c_str());
+        error("can't add screen %s - not initialized yet", scr->getName().c_str());
         error("use init( width, height, bits_per_pixel )");
         return false;
     }
@@ -194,7 +194,7 @@ bool Context::add_screen(ViewPort *scr) {
     scr->sel(true);
     screen = screens.begin();
     func("screen %s successfully added", scr->getName().c_str());
-    act("screen %s now on top",screen->getName().c_str());
+    act("screen %s now on top", screen->getName().c_str());
 
     return(true);
 }
@@ -204,14 +204,14 @@ bool Context::init() {
     notice("Initializing the FreeJ engine");
 
     // a fast benchmark to select the best memcpy to use
-    find_best_memcpy ();
+    find_best_memcpy();
 
 
     fps.init(fps_speed);
 
 #ifdef WITH_JAVASCRIPT
     // create javascript object
-    js = new JsParser (this);
+    js = new JsParser(this);
 #endif
 
 #ifdef WITH_FFMPEG
@@ -226,8 +226,8 @@ bool Context::init() {
 
     // register SIGPIPE signal handler (stream error)
     got_sigpipe = false;
-    if (signal (SIGPIPE, fsigpipe) == SIG_ERR) {
-        error ("Couldn't install SIGPIPE handler");
+    if(signal(SIGPIPE, fsigpipe) == SIG_ERR) {
+        error("Couldn't install SIGPIPE handler");
         //   exit (0); lets not be so drastical...
     }
 
@@ -270,10 +270,10 @@ void Context::cafudda(double secs) {
     scr = screens.begin();
     while(scr) {
 
-        if (clear_all) scr->clear();
+        if(clear_all) scr->clear();
 
         // Change resolution if needed
-        if (scr->changeres) scr->handle_resize();
+        if(scr->changeres) scr->handle_resize();
 
         scr->blit_layers();
 
@@ -288,7 +288,7 @@ void Context::cafudda(double secs) {
     //        than fps
     // XXX - temporarily disabling explicit garbage-collection
     //       because it still triggers deadlocks somewhere
-    if (js)
+    if(js)
         js->gc();
     /// FPS calculation
     fps.calc();
@@ -306,11 +306,11 @@ void Context::handle_controllers() {
     SDL_PumpEvents();
 
     // peep if there are quit or fullscreen events
-    res = SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_KEYEVENTMASK|SDL_QUITMASK);
-    if (res < 0) warning("SDL_PeepEvents error");
+    res = SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_KEYEVENTMASK | SDL_QUITMASK);
+    if(res < 0) warning("SDL_PeepEvents error");
 
     // force quit when SDL does
-    if (event.type == SDL_QUIT) {
+    if(event.type == SDL_QUIT) {
         quit = true;
         return;
     }
@@ -322,8 +322,8 @@ void Context::handle_controllers() {
                 if(event.key.keysym.sym == SDLK_f) {
                     ViewPort *scr = screens.selected();
                     scr->fullscreen();
-                    res = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYEVENTMASK|SDL_QUITMASK);
-                    if (res < 0) warning("SDL_PeepEvents error");
+                    res = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYEVENTMASK | SDL_QUITMASK);
+                    if(res < 0) warning("SDL_PeepEvents error");
                 }
 
     ctrl = (Controller *)controllers.begin();
@@ -338,22 +338,22 @@ void Context::handle_controllers() {
     }
 
     // flushes all events that are leftover
-    while( SDL_PeepEvents(&event,1,SDL_GETEVENT, SDL_ALLEVENTS) > 0 )
+    while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS) > 0)
         continue;
     memset(&event, 0x0, sizeof(SDL_Event));
 
 }
 
 bool Context::register_controller(Controller *ctrl) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     if(!ctrl) {
         error("%s called on a NULL object", __PRETTY_FUNCTION__);
         return false;
     }
 
-    if(! ctrl->initialized ) {
-        func("initialising controller %s (%p)",ctrl->getName().c_str(), ctrl);
+    if(! ctrl->initialized) {
+        func("initialising controller %s (%p)", ctrl->getName().c_str(), ctrl);
 
         ctrl->init(this);
 
@@ -375,7 +375,7 @@ bool Context::register_controller(Controller *ctrl) {
 }
 
 bool Context::rem_controller(Controller *ctrl) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     if(!ctrl) {
         error("%s called on a NULL object", __PRETTY_FUNCTION__);
         return false;
@@ -392,7 +392,7 @@ bool Context::rem_controller(Controller *ctrl) {
 }
 
 bool Context::add_encoder(VideoEncoder *enc) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     ViewPort *scr;
     scr = screens.selected();
@@ -400,11 +400,11 @@ bool Context::add_encoder(VideoEncoder *enc) {
         error("no screen initialized, can't add encoder %s", enc->getName().c_str());
         return(false);
     }
-    return( scr->add_encoder(enc) );
+    return(scr->add_encoder(enc));
 }
 
 bool Context::add_layer(Layer *lay) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     warning("use of Context::add_layer is DEPRECATED");
     warning("please use ViewPort::add_layer instead");
@@ -416,15 +416,15 @@ bool Context::add_layer(Layer *lay) {
         error("no screen initialized, can't add layer %s", lay->getName().c_str());
         return(false);
     }
-    return( scr->add_layer(lay) );
+    return(scr->add_layer(lay));
 
 }
 
 void Context::rem_layer(Layer *lay) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     ViewPort *scr = screens.selected();
-    if (scr)
+    if(scr)
         scr->rem_layer(lay);
 }
 
@@ -441,22 +441,22 @@ int Context::open_script(char *filename) {
 int Context::parse_js_cmd(const char *cmd) {
     if(!js) {
         error("javascript interpreter is not initialized");
-        error("can't parse script \"%s\"",cmd);
+        error("can't parse script \"%s\"", cmd);
         return 0;
     }
     return js->parse(cmd);
 }
 
 int Context::reset() {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     notice("FreeJ engine reset");
 
-    func("deleting %u controllers", controllers.len() );
+    func("deleting %u controllers", controllers.len());
     controllers.lock();
     Controller *ctrl = controllers.begin();
     while(ctrl) {
-        if(ctrl->indestructible ) {
+        if(ctrl->indestructible) {
             ctrl->reset();
             ctrl = (Controller *)ctrl->next;
         } else {
@@ -466,11 +466,11 @@ int Context::reset() {
         }
     }
     controllers.unlock();
-    func("deleting %u screens", screens.len() );
+    func("deleting %u screens", screens.len());
     ViewPort *scr = screens.begin();
     while(scr) {
         scr->lock();
-        if (scr->indestructible) {
+        if(scr->indestructible) {
             scr->reset();
             scr->unlock();
             scr = (ViewPort *)scr->next;
@@ -481,7 +481,7 @@ int Context::reset() {
         }
     }
 
-    if (js)
+    if(js)
         js->reset();
     //does anyone care about reset() return value?
     return 1;
@@ -497,13 +497,13 @@ bool Context::config_check(const char *filename) {
     }
 
     snprintf(tmp, 512, "%s/.freej/%s", getenv("HOME"), filename);
-    if( filecheck(tmp) ) {
+    if(filecheck(tmp)) {
         js->open(tmp);
         return(true);
     }
 
     snprintf(tmp, 512, "/etc/freej/%s", filename);
-    if( filecheck(tmp) ) {
+    if(filecheck(tmp)) {
         js->open(tmp);
         return(true);
     }
@@ -513,25 +513,25 @@ bool Context::config_check(const char *filename) {
 #else
     snprintf(tmp, 512, "%s/%s", DATADIR, filename);
 #endif
-    if( filecheck(tmp) ) {
+    if(filecheck(tmp)) {
         js->open(tmp);
         return(true);
     }
 
     snprintf(tmp, 512, "/usr/lib/freej/%s", filename);
-    if( filecheck(tmp) ) {
+    if(filecheck(tmp)) {
         js->open(tmp);
         return(true);
     }
 
     snprintf(tmp, 512, "/usr/local/lib/freej/%s", filename);
-    if( filecheck(tmp) ) {
+    if(filecheck(tmp)) {
         js->open(tmp);
         return(true);
     }
 
     snprintf(tmp, 512, "/opt/video/lib/freej/%s", filename);
-    if( filecheck(tmp) ) {
+    if(filecheck(tmp)) {
         js->open(tmp);
         return(true);
     }
@@ -549,13 +549,13 @@ void Context::resize(int w, int h) {
 
 void *Context::coords(int x, int y) {
     ViewPort *scr = screens.selected();
-    return( scr->coords(x,y) );
+    return(scr->coords(x, y));
 }
 
 
-void fsigpipe (int Sig) {
-    if (!got_sigpipe)
-        warning ("SIGPIPE - Problems streaming video :-(");
+void fsigpipe(int Sig) {
+    if(!got_sigpipe)
+        warning("SIGPIPE - Problems streaming video :-(");
     got_sigpipe = true;
 }
 
@@ -566,19 +566,19 @@ void fsigpipe (int Sig) {
 // TODO - use factory to create instances for each class of layers
 //        (cam-input, videofile-input, whatever)
 Layer *Context::open(char *file, int w, int h) {
-    func("%s",__PRETTY_FUNCTION__);
-    char *end_file_ptr,*file_ptr;
+    func("%s", __PRETTY_FUNCTION__);
+    char *end_file_ptr, *file_ptr;
     FILE *tmp;
     Layer *nlayer = NULL;
 
     /* check that file exists */
-    if(strncasecmp(file,"/dev/",5)!=0
-            && strncasecmp(file,"http://",7)!=0
-            && strncasecmp(file,"layer_",6)!=0) {
-        tmp = fopen(file,"r");
+    if(strncasecmp(file, "/dev/", 5) != 0
+            && strncasecmp(file, "http://", 7) != 0
+            && strncasecmp(file, "layer_", 6) != 0) {
+        tmp = fopen(file, "r");
         if(!tmp) {
             error("can't open %s to create a Layer: %s",
-                  file,strerror(errno));
+                  file, strerror(errno));
             return NULL;
         } else fclose(tmp);
     }
@@ -587,7 +587,7 @@ Layer *Context::open(char *file, int w, int h) {
     end_file_ptr += strlen(file);
 //  while(*end_file_ptr!='\0' && *end_file_ptr!='\n') end_file_ptr++; *end_file_ptr='\0';
 
-    if( !w || !h ) {
+    if(!w || !h) {
         // uses the size of currently selected screen
         ViewPort *screen = screens.selected();
         w = screen->geo.w;
@@ -595,10 +595,10 @@ Layer *Context::open(char *file, int w, int h) {
     }
 
     /* ==== Unified caputure API (V4L & V4L2) */
-    if( strncasecmp ( file_ptr,"/dev/video",10)==0) {
+    if(strncasecmp(file_ptr, "/dev/video", 10) == 0) {
         unsigned int uw, uh;
-        while(end_file_ptr!=file_ptr) {
-            if(*end_file_ptr!='%') {
+        while(end_file_ptr != file_ptr) {
+            if(*end_file_ptr != '%') {
 
                 // uses the size of currently selected screen
                 uw = w;
@@ -607,20 +607,20 @@ Layer *Context::open(char *file, int w, int h) {
 
             } else { /* size is specified */
 
-                *end_file_ptr='\0';
+                *end_file_ptr = '\0';
                 end_file_ptr++;
-                sscanf(end_file_ptr,"%ux%u",&uw,&uh);
+                sscanf(end_file_ptr, "%ux%u", &uw, &uh);
                 end_file_ptr = file_ptr;
 
             }
         }
         nlayer = Factory<Layer>::new_instance("CamLayer");
         if(!nlayer) {
-            error("cannot open camera on %s",file_ptr);
+            error("cannot open camera on %s", file_ptr);
             error("no implementation found for CamLayer in this FreeJ binary");
             return NULL;
         }
-        if(! nlayer->init( uw, uh, 32 ) ) {
+        if(! nlayer->init(uw, uh, 32)) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
             delete nlayer;
             return NULL;
@@ -637,7 +637,7 @@ Layer *Context::open(char *file, int w, int h) {
 
     } else /* VIDEO LAYER */
 
-        if( ( ( IS_VIDEO_EXTENSION(end_file_ptr) ) | ( IS_FIREWIRE_DEVICE(file_ptr) ) ) ) {
+        if(((IS_VIDEO_EXTENSION(end_file_ptr)) | (IS_FIREWIRE_DEVICE(file_ptr)))) {
             func("is a movie layer");
 
 #ifdef WITH_FFMPEG
@@ -654,10 +654,10 @@ Layer *Context::open(char *file, int w, int h) {
             }
 #else
             error("VIDEO and AVI layer support not compiled");
-            act("can't load %s",file_ptr);
+            act("can't load %s", file_ptr);
 #endif
         } else /* IMAGE LAYER */
-            if( (IS_IMAGE_EXTENSION(end_file_ptr))) {
+            if((IS_IMAGE_EXTENSION(end_file_ptr))) {
 //		strncasecmp((end_file_ptr-4),".png",4)==0)
                 nlayer = new ImageLayer();
                 if(!nlayer->init()) {
@@ -671,7 +671,7 @@ Layer *Context::open(char *file, int w, int h) {
                     nlayer = NULL;
                 }
             } else /* TXT LAYER */
-                if(strncasecmp((end_file_ptr-4),".txt",4)==0) {
+                if(strncasecmp((end_file_ptr - 4), ".txt", 4) == 0) {
 #if defined WITH_TEXTLAYER
                     nlayer = new TextLayer();
 
@@ -688,12 +688,12 @@ Layer *Context::open(char *file, int w, int h) {
                     }
 #else
                     error("TXT layer support not compiled");
-                    act("can't load %s",file_ptr);
+                    act("can't load %s", file_ptr);
                     return(NULL);
 #endif
 
                 } else /* XSCREENSAVER LAYER */
-                    if(strstr(file_ptr,"xscreensaver")) {
+                    if(strstr(file_ptr, "xscreensaver")) {
 #ifdef WITH_XSCREENSAVER
                         nlayer = new XScreenSaverLayer();
 
@@ -703,22 +703,22 @@ Layer *Context::open(char *file, int w, int h) {
                             return NULL;
                         }
 
-                        if (!nlayer->open(file_ptr)) {
+                        if(!nlayer->open(file_ptr)) {
                             error("create_layer : XScreenSaver open failed");
                             delete nlayer;
                             nlayer = NULL;
                         }
 #else
                         error("no xscreensaver layer support");
-                        act("can't load %s",file_ptr);
+                        act("can't load %s", file_ptr);
                         return(NULL);
 #endif
-                    }  else if(strncasecmp(file_ptr,"layer_goom",10)==0) {
+                    }  else if(strncasecmp(file_ptr, "layer_goom", 10) == 0) {
 
 #ifdef WITH_GOOM
                         nlayer = new GoomLayer();
 
-                        if(!nlayer->init( this )) {
+                        if(!nlayer->init(this)) {
                             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                             delete nlayer;
                             return NULL;
@@ -731,10 +731,10 @@ Layer *Context::open(char *file, int w, int h) {
 
                     }
 #ifdef WITH_FLASH
-                    else if(strncasecmp(end_file_ptr-4,".swf",4)==0) {
+                    else if(strncasecmp(end_file_ptr - 4, ".swf", 4) == 0) {
 
                         nlayer = new FlashLayer();
-                        if(!nlayer->init( )) {
+                        if(!nlayer->init()) {
                             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
                             delete nlayer;
                             return NULL;
@@ -750,7 +750,7 @@ Layer *Context::open(char *file, int w, int h) {
 #endif
 
 #ifdef WITH_OPENCV
-                    else if(strcasecmp(file_ptr,"layer_opencv_cam")==0) {
+                    else if(strcasecmp(file_ptr, "layer_opencv_cam") == 0) {
                         func("creating a cam layer using OpenCV");
                         nlayer = new OpenCVCamLayer();
                         if(!nlayer->init()) {
@@ -762,9 +762,9 @@ Layer *Context::open(char *file, int w, int h) {
 #endif
 
     if(!nlayer)
-        error("can't create a layer with %s",file);
+        error("can't create a layer with %s", file);
     else
-        func("create_layer successful, returns %p",nlayer);
+        func("create_layer successful, returns %p", nlayer);
     return nlayer;
 }
 

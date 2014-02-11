@@ -18,7 +18,7 @@
 
 
 XScreenSaverLayer::XScreenSaverLayer()
-    :Layer() {
+    : Layer() {
     setName("XSS");
 }
 
@@ -27,7 +27,7 @@ XScreenSaverLayer::~XScreenSaverLayer() {
 }
 
 bool XScreenSaverLayer::_init() {
-    func("%u:%s:%s (%p)",__LINE__,__FILE__,__FUNCTION__, this);
+    func("%u:%s:%s (%p)", __LINE__, __FILE__, __FUNCTION__, this);
 
     // img=XCreatePixmap(dpy, back_win, freej->screen->w, freej->screen->h, 32);
     // img = XGetImage(dpy, back_win, 0, 0, geo.w, geo.h, ~0L, ZPixmap);
@@ -98,12 +98,12 @@ bool XScreenSaverLayer::open(const char *file) {
     for(;;) {
         XEvent e;
         XNextEvent(dpy, &e);
-        if (e.type == MapNotify)
+        if(e.type == MapNotify)
             break;
     }
 
     x_pid = fork();
-    if (x_pid == 0) { // child
+    if(x_pid == 0) {  // child
         char args[32];
         sprintf(args, "0x%x", (int)back_win);
         notice("%s exec %s", __PRETTY_FUNCTION__, args);
@@ -119,7 +119,7 @@ bool XScreenSaverLayer::open(const char *file) {
     // int res =  system(args);
     // notice("Xlayer::open exec result %i", res);
 
-    notice("Opened XScreenSaver '%s' with back_win %p",file , back_win);
+    notice("Opened XScreenSaver '%s' with back_win %p", file , back_win);
 
     opened = true;
 
@@ -167,13 +167,13 @@ void XScreenSaverLayer::close() {
 void XScreenSaverLayer::pause(bool set) {
     paused = set;
     int res;
-    if (paused)
-        res=kill(x_pid, SIGSTOP);
+    if(paused)
+        res = kill(x_pid, SIGSTOP);
     else
-        res=kill(x_pid, SIGCONT);
+        res = kill(x_pid, SIGCONT);
 
     notice("XScreenSaver to %i pause : %s is %i err %i", x_pid,
-           ((paused) ? "on" : "off"), res,errno );
+           ((paused) ? "on" : "off"), res, errno);
 }
 
 // bool XScreenSaverLayer::keypress(int key) {

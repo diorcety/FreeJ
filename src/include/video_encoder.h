@@ -66,13 +66,13 @@ class VideoEncoder: public Entry, public JSyncThread {
 
 public:
 
-    VideoEncoder ();
-    virtual ~VideoEncoder ();
+    VideoEncoder();
+    virtual ~VideoEncoder();
 
     double getStreamRate();
 
-    virtual bool init (ViewPort *scr) = 0;  ///< pure virtual function to implement
-    virtual int encode_frame ()       = 0;  ///< pure virtual function to implement
+    virtual bool init(ViewPort *scr) = 0;   ///< pure virtual function to implement
+    virtual int encode_frame()       = 0;   ///< pure virtual function to implement
 
     void thread_setup(); ///< setup data needed in encoding thread
     void thread_loop(); ///< encoding thread main loop

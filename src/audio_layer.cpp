@@ -29,19 +29,19 @@
 //#include <jutils.h>
 
 AudioLayer::AudioLayer()
-    :Layer(),
-     m_JackBuffer(NULL),
-     m_ProcessPos(0),
-     m_Processing(false) {
+    : Layer(),
+      m_JackBuffer(NULL),
+      m_ProcessPos(0),
+      m_Processing(false) {
     notice("Audio layer initialized.");
     JackClient *Jack = JackClient::Get();
-    if (!Jack->IsAttached()) {
-        Jack->SetCallback(AudioCallback,(void*)this);
+    if(!Jack->IsAttached()) {
+        Jack->SetCallback(AudioCallback, (void*)this);
         Jack->Attach("freej");
     }
-    if (Jack->IsAttached()) {
-        int id=Jack->AddInputPort();
-        Jack->SetOutputBuf(id,m_JackBuffer);
+    if(Jack->IsAttached()) {
+        int id = Jack->AddInputPort();
+        Jack->SetOutputBuf(id, m_JackBuffer);
         //const string &port;
         //Jack->ConnectOutput(id, port); // XXX
     } else {
@@ -55,7 +55,7 @@ AudioLayer::~AudioLayer() {
 
 
 bool AudioLayer::open(const char *file) {
-    opened=true;
+    opened = true;
     return(true);
 }
 

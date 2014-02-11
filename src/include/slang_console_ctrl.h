@@ -93,7 +93,7 @@ private:
     SLW_Log *log;
     SlwReadline *rdl;
 
-    int x,y;
+    int x, y;
 
     int paramsel;
 

@@ -35,13 +35,13 @@ FACTORY_REGISTER_INSTANTIATOR(Controller, MouseController, MouseController, sdl)
 
 JS(js_mouse_ctrl_constructor);
 
-DECLARE_CLASS("MouseController",js_mouse_ctrl_class, js_mouse_ctrl_constructor);
+DECLARE_CLASS("MouseController", js_mouse_ctrl_class, js_mouse_ctrl_constructor);
 
-JSBool js_add_p (JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
+JSBool js_add_p(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     func("add prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
     return JS_TRUE;
 }
-JSBool js_del_p (JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
+JSBool js_del_p(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     func("del prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
     return JS_TRUE;
 }
@@ -69,10 +69,10 @@ JS(js_mouse_grab) {
 
     jsint state = js_get_int(argv[0]);
 
-    MouseController *mouse = (MouseController *) JS_GetPrivate(cx,obj);
+    MouseController *mouse = (MouseController *) JS_GetPrivate(cx, obj);
     if(!mouse) {
         error("%u:%s:%s :: Mouse core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -82,7 +82,7 @@ JS(js_mouse_grab) {
 }
 
 MouseController::MouseController()
-    :SdlController() {
+    : SdlController() {
     setName("Mouse");
     indestructible = true;
 }
@@ -134,7 +134,7 @@ int MouseController::motion(int state, int x, int y, int xrel, int yrel) {
         INT_TO_JSVAL(x), INT_TO_JSVAL(y),
         INT_TO_JSVAL(xrel), INT_TO_JSVAL(yrel)
     };
-    if (!JSCall("motion", 5, js_data)) {
+    if(!JSCall("motion", 5, js_data)) {
         error("Can't call method motion() on mouse listeners");
         return(0);
     }
@@ -148,7 +148,7 @@ int MouseController::button(int button, int state, int x, int y) {
         INT_TO_JSVAL(x),
         INT_TO_JSVAL(y)
     };
-    if (!JSCall("button", 4, js_data)) {
+    if(!JSCall("button", 4, js_data)) {
         error("Can't call method button() on mouse listeners");
         return(0);
     }
@@ -156,7 +156,7 @@ int MouseController::button(int button, int state, int x, int y) {
 }
 
 int MouseController::dispatch() {
-    if (event.type == SDL_MOUSEMOTION) {
+    if(event.type == SDL_MOUSEMOTION) {
         SDL_MouseMotionEvent mm = event.motion;
         return motion(mm.state, mm.x, mm.y, mm.xrel, mm.yrel);
     } else { // MOUSE_BUTTON
@@ -166,7 +166,7 @@ int MouseController::dispatch() {
 }
 
 void MouseController::grab(bool state) {
-    if (state) {
+    if(state) {
         SDL_ShowCursor(0);
         SDL_WM_GrabInput(SDL_GRAB_ON);
     } else {
@@ -176,19 +176,19 @@ void MouseController::grab(bool state) {
 }
 
 JS(js_mouse_ctrl_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    MouseController *mouse = (MouseController *)Factory<Controller>::get_instance( "MouseController" );
+    MouseController *mouse = (MouseController *)Factory<Controller>::get_instance("MouseController");
 
     // initialize with javascript context
-    if(! mouse->init(global_environment) ) {
+    if(! mouse->init(global_environment)) {
         error("failed initializing mouse controller");
         delete mouse;
         return JS_FALSE;
     }
 
     // assign instance into javascript object
-    if( ! JS_SetPrivate(cx, obj, (void*)mouse) ) {
+    if(! JS_SetPrivate(cx, obj, (void*)mouse)) {
         error("failed assigning mouse controller to javascript");
         delete mouse;
         return JS_FALSE;

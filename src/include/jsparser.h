@@ -71,7 +71,7 @@ public:
     int parse(const char *command);
     void stop();
     void gc();
-    char* readFile(FILE *file,int *len);
+    char* readFile(FILE *file, int *len);
     int reset();
 
     JSBool branch_callback(JSContext* Context, JSScript* Script);

@@ -24,7 +24,7 @@
 #include <layer.h>
 #include <config.h>
 
-DECLARE_CLASS("CamLayer",cam_layer_class,cam_layer_constructor);
+DECLARE_CLASS("CamLayer", cam_layer_class, cam_layer_constructor);
 
 ////////////////////////////////
 // CamLayer methods
@@ -46,23 +46,23 @@ JSPropertySpec cam_layer_properties[] = {
 
 
 JS(cam_layer_constructor) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     Layer *cam = NULL;
     char *type = NULL;
 
     if(argc >= 1) {
         // a specific screen type has been requested
         char *type = js_get_string(argv[0]);
-        cam = Factory<Layer>::new_instance( "CamLayer", type );
+        cam = Factory<Layer>::new_instance("CamLayer", type);
     } else {
         // no screen type has been specified, return the default one
-        cam = Factory<Layer>::new_instance( "CamLayer" );
+        cam = Factory<Layer>::new_instance("CamLayer");
     }
 
     JS_BeginRequest(cx);
 
     if(!cam) {
-        error("%s: cannot open CamLayer",__FUNCTION__);
+        error("%s: cannot open CamLayer", __FUNCTION__);
         JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
                              JSSMSG_FJ_CANT_CREATE, type,
                              strerror(errno));
@@ -70,7 +70,7 @@ JS(cam_layer_constructor) {
         return JS_FALSE;
     }
 
-    if (!JS_SetPrivate(cx, obj, (void *) cam))
+    if(!JS_SetPrivate(cx, obj, (void *) cam))
         JS_ERROR("internal error setting private value");
 
     *rval = OBJECT_TO_JSVAL(obj);
@@ -83,14 +83,14 @@ JS(cam_layer_constructor) {
 
 
 JS(cam_layer_open) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1) return JS_FALSE;
+    if(argc < 1) return JS_FALSE;
     char *type = js_get_string(argv[0]);
 
     GET_LAYER(Layer);
 
-    char *file = JS_GetStringBytes(JS_ValueToString(cx,argv[0]));
+    char *file = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     if(!file) {
         error("JsParser :: invalid string in CamLayer::open");
         JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,

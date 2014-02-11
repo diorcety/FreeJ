@@ -32,7 +32,7 @@
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Layer, CairoLayer, VectorLayer, cairo);
 
-CairoColor::CairoColor(cairo_t *cai) :Color() {
+CairoColor::CairoColor(cairo_t *cai) : Color() {
     r = 0.;
     g = 0.;
     b = 0.;
@@ -45,12 +45,12 @@ void CairoColor::set() {
     double sg = g / 255.;
     double sb = b / 255.;
     double sa = a / 255.;
-    func("Color::set r[%.2f] g[%.2f] b[%.2f] a[%.2f]",sr,sg,sb,sa);
+    func("Color::set r[%.2f] g[%.2f] b[%.2f] a[%.2f]", sr, sg, sb, sa);
     cairo_set_source_rgba(cairo, sr, sg, sb, sa);
 };
 
 CairoLayer::CairoLayer()
-    :Layer() {
+    : Layer() {
 
 
     surf = NULL;
@@ -76,7 +76,7 @@ bool CairoLayer::_init() {
     // create the surface
     stride = cairo_format_stride_for_width
              (CAIRO_FORMAT_ARGB32, geo.w);
-    pixels = malloc (stride * geo.h);
+    pixels = malloc(stride * geo.h);
     surf = cairo_image_surface_create_for_data
            ((unsigned char*)pixels, CAIRO_FORMAT_ARGB32, geo.w, geo.h, stride);
     // create the drawing context
@@ -85,7 +85,7 @@ bool CairoLayer::_init() {
     // cairo_surface_destroy()  on it if  you don't  need to  maintain a
     // separate reference to it.
 
-    color = new CairoColor( cairo );
+    color = new CairoColor(cairo);
 
     opened = true;
     return(true);

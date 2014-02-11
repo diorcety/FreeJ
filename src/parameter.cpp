@@ -49,7 +49,7 @@ Parameter::Parameter(Parameter::Type param_type)
     default:
         error("parameter initialized with unknown type: %u", param_type);
     }
-    if (value_size) {
+    if(value_size) {
         value = calloc(1, value_size);
         min_value = calloc(1, value_size);
         max_value = calloc(1, value_size);
@@ -79,14 +79,14 @@ bool Parameter::set(void *val) {
     ////////////////////////////////////////
     if(type == Parameter::NUMBER) {
         double v = *(double*)val;
-        func("%s NUMBER %g (mult %g)",__PRETTY_FUNCTION__, v, multiplier);
+        func("%s NUMBER %g (mult %g)", __PRETTY_FUNCTION__, v, multiplier);
         // range check (input is always 0.0 - 1.0)
-        if((v<0.0) || (v>1.0)) {
+        if((v < 0.0) || (v > 1.0)) {
             error("%s parameter: value %.2f out of range", name.c_str(), v);
             return(false);
         }
         // apply multiplier for internal value storage
-        if(multiplier!= 1.0)
+        if(multiplier != 1.0)
             v = v * multiplier;
         func("parameter %s set to %.2f", name.c_str(), v);
         // store value
@@ -99,20 +99,20 @@ bool Parameter::set(void *val) {
 
         //    act("filter %s parameter %s set to: %e", name, param->name, (double*)value);
         //////////////////////////////////////
-    } else if (type == Parameter::POSITION) {
+    } else if(type == Parameter::POSITION) {
 
         ((double*)value)[0] = ((double*)val)[0];
         ((double*)value)[1] = ((double*)val)[1];
 
         //////////////////////////////////////
-    } else if (type==Parameter::COLOR) {
+    } else if(type == Parameter::COLOR) {
 
         ((double*)value)[0] = ((double*)val)[0];
         ((double*)value)[1] = ((double*)val)[1];
         ((double*)value)[2] = ((double*)val)[2];
 
         //////////////////////////////////////
-    } else if (type==Parameter::STRING) {
+    } else if(type == Parameter::STRING) {
 
         strcpy((char*)value, (char*)val);
 
@@ -146,7 +146,7 @@ bool Parameter::parse(char *p) {
     if(type == Parameter::NUMBER) {
         double val;
         func("parsing number parameter");
-        if( sscanf(p, "%le", &val) < 1 ) {
+        if(sscanf(p, "%le", &val) < 1) {
             error("error parsing value [%s] for parameter %s", p, name.c_str());
             return false;
         }
@@ -158,16 +158,16 @@ bool Parameter::parse(char *p) {
         bool val;
         func("parsing bool parameter");
         char *pp;
-        for( pp=p; (*pp!='1') & (*pp!='0') ; pp++) {
-            if(pp-p>128) {
+        for(pp = p; (*pp != '1') & (*pp != '0') ; pp++) {
+            if(pp - p > 128) {
                 error("error parsing value [%s] for parameter %s", p, name.c_str());
                 return false;
             }
         }
-        if(*pp=='1') val = true;
-        if(*pp=='0') val = false;
+        if(*pp == '1') val = true;
+        if(*pp == '0') val = false;
         func("parameter %s parsed to %s",
-             p, (val) ? "true" : "false" );
+             p, (val) ? "true" : "false");
         set(&val);
 
         //////////////////////////////////////
@@ -175,11 +175,11 @@ bool Parameter::parse(char *p) {
 
         double val[2];
 
-        if( sscanf(p, "%le %le", &val[0], &val[1]) < 1 ) {
+        if(sscanf(p, "%le %le", &val[0], &val[1]) < 1) {
             error("error parsing position [%s] for parameter %s", p, name.c_str());
             return false;
         }
-        func("parameter %s parsed to %g %g",p, val[0], val[1]);
+        func("parameter %s parsed to %g %g", p, val[0], val[1]);
         set(&val);
 
         //////////////////////////////////////
@@ -187,11 +187,11 @@ bool Parameter::parse(char *p) {
 
         double val[3];
 
-        if( sscanf(p, "%le %le %le", &val[0], &val[1], &val[2]) < 1 ) {
+        if(sscanf(p, "%le %le %le", &val[0], &val[1], &val[2]) < 1) {
             error("error parsing position [%s] for parameter %s", p, name.c_str());
             return false;
         }
-        func("parameter %s parsed to %le %le %le",p, val[0], val[1], val[2]);
+        func("parameter %s parsed to %le %le %le", p, val[0], val[1], val[2]);
         set(&val);
 
         //////////////////////////////////////

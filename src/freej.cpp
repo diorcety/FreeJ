@@ -133,19 +133,19 @@ void cmdline(int argc, char **argv) {
             exit(0);
             break;
         case 'v':
-            fprintf(stderr,"\n");
+            fprintf(stderr, "\n");
             exit(0);
             break;
         case 'D':
             debug_level = atoi(optarg);
-            if(debug_level>3) {
+            if(debug_level > 3) {
                 warning("debug verbosity ranges from 1 to 3\n");
                 debug_level = 3;
             }
             break;
 
         case 's':
-            sscanf(optarg,"%ux%u",&width,&height);
+            sscanf(optarg, "%ux%u", &width, &height);
 //      freej.screen->resize(width,height);
             /* what the fuck ???
             if(width<320) {
@@ -167,9 +167,9 @@ void cmdline(int argc, char **argv) {
             break;
 
         case 'm':
-            sscanf(optarg,"%u",&magn);
+            sscanf(optarg, "%u", &magn);
             magn -= 1;
-            magn = (magn>3) ? 3 : (magn<1) ? 0 : magn;
+            magn = (magn > 3) ? 3 : (magn < 1) ? 0 : magn;
             break;
 
         case 'n':
@@ -181,7 +181,7 @@ void cmdline(int argc, char **argv) {
             break;
 
         case 'f':
-            sscanf (optarg, "%u", &fps);
+            sscanf(optarg, "%u", &fps);
             break;
 
         case 'F':
@@ -190,23 +190,23 @@ void cmdline(int argc, char **argv) {
             break;
 
         case 'j':
-            fd = fopen(optarg,"r");
+            fd = fopen(optarg, "r");
             if(!fd) {
                 error("can't open JS file '%s': %s", optarg, strerror(errno));
                 error("missing script, fatal error.");
                 exit(0);
             } else {
-                snprintf(javascript,512,"%s",optarg);
+                snprintf(javascript, 512, "%s", optarg);
                 fclose(fd);
             }
             break;
 
         case 'p':
-            fd = fopen(optarg,"r");
+            fd = fopen(optarg, "r");
             if(!fd) {
                 error("processing script file not found '%s': %s", optarg, strerror(errno));
             } else {
-                snprintf(processing,512,"%s",optarg);
+                snprintf(processing, 512, "%s", optarg);
                 fclose(fd);
             }
             break;
@@ -219,22 +219,22 @@ void cmdline(int argc, char **argv) {
 
 
         case '?':
-            warning("unrecognized option: %s",optarg);
+            warning("unrecognized option: %s", optarg);
             break;
 
         case 1:
             // if it's a script, load it as such
             // this lets shell bangs work
-            if(strstr(optarg,".js")) {
-                sprintf(javascript,"%s",optarg);
+            if(strstr(optarg, ".js")) {
+                sprintf(javascript, "%s", optarg);
                 continue;
             }
 
             optlen = strlen(optarg);
-            if( (cli_chars+optlen) < MAX_CLI_CHARS ) {
-                sprintf(p,"%s#",optarg);
-                cli_chars+=optlen+1;
-                p+=optlen+1;
+            if((cli_chars + optlen) < MAX_CLI_CHARS) {
+                sprintf(p, "%s#", optarg);
+                cli_chars += optlen + 1;
+                p += optlen + 1;
             } else warning("too much files on commandline, list truncated");
             break;
 
@@ -242,21 +242,21 @@ void cmdline(int argc, char **argv) {
             // act("received commandline parser code %i with optarg %s",res,optarg);
             break;
         }
-    } while (res != -1);
+    } while(res != -1);
 
 #ifdef HAVE_DARWIN
-    for(; optind<argc; optind++) {
+    for(; optind < argc; optind++) {
 
-        if(strstr(argv[optind],".js")) {
-            sprintf(javascript,"%s",argv[optind]);
+        if(strstr(argv[optind], ".js")) {
+            sprintf(javascript, "%s", argv[optind]);
             continue;
         }
 
         optlen = strlen(argv[optind]);
-        if( (cli_chars+optlen) < MAX_CLI_CHARS ) {
-            sprintf(p,"%s#",argv[optind]);
-            cli_chars+=optlen+1;
-            p+=optlen+1;
+        if((cli_chars + optlen) < MAX_CLI_CHARS) {
+            sprintf(p, "%s#", argv[optind]);
+            cli_chars += optlen + 1;
+            p += optlen + 1;
         } else
             warning("too many files on commandline, list truncated");
     }
@@ -273,8 +273,8 @@ int script_selector(struct dirent *dir)
 int script_selector(const struct dirent *dir)
 #endif
 {
-    if(strstr(dir->d_name,".freej")) return(1);
-    if(strstr(dir->d_name,".js"))    return(1);
+    if(strstr(dir->d_name, ".freej")) return(1);
+    if(strstr(dir->d_name, ".js"))    return(1);
     return(0);
 }
 
@@ -285,42 +285,42 @@ int scripts(char *path) {
     struct dirent **filelist;
     int found;
 
-    dir = strtok(path,":");
+    dir = strtok(path, ":");
     do {
-        found = scandir(dir,&filelist,script_selector,alphasort);
-        if(found<0) {
+        found = scandir(dir, &filelist, script_selector, alphasort);
+        if(found < 0) {
             error("loading default scripts: scandir error: %s", strerror(errno));
             return(-1);
         }
         /* .so files found, check if they are plugins */
         while(found--) {
             char temp[256];
-            snprintf(temp,255,"%s/%s",dir,filelist[found]->d_name);
+            snprintf(temp, 255, "%s/%s", dir, filelist[found]->d_name);
             // if it exist is a default one: source it
             freej->open_script(temp);
         }
-    } while(( dir = strtok(NULL,":") ));
+    } while((dir = strtok(NULL, ":")));
 
     return 1;
 }
 //[js]
 
 #ifndef HAVE_DARWIN
-int main (int argc, char **argv) {
+int main(int argc, char **argv) {
     Layer *lay = NULL;
     ConsoleController *con = NULL;
 
     freej = new Context();
 
-    notice("%s version %s   free the veejay",PACKAGE,VERSION);
+    notice("%s version %s   free the veejay", PACKAGE, VERSION);
     act("2001-2009 RASTASOFT :: %s", PACKAGE_URL);
     act("----------------------------------------------");
 
-    cmdline(argc,argv);
+    cmdline(argc, argv);
     set_debug(debug_level);
 
     // create SDL screen by default at selected size
-    screen = Factory<ViewPort>::get_instance( "Screen", screen_name );
+    screen = Factory<ViewPort>::get_instance("Screen", screen_name);
     //  screen = new SdlScreen();
     if(!screen) {
         error("no screen can be opened");
@@ -347,11 +347,11 @@ int main (int argc, char **argv) {
 
     /* initialize the S-Lang text Console */
     if(!noconsole) {
-        if( getenv("TERM") ) {
+        if(getenv("TERM")) {
             con = new SlwConsole();
-            freej->register_controller( con );
+            freej->register_controller(con);
             con->console_init();
-            set_console( con );
+            set_console(con);
         }
     }
 
@@ -359,7 +359,7 @@ int main (int argc, char **argv) {
     freej->config_check("keyboard.js");
 
     /* execute javascript */
-    if( javascript[0] ) {
+    if(javascript[0]) {
         freej->interactive = false;
         freej->open_script(javascript); // TODO: quit here when script failed??
         if(freej->quit) {
@@ -372,12 +372,12 @@ int main (int argc, char **argv) {
     }
 
     /* execute processing */
-    if( processing[0] ) {
+    if(processing[0]) {
         freej->interactive = false;
         char tmp[1024];
 
         // parse includes our extra processing.js library
-        snprintf(tmp,1023,"include(\"processing.js\");script = read_file(\"%s\");Processing(script);", processing);
+        snprintf(tmp, 1023, "include(\"processing.js\");script = read_file(\"%s\");Processing(script);", processing);
         freej->js->parse(tmp);
 
         if(freej->quit) exit(1);
@@ -391,34 +391,34 @@ int main (int argc, char **argv) {
 
 
     // Set fps
-    freej->fps.set( fps );
+    freej->fps.set(fps);
 
     freej->start_running = startstate;
 
     /* create layers requested on commandline */
     {
         char *l, *p, *pp = layer_files;
-        while(cli_chars>0) {
+        while(cli_chars > 0) {
 
             p = pp;
 
-            while(*p!='#' && cli_chars>0) {
+            while(*p != '#' && cli_chars > 0) {
                 p++;
                 cli_chars--;
             }
-            l = p+1;
-            if(cli_chars<=0) break;
-            *p='\0';
+            l = p + 1;
+            if(cli_chars <= 0) break;
+            *p = '\0';
 
-            func("creating layer for file %s",pp);
+            func("creating layer for file %s", pp);
 
             lay = freej->open(pp); // hey, this already init and open the layer !!
             if(lay)  {
-                if( screen->add_layer(lay) ) {
+                if(screen->add_layer(lay)) {
                     lay->start();
                     lay->fps.set(fps);
                 }
-                if (!startstate)
+                if(!startstate)
                     lay->active = false;
             }
 
@@ -427,7 +427,7 @@ int main (int argc, char **argv) {
     }
 
     /* MAIN loop */
-    while( !freej->quit ) {
+    while(!freej->quit) {
         /* CAFUDDARE in sicilian means to add a lot of
            stuff into something; for example, to do the
            bread or the pasta for the pizza you have to

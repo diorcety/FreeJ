@@ -24,7 +24,7 @@
 #include <config.h>
 #include <image_layer.h>
 
-DECLARE_CLASS_GC("ImageLayer",image_layer_class,image_layer_constructor,js_layer_gc);
+DECLARE_CLASS_GC("ImageLayer", image_layer_class, image_layer_constructor, js_layer_gc);
 
 ////////////////////////////////
 // Image Layer methods
@@ -34,15 +34,15 @@ JSFunctionSpec image_layer_methods[] = {
     {0}
 };
 
-JS_CONSTRUCTOR("ImageLayer",image_layer_constructor,ImageLayer);
+JS_CONSTRUCTOR("ImageLayer", image_layer_constructor, ImageLayer);
 JS(image_layer_open) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    if(argc<1) return JS_FALSE;
+    if(argc < 1) return JS_FALSE;
 
     GET_LAYER(ImageLayer);
 
-    char *file = JS_GetStringBytes(JS_ValueToString(cx,argv[0]));
+    char *file = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     if(!file) {
         error("JsParser :: invalid string in ImageLayer::open");
         return JS_FALSE;

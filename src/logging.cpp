@@ -41,13 +41,13 @@ Logger::~Logger() {
 
 Loggable::Loggable() : logger_(NULL), loglevel_(INFO) {
     int r;
-    if ((r=pthread_mutex_init(&logger_mutex_, NULL)) != 0)
+    if((r = pthread_mutex_init(&logger_mutex_, NULL)) != 0)
         throw Error("Initializing logger_mutex_", r);
 }
 
 Loggable::~Loggable() {
     int r;
-    if ((r=pthread_mutex_destroy(&logger_mutex_)) != 0)
+    if((r = pthread_mutex_destroy(&logger_mutex_)) != 0)
         GlobalLogger::printlog(ERROR, "In %s , pthread_mutex_destroy(): %s",
                                __PRETTY_FUNCTION__, strerror(r));
 }
@@ -89,9 +89,9 @@ int Loggable::log(LogLevel level, const char *format, ...) {
 int Loggable::vlog(LogLevel level, const char *format, va_list arg) {
     int rv = 0; // return 0 if nothing is logged
 
-    if (level <= loglevel_) {
+    if(level <= loglevel_) {
         pthread_mutex_lock(&logger_mutex_);
-        if (logger_)
+        if(logger_)
             rv = logger_->vprintlog(level, format, arg);
         else
             rv = GlobalLogger::vprintlog(level, format, arg);
@@ -104,7 +104,7 @@ LogLevel GlobalLogger::loglevel_ = INFO;
 Logger *GlobalLogger::logger_ = NULL;
 pthread_mutex_t GlobalLogger::logger_mutex_ = PTHREAD_MUTEX_INITIALIZER;
 ConsoleController *GlobalLogger::console_ = NULL;
-char GlobalLogger::logbuf_[MAX_LOG_MSG+1] = {0};
+char GlobalLogger::logbuf_[MAX_LOG_MSG + 1] = {0};
 
 LogLevel GlobalLogger::get_loglevel() {
     return loglevel_;
@@ -154,13 +154,13 @@ int GlobalLogger::printlog(LogLevel level, const char *format, ...) {
 int GlobalLogger::vprintlog(LogLevel level, const char *format, va_list arg) {
     int rv = 0; // return 0 if nothing is logged
 
-    if (level <= loglevel_) {
+    if(level <= loglevel_) {
         pthread_mutex_lock(&logger_mutex_);
-        if (logger_) {
+        if(logger_) {
             rv = logger_->vprintlog(level, format, arg);
         } else {
             vsnprintf(logbuf_, MAX_LOG_MSG, format, arg);
-            if (console_) { // Old console compatibility
+            if(console_) {  // Old console compatibility
                 console_->old_printlog(logbuf_);
             } else {
                 const char *prefix = NULL;
@@ -194,9 +194,9 @@ int GlobalLogger::vprintlog(LogLevel level, const char *format, va_list arg) {
 
 WrapperLogger::WrapperLogger() {
     int r;
-    if ((r=pthread_mutex_init(&logbuf_mutex_, NULL)) != 0)
+    if((r = pthread_mutex_init(&logbuf_mutex_, NULL)) != 0)
         throw Error("Initializing logbuf_mutex_", r);
-    if ((logbuf_ = (char *)malloc(sizeof(char)*(MAX_LOG_MSG+1))) == NULL) {
+    if((logbuf_ = (char *)malloc(sizeof(char) * (MAX_LOG_MSG + 1))) == NULL) {
         pthread_mutex_destroy(&logbuf_mutex_);
         throw Error("Allocating logbuf_", 0);
     }
@@ -204,7 +204,7 @@ WrapperLogger::WrapperLogger() {
 
 WrapperLogger::~WrapperLogger() {
     int r;
-    if ((r=pthread_mutex_destroy(&logbuf_mutex_)) != 0)
+    if((r = pthread_mutex_destroy(&logbuf_mutex_)) != 0)
         GlobalLogger::printlog(ERROR, "In %s , pthread_mutex_destroy(): %s",
                                __PRETTY_FUNCTION__, strerror(r));
     free(logbuf_);
@@ -227,7 +227,7 @@ void WrapperLogger::logmsg(LogLevel level, const char *msg) {
 void set_debug(int lev) {
     // In the old logging there was no proper scale,
     // let's do something as compatible as possible..
-    if (lev <= 1)
+    if(lev <= 1)
         GlobalLogger::set_loglevel(INFO);
     else
         GlobalLogger::set_loglevel(DEBUG);

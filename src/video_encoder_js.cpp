@@ -53,7 +53,7 @@ JSFunctionSpec js_vid_enc_methods[] = {
 };
 
 JS(js_vid_enc_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     OggTheoraEncoder *enc;
     enc = new OggTheoraEncoder();
     //  Theora11Encoder *enc;
@@ -83,7 +83,7 @@ JS(js_vid_enc_constructor) {
 
     // initialization is done with audio
 
-    if(!JS_SetPrivate(cx,obj,(void*)enc)) {
+    if(!JS_SetPrivate(cx, obj, (void*)enc)) {
         error("JS::VideoEncoder : can't set the private value");
         delete enc;
         return JS_FALSE;
@@ -93,7 +93,7 @@ JS(js_vid_enc_constructor) {
 }
 
 JS(vid_enc_add_audio) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     JS_CHECK_ARGC(1);
     //#ifdef WITH_AUDIO
@@ -110,7 +110,7 @@ JS(vid_enc_add_audio) {
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -122,13 +122,13 @@ JS(vid_enc_add_audio) {
 }
 
 JS(vid_enc_start_filesave) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -145,13 +145,13 @@ JS(vid_enc_start_filesave) {
 
 
 JS(vid_enc_stop_filesave) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -161,22 +161,22 @@ JS(vid_enc_stop_filesave) {
 }
 
 JS(start_stream) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
 
-    act("starting stream to server %s on port %u",shout_get_host(enc->ice),shout_get_port(enc->ice));
+    act("starting stream to server %s on port %u", shout_get_host(enc->ice), shout_get_port(enc->ice));
 
     if(!enc->is_running())
         enc->start();
 
-    if( shout_open(enc->ice) == SHOUTERR_SUCCESS ) {
+    if(shout_open(enc->ice) == SHOUTERR_SUCCESS) {
 
         notice("streaming on url: http://%s:%i%s",
                shout_get_host(enc->ice), shout_get_port(enc->ice), shout_get_mount(enc->ice));
@@ -196,19 +196,19 @@ JS(start_stream) {
 }
 
 JS(stop_stream) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
     enc->write_to_stream = false;
 
     if(shout_close(enc->ice))
-        error("shout_close: %s",shout_get_error(enc->ice));
+        error("shout_close: %s", shout_get_error(enc->ice));
 
     //  shout_sync(enc->ice);
 
@@ -216,30 +216,30 @@ JS(stop_stream) {
 }
 
 JS(stream_host) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
     char *hostname = js_get_string(argv[0]);
 
     if(shout_set_host(enc->ice, hostname))
-        error("shout_set_host: %s",shout_get_error(enc->ice));
+        error("shout_set_host: %s", shout_get_error(enc->ice));
 
     return JS_TRUE;
 }
 
 JS(stream_port) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -253,31 +253,31 @@ JS(stream_port) {
 }
 
 JS(stream_mount) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
     char *mount = js_get_string(argv[0]);
 
     if(shout_set_mount(enc->ice, mount))
-        error("shout_set_mount: %s",shout_get_error(enc->ice));
+        error("shout_set_mount: %s", shout_get_error(enc->ice));
 
     return JS_TRUE;
 
 }
 
 JS(stream_title) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -285,19 +285,19 @@ JS(stream_title) {
     char *title = js_get_string(argv[0]);
 
     if(shout_set_name(enc->ice, title))
-        error("shout_set_title: %s",shout_get_error(enc->ice));
+        error("shout_set_title: %s", shout_get_error(enc->ice));
 
     return JS_TRUE;
 
 }
 
 JS(stream_username) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -305,64 +305,64 @@ JS(stream_username) {
     char *user = js_get_string(argv[0]);
 
     if(shout_set_user(enc->ice, user))
-        error("shout_set_user: %s",shout_get_error(enc->ice));
+        error("shout_set_user: %s", shout_get_error(enc->ice));
 
     return JS_TRUE;
 
 }
 
 JS(stream_password) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
     char *pass = js_get_string(argv[0]);
 
     if(shout_set_password(enc->ice, pass))
-        error("shout_set_pass: %s",shout_get_error(enc->ice));
+        error("shout_set_pass: %s", shout_get_error(enc->ice));
 
     return JS_TRUE;
 
 }
 
 JS(stream_homepage) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
     char *url = js_get_string(argv[0]);
 
     if(shout_set_url(enc->ice, url))
-        error("shout_set_url: %s",shout_get_error(enc->ice));
+        error("shout_set_url: %s", shout_get_error(enc->ice));
 
     return JS_TRUE;
 
 }
 
 JS(stream_description) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     VideoEncoder *enc = (VideoEncoder*)JS_GetPrivate(cx, obj);
     if(!enc) {
         error("%u:%s:%s :: VideoEncoder core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
     char *desc = js_get_string(argv[0]);
 
     if(shout_set_description(enc->ice, desc))
-        error("shout_set_descrition: %s",shout_get_error(enc->ice));
+        error("shout_set_descrition: %s", shout_get_error(enc->ice));
 
     return JS_TRUE;
 

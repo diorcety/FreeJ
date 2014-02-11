@@ -37,7 +37,7 @@ JSPropertySpec parameter_properties[] = {
 };
 
 JS(parameter_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     // nop
 
@@ -85,13 +85,13 @@ JSP(parameter_get_type) {
     } else {
         switch(param->type) {
         case Parameter::BOOL:
-            str  = JS_NewStringCopyZ(cx,"Boolean");
+            str  = JS_NewStringCopyZ(cx, "Boolean");
             break;
         case Parameter::NUMBER:
-            str  = JS_NewStringCopyZ(cx,"Number");
+            str  = JS_NewStringCopyZ(cx, "Number");
             break;
         case Parameter::COLOR:
-            str  = JS_NewStringCopyZ(cx,"Color");
+            str  = JS_NewStringCopyZ(cx, "Color");
             break;
         case Parameter::POSITION:
             str  = JS_NewStringCopyZ(cx, "Position");

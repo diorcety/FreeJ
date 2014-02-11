@@ -76,7 +76,7 @@ Shouter::~Shouter() {
 }
 
 bool Shouter::start() {
-    if (running)
+    if(running)
         return true;
     int res;
     char srv[64];
@@ -84,13 +84,13 @@ bool Shouter::start() {
     pass((char*)"hackme");
     switch(login()) {
     case SHOUT_PROTOCOL_HTTP:
-        sprintf(srv,"icecast2");
+        sprintf(srv, "icecast2");
         break;
     case SHOUT_PROTOCOL_ICY:
-        sprintf(srv,"shoutcast");
+        sprintf(srv, "shoutcast");
         break;
     default:
-        sprintf(srv,"icecast 2");
+        sprintf(srv, "icecast 2");
         break;
     }
 
@@ -102,19 +102,19 @@ bool Shouter::start() {
       shout_sync(ice);
       }
     */
-    act("starting stream to %s server %s on port %u",srv,host(),port());
+    act("starting stream to %s server %s on port %u", srv, host(), port());
 
     res = shout_open(ice);
-    func("Shouter::start() shout_open returns %i",res);
+    func("Shouter::start() shout_open returns %i", res);
     //	shout_sync(ice);
 
-    if(res==SHOUTERR_SUCCESS) {
-        notice("Video streaming on %s",streamurl);
+    if(res == SHOUTERR_SUCCESS) {
+        notice("Video streaming on %s", streamurl);
         running = true;
     } else {
-        notice ("Can't stream on %s :( probably the server is down or the parameters are wrong", streamurl);
-        notice ("Check http://lab.dyne.org/FreejStreaming for more info or contine enjoying freej ;)");
-        func ("shout_open: %s",shout_get_error(ice));
+        notice("Can't stream on %s :( probably the server is down or the parameters are wrong", streamurl);
+        notice("Check http://lab.dyne.org/FreejStreaming for more info or contine enjoying freej ;)");
+        func("shout_open: %s", shout_get_error(ice));
         //		shout_close(ice);
         //		shout_sync(ice);
         running = false;
@@ -126,7 +126,7 @@ bool Shouter::start() {
 bool Shouter::stop() {
 
     if(running) {
-        notice("Stopping video stream to %s",streamurl);
+        notice("Stopping video stream to %s", streamurl);
         shout_close(ice);
         shout_sync(ice);
         running = false;
@@ -142,67 +142,67 @@ bool Shouter::apply_profile() {
     bool res = true;
     //	if(was_running) stop();
 
-    if(shout_set_host(ice,host()))
-        error("shout_set_host: %s",shout_get_error(ice));
+    if(shout_set_host(ice, host()))
+        error("shout_set_host: %s", shout_get_error(ice));
 
-    if( shout_set_protocol(ice,SHOUT_PROTOCOL_HTTP) )
-        error("shout_set_protocol %i: %s",login(),shout_get_error(ice));
+    if(shout_set_protocol(ice, SHOUT_PROTOCOL_HTTP))
+        error("shout_set_protocol %i: %s", login(), shout_get_error(ice));
 
-    if( shout_set_port(ice,port()) )
-        error("shout_set_port: %s",shout_get_error(ice));
+    if(shout_set_port(ice, port()))
+        error("shout_set_port: %s", shout_get_error(ice));
 
-    if( shout_set_password(ice,pass()) )
-        error("shout_set_password: %s",shout_get_error(ice));
+    if(shout_set_password(ice, pass()))
+        error("shout_set_password: %s", shout_get_error(ice));
     else
-        func("shout_set_password: %s",pass());
+        func("shout_set_password: %s", pass());
 
     // === fixes the format of the mountpoint
-    if((mount())[0]!='/') {
+    if((mount())[0] != '/') {
         char tmp[MAX_VALUE_SIZE];
-        sprintf(tmp,"/%s",mount());
+        sprintf(tmp, "/%s", mount());
         mount(tmp);
     }
 
     // use a .ogg termination
-    if(!strstr(mount(),".ogg")) {
+    if(!strstr(mount(), ".ogg")) {
         char tmp[MAX_VALUE_SIZE];
-        sprintf(tmp,"%s.ogg",mount());
+        sprintf(tmp, "%s.ogg", mount());
         mount(tmp);
     }
 
 
-    if( shout_set_mount(ice,mount()) )
-        error("shout_set_mount: %s",shout_get_error(ice));
+    if(shout_set_mount(ice, mount()))
+        error("shout_set_mount: %s", shout_get_error(ice));
 
-    if( shout_set_user(ice, user()) )
-        error("shout_set_user: %s",shout_get_error(ice));
+    if(shout_set_user(ice, user()))
+        error("shout_set_user: %s", shout_get_error(ice));
     else
-        func("shout_set_user: %s",user());
+        func("shout_set_user: %s", user());
 
-    if( shout_set_format(ice,SHOUT_FORMAT_OGG) )
-        error("shout_set_format: %s",shout_get_error(ice));
+    if(shout_set_format(ice, SHOUT_FORMAT_OGG))
+        error("shout_set_format: %s", shout_get_error(ice));
 
-    if( shout_setName(ice,name()) )
-        error("shout_setName: %s",shout_get_error(ice));
+    if(shout_setName(ice, name()))
+        error("shout_setName: %s", shout_get_error(ice));
 
-    if( shout_set_url(ice,url()) )
-        error("shout_set_url: %s",shout_get_error(ice));
+    if(shout_set_url(ice, url()))
+        error("shout_set_url: %s", shout_get_error(ice));
 
-    if( shout_set_description(ice,desc()) )
-        error("shout_set_description: %s",shout_get_error(ice));
+    if(shout_set_description(ice, desc()))
+        error("shout_set_description: %s", shout_get_error(ice));
 
 
     //if( shout_set_bitrate(ice,_bps) )
     //  error("shout_set_bitrate: %s",shout_get_error(ice));
     {
         char temp[256];
-        snprintf(temp,256,"%s ver. %s",PACKAGE,VERSION);
-        if( shout_set_agent(ice,temp) )
-            error("shout_set_agent: %s",shout_get_error(ice));
+        snprintf(temp, 256, "%s ver. %s", PACKAGE, VERSION);
+        if(shout_set_agent(ice, temp))
+            error("shout_set_agent: %s", shout_get_error(ice));
     }
 
-    snprintf(streamurl,MAX_VALUE_SIZE,
-             "http://%s:%i%s",host(),port(),mount());
+    snprintf(streamurl, MAX_VALUE_SIZE,
+             "http://%s:%i%s", host(), port(), mount());
 
     //	if(was_running) { res = start(); }
     profile_changed = false;
@@ -212,17 +212,17 @@ bool Shouter::apply_profile() {
 int Shouter::send(unsigned char *buf, unsigned int enc) {
     int res = 0;
     if(!running) return(0);
-    if(enc<1) return res;
+    if(enc < 1) return res;
 
     //	shout_sync(ice);
 
-    res = shout_send(ice,(unsigned char*) buf, enc);
+    res = shout_send(ice, (unsigned char*) buf, enc);
     if(res) {
-        error("shout_send: %s",shout_get_error(ice));
-        if (got_sigpipe && (res==SHOUTERR_SOCKET)) {
+        error("shout_send: %s", shout_get_error(ice));
+        if(got_sigpipe && (res == SHOUTERR_SOCKET)) {
             errors++;
             got_sigpipe = false;
-            if(errors>10) {
+            if(errors > 10) {
                 res = -2;
                 errors = 0;
             }

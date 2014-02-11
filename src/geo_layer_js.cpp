@@ -25,7 +25,7 @@
 #include <config.h>
 #include <geo_layer.h>
 
-DECLARE_CLASS_GC("GeometryLayer",geometry_layer_class,geometry_layer_constructor,js_layer_gc);
+DECLARE_CLASS_GC("GeometryLayer", geometry_layer_class, geometry_layer_constructor, js_layer_gc);
 
 ////////////////////////////////
 // Geometry Layer methods
@@ -60,7 +60,7 @@ JSFunctionSpec geometry_layer_methods[] = {
 };
 
 // JSBool fun(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
-JS_CONSTRUCTOR("GeometryLayer",geometry_layer_constructor,GeoLayer);
+JS_CONSTRUCTOR("GeometryLayer", geometry_layer_constructor, GeoLayer);
 
 /// color handling, a macro and some overloading tricks
 #define OPTIONAL_COLOR_ARG(num) \
@@ -74,7 +74,7 @@ JS_CONSTRUCTOR("GeometryLayer",geometry_layer_constructor,GeoLayer);
     color = lay->get_color();
 
 JS(geometry_layer_clear) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     GET_LAYER(GeoLayer);
     lay->clear();
@@ -95,7 +95,7 @@ JS(geometry_layer_color) {
 
     // color accepts arguments in many ways
     // R,G,B,A or R,G,B or the whole 32bit value
-    uint16_t r,g,b,a;
+    uint16_t r, g, b, a;
 
     if(argc == 1) {
 
@@ -106,7 +106,7 @@ JS(geometry_layer_color) {
         JS_ValueToUint16(cx, argv[0], &r);
         JS_ValueToUint16(cx, argv[1], &g);
         JS_ValueToUint16(cx, argv[2], &b);
-        if (argc == 4)
+        if(argc == 4)
             JS_ValueToUint16(cx, argv[3], &a);
         else
             a = 0xff;
@@ -127,7 +127,7 @@ JS(geometry_layer_pixel) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y;
+    uint16_t x, y;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
 
@@ -149,7 +149,7 @@ JS(geometry_layer_hline) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,x2,y;
+    uint16_t x1, x2, y;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &x2);
     JS_ValueToUint16(cx, argv[2], &y);
@@ -170,7 +170,7 @@ JS(geometry_layer_vline) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y1,y2;
+    uint16_t x, y1, y2;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y1);
     JS_ValueToUint16(cx, argv[2], &y2);
@@ -192,7 +192,7 @@ JS(geometry_layer_rectangle) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,x2,y1,y2;
+    uint16_t x1, x2, y1, y2;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &y1);
 
@@ -218,7 +218,7 @@ JS(geometry_layer_rectangle_fill) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,x2,y1,y2;
+    uint16_t x1, x2, y1, y2;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &y1);
 
@@ -243,7 +243,7 @@ JS(geometry_layer_line) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,x2,y1,y2;
+    uint16_t x1, x2, y1, y2;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &y1);
 
@@ -267,7 +267,7 @@ JS(geometry_layer_aaline) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,x2,y1,y2;
+    uint16_t x1, x2, y1, y2;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &y1);
 
@@ -292,7 +292,7 @@ JS(geometry_layer_circle) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,r;
+    uint16_t x, y, r;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &r);
@@ -312,7 +312,7 @@ JS(geometry_layer_aacircle) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,r;
+    uint16_t x, y, r;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &r);
@@ -334,7 +334,7 @@ JS(geometry_layer_circle_fill) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,r;
+    uint16_t x, y, r;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &r);
@@ -356,7 +356,7 @@ JS(geometry_layer_ellipse) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,rx,ry;
+    uint16_t x, y, rx, ry;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &rx);
@@ -377,7 +377,7 @@ JS(geometry_layer_aaellipse) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,rx,ry;
+    uint16_t x, y, rx, ry;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &rx);
@@ -398,7 +398,7 @@ JS(geometry_layer_ellipse_fill) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,rx,ry;
+    uint16_t x, y, rx, ry;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &rx);
@@ -420,7 +420,7 @@ JS(geometry_layer_pie) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,rad,start,end;
+    uint16_t x, y, rad, start, end;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &rad);
@@ -443,7 +443,7 @@ JS(geometry_layer_pie_fill) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x,y,rad,start,end;
+    uint16_t x, y, rad, start, end;
     JS_ValueToUint16(cx, argv[0], &x);
     JS_ValueToUint16(cx, argv[1], &y);
     JS_ValueToUint16(cx, argv[2], &rad);
@@ -466,7 +466,7 @@ JS(geometry_layer_trigon) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,y1,x2,y2,x3,y3;
+    uint16_t x1, y1, x2, y2, x3, y3;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &y1);
     JS_ValueToUint16(cx, argv[2], &x2);
@@ -490,7 +490,7 @@ JS(geometry_layer_aatrigon) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,y1,x2,y2,x3,y3;
+    uint16_t x1, y1, x2, y2, x3, y3;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &y1);
     JS_ValueToUint16(cx, argv[2], &x2);
@@ -514,7 +514,7 @@ JS(geometry_layer_trigon_fill) {
 
     GET_LAYER(GeoLayer);
 
-    uint16_t x1,y1,x2,y2,x3,y3;
+    uint16_t x1, y1, x2, y2, x3, y3;
     JS_ValueToUint16(cx, argv[0], &x1);
     JS_ValueToUint16(cx, argv[1], &y1);
     JS_ValueToUint16(cx, argv[2], &x2);

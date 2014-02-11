@@ -37,7 +37,7 @@ Iterator::Iterator(float *val)
        it holds a pointer to the value to be changed */
     value = val;
 
-    func("initialized iterator with value %i",*value);
+    func("initialized iterator with value %i", *value);
 
     setName("iterator");
 
@@ -45,8 +45,8 @@ Iterator::Iterator(float *val)
     aim = *val;
 
     // minmax defaults
-    max = aim+0xff;
-    min = aim-0xff;
+    max = aim + 0xff;
+    min = aim - 0xff;
 
     // default step
     step = 1;
@@ -67,7 +67,7 @@ int Iterator::cafudda() {
     if(aim != *value) {
 
         // check which direction we wanna go
-        direction = (aim>*value)?true:false;
+        direction = (aim > *value) ? true : false;
 
 
         //    if( envelope == ITERATOR_ENVELOPE_LINEAR) {
@@ -95,19 +95,19 @@ int Iterator::cafudda() {
             return -1;
 
         case LOOP:
-            if(aim==max) // increasing
+            if(aim == max) // increasing
                 *value = min;
             else // decreasing (aim==min)
                 *value = max;
             break;
 
         case BOUNCE:
-            if(*value>=max) aim = min;
+            if(*value >= max) aim = min;
             else aim = max; // if(*value<=min)
             break;
 
         case PULSE: // go back to the initial value and stop
-            if(aim!=saved_value) {
+            if(aim != saved_value) {
                 aim = saved_value;
                 break;
             } else return -1;
@@ -151,7 +151,7 @@ void Iterator::set_mode(iterator_mode_t m) {
         break;
 
     case PULSE:
-        saved_value = (float)*value;
+        saved_value = (float) * value;
         break;
 
     default:

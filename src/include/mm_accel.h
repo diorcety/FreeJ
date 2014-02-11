@@ -27,4 +27,4 @@
 #define MM_ACCEL_X86_3DNOW	0x40000000
 #define MM_ACCEL_X86_MMXEXT	0x20000000
 
-uint32_t mm_accel (void);
+uint32_t mm_accel(void);

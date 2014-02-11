@@ -77,8 +77,8 @@ public:
     }
 
     bool add_call(FunctionType call) {
-        if (typeid(call) == typeid(function_)) {
-            if (get_fun_(call)) {
+        if(typeid(call) == typeid(function_)) {
+            if(get_fun_(call)) {
                 warning("%s %s, callback already added",
                         __PRETTY_FUNCTION__, name_.c_str());
                 return false;
@@ -93,7 +93,7 @@ public:
     }
 
     bool rem_call(FunctionType call) {
-        if (!get_fun_(call)) {
+        if(!get_fun_(call)) {
             warning("%s %s, callback not present",
                     __PRETTY_FUNCTION__, name_.c_str());
             return false;
@@ -104,7 +104,7 @@ public:
 
     void notify(ThreadedClosureQueue *dispatcher) {
         std::list<FunctionType>::iterator i;
-        for (i=calls_.begin() ; i!=calls_.end() ; i++)
+        for(i = calls_.begin() ; i != calls_.end() ; i++)
             dispatcher->add_job(NewClosure(*i));
     }
 
@@ -112,8 +112,8 @@ private:
     FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
         std::list<FunctionType>::iterator i;
-        for (i=calls_.begin() ; i!=calls_.end() ; i++)
-            if (*i == call) fun = call;
+        for(i = calls_.begin() ; i != calls_.end() ; i++)
+            if(*i == call) fun = call;
         return fun;
     }
 
@@ -133,8 +133,8 @@ public:
     }
 
     bool add_call(FunctionType call) {
-        if (typeid(call) == typeid(function_)) {
-            if (get_fun_(call)) {
+        if(typeid(call) == typeid(function_)) {
+            if(get_fun_(call)) {
                 warning("%s %s, callback already added",
                         __PRETTY_FUNCTION__, name_.c_str());
                 return false;
@@ -149,7 +149,7 @@ public:
     }
 
     bool rem_call(FunctionType call) {
-        if (!get_fun_(call)) {
+        if(!get_fun_(call)) {
             warning("%s %s, callback not present",
                     __PRETTY_FUNCTION__, name_.c_str());
             return false;
@@ -160,7 +160,7 @@ public:
 
     void notify(ThreadedClosureQueue *dispatcher, Arg1 arg1) {
         typename std::list<FunctionType>::iterator i;
-        for (i=calls_.begin() ; i!=calls_.end() ; i++)
+        for(i = calls_.begin() ; i != calls_.end() ; i++)
             dispatcher->add_job(NewClosure(*i, arg1));
     }
 
@@ -168,8 +168,8 @@ private:
     FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
         typename std::list<FunctionType>::iterator i;
-        for (i=calls_.begin() ; i!=calls_.end() ; i++)
-            if (*i == call) fun = call;
+        for(i = calls_.begin() ; i != calls_.end() ; i++)
+            if(*i == call) fun = call;
         return fun;
     }
 
@@ -192,7 +192,7 @@ public:
 
     bool add_call(const char *name, void (*prototype)()) {
         callbacks::CbackData *c = get_data_(name);
-        if (!c) {
+        if(!c) {
             warning("%s name %s not found", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -203,7 +203,7 @@ public:
     template <typename Arg1>
     bool add_call(const char *name, void (*prototype)(Arg1)) {
         callbacks::CbackData *c = get_data_(name);
-        if (!c) {
+        if(!c) {
             warning("%s name %s not found", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -213,7 +213,7 @@ public:
 
     bool rem_call(const char *name, void (*prototype)()) {
         callbacks::CbackData *c = get_data_(name);
-        if (!c) {
+        if(!c) {
             warning("%s name %s not found", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -225,7 +225,7 @@ public:
     template <typename Arg1>
     bool rem_call(const char *name, void (*prototype)(Arg1)) {
         callbacks::CbackData *c = get_data_(name);
-        if (!c) {
+        if(!c) {
             warning("%s name %s not found", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -235,7 +235,7 @@ public:
 
     bool unregister_callback(const char *name) {
         callbacks::CbackData *c = get_data_(name);
-        if (!c) {
+        if(!c) {
             warning("%s name %s not found", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -245,7 +245,7 @@ public:
 
     bool register_callback(const char *name, void (*prototype)()) {
         callbacks::CbackData *c = get_data_(name);
-        if (c) {
+        if(c) {
             warning("%s name %s already registered", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -257,7 +257,7 @@ public:
     template <typename Arg1>
     bool register_callback(const char *name, void (*prototype)(Arg1)) {
         callbacks::CbackData *c = get_data_(name);
-        if (c) {
+        if(c) {
             warning("%s name %s already registered", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -268,7 +268,7 @@ public:
 
     bool notify(const char *name) {
         callbacks::CbackData *c = get_data_(name);
-        if (!c) {
+        if(!c) {
             warning("%s name %s not found", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -281,7 +281,7 @@ public:
     template <typename Arg1>
     bool notify(const char *name, Arg1 arg1) {
         callbacks::CbackData *c = get_data_(name);
-        if (!c) {
+        if(!c) {
             warning("%s name %s not found", __PRETTY_FUNCTION__, name);
             return false;
         }
@@ -295,8 +295,8 @@ private:
     callbacks::CbackData *get_data_(const std::string& name) {
         callbacks::CbackData *c = NULL;
         std::list<callbacks::CbackData*>::iterator i;
-        for (i=cbacks_.begin() ; i!=cbacks_.end() ; i++)
-            if ((*i)->name() == name) c = *i;
+        for(i = cbacks_.begin() ; i != cbacks_.end() ; i++)
+            if((*i)->name() == name) c = *i;
         return c;
     }
 

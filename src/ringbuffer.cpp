@@ -35,20 +35,20 @@
    actual buffer size is rounded up to the next power of two.  */
 
 ringbuffer_t *
-ringbuffer_create (size_t sz) {
+ringbuffer_create(size_t sz) {
     unsigned int power_of_two;
     ringbuffer_t *rb;
 
-    rb = (ringbuffer_t*) malloc (sizeof (ringbuffer_t));
+    rb = (ringbuffer_t*) malloc(sizeof(ringbuffer_t));
 
-    for (power_of_two = 1; (((unsigned int) 1) << power_of_two) < sz; power_of_two++);
+    for(power_of_two = 1; (((unsigned int) 1) << power_of_two) < sz; power_of_two++);
 
     rb->size = 1 << power_of_two;
     rb->size_mask = rb->size;
     rb->size_mask -= 1;
     rb->write_ptr = 0;
     rb->read_ptr = 0;
-    rb->buf = (char*)malloc (rb->size);
+    rb->buf = (char*)malloc(rb->size);
     rb->mlocked = 0;
 
     return rb;
@@ -57,22 +57,22 @@ ringbuffer_create (size_t sz) {
 /* Free all data associated with the ringbuffer `rb'. */
 
 void
-ringbuffer_free (ringbuffer_t * rb) {
+ringbuffer_free(ringbuffer_t * rb) {
 #ifdef USE_MLOCK
-    if (rb->mlocked) {
-        munlock (rb->buf, rb->size);
+    if(rb->mlocked) {
+        munlock(rb->buf, rb->size);
     }
 #endif /* USE_MLOCK */
-    free (rb->buf);
-    free (rb);
+    free(rb->buf);
+    free(rb);
 }
 
 /* Lock the data block of `rb' using the system call 'mlock'.  */
 
 int
-ringbuffer_mlock (ringbuffer_t * rb) {
+ringbuffer_mlock(ringbuffer_t * rb) {
 #ifdef USE_MLOCK
-    if (mlock (rb->buf, rb->size)) {
+    if(mlock(rb->buf, rb->size)) {
         return -1;
     }
 #endif /* USE_MLOCK */
@@ -84,7 +84,7 @@ ringbuffer_mlock (ringbuffer_t * rb) {
    safe. */
 
 void
-ringbuffer_reset (ringbuffer_t * rb) {
+ringbuffer_reset(ringbuffer_t * rb) {
     rb->read_ptr = 0;
     rb->write_ptr = 0;
 }
@@ -94,13 +94,13 @@ ringbuffer_reset (ringbuffer_t * rb) {
    pointer.  */
 
 size_t
-ringbuffer_read_space (const ringbuffer_t * rb) {
+ringbuffer_read_space(const ringbuffer_t * rb) {
     size_t w, r;
 
     w = rb->write_ptr;
     r = rb->read_ptr;
 
-    if (w > r) {
+    if(w > r) {
         return w - r;
     } else {
         return (w - r + rb->size) & rb->size_mask;
@@ -112,15 +112,15 @@ ringbuffer_read_space (const ringbuffer_t * rb) {
    pointer.  */
 
 size_t
-ringbuffer_write_space (const ringbuffer_t * rb) {
+ringbuffer_write_space(const ringbuffer_t * rb) {
     size_t w, r;
 
     w = rb->write_ptr;
     r = rb->read_ptr;
 
-    if (w > r) {
+    if(w > r) {
         return ((r - w + rb->size) & rb->size_mask) - 1;
-    } else if (w < r) {
+    } else if(w < r) {
         return (r - w) - 1;
     } else {
         return rb->size - 1;
@@ -131,13 +131,13 @@ ringbuffer_write_space (const ringbuffer_t * rb) {
    `dest'.  Returns the actual number of bytes copied. */
 
 size_t
-ringbuffer_read (ringbuffer_t * rb, char *dest, size_t cnt) {
+ringbuffer_read(ringbuffer_t * rb, char *dest, size_t cnt) {
     size_t free_cnt;
     size_t cnt2;
     size_t to_read;
     size_t n1, n2;
 
-    if ((free_cnt = ringbuffer_read_space (rb)) == 0) {
+    if((free_cnt = ringbuffer_read_space(rb)) == 0) {
         return 0;
     }
 
@@ -145,7 +145,7 @@ ringbuffer_read (ringbuffer_t * rb, char *dest, size_t cnt) {
 
     cnt2 = rb->read_ptr + to_read;
 
-    if (cnt2 > rb->size) {
+    if(cnt2 > rb->size) {
         n1 = rb->size - rb->read_ptr;
         n2 = cnt2 & rb->size_mask;
     } else {
@@ -153,12 +153,12 @@ ringbuffer_read (ringbuffer_t * rb, char *dest, size_t cnt) {
         n2 = 0;
     }
 
-    jmemcpy (dest, &(rb->buf[rb->read_ptr]), n1);
+    jmemcpy(dest, &(rb->buf[rb->read_ptr]), n1);
     rb->read_ptr += n1;
     rb->read_ptr &= rb->size_mask;
 
-    if (n2) {
-        jmemcpy (dest + n1, &(rb->buf[rb->read_ptr]), n2);
+    if(n2) {
+        jmemcpy(dest + n1, &(rb->buf[rb->read_ptr]), n2);
         rb->read_ptr += n2;
         rb->read_ptr &= rb->size_mask;
     }
@@ -171,7 +171,7 @@ ringbuffer_read (ringbuffer_t * rb, char *dest, size_t cnt) {
 copied. */
 
 size_t
-ringbuffer_peek (ringbuffer_t * rb, char *dest, size_t cnt) {
+ringbuffer_peek(ringbuffer_t * rb, char *dest, size_t cnt) {
     size_t free_cnt;
     size_t cnt2;
     size_t to_read;
@@ -180,7 +180,7 @@ ringbuffer_peek (ringbuffer_t * rb, char *dest, size_t cnt) {
 
     tmp_read_ptr = rb->read_ptr;
 
-    if ((free_cnt = ringbuffer_read_space (rb)) == 0) {
+    if((free_cnt = ringbuffer_read_space(rb)) == 0) {
         return 0;
     }
 
@@ -188,7 +188,7 @@ ringbuffer_peek (ringbuffer_t * rb, char *dest, size_t cnt) {
 
     cnt2 = tmp_read_ptr + to_read;
 
-    if (cnt2 > rb->size) {
+    if(cnt2 > rb->size) {
         n1 = rb->size - tmp_read_ptr;
         n2 = cnt2 & rb->size_mask;
     } else {
@@ -196,12 +196,12 @@ ringbuffer_peek (ringbuffer_t * rb, char *dest, size_t cnt) {
         n2 = 0;
     }
 
-    jmemcpy (dest, &(rb->buf[tmp_read_ptr]), n1);
+    jmemcpy(dest, &(rb->buf[tmp_read_ptr]), n1);
     tmp_read_ptr += n1;
     tmp_read_ptr &= rb->size_mask;
 
-    if (n2) {
-        jmemcpy (dest + n1, &(rb->buf[tmp_read_ptr]), n2);
+    if(n2) {
+        jmemcpy(dest + n1, &(rb->buf[tmp_read_ptr]), n2);
         tmp_read_ptr += n2;
         tmp_read_ptr &= rb->size_mask;
     }
@@ -214,13 +214,13 @@ ringbuffer_peek (ringbuffer_t * rb, char *dest, size_t cnt) {
    `src'.  Returns the actual number of bytes copied. */
 
 size_t
-ringbuffer_write (ringbuffer_t * rb, const char *src, size_t cnt) {
+ringbuffer_write(ringbuffer_t * rb, const char *src, size_t cnt) {
     size_t free_cnt;
     size_t cnt2;
     size_t to_write;
     size_t n1, n2;
 
-    if ((free_cnt = ringbuffer_write_space (rb)) == 0) {
+    if((free_cnt = ringbuffer_write_space(rb)) == 0) {
         return 0;
     }
 
@@ -228,7 +228,7 @@ ringbuffer_write (ringbuffer_t * rb, const char *src, size_t cnt) {
 
     cnt2 = rb->write_ptr + to_write;
 
-    if (cnt2 > rb->size) {
+    if(cnt2 > rb->size) {
         n1 = rb->size - rb->write_ptr;
         n2 = cnt2 & rb->size_mask;
     } else {
@@ -236,12 +236,12 @@ ringbuffer_write (ringbuffer_t * rb, const char *src, size_t cnt) {
         n2 = 0;
     }
 
-    jmemcpy (&(rb->buf[rb->write_ptr]), src, n1);
+    jmemcpy(&(rb->buf[rb->write_ptr]), src, n1);
     rb->write_ptr += n1;
     rb->write_ptr &= rb->size_mask;
 
-    if (n2) {
-        jmemcpy (&(rb->buf[rb->write_ptr]), src + n1, n2);
+    if(n2) {
+        jmemcpy(&(rb->buf[rb->write_ptr]), src + n1, n2);
         rb->write_ptr += n2;
         rb->write_ptr &= rb->size_mask;
     }
@@ -252,7 +252,7 @@ ringbuffer_write (ringbuffer_t * rb, const char *src, size_t cnt) {
 /* Advance the read pointer `cnt' places. */
 
 void
-ringbuffer_read_advance (ringbuffer_t * rb, size_t cnt) {
+ringbuffer_read_advance(ringbuffer_t * rb, size_t cnt) {
     rb->read_ptr += cnt;
     rb->read_ptr &= rb->size_mask;
 }
@@ -260,7 +260,7 @@ ringbuffer_read_advance (ringbuffer_t * rb, size_t cnt) {
 /* Advance the write pointer `cnt' places. */
 
 void
-ringbuffer_write_advance (ringbuffer_t * rb, size_t cnt) {
+ringbuffer_write_advance(ringbuffer_t * rb, size_t cnt) {
     rb->write_ptr += cnt;
     rb->write_ptr &= rb->size_mask;
 }
@@ -271,8 +271,8 @@ ringbuffer_write_advance (ringbuffer_t * rb, size_t cnt) {
    length.  */
 
 void
-ringbuffer_get_read_vector (const ringbuffer_t * rb,
-                            ringbuffer_data_t * vec) {
+ringbuffer_get_read_vector(const ringbuffer_t * rb,
+                           ringbuffer_data_t * vec) {
     size_t free_cnt;
     size_t cnt2;
     size_t w, r;
@@ -280,7 +280,7 @@ ringbuffer_get_read_vector (const ringbuffer_t * rb,
     w = rb->write_ptr;
     r = rb->read_ptr;
 
-    if (w > r) {
+    if(w > r) {
         free_cnt = w - r;
     } else {
         free_cnt = (w - r + rb->size) & rb->size_mask;
@@ -288,7 +288,7 @@ ringbuffer_get_read_vector (const ringbuffer_t * rb,
 
     cnt2 = r + free_cnt;
 
-    if (cnt2 > rb->size) {
+    if(cnt2 > rb->size) {
 
         /* Two part vector: the rest of the buffer after the current write
            ptr, plus some from the start of the buffer. */
@@ -314,8 +314,8 @@ ringbuffer_get_read_vector (const ringbuffer_t * rb,
    length.  */
 
 void
-ringbuffer_get_write_vector (const ringbuffer_t * rb,
-                             ringbuffer_data_t * vec) {
+ringbuffer_get_write_vector(const ringbuffer_t * rb,
+                            ringbuffer_data_t * vec) {
     size_t free_cnt;
     size_t cnt2;
     size_t w, r;
@@ -323,9 +323,9 @@ ringbuffer_get_write_vector (const ringbuffer_t * rb,
     w = rb->write_ptr;
     r = rb->read_ptr;
 
-    if (w > r) {
+    if(w > r) {
         free_cnt = ((r - w + rb->size) & rb->size_mask) - 1;
-    } else if (w < r) {
+    } else if(w < r) {
         free_cnt = (r - w) - 1;
     } else {
         free_cnt = rb->size - 1;
@@ -333,7 +333,7 @@ ringbuffer_get_write_vector (const ringbuffer_t * rb,
 
     cnt2 = w + free_cnt;
 
-    if (cnt2 > rb->size) {
+    if(cnt2 > rb->size) {
 
         /* Two part vector: the rest of the buffer after the current write
            ptr, plus some from the start of the buffer. */

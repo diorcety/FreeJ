@@ -44,7 +44,7 @@ AaScreen::AaScreen()
 }
 
 AaScreen::~AaScreen() {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
     if(ascii_context)
         aa_close(ascii_context);
     if(screen_buffer) free(screen_buffer);
@@ -75,7 +75,7 @@ bool AaScreen::_init() {
     ascii_rndparms->gamma = 1;
 
 
-    ascii_context = aa_autoinit (&ascii_hwparms);
+    ascii_context = aa_autoinit(&ascii_hwparms);
     if(!ascii_context) {
         error("cannot initialize ASCII screen (aa_autoinit failed)");
         return(false);
@@ -96,7 +96,7 @@ void AaScreen::blit(Layer *src) {
     }
 
     if(src->need_crop)
-        src->blitter->crop( src, this );
+        src->blitter->crop(src, this);
 
     b = src->current_blit;
 
@@ -104,7 +104,7 @@ void AaScreen::blit(Layer *src) {
     play = (uint32_t*) src->buffer   + b->lay_offset;
 
     // iterates the blit on each horizontal line
-    for( c = b->lay_height ; c > 0 ; c-- ) {
+    for(c = b->lay_height ; c > 0 ; c--) {
 
         (*b->fun)
         ((void*)play, (void*)pscr,
@@ -123,13 +123,13 @@ uint32_t AaScreen::rgba_to_r(uint32_t c) {
     return       c & 0xff;
 }
 uint32_t AaScreen::rgba_to_g(uint32_t c) {
-    return (c>> 8) & 0xff;
+    return (c >> 8) & 0xff;
 }
 uint32_t AaScreen::rgba_to_b(uint32_t c) {
-    return (c>>16) & 0xff;
+    return (c >> 16) & 0xff;
 }
 uint32_t AaScreen::rgba_to_a(uint32_t c) {
-    return (c>>24);
+    return (c >> 24);
 }
 
 void AaScreen::show() {
@@ -138,14 +138,14 @@ void AaScreen::show() {
     uint8_t *aa_buf = (uint8_t*)aa_image(ascii_context);
     uint32_t *rgb_buf = (uint32_t*) screen_buffer;
 
-    for(c=0; c<geo.pixelsize; c++)
-        aa_buf[c] = .30*rgba_to_r(rgb_buf[c])
-                    + .59*rgba_to_g(rgb_buf[c])
-                    + .11*rgba_to_b(rgb_buf[c]);
+    for(c = 0; c < geo.pixelsize; c++)
+        aa_buf[c] = .30 * rgba_to_r(rgb_buf[c])
+                    + .59 * rgba_to_g(rgb_buf[c])
+                    + .11 * rgba_to_b(rgb_buf[c]);
 
 
-    aa_render (ascii_context, ascii_rndparms, 0, 0, geo.w,geo.h);
-    aa_flush (ascii_context);
+    aa_render(ascii_context, ascii_rndparms, 0, 0, geo.w, geo.h);
+    aa_flush(ascii_context);
 
 }
 
@@ -155,8 +155,8 @@ void *AaScreen::coords(int x, int y) {
 // use the .pixelsize geometric property for a pre-calculated stride
 // that is: number of bytes for one full line
     return
-        ( x + geo.pixelsize*y +
-          (uint32_t*)get_surface() );
+        (x + geo.pixelsize * y +
+         (uint32_t*)get_surface());
 }
 
 void *AaScreen::get_surface() {

@@ -28,7 +28,7 @@ $Id: $
 #include <filter.h>
 
 
-DECLARE_CLASS("Filter",filter_class,filter_constructor);
+DECLARE_CLASS("Filter", filter_class, filter_constructor);
 
 JSFunctionSpec filter_methods[] = {
     {"set_parameter",           filter_set_parameter,             4},
@@ -46,7 +46,7 @@ JSPropertySpec filter_properties[] = {
 };
 
 JS(filter_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     int idx;
     char *name;
@@ -61,7 +61,7 @@ JS(filter_constructor) {
     Filter *filter = (Filter*) global_environment->filters.search(name, &idx);
 
     if(!filter) {
-        error("filter not found: %s",name);
+        error("filter not found: %s", name);
         *rval = JSVAL_FALSE;
         return JS_TRUE;
     } else {
@@ -82,20 +82,20 @@ JS(filter_constructor) {
 }
 
 JS(filter_activate) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     FilterInstance *filter_instance = (FilterInstance *) JS_GetPrivate(cx, obj);
     if(!filter_instance) {
         error("%u:%s:%s :: Filter core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         JS_EndRequest(cx);
         //JS_ClearContextThread(cx);
         return JS_FALSE;
     }
     *rval = BOOLEAN_TO_JSVAL(filter_instance->active);
-    if (argc == 1) {
+    if(argc == 1) {
         jsint var = js_get_int(argv[0]);
         filter_instance->active = (bool)var;
     }
@@ -106,7 +106,7 @@ JS(filter_activate) {
 
 
 JS(filter_set_parameter) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     int idx = 0;
     char *name = NULL;
     Parameter *param;
@@ -122,7 +122,7 @@ JS(filter_set_parameter) {
     FilterInstance *filter_instance = (FilterInstance*)JS_GetPrivate(cx, obj);
     if(!filter_instance) {
         error("%u:%s:%s :: Filter core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         return JS_FALSE;
     }
 
@@ -193,7 +193,7 @@ JS(filter_set_parameter) {
 }
 
 JSP(filter_list_parameters) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     JSObject *arr, *otmp;
     jsval val;
 
@@ -209,7 +209,7 @@ JSP(filter_list_parameters) {
     FilterInstance *filter_instance = (FilterInstance*)JS_GetPrivate(cx, obj);
     if(!filter_instance) {
         error("%u:%s:%s :: Layer core data is NULL",
-              __LINE__,__FILE__,__FUNCTION__);
+              __LINE__, __FILE__, __FUNCTION__);
         JS_EndRequest(cx);
         //JS_ClearContextThread(cx);
         return JS_FALSE;
@@ -220,7 +220,7 @@ JSP(filter_list_parameters) {
     int c = 0;
     while(parm) {
         otmp = JS_NewObject(cx, &parameter_class, NULL, obj);
-        JS_SetPrivate(cx,otmp, (void*)parm);
+        JS_SetPrivate(cx, otmp, (void*)parm);
         parm->jsclass = &parameter_class;
         parm->jsobj = otmp;
         val = OBJECT_TO_JSVAL(otmp);
@@ -229,14 +229,14 @@ JSP(filter_list_parameters) {
         parm = (Parameter*)parm->next;
     }
 
-    *vp = OBJECT_TO_JSVAL( arr );
+    *vp = OBJECT_TO_JSVAL(arr);
     JS_EndRequest(cx);
     //JS_ClearContextThread(cx);
     return JS_TRUE;
 }
 
 JSP(filter_get_description) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     JSString *str;
 

@@ -33,8 +33,8 @@
 FACTORY_REGISTER_INSTANTIATOR(Layer, TextLayer, TextLayer, truetype);
 
 TextLayer::TextLayer()
-    :Layer() {
-    func("%s this=%p",__PRETTY_FUNCTION__, this);
+    : Layer() {
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
 
     // set defaults
 
@@ -71,7 +71,7 @@ TextLayer::TextLayer()
 
 
 TextLayer::~TextLayer() {
-    func("%s this=%p",__PRETTY_FUNCTION__, this);
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
 //   close();
 }
 
@@ -89,7 +89,7 @@ bool TextLayer::_init() {
     // in fact the size is changing at every new print
     // so we'll call the Layer::_init(wdt,hgt) many times
 
-    if( ! TTF_WasInit() )
+    if(! TTF_WasInit())
         TTF_Init();
 
     set_font("sans"); // just try one..
@@ -104,12 +104,12 @@ void TextLayer::close() {
     // mh, this call randomly crashes on my machine ...
     if(font) TTF_CloseFont(font);
 
-    if( TTF_WasInit() ) TTF_Quit();
+    if(TTF_WasInit()) TTF_Quit();
     // free sdl font surface
     if(surf) SDL_FreeSurface(surf);
     if(fontfile) free(fontfile);
     if(fontname) free(fontname);
-    FcFini ();
+    FcFini();
 }
 
 void TextLayer::calculate_string_size(char *text, int *w, int *h) {
@@ -135,28 +135,28 @@ char *TextLayer::_get_fontfile(const char *name) {
     FcResult result;
     FcChar8 *file;
 
-    if (!FcInit ()) { // if already initialized returns immediately
+    if(!FcInit()) {   // if already initialized returns immediately
         error("Can't init font config library\n");
         return NULL;
     }
 
-    pat = FcNameParse ((FcChar8 *)name);
+    pat = FcNameParse((FcChar8 *)name);
 
-    FcConfigSubstitute (0, pat, FcMatchPattern);
-    FcDefaultSubstitute (pat);
+    FcConfigSubstitute(0, pat, FcMatchPattern);
+    FcDefaultSubstitute(pat);
 
-    fs = FcFontSetCreate ();
+    fs = FcFontSetCreate();
 
-    match = FcFontMatch (0, pat, &result);
-    if (match) FcFontSetAdd (fs, match);
+    match = FcFontMatch(0, pat, &result);
+    if(match) FcFontSetAdd(fs, match);
 
-    FcPatternDestroy (pat);
+    FcPatternDestroy(pat);
 
-    if (fs && fs->nfont > 0)
-        if (FcPatternGetString(fs->fonts[0], FC_FILE, 0, &file) == FcResultMatch)
+    if(fs && fs->nfont > 0)
+        if(FcPatternGetString(fs->fonts[0], FC_FILE, 0, &file) == FcResultMatch)
             path = strdup((const char *)file);
 
-    FcFontSetDestroy (fs);
+    FcFontSetDestroy(fs);
 
     return path;
 
@@ -206,13 +206,13 @@ bool TextLayer::set_fontsize(int sz) {
 
 void TextLayer::_display_text(SDL_Surface *newsurf) {
 
-    geo.init( newsurf->w, newsurf->h, 32);
+    geo.init(newsurf->w, newsurf->h, 32);
 
     // we're going to free the memory pointed by Layer::buffer,
     // NULLify first..
     buffer = NULL;
 
-    if (surf) SDL_FreeSurface(surf);
+    if(surf) SDL_FreeSurface(surf);
     surf = newsurf;
 
 }

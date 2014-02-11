@@ -50,7 +50,7 @@ JSFunctionSpec js_audio_jack_methods[] = {
 };
 
 JS(js_audio_jack_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     char excp_msg[MAX_ERR_MSG + 1];
     char *port;
@@ -64,7 +64,7 @@ JS(js_audio_jack_constructor) {
 
     AudioCollector *audio = new AudioCollector(port, sample, rate);
 
-    if( ! JS_SetPrivate(cx, obj, (void*)audio) ) {
+    if(! JS_SetPrivate(cx, obj, (void*)audio)) {
         sprintf(excp_msg, "failed assigning audio jack to javascript");
         goto error;
     }
@@ -81,7 +81,7 @@ error:
 }
 
 JS(js_audio_jack_add_output) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     char excp_msg[MAX_ERR_MSG + 1];
     Layer *lay;
     AudioCollector *audio;
@@ -140,13 +140,13 @@ error:
 }
 
 JS(js_audio_jack_add_layer) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     Layer *lay;
     JSObject *jslayer;
-    *rval=JSVAL_FALSE;
+    *rval = JSVAL_FALSE;
 
-    if(argc<1) JS_ERROR("missing argument");
+    if(argc < 1) JS_ERROR("missing argument");
     //   js_is_instanceOf(&layer_class, argv[0]);
 
     jslayer = JSVAL_TO_OBJECT(argv[0]);
@@ -167,7 +167,7 @@ JS(js_audio_jack_add_layer) {
         return JS_TRUE;
     }
 
-    lay->screen->add_audio( audio->Jack );
+    lay->screen->add_audio(audio->Jack);
 
     *rval = JSVAL_TRUE;
 
@@ -195,7 +195,7 @@ error:
 }
 
 void js_audio_jack_gc(JSContext *cx, JSObject *obj) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     AudioCollector *audio = (AudioCollector*)JS_GetPrivate(cx, obj);
     if(!audio) return;

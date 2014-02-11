@@ -32,7 +32,7 @@
 FACTORY_REGISTER_INSTANTIATOR(Layer, OpenCVCamLayer, CamLayer, opencv);
 
 OpenCVCamLayer::OpenCVCamLayer()
-    :Layer() {
+    : Layer() {
 
     capture = NULL;
     frame = NULL;
@@ -46,41 +46,41 @@ OpenCVCamLayer::~OpenCVCamLayer() {
     if(rgba) free(rgba);
     if(frame) cvReleaseImage(&frame);
     if(capture)
-        cvReleaseCapture( &capture );
+        cvReleaseCapture(&capture);
 
 }
 
 bool OpenCVCamLayer::open(const char *devfile) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     // examine the last cypher of the device, should be a number
     int len = strlen(devfile);
-    int dev = atoi(&devfile[len-1]);
+    int dev = atoi(&devfile[len - 1]);
 
-    act("opening camera device %i (%s)",dev,devfile);
+    act("opening camera device %i (%s)", dev, devfile);
 
-    capture = cvCaptureFromCAM( dev );
-    if( !capture ) {
+    capture = cvCaptureFromCAM(dev);
+    if(!capture) {
         error("OpenCV cannot open device %i (%s)", dev, devfile);
         return(false);
     }
 
     // set size
-    cvSetCaptureProperty( capture, CV_CAP_PROP_FRAME_WIDTH, geo.w);
-    cvSetCaptureProperty( capture, CV_CAP_PROP_FRAME_HEIGHT, geo.h);
+    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, geo.w);
+    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, geo.h);
 
 
-    frame = cvQueryFrame( capture );
-    func("first cvQueryFrame returns %p",frame);
+    frame = cvQueryFrame(capture);
+    func("first cvQueryFrame returns %p", frame);
 
-    int w = (int)cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_WIDTH);
-    int h = (int)cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_HEIGHT);
+    int w = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH);
+    int h = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT);
 
     cvsize = cvSize(w, h);
     geo.init(w, h, 32);
 
     act("Camera capture initialized: %ux%u %u chans, %u depth, fourcc %s (seq %s)",
-        w,h, frame->nChannels, frame->depth, frame->colorModel, frame->channelSeq);
+        w, h, frame->nChannels, frame->depth, frame->colorModel, frame->channelSeq);
 
     rgba = malloc(geo.bytesize);
 
@@ -94,7 +94,7 @@ bool OpenCVCamLayer::_init() {
 
 void *OpenCVCamLayer::feed() {
 
-    frame = cvQueryFrame( capture );
+    frame = cvQueryFrame(capture);
 
     ccvt_bgr24_bgr32(geo.w, geo.h, frame->imageData, rgba);
 

@@ -102,16 +102,16 @@ public:
     bool initialized;
 
     enum fourcc { RGBA32, BGRA32, ARGB32 }; ///< pixel formats understood
-    virtual fourcc get_pixel_format() =0; ///< return the pixel format
+    virtual fourcc get_pixel_format() = 0; ///< return the pixel format
 
-    virtual void *get_surface() =0; ///< returns direct pointer to video memory
+    virtual void *get_surface() = 0; ///< returns direct pointer to video memory
 
-    virtual void *coords(int x, int y) =0;
+    virtual void *coords(int x, int y) = 0;
     ///< returns pointer to pixel (slow! use it once and then move around)
 
-    virtual void blit(Layer *src) =0; ///< operate the blit
+    virtual void blit(Layer *src) = 0; ///< operate the blit
 
-    virtual void setup_blits(Layer *lay) =0; ///< setup available blits on added layer
+    virtual void setup_blits(Layer *lay) = 0; ///< setup available blits on added layer
 
     void blit_layers();
 

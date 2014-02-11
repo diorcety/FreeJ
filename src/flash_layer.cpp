@@ -39,24 +39,24 @@
 
 // callbacks
 static void showUrl(char *url, char *target, void *client_data) {
-    act("Flash showURL : %s",url);
+    act("Flash showURL : %s", url);
 }
 static int readfile(const char *filename, char **buffer, long *size) {
     FILE *in;
     char *buf;
     long length;
 
-    in = fopen(filename,"r");
-    if (in == 0) {
-        error("FlashLayer::readfile : error on %s",filename);
+    in = fopen(filename, "r");
+    if(in == 0) {
+        error("FlashLayer::readfile : error on %s", filename);
         return -1;
     }
-    fseek(in,0,SEEK_END);
+    fseek(in, 0, SEEK_END);
     length = ftell(in);
     rewind(in);
     buf = (char*)malloc(length);
-    func("readFile allocated %u Kbytes for %s",length/1024, filename);
-    fread(buf,length,1,in);
+    func("readFile allocated %u Kbytes for %s", length / 1024, filename);
+    fread(buf, length, 1, in);
     fclose(in);
 
     *size = length;
@@ -69,7 +69,7 @@ static void getSwf(char *url, int level, void *client_data) {
     char *buffer;
     long size;
 
-    func("FlashLayer : getSwf called on url %s level %i",url,level);
+    func("FlashLayer : getSwf called on url %s level %i", url, level);
 
     flashHandle = (FlashHandle) client_data;
 
@@ -112,13 +112,13 @@ bool FlashLayer::open(const char *file) {
     int width  = geo.w;
     int height = geo.h;
 
-    if(!readfile(file,&tmpbuffer,&size))
+    if(!readfile(file, &tmpbuffer, &size))
         return false;
 
     // Load level 0 movie
     do {
         status = FlashParse(fh, 0, tmpbuffer, size);
-    } while (status & FLASH_PARSE_NEED_DATA);
+    } while(status & FLASH_PARSE_NEED_DATA);
 
     free(tmpbuffer);
 
@@ -128,14 +128,14 @@ bool FlashLayer::open(const char *file) {
     //  render = calloc(geo.size,1);
 
     if(procbuf) free(procbuf);
-    procbuf = calloc(geo.bytesize,1);
+    procbuf = calloc(geo.bytesize, 1);
 
     fd.pixels = procbuf;
     fd.width = geo.w;
     fd.height = geo.h;
     fd.bpl = geo.bytewidth;
-    fd.depth = geo.bpp>>3; //DefaultDepth(dpy, DefaultScreen(dpy));
-    fd.bpp = geo.bpp>>3; // bytes per pixel
+    fd.depth = geo.bpp >> 3; //DefaultDepth(dpy, DefaultScreen(dpy));
+    fd.bpp = geo.bpp >> 3; // bytes per pixel
 
     res = FlashGraphicInit(fh, &fd);
     if(!res) {

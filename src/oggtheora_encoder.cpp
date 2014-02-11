@@ -75,12 +75,12 @@ OggTheoraEncoder::~OggTheoraEncoder() { // XXX TODO clear the memory !!
     if(audio_buf) free(audio_buf);
     if(m_MixBuffer) free(m_MixBuffer);
     if(m_MixBufferOperation) free(m_MixBufferOperation);
-    if (m_buffStream) free(m_buffStream);
-    if (m_MixedRing) ringbuffer_free(m_MixedRing);
+    if(m_buffStream) free(m_buffStream);
+    if(m_MixedRing) ringbuffer_free(m_MixedRing);
 }
 
 
-bool OggTheoraEncoder::init (ViewPort *scr) {
+bool OggTheoraEncoder::init(ViewPort *scr) {
 
     if(initialized) return true;
 
@@ -92,23 +92,23 @@ bool OggTheoraEncoder::init (ViewPort *scr) {
     oggmux.audio_only = 0;
 
     if(use_audio && audio) {
-        func("allocating encoder audio buffer of %u bytes",audio->buffersize);
+        func("allocating encoder audio buffer of %u bytes", audio->buffersize);
         audio_buf = (float*)calloc(audio->buffersize, sizeof(float));
 
         m_MixVal = 1.0;	//sound mix level coef.
         oggmux.video_only = 0;
         oggmux.sample_rate = audio->samplerate;
-        if (audio->Jack->m_ringbufferchannels)
+        if(audio->Jack->m_ringbufferchannels)
             oggmux.channels = audio->Jack->m_ringbufferchannels;
         else
             oggmux.channels = 1;	//sets to 1 channel if there is no Jack output one
-        if ((audio_quality >= 0) && (audio_quality <= 100))
-            oggmux.vorbis_quality = (double)audio_quality*0.011-0.1;	/*audio_quality as to become from -0.1 to 1.0 (lo to hi)*/
+        if((audio_quality >= 0) && (audio_quality <= 100))
+            oggmux.vorbis_quality = (double)audio_quality * 0.011 - 0.1;	/*audio_quality as to become from -0.1 to 1.0 (lo to hi)*/
 
 //     oggmux.vorbis_bitrate = audio_bitrate;	//not used
 
         m_MixBuffer = (float*) malloc(4096 * 1024);
-        m_MixBufferOperation = (float*) malloc(4096 * 1024 *2);
+        m_MixBufferOperation = (float*) malloc(4096 * 1024 * 2);
 
         m_buffStream = (float *)malloc(4096 * 512 * 4);	//size must be the same as audio_mix_ring declared in JackClient::Attach()
         m_MixedRing = ringbuffer_create(4096 * 512 * 4);
@@ -123,23 +123,23 @@ bool OggTheoraEncoder::init (ViewPort *scr) {
 
     /* Set up Theora encoder */
 
-    int theora_quality = (int) ( (video_quality * 63) / 100);
+    int theora_quality = (int)((video_quality * 63) / 100);
     int w                   = screen->geo.w;
     int h                   = screen->geo.h;
     func("VideoEncoder: encoding theora to quality %u", theora_quality);
     /* Theora has a divisible-by-sixteen restriction for the encoded video size */
     /* scale the frame size up to the nearest /16 and calculate offsets */
-    video_x = ( (w + 15) >> 4) << 4;
-    video_y = ( (h + 15) >> 4) << 4;
+    video_x = ((w + 15) >> 4) << 4;
+    video_y = ((h + 15) >> 4) << 4;
     /* We force the offset to be even.
        This ensures that the chroma samples align properly with the luma
        samples. */
-    frame_x_offset = ( (video_x - w ) / 2) &~ 1;
-    frame_y_offset = ( (video_y - h ) / 2) &~ 1;
+    frame_x_offset = ((video_x - w) / 2) &~ 1;
+    frame_y_offset = ((video_y - h) / 2) &~ 1;
 
 
     /* video settings here */
-    theora_info_init (&oggmux.ti);
+    theora_info_init(&oggmux.ti);
 
     oggmux.ti.width                        = video_x;
     oggmux.ti.height                       = video_y;
@@ -164,7 +164,7 @@ bool OggTheoraEncoder::init (ViewPort *scr) {
     oggmux.ti.keyframe_auto_p              = 1;
     oggmux.ti.keyframe_frequency           = 64;
     oggmux.ti.keyframe_frequency_force     = 64;
-    oggmux.ti.keyframe_data_target_bitrate = (unsigned int) (video_bitrate * 1.5);
+    oggmux.ti.keyframe_data_target_bitrate = (unsigned int)(video_bitrate * 1.5);
     oggmux.ti.keyframe_auto_threshold      = 80;
     oggmux.ti.keyframe_mindistance         = 8;
     oggmux.ti.noise_sensitivity            = 1;
@@ -172,10 +172,10 @@ bool OggTheoraEncoder::init (ViewPort *scr) {
 
     oggmux_init(&oggmux);
 
-    enc_y     = malloc( screen->geo.w * screen->geo.h);
-    enc_u     = malloc((screen->geo.w * screen->geo.h) /2);
-    enc_v     = malloc((screen->geo.w * screen->geo.h) /2);
-    enc_yuyv   = (uint8_t*)malloc(  screen->geo.bytesize );
+    enc_y     = malloc(screen->geo.w * screen->geo.h);
+    enc_u     = malloc((screen->geo.w * screen->geo.h) / 2);
+    enc_v     = malloc((screen->geo.w * screen->geo.h) / 2);
+    enc_yuyv   = (uint8_t*)malloc(screen->geo.bytesize);
 
     act("initialization successful");
     initialized = true;
@@ -196,31 +196,31 @@ int OggTheoraEncoder::Mux(int nfr) {
     size_t sizeFirst = 0;
     size_t sizeVideo = 0;
     float *ringPtr, *mixPtr;
-    memset (m_MixBuffer, 0, 4096 * 1024);
-    memset (m_MixBufferOperation, 0, 4096 * 1024 * 2);
+    memset(m_MixBuffer, 0, 4096 * 1024);
+    memset(m_MixBufferOperation, 0, 4096 * 1024 * 2);
 
-    if ((sizeFirst = ringbuffer_read_space(audio->Jack->first)) != 0) {
+    if((sizeFirst = ringbuffer_read_space(audio->Jack->first)) != 0) {
         size_t rv = ringbuffer_read(audio->Jack->first, (char *)m_MixBuffer, sizeFirst);
-        if (rv != sizeFirst) {
+        if(rv != sizeFirst) {
             std::cerr << "----- Problems reading the in_ring" << std::endl;
             return (false);
         }
-        if ((sizeVideo = ringbuffer_read_space(audio->Jack->audio_mix_ring)) != 0) {
+        if((sizeVideo = ringbuffer_read_space(audio->Jack->audio_mix_ring)) != 0) {
             size_t rf = ringbuffer_read(audio->Jack->audio_mix_ring, (char *)m_MixBufferOperation, sizeVideo);
-            if (rf != sizeVideo) {
+            if(rf != sizeVideo) {
                 std::cerr << "----- Problems reading the audio_mix_ring" << std::endl;
                 return (false);
             }
             mixPtr = m_MixBufferOperation;
             ringPtr = m_MixBuffer;
-            for (size_t j=0; j < rf/sizeof(float); j++, mixPtr++, ringPtr++) {
-                if (oggmux.channels > 1)
+            for(size_t j = 0; j < rf / sizeof(float); j++, mixPtr++, ringPtr++) {
+                if(oggmux.channels > 1)
                     *mixPtr++ += *ringPtr * m_MixVal;	//both channels
                 *mixPtr += *ringPtr * m_MixVal;		//reduce input level
             }
-            if (ringbuffer_write_space (m_MixedRing) >= sizeVideo) {
-                size_t rb = ringbuffer_write (m_MixedRing, (char *)m_MixBufferOperation, sizeVideo);
-                if (rb != sizeVideo) {
+            if(ringbuffer_write_space(m_MixedRing) >= sizeVideo) {
+                size_t rb = ringbuffer_write(m_MixedRing, (char *)m_MixBufferOperation, sizeVideo);
+                if(rb != sizeVideo) {
                     std::cerr << "---" << rb << " : au lieu de :" << sizeVideo \
                               << " octets ecrits dans le ringbuffer !!" << std::endl;
                     return (0);
@@ -232,32 +232,32 @@ int OggTheoraEncoder::Mux(int nfr) {
         } else {
             mixPtr = m_MixBufferOperation;
             ringPtr = m_MixBuffer;
-            for (size_t j=0; j < sizeFirst/sizeof(float); j++, mixPtr++, ringPtr++) {
-                if (oggmux.channels > 1)
+            for(size_t j = 0; j < sizeFirst / sizeof(float); j++, mixPtr++, ringPtr++) {
+                if(oggmux.channels > 1)
                     *mixPtr++ += *ringPtr * m_MixVal;	//both channels
                 *mixPtr += *ringPtr * m_MixVal;		//reduce audio input level on all channels
             }
-            if (ringbuffer_write_space (m_MixedRing) >= sizeFirst) {
-                size_t rf = ringbuffer_write (m_MixedRing, (char *)m_MixBufferOperation, sizeFirst*oggmux.channels);
-                if (rf != sizeFirst*oggmux.channels) {
+            if(ringbuffer_write_space(m_MixedRing) >= sizeFirst) {
+                size_t rf = ringbuffer_write(m_MixedRing, (char *)m_MixBufferOperation, sizeFirst * oggmux.channels);
+                if(rf != sizeFirst * oggmux.channels) {
                     std::cerr << "---" << rf << " : au lieu de :" << sizeFirst*oggmux.channels \
                               << " octets ecrits dans le ringbuffer !!" << std::endl;
                     return (0);
                 }
-                return (sizeFirst*oggmux.channels);
+                return (sizeFirst * oggmux.channels);
             }
         }
     } else {	//no sound in the first ring buffer
-        if ((sizeVideo = ringbuffer_read_space(audio->Jack->audio_mix_ring)) != 0) {
+        if((sizeVideo = ringbuffer_read_space(audio->Jack->audio_mix_ring)) != 0) {
             size_t rv = ringbuffer_read(audio->Jack->audio_mix_ring, (char *)m_MixBufferOperation, sizeVideo);
-            if (rv != sizeVideo) {
+            if(rv != sizeVideo) {
                 std::cerr << "----- Problems reading the audio_mix_ring" << std::endl;
                 return (0);
             }
         }
-        if ((ringbuffer_write_space (m_MixedRing) >= sizeVideo) && sizeVideo) {
-            size_t rv = ringbuffer_write (m_MixedRing, (char *)m_MixBufferOperation, sizeVideo);
-            if (rv != sizeVideo) {
+        if((ringbuffer_write_space(m_MixedRing) >= sizeVideo) && sizeVideo) {
+            size_t rv = ringbuffer_write(m_MixedRing, (char *)m_MixBufferOperation, sizeVideo);
+            if(rv != sizeVideo) {
                 std::cerr << "---" << rv << " : au lieu de :" << sizeVideo \
                           << " octets ecrits dans le ringbuffer !!" << std::endl;
                 return (0);
@@ -268,31 +268,31 @@ int OggTheoraEncoder::Mux(int nfr) {
 }
 
 int OggTheoraEncoder::encode_frame() {
-    encode_video ( 0);
-    if (use_audio) {
+    encode_video(0);
+    if(use_audio) {
         //int sizeFilled = 0;
         size_t rv = 0;
         //sizeFilled = Mux(1024);
 // 	std::cerr << "--sizeFilled :" << sizeFilled << std::endl;
-        if (int rf = ringbuffer_read_space (m_MixedRing)) {
+        if(int rf = ringbuffer_read_space(m_MixedRing)) {
 // 	  std::cerr << "--rf :" << rf << std::endl;
             double rff = 0;
-            if (rf > (4096 * 512 * 4))
+            if(rf > (4096 * 512 * 4))
                 rf  = 4096 * 512 * 4;
             else {
-                rff = ceil(rf/sizeof(float));
-                rff = (rff*sizeof(float)) - sizeof(float);	//take the bigest number divisible by 4 and lower than rf (ringbuffer available datas)
+                rff = ceil(rf / sizeof(float));
+                rff = (rff * sizeof(float)) - sizeof(float);	//take the bigest number divisible by 4 and lower than rf (ringbuffer available datas)
             }
 // 	  std::cerr << "--rff :" << rff << std::endl;
-            if (rff >= ((1024 * sizeof(float) * oggmux.channels - 1))) {	// > to 1024 frames in stereo
-                if ((rv = ringbuffer_read(m_MixedRing, (char *)m_buffStream, (size_t)rff)) == 0) {
+            if(rff >= ((1024 * sizeof(float) * oggmux.channels - 1))) {	// > to 1024 frames in stereo
+                if((rv = ringbuffer_read(m_MixedRing, (char *)m_buffStream, (size_t)rff)) == 0) {
                     std::cerr << "------impossible de lire dans le audio_mix_ring ringbuffer !!!"\
                               << " rff:" << rff << " rv:" << rv << endl;
-                } else if (rv != rff) {
+                } else if(rv != rff) {
                     std::cerr << "------pas assez lu dans audio_mix_ring ringbuffer !!!"\
                               << " rff:" << rff << " rv:" << rv << std::endl << std::flush;
                 }
-                encode_audio ( 0, rv);
+                encode_audio(0, rv);
             }
         }
     }
@@ -311,7 +311,7 @@ int OggTheoraEncoder::encode_frame() {
 
 
 
-int OggTheoraEncoder::encode_video( int end_of_stream) {
+int OggTheoraEncoder::encode_video(int end_of_stream) {
     yuv_buffer          yuv;
 
     /* take picture and convert it to yuv420 */
@@ -335,11 +335,11 @@ int OggTheoraEncoder::encode_video( int end_of_stream) {
     yuv.v = (uint8_t *) enc_v;
 
     /* encode image */
-    oggmux_add_video (&oggmux, &yuv, end_of_stream);
+    oggmux_add_video(&oggmux, &yuv, end_of_stream);
     return 1;
 }
 
-int OggTheoraEncoder::encode_audio( int end_of_stream, size_t sizeInBuff) {
+int OggTheoraEncoder::encode_audio(int end_of_stream, size_t sizeInBuff) {
 
 #ifdef WITH_AUDIO
     //  num = env->audio->framesperbuffer*env->audio->channels*sizeof(int16_t);
@@ -354,8 +354,8 @@ int OggTheoraEncoder::encode_audio( int end_of_stream, size_t sizeInBuff) {
 
     oggmux_add_audio(&oggmux, m_buffStream,
                      sizeInBuff,
-                     sizeInBuff/(sizeof(float)*oggmux.channels), //read / oggmux.channels,
-                     end_of_stream );
+                     sizeInBuff / (sizeof(float)*oggmux.channels), //read / oggmux.channels,
+                     end_of_stream);
 #endif
 
     return 1;

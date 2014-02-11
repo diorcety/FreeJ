@@ -36,17 +36,17 @@
 FACTORY_REGISTER_INSTANTIATOR(Controller, KbdController, KeyboardController, sdl);
 
 KbdController::KbdController()
-    :SdlController() {
+    : SdlController() {
     setName("Keyboard");
     indestructible = true; // we are going to be used as a singleton
-    func("%s this=%p",__PRETTY_FUNCTION__, this);
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
 }
 
 KbdController::~KbdController() {
 }
 
 bool KbdController::init(Context *freej) {
-    func("%s",__PRETTY_FUNCTION__);
+    func("%s", __PRETTY_FUNCTION__);
 
     /* enable key repeat */
     SDL_EnableKeyRepeat(SDL_REPEAT_DELAY, SDL_REPEAT_INTERVAL);
@@ -71,15 +71,15 @@ int KbdController::key_event(const char *state, bool shift, bool ctrl, bool alt,
     Uint16 uni[] = {keysym->unicode, 0};
     //#snprintf(uni, 2, "X %s X", (char*)&keysym->unicode);
     // universal call
-    if (JSCall("key", 7, "buusWuu",
-               event.key.state,
-               keysym->scancode,
-               keysym->sym,
-               SDL_GetKeyName(keysym->sym),
-               uni,
-               keysym->mod,
-               event.key.which
-              ) )
+    if(JSCall("key", 7, "buusWuu",
+              event.key.state,
+              keysym->scancode,
+              keysym->sym,
+              SDL_GetKeyName(keysym->sym),
+              uni,
+              keysym->mod,
+              event.key.which
+             ))
         return 1; // returned true, we are done!
 
     //Uint16 keysym->unicode
@@ -90,10 +90,10 @@ int KbdController::key_event(const char *state, bool shift, bool ctrl, bool alt,
     if(strlen(keyname)) {
         sprintf(funcname, "%s_%s%s%s%s%s",
                 state,
-                (shift? "shift_" : ""),
-                (ctrl?  "ctrl_"  : ""),
-                (alt?   "alt_"   : ""),
-                (num?   "num_"   : ""),
+                (shift ? "shift_" : ""),
+                (ctrl ?  "ctrl_"  : ""),
+                (alt ?   "alt_"   : ""),
+                (num ?   "num_"   : ""),
                 keyname);
 
         func("%s calling method %s()", __func__, funcname);
@@ -118,8 +118,8 @@ int KbdController::dispatch() {
 
     keysym = &event.key.keysym;
 
-    memset(keyname, 0, sizeof(char)<<9);  // *512
-    memset(funcname, 0, sizeof(char)<<9); // *512
+    memset(keyname, 0, sizeof(char) << 9); // *512
+    memset(funcname, 0, sizeof(char) << 9); // *512
 
     // check key modifiers
     if(keysym->mod & KMOD_SHIFT)
@@ -130,11 +130,11 @@ int KbdController::dispatch() {
         alt = true;
 
     // check normal alphabet and letters
-    if( (keysym->sym >= SDLK_0 && keysym->sym <= SDLK_9)
-            || (keysym->sym >= SDLK_a && keysym->sym <= SDLK_z) ) {
+    if((keysym->sym >= SDLK_0 && keysym->sym <= SDLK_9)
+            || (keysym->sym >= SDLK_a && keysym->sym <= SDLK_z)) {
         tmp[0] = keysym->sym;
         tmp[1] = 0x0;
-        sprintf(keyname,"%s", tmp);
+        sprintf(keyname, "%s", tmp);
     }
     // check numeric keypad
     else if(keysym->sym >= SDLK_KP0 && keysym->sym <= SDLK_KP9) {

@@ -25,12 +25,12 @@ void *Plugin::operator[](const char *sym) {
     /* darwin prepends an _ before plugin symbol names */
     if(!point) {
         char tmp[256];
-        snprintf(tmp,256,"_%s",sym);
+        snprintf(tmp, 256, "_%s", sym);
         point = dlsym(_handle, tmp);
     }
 #endif
     if(!point)
-        warning("Plugin::%s[%s] %s",_name,sym,dlerror());
+        warning("Plugin::%s[%s] %s", _name, sym, dlerror());
     return(point);
 }
 
@@ -44,40 +44,40 @@ bool Plugin::open(const char *path) {
 
     dlerror(); //clear up previous errors
 #if 0
-    if (!dlopen_preflight(path)) {
+    if(!dlopen_preflight(path)) {
         warning("plugin '%s' failed: %s", path, dlerror());
         return false;
     }
 #endif
-    _handle = dlopen(path,RTLD_LAZY);
+    _handle = dlopen(path, RTLD_LAZY);
     if(!_handle) {
-        warning("can't open plugin: %s",dlerror());
+        warning("can't open plugin: %s", dlerror());
         return(false);
     }
 
-    getstr = (getch*) (*this)["getname"];
+    getstr = (getch*)(*this)["getname"];
     if(getstr) _name = (*getstr)();
 
-    getstr = (getch*) (*this)["getauthor"];
+    getstr = (getch*)(*this)["getauthor"];
     if(getstr) _author = (*getstr)();
 
-    getstr = (getch*) (*this)["getinfo"];
+    getstr = (getch*)(*this)["getinfo"];
     if(getstr) _info = (*getstr)();
 
-    getver = (getint*) (*this)["getversion"];
+    getver = (getint*)(*this)["getversion"];
     if(getver) _version = (*getver)();
     else _version = 0;
 
     func("Opened plugin %s from %s with handle %p",
-         _name,path,_handle);
+         _name, path, _handle);
 
     __init = (t_init*)(*this)["init"];
     __clean = (t_clean*)(*this)["clean"];
     __process = (t_process*)(*this)["process"];
     __kbd_input = (t_kbdin*)(*this)["kbd_input"];
     if(!__kbd_input) __kbd_input = dummy_kbd_input;
-    if(!__init||!__clean||!__process) {
-        warning("invalid plugin %s",path);
+    if(!__init || !__clean || !__process) {
+        warning("invalid plugin %s", path);
         dlclose(_handle);
         return(false);
     }

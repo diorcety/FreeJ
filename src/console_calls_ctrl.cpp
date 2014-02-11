@@ -58,20 +58,20 @@ int console_param_selection(Context *env, char *cmd) {
     for(p = cmd; *p != '\0'; p++)
         if(*p == '=') {
             *p = '\0';
-            if(*(p-1)==' ')
-                *(p-1) = '\0';
+            if(*(p - 1) == ' ')
+                *(p - 1) = '\0';
             p++;
             break;
         }
 
     while(*p == ' ') p++; // jump all spaces
-    if(*p=='\0') return 0; // no value was given
+    if(*p == '\0') return 0; // no value was given
 
     if(filt) { ///////////////////////// parameters for filter
 
         // find the parameter
         param = (Parameter*)filt->parameters.search(cmd, &idx);
-        if( ! param) {
+        if(! param) {
             error("parameter %s not found in filter %s", cmd, filt->proto->getName().c_str());
             return 0;
         } else
@@ -80,7 +80,7 @@ int console_param_selection(Context *env, char *cmd) {
 
     } else if(lay->parameters) { /////// parameters for layer
         param = (Parameter*)lay->parameters->search(cmd, &idx);
-        if( ! param) {
+        if(! param) {
             error("parameter %s not found in layers %s", cmd, lay->getName().c_str());
             return 0;
         } else
@@ -96,7 +96,7 @@ int console_param_selection(Context *env, char *cmd) {
 
     if(filt) {
 
-        if( ! filt->set_parameter(idx) ) {
+        if(! filt->set_parameter(idx)) {
             error("error setting value %s for parameter %s on filter %s",
                   p, param->getName().c_str(), filt->proto->getName().c_str());
             return 0;
@@ -104,7 +104,7 @@ int console_param_selection(Context *env, char *cmd) {
 
     } else {
 
-        if( ! lay->set_parameter(idx) ) {
+        if(! lay->set_parameter(idx)) {
             error("error setting value %s for parameter %s on layer %s",
                   p, param->getName().c_str(), lay->getName().c_str());
             return 0;
@@ -139,16 +139,16 @@ int console_param_completion(Context *env, char *cmd) {
     if(!params[1]) { // exact match, then fill in command
         p = (Parameter*)params[0];
         //    ::notice("%s :: %s",p->getName().c_str(),p->getDescription().c_str());
-        snprintf(cmd,MAX_CMDLINE,"%s = ",p->getName().c_str());
+        snprintf(cmd, MAX_CMDLINE, "%s = ", p->getName().c_str());
         //    return 1;
     } else {
 
-        notice("List available parameters starting with \"%s\"",cmd);
+        notice("List available parameters starting with \"%s\"", cmd);
 
     }
 
     int c;
-    for(c=0; params[c]; c++) {
+    for(c = 0; params[c]; c++) {
         p = (Parameter*)params[c];
         switch(p->type) {
         case Parameter::BOOL:
@@ -214,43 +214,43 @@ int console_blit_completion(Context *env, char *cmd) {
 
     if(!blits[1]) { // exact match, then fill in command
         b = (Blit*) blits[0];
-        ::notice("%s :: %s",b->getName().c_str(),b->getDescription().c_str());
-        snprintf(cmd,MAX_CMDLINE,"%s",b->getName().c_str());
+        ::notice("%s :: %s", b->getName().c_str(), b->getDescription().c_str());
+        snprintf(cmd, MAX_CMDLINE, "%s", b->getName().c_str());
         return 1;
     }
 
-    if(cmd[0]==0x0)
+    if(cmd[0] == 0x0)
         notice("List available blits");
     else
-        notice("List available blits starting with \"%s\"",cmd);
+        notice("List available blits starting with \"%s\"", cmd);
 
 
-    for(c=0; blits[c]; c+=4) {
+    for(c = 0; blits[c]; c += 4) {
         char tmp[256];
 
         b = (Blit*)blits[c];
         if(!b) break;
-        snprintf(tmp,255,"%s", b->getName().c_str());
+        snprintf(tmp, 255, "%s", b->getName().c_str());
 
-        b = (Blit*)blits[c+1];
+        b = (Blit*)blits[c + 1];
         if(b) {
             strncat(tmp, "\t", 255);
             strncat(tmp, b->getName().c_str(), 255);
         }
 
-        b = (Blit*)blits[c+2];
+        b = (Blit*)blits[c + 2];
         if(b) {
             strncat(tmp, "\t", 255);
             strncat(tmp, b->getName().c_str(), 255);
         }
 
-        b = (Blit*)blits[c+3];
+        b = (Blit*)blits[c + 3];
         if(b) {
             strncat(tmp, "\t", 255);
             strncat(tmp, b->getName().c_str(), 255);
         }
 
-        ::act("%s",tmp);
+        ::act("%s", tmp);
 
     }
     return c;
@@ -272,7 +272,7 @@ int console_blit_param_selection(Context *env, char *cmd) {
     }
     b = lay->current_blit;
     if(!b) {
-        ::error("no blit selected on layer %s",lay->getName().c_str());
+        ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
     }
     // find the values after the first blank space
@@ -280,14 +280,14 @@ int console_blit_param_selection(Context *env, char *cmd) {
     for(p = cmd; *p != '\0'; p++)
         if(*p == '=') {
             *p = '\0';
-            if(*(p-1)==' ')
-                *(p-1) = '\0';
+            if(*(p - 1) == ' ')
+                *(p - 1) = '\0';
             p++;
             break;
         }
 
     while(*p == ' ') p++; // jump all spaces
-    if(*p=='\0') return 0; // no value was given
+    if(*p == '\0') return 0; // no value was given
     param = (Parameter*)b->parameters.search(cmd, &idx);
     if(! param) {
         error("parameter %s not found in blit %s", cmd, b->getName().c_str());
@@ -313,7 +313,7 @@ int console_blit_param_completion(Context *env, char *cmd) {
     }
     b = lay->current_blit;
     if(!b) {
-        ::error("no blit selected on layer %s",lay->getName().c_str());
+        ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
     }
     params = b->parameters.completion(cmd);
@@ -322,19 +322,19 @@ int console_blit_param_completion(Context *env, char *cmd) {
     if(!params[1]) { // exact match, then fill in command
         p = (Parameter*)params[0];
         //    ::notice("%s :: %s",p->getName().c_str(),p->getDescription().c_str());
-        snprintf(cmd,MAX_CMDLINE,"%s = ",p->getName().c_str());
+        snprintf(cmd, MAX_CMDLINE, "%s = ", p->getName().c_str());
         //    return 1;
     } else {
 
-        if(cmd[0]==0x0)
-            notice("List available blit parameters",cmd);
+        if(cmd[0] == 0x0)
+            notice("List available blit parameters", cmd);
         else
-            notice("List available blit parameters starting with \"%s\"",cmd);
+            notice("List available blit parameters starting with \"%s\"", cmd);
 
     }
 
     int c;
-    for(c=0; params[c]; c++) {
+    for(c = 0; params[c]; c++) {
         p = (Parameter*)params[c];
         switch(p->type) {
         case Parameter::BOOL:
@@ -376,18 +376,18 @@ int console_filter_selection(Context *env, char *cmd) {
 
     filt = (Filter*)env->filters.search(cmd, &idx);
     if(!filt) {
-        ::error("filter not found: %s",cmd);
+        ::error("filter not found: %s", cmd);
         return 0;
     }
 
     Layer *lay = (Layer*)env->screens.selected()->layers.selected();
     if(!lay) {
-        ::error("no layer selected for effect %s",filt->getName().c_str());
+        ::error("no layer selected for effect %s", filt->getName().c_str());
         return 0;
     }
 
-    if( ! filt->apply(lay) ) {
-        ::error("error applying filter %s on layer %s",filt->getName().c_str(), lay->getName().c_str());
+    if(! filt->apply(lay)) {
+        ::error("error applying filter %s on layer %s", filt->getName().c_str(), lay->getName().c_str());
         return 0;
     }
 
@@ -409,30 +409,30 @@ int console_filter_completion(Context *env, char *cmd) {
     if(!res[1]) { // exact match: fill in the command
         filt = res[0];
         if(!filt) return 0; // doublecheck safety fix
-        ::notice("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str());
-        snprintf(cmd,511,"%s",res[0]->getName().c_str());
-        c=1;
+        ::notice("%s :: %s", filt->getName().c_str(), filt->getDescription().c_str());
+        snprintf(cmd, 511, "%s", res[0]->getName().c_str());
+        c = 1;
     } else { // list all matches
-        for(c=0; res[c]; c+=4) {
+        for(c = 0; res[c]; c += 4) {
             char tmp[256];
 
             filt = res[c];
             if(!filt) break;
-            snprintf(tmp,255,"%s", filt->getName().c_str());
+            snprintf(tmp, 255, "%s", filt->getName().c_str());
 
-            filt = res[c+1];
+            filt = res[c + 1];
             if(filt) {
                 strncat(tmp, "\t", 255);
                 strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            filt = res[c+2];
+            filt = res[c + 2];
             if(filt) {
                 strncat(tmp, "\t", 255);
                 strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            filt = res[c+3];
+            filt = res[c + 3];
             if(filt) {
                 strncat(tmp, "\t", 255);
                 strncat(tmp, filt->getName().c_str(), 255);
@@ -440,7 +440,7 @@ int console_filter_completion(Context *env, char *cmd) {
 
             //      ::act("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str()());
 
-            ::act("%s",tmp);
+            ::act("%s", tmp);
         }
     }
     return c;
@@ -449,15 +449,15 @@ int console_filter_completion(Context *env, char *cmd) {
 int console_exec_script(Context *env, char *cmd) {
     struct stat filestatus;
 
-    func("exec_script(%s)",cmd);
+    func("exec_script(%s)", cmd);
 
     // check that is a good file
-    if( stat(cmd,&filestatus) < 0 ) {
-        error("invalid file %s: %s",cmd,strerror(errno));
+    if(stat(cmd, &filestatus) < 0) {
+        error("invalid file %s: %s", cmd, strerror(errno));
         return 0;
     } else { // is it a directory?
-        if( S_ISDIR( filestatus.st_mode ) ) {
-            error("can't open a directory as a script",cmd);
+        if(S_ISDIR(filestatus.st_mode)) {
+            error("can't open a directory as a script", cmd);
             return 0;
         }
     }
@@ -469,7 +469,7 @@ int console_exec_script(Context *env, char *cmd) {
 
 int console_exec_script_command(Context *env, char *cmd) {
 
-    act("> %s",cmd);
+    act("> %s", cmd);
 
     // check that is a good file
 
@@ -482,16 +482,16 @@ int console_open_layer(Context *env, char *cmd) {
     struct stat filestatus;
     int len;
 
-    func("open_layer(%s)",cmd);
+    func("open_layer(%s)", cmd);
 
     // check that is a good file
-    if (strncasecmp(cmd, "/dev/video",10)!=0) {
-        if( stat(cmd,&filestatus) < 0 ) {
-            error("invalid file %s: %s",cmd,strerror(errno));
+    if(strncasecmp(cmd, "/dev/video", 10) != 0) {
+        if(stat(cmd, &filestatus) < 0) {
+            error("invalid file %s: %s", cmd, strerror(errno));
             return 0;
         } else { // is it a directory?
-            if( S_ISDIR( filestatus.st_mode ) ) {
-                error("can't open a directory as a layer",cmd);
+            if(S_ISDIR(filestatus.st_mode)) {
+                error("can't open a directory as a layer", cmd);
                 return 0;
             }
         }
@@ -510,11 +510,11 @@ int console_open_layer(Context *env, char *cmd) {
         //	  l->set_fps(env->fps_speed);
         l->start();
         env->screen->add_layer(l);
-        l->active=true;
+        l->active = true;
         //    l->fps=env->fps_speed;
 
         len = env->screens.selected()->layers.len();
-        notice("layer successfully created, now you have %i layers",len);
+        notice("layer successfully created, now you have %i layers", len);
         return len;
     }
     error("layer creation aborted");
@@ -543,9 +543,9 @@ int console_open_text_layer(Context *env, char *cmd) {
     txt->start();
     //  txt->set_fps(0);
     env->screen->add_layer(txt);
-    txt->active=true;
+    txt->active = true;
 
-    notice("layer successfully created with text: %s",cmd);
+    notice("layer successfully created with text: %s", cmd);
     return env->screens.selected()->layers.len();
 }
 #endif
@@ -556,8 +556,8 @@ int filebrowse_completion_selector(struct dirent *dir)
 int filebrowse_completion_selector(const struct dirent *dir)
 #endif
 {
-    if(dir->d_name[0]=='.')
-        if(dir->d_name[1]!='.')
+    if(dir->d_name[0] == '.')
+        if(dir->d_name[1] != '.')
             return(0); // skip hidden files
     return(1);
 }
@@ -578,54 +578,54 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     int found;
     int c;
 
-    if(cmd[0]!='/') // path is relative: prefix our location
-        snprintf(path,MAX_CMDLINE,"%s/%s",getenv("PWD"),cmd);
+    if(cmd[0] != '/') // path is relative: prefix our location
+        snprintf(path, MAX_CMDLINE, "%s/%s", getenv("PWD"), cmd);
     else // path is absolute
-        strncpy(path,cmd,MAX_CMDLINE);
+        strncpy(path, cmd, MAX_CMDLINE);
 
-    if( stat(path,&filestatus) < 0 ) { // no file there?
+    if(stat(path, &filestatus) < 0) {  // no file there?
 
         // parse backwards to the first '/' and zero it,
         // store the word of the right part in needle
-        for( c = strlen(path); path[c]!='/' && c>0; c-- );
-        strncpy(needle,&path[c+1],MAX_CMDLINE);
-        path[c+1] = '\0';
+        for(c = strlen(path); path[c] != '/' && c > 0; c--);
+        strncpy(needle, &path[c + 1], MAX_CMDLINE);
+        path[c + 1] = '\0';
         incomplete = true;
 
-        if( stat(path,&filestatus) < 0) { // yet no valid file?
-            error("error on file completion path %s: %s",path,strerror(errno));
+        if(stat(path, &filestatus) < 0) { // yet no valid file?
+            error("error on file completion path %s: %s", path, strerror(errno));
             return 0;
         }
 
     } else { // we have a file!
 
-        if( S_ISREG( filestatus.st_mode ) )
+        if(S_ISREG(filestatus.st_mode))
             return 1; // is a regular file!
 
         // is it a directory? then append the trailing slash
-        if( S_ISDIR( filestatus.st_mode ) ) {
+        if(S_ISDIR(filestatus.st_mode)) {
             c = strlen(path);
-            if(path[c-1]!='/') {
+            if(path[c - 1] != '/') {
                 path[c] = '/';
-                path[c+1] = '\0';
+                path[c + 1] = '\0';
             }
         }
 
-        strncpy(cmd,path,MAX_CMDLINE);
+        strncpy(cmd, path, MAX_CMDLINE);
 
     }
-    func("file completion: %s",cmd);
+    func("file completion: %s", cmd);
     // at this point in path there should be something valid
     found = scandir
-            (path,&filelist,
-             filebrowse_completion_selector,alphasort);
+            (path, &filelist,
+             filebrowse_completion_selector, alphasort);
 
-    if(found<0) {
-        error("filebrowse_completion: scandir: %s",strerror(errno));
+    if(found < 0) {
+        error("filebrowse_completion: scandir: %s", strerror(errno));
         return 0;
     }
 
-    for(c=found-1; c>0; c--) { // insert each entry found in a linklist
+    for(c = found - 1; c > 0; c--) { // insert each entry found in a linklist
         e = new Entry();
         e->setName(filelist[c]->d_name);
         files.append(e);
@@ -643,15 +643,15 @@ int console_filebrowse_completion(Context *env, char *cmd) {
             if(!comps[1]) { // exact match
 
                 e = comps[0];
-                snprintf(cmd,MAX_CMDLINE,"%s%s",path,e->getName().c_str());
+                snprintf(cmd, MAX_CMDLINE, "%s%s", path, e->getName().c_str());
 
                 c = 1;
 
             } else { // multiple matches
 
-                notice("list of %s* files in %s:",needle,path);
-                for(c=0; comps[c]; c++) {
-                    ::act(" %s",comps[c]->getName().c_str());
+                notice("list of %s* files in %s:", needle, path);
+                for(c = 0; comps[c]; c++) {
+                    ::act(" %s", comps[c]->getName().c_str());
                 }
 
             }
@@ -661,11 +661,11 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     } else {
 
         // list all entries
-        notice("list of all files in %s:",path);
+        notice("list of all files in %s:", path);
         e = files.begin();
-        for(c=0, e=files.begin();
-                e; e=e->next, c++)
-            ::act("%s",e->getName().c_str());
+        for(c = 0, e = files.begin();
+                e; e = e->next, c++)
+            ::act("%s", e->getName().c_str());
 
     }
     // free entries allocated in memory
@@ -705,7 +705,7 @@ int console_generator_completion(Context *env, char *cmd) {
     int c;
 
     if(!cmd) return 0;
-    func("generator completion for %s",cmd);
+    func("generator completion for %s", cmd);
     res = env->generators.completion(cmd);
     if(!res[0]) {
         func("nothing found");
@@ -714,31 +714,31 @@ int console_generator_completion(Context *env, char *cmd) {
 
     if(!res[1]) { // exact match: fill in the command
         filt = res[0];
-        ::notice("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str());
-        snprintf(cmd,511,"%s",filt->getName().c_str());
-        c=1;
+        ::notice("%s :: %s", filt->getName().c_str(), filt->getDescription().c_str());
+        snprintf(cmd, 511, "%s", filt->getName().c_str());
+        c = 1;
     } else { // list all matches
-        for(c=0; res[c]; c+=4) {
+        for(c = 0; res[c]; c += 4) {
 
             char tmp[260];
 
             filt = res[c];
             if(!filt) break;
-            snprintf(tmp,255,"%s", filt->getName().c_str());
+            snprintf(tmp, 255, "%s", filt->getName().c_str());
 
-            filt = res[c+1];
+            filt = res[c + 1];
             if(filt) {
                 strncat(tmp, "\t", 255);
                 strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            filt = res[c+2];
+            filt = res[c + 2];
             if(filt) {
                 strncat(tmp, "\t", 255);
                 strncat(tmp, filt->getName().c_str(), 255);
             }
 
-            filt = res[c+3];
+            filt = res[c + 3];
             if(filt) {
                 strncat(tmp, "\t", 255);
                 strncat(tmp, filt->getName().c_str(), 255);
@@ -746,7 +746,7 @@ int console_generator_completion(Context *env, char *cmd) {
 
             //      ::act("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str()());
 
-            ::act("%s",tmp);
+            ::act("%s", tmp);
         }
 
     }
@@ -765,7 +765,7 @@ int console_generator_selection(Context *env, char *cmd) {
     }
     // this is something specific to the generator layer
     // it needs this from the environment..
-    tmp->register_generators( &env->generators );
+    tmp->register_generators(&env->generators);
 
     if(!tmp->open(cmd)) {
         error("generator %s is not found", cmd);
@@ -776,7 +776,7 @@ int console_generator_selection(Context *env, char *cmd) {
     tmp->start();
     //  tmp->set_fps(env->fps_speed);
     env->screen->add_layer(tmp);
-    tmp->active=true;
+    tmp->active = true;
 
     notice("generator %s successfully created", tmp->getName().c_str());
     return 1;

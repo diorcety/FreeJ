@@ -40,7 +40,7 @@
 
 uint32_t *Osd::print(const char *text, uint32_t *pos, int hsize, int vsize) {
     uint32_t *diocrap = pos; //(uint32_t *)env->coords(xpos,ypos);
-    unsigned char *buffer = (unsigned char *) env->screen->get_surface ();
+    unsigned char *buffer = (unsigned char *) env->screen->get_surface();
     v = env->screen->w * vsize; // stride
 
     //  len = strlen(text);
@@ -48,25 +48,25 @@ uint32_t *Osd::print(const char *text, uint32_t *pos, int hsize, int vsize) {
     /* quest'algoritmo di rastering a grandezza variabile delle font
        e' una cosa di cui vado molto fiero, ogni volta che lo vedo il
        petto mi si gonfia e mi escono sonore scorregge. */
-    for (y=0; y<CHAR_HEIGHT; y++) {
+    for(y = 0; y < CHAR_HEIGHT; y++) {
         ptr = diocrap += v;
 
         /* control screen bounds */
-        if (diocrap-(uint32_t *)buffer > (env->screen->size - env->screen->pitch))
-            return diocrap-newline; /* low bound */
-        while (diocrap - (uint32_t *)buffer < env->screen->pitch)
+        if(diocrap - (uint32_t *)buffer > (env->screen->size - env->screen->pitch))
+            return diocrap - newline; /* low bound */
+        while(diocrap - (uint32_t *)buffer < env->screen->pitch)
             ptr = diocrap += v;
 
         //    for (x=0; x<len; x++)
-        x=0;
+        x = 0;
         uint32_t *limit = env->screen->w * env->screen->h + (uint32_t *) env->screen->get_surface() ;
-        if ( ptr + env->screen->w * hsize < limit) {
-            while (text[x] != '\0' ) {
+        if(ptr + env->screen->w * hsize < limit) {
+            while(text[x] != '\0') {
                 f = fontdata[text[x] * CHAR_HEIGHT + y];
-                for (i = (CHAR_WIDTH-1); i >= 0; i--) {
-                    if (f & (CHAR_START << i)) {
-                        for (ch=0; ch<hsize; ch++) {
-                            for (cv=0; cv<v; cv+=env->screen->w)
+                for(i = (CHAR_WIDTH - 1); i >= 0; i--) {
+                    if(f & (CHAR_START << i)) {
+                        for(ch = 0; ch < hsize; ch++) {
+                            for(cv = 0; cv < v; cv += env->screen->w)
                                 ptr [cv] = _color32;
                             ptr++;
                         }
@@ -98,7 +98,7 @@ Osd::~Osd() { }
 void Osd::init(Context *screen) {
     this->env = screen;
     _set_color(white);
-    snprintf(title,64,"%s v%s codename BeTV",PACKAGE,VERSION);
+    snprintf(title, 64, "%s v%s codename BeTV", PACKAGE, VERSION);
 
     // setup sizes
     resize();
@@ -136,19 +136,19 @@ void Osd::resize() {
     /* setup coordinates for OSD information
        stored in offsets of video memory addresses
        to gain speed and limit computation during cycles */
-    fps_offset = (uint32_t*)env->screen->coords(env->screen->w-50,1);
-    selection_offset = (uint32_t*)env->screen->coords(80,1);
-    status_offset = (uint32_t*)env->screen->coords(HBOUND,env->screen->h-12);
-    layer_offset = (uint32_t*)env->screen->coords(env->screen->w-28,VBOUND+TOPLIST);
-    filter_offset = (uint32_t*)env->screen->coords(3,VBOUND+6);
-    hicredits_offset = (uint32_t*)env->screen->coords((env->screen->w/2)-140,VBOUND+5);
-    locredits_offset1 = (uint32_t*)env->screen->coords((env->screen->w/2)+10,env->screen->h-VBOUND-30);
-    locredits_offset2 = (uint32_t*)env->screen->coords((env->screen->w/2)-150,env->screen->h-VBOUND-33);
-    hilogo_offset = (uint32_t*)env->screen->coords(3,0);
-    topclean_offset = (uint64_t*)env->screen->coords(0,0);
-    downclean_offset = (uint64_t*) env->screen->coords(0,env->screen->h-VBOUND);
+    fps_offset = (uint32_t*)env->screen->coords(env->screen->w - 50, 1);
+    selection_offset = (uint32_t*)env->screen->coords(80, 1);
+    status_offset = (uint32_t*)env->screen->coords(HBOUND, env->screen->h - 12);
+    layer_offset = (uint32_t*)env->screen->coords(env->screen->w - 28, VBOUND + TOPLIST);
+    filter_offset = (uint32_t*)env->screen->coords(3, VBOUND + 6);
+    hicredits_offset = (uint32_t*)env->screen->coords((env->screen->w / 2) - 140, VBOUND + 5);
+    locredits_offset1 = (uint32_t*)env->screen->coords((env->screen->w / 2) + 10, env->screen->h - VBOUND - 30);
+    locredits_offset2 = (uint32_t*)env->screen->coords((env->screen->w / 2) - 150, env->screen->h - VBOUND - 33);
+    hilogo_offset = (uint32_t*)env->screen->coords(3, 0);
+    topclean_offset = (uint64_t*)env->screen->coords(0, 0);
+    downclean_offset = (uint64_t*) env->screen->coords(0, env->screen->h - VBOUND);
 
-    newline = env->screen->pitch*(CHAR_HEIGHT);
+    newline = env->screen->pitch * (CHAR_HEIGHT);
     osd_jump = (env->screen->w - HBOUND - HBOUND) / 2;
 
 
@@ -199,22 +199,22 @@ void Osd::print() {
 
 void Osd::_print_status() {
     unsigned char c;
-    int wstride = env->screen->w-CHAR_WIDTH;
+    int wstride = env->screen->w - CHAR_WIDTH;
     //  _set_color(yellow);
     //  print(status_msg,status_offset,1,1);
     ptr = status_offset;
 
-    for (x=0; status_msg[x]!='\0'; x++) {
-        for (y=0; y<CHAR_HEIGHT; y++) {
+    for(x = 0; status_msg[x] != '\0'; x++) {
+        for(y = 0; y < CHAR_HEIGHT; y++) {
             c = fontdata[status_msg[x] * CHAR_HEIGHT + y];
-            for (i = CHAR_WIDTH; i > 0; i--) {
-                if (c & (CHAR_START << i))
+            for(i = CHAR_WIDTH; i > 0; i--) {
+                if(c & (CHAR_START << i))
                     *ptr = 0x00ffef00;
                 ptr++;
             }
             ptr += wstride;
         }
-        ptr = status_offset + ((x+1)*CHAR_WIDTH);
+        ptr = status_offset + ((x + 1) * CHAR_WIDTH);
     }
 }
 
@@ -248,14 +248,14 @@ void Osd::_selection() {
     if(!lay) return;
 
     Filter *filt = (Filter*) lay->filters.selected();
-    sprintf(msg,"%s::%s %s[%.1f] [%s]",
+    sprintf(msg, "%s::%s %s[%.1f] [%s]",
             lay->getName().c_str(),
-            (filt)?filt->name:" ",
+            (filt) ? filt->name : " ",
             lay->blitter.current_blit->getName().c_str(),
             lay->blitter.current_blit->value,
-            (env->clear_all)?"0":" ");
+            (env->clear_all) ? "0" : " ");
 
-    print(msg,selection_offset,1,1);
+    print(msg, selection_offset, 1, 1);
 
 }
 /*
@@ -282,10 +282,10 @@ void Osd::_layerlist() {
     Layer *l = (Layer *)env->layers.begin(),
            *laysel = (Layer*) env->layers.selected();
 
-    while (l) {
+    while(l) {
 
         /* turn off credits if there are other layers */
-        if(l==ipernaut) {
+        if(l == ipernaut) {
             credits_on = true;
         } else if(credits_on) {
             env->layers.unlock();
@@ -298,24 +298,24 @@ void Osd::_layerlist() {
         lname = l->getName().c_str();
 
 
-        if( l == laysel) {
+        if(l == laysel) {
 
             if(l->active) {
                 /* red color */ _color32 = 0xee0000;
-                pos = print(lname,pos-4,1,1) + 4;
+                pos = print(lname, pos - 4, 1, 1) + 4;
             } else {
                 /* dark red color */ _color32 = 0x880000;
-                pos = print(lname,pos-4,1,1) + 4;
+                pos = print(lname, pos - 4, 1, 1) + 4;
             }
 
         } else {
 
             if(l->active) {
                 /* red color */ _color32 = 0xee0000;
-                pos = print (lname,pos,1,1);
+                pos = print(lname, pos, 1, 1);
             } else {
                 /* dark red color */ _color32 = 0x880000;
-                pos = print (lname,pos,1,1);
+                pos = print(lname, pos, 1, 1);
             }
 
         }
@@ -337,27 +337,27 @@ void Osd::_filterlist() {
     Filter *f = (Filter *)lay->filters.begin();
     Filter *filtsel = (Filter*)lay->filters.selected();
     while(f) {
-        strncpy(fname,f->name,3);
+        strncpy(fname, f->name, 3);
         fname[3] = '\0';
 
         if(f == filtsel) {
 
             if(f->active) {
                 /* red color */ _color32 = 0xee0000;
-                pos = print(fname,pos+4,1,1) - 4;
+                pos = print(fname, pos + 4, 1, 1) - 4;
             } else {
                 /* dark red color */ _color32 = 0x880000;
-                pos = print(fname,pos+4,1,1) - 4;
+                pos = print(fname, pos + 4, 1, 1) - 4;
             }
 
         } else {
 
             if(f->active) {
                 /* red color */ _color32 = 0xee0000;
-                pos = print(fname,pos,1,1);
+                pos = print(fname, pos, 1, 1);
             } else {
                 /* dark red color */ _color32 = 0x880000;
-                pos = print(fname,pos,1,1);
+                pos = print(fname, pos, 1, 1);
             }
 
         }
@@ -370,13 +370,13 @@ void Osd::draw_credits() {
     uint32_t *pos;
     _set_color(white);
     pos = hicredits_offset;
-    pos = print(title,pos,1,2);
-    pos = print(":: set the veejay free",pos,1,1);
+    pos = print(title, pos, 1, 2);
+    pos = print(":: set the veejay free", pos, 1, 1);
     pos = locredits_offset1;
-    pos = print("|| RASTASOFT",pos,1,1);
-    pos = print("|| by dyne.org hackers",pos,1,1);
+    pos = print("|| RASTASOFT", pos, 1, 1);
+    pos = print("|| by dyne.org hackers", pos, 1, 1);
     pos = locredits_offset2;
-    print("freej.org",pos,2,2);
+    print("freej.org", pos, 2, 2);
 
 }
 
@@ -395,8 +395,8 @@ void Osd::_print_credits() {
     if(_credits) draw_credits();
     else {
         _set_color(green);
-        uint32_t *pos = print(PACKAGE,hilogo_offset,1,1);
-        print(VERSION,pos,1,1);
+        uint32_t *pos = print(PACKAGE, hilogo_offset, 1, 1);
+        print(VERSION, pos, 1, 1);
     }
 }
 
@@ -418,24 +418,24 @@ void Osd::_set_color(colors col) {
 
 void Osd::clean() {
     //  if(!active) return;
-    int c,cc;
+    int c, cc;
     uint64_t *top = topclean_offset;
     uint64_t *down = downclean_offset;
 
     env->screen->lock();
-    for(c=(VBOUND*(env->screen->w>>1)); c>0; c--) {
+    for(c = (VBOUND * (env->screen->w >> 1)); c > 0; c--) {
         *top = 0x0;
         *down = 0x0;
         top++;
         down++;
     }
-    for(c = env->screen->h-VBOUND-VBOUND; c>0; c--) {
-        for(cc = HBOUND>>1; cc>0; cc--) {
+    for(c = env->screen->h - VBOUND - VBOUND; c > 0; c--) {
+        for(cc = HBOUND >> 1; cc > 0; cc--) {
             *top = 0x0;
             top++;
         }
-        top+=osd_jump;
-        for(cc = HBOUND>>1; cc>0; cc--) {
+        top += osd_jump;
+        for(cc = HBOUND >> 1; cc > 0; cc--) {
             *top = 0x0;
             top++;
         }

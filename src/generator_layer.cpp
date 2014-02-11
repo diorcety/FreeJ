@@ -33,7 +33,7 @@
 FACTORY_REGISTER_INSTANTIATOR(Layer, GeneratorLayer, GeneratorLayer, ff_f0r);
 
 GeneratorLayer::GeneratorLayer()
-    :Layer() {
+    : Layer() {
 
     generator = NULL;
     generators = NULL;
@@ -47,7 +47,7 @@ GeneratorLayer::GeneratorLayer()
 
 GeneratorLayer::~GeneratorLayer() {
     close();
-    if (swap_buffer)
+    if(swap_buffer)
         free(swap_buffer);
 }
 
@@ -63,17 +63,17 @@ static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
     Freior *f = (Freior *)layer->generator->proto;
     void *val = param->value;
 
-    switch(f->param_infos[idx-1].type) {
+    switch(f->param_infos[idx - 1].type) {
 
         // idx-1 because frei0r's index starts from 0
     case F0R_PARAM_BOOL:
         (*f->f0r_set_param_value)
-        (layer->generator->core, new f0r_param_bool(*(bool*)val), idx-1);
+        (layer->generator->core, new f0r_param_bool(*(bool*)val), idx - 1);
         break;
 
     case F0R_PARAM_DOUBLE:
         (*f->f0r_set_param_value)(layer->generator->core,
-                                  new f0r_param_double(*(double*)val), idx-1);
+                                  new f0r_param_double(*(double*)val), idx - 1);
         break;
 
     case F0R_PARAM_COLOR: {
@@ -81,7 +81,7 @@ static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
         color->r = ((double*)val)[0];
         color->g = ((double*)val)[1];
         color->b = ((double*)val)[2];
-        (*f->f0r_set_param_value)(layer->generator->core, color, idx-1);
+        (*f->f0r_set_param_value)(layer->generator->core, color, idx - 1);
         // QUAAA: should we delete the new allocated object? -jrml
     }
     break;
@@ -90,7 +90,7 @@ static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
         f0r_param_position *position = new f0r_param_position;
         position->x = ((double*)val)[0];
         position->y = ((double*)val)[1];
-        (*f->f0r_set_param_value)(layer->generator->core, position, idx-1);
+        (*f->f0r_set_param_value)(layer->generator->core, position, idx - 1);
         // QUAAA: should we delete the new allocated object? -jrml
     }
     break;
@@ -109,7 +109,7 @@ void GeneratorLayer::register_generators(Linklist<Filter> *gens) {
 }
 
 bool GeneratorLayer::open(const char *file) {
-    func("%s - %s",__PRETTY_FUNCTION__, file);
+    func("%s - %s", __PRETTY_FUNCTION__, file);
     int idx;
     Filter *proto;
 
@@ -127,14 +127,14 @@ bool GeneratorLayer::open(const char *file) {
     close();
 
     generator = Factory<FilterInstance>::new_instance("FilterInstance");
-    if (generator)
+    if(generator)
         generator->init(proto);
 
 #ifdef WITH_FREI0R
     if(proto->type() == Filter::FREIOR) {
         generator->core = (void*)(*((Freior *)proto)->f0r_construct)(geo.w, geo.h);
         if(!generator->core) {
-            error("freior constructor returned NULL instantiating generator %s",file);
+            error("freior constructor returned NULL instantiating generator %s", file);
             delete generator;
             generator = NULL;
             return false;
@@ -195,7 +195,7 @@ bool GeneratorLayer::_init() {
     //  open("lissajous0r");
     //  open("ising0r");
 
-    if (!swap_buffer)
+    if(!swap_buffer)
         swap_buffer = malloc(geo.bytesize);
     else { // if changing context ensure we can handle its resolution
         swap_buffer = realloc(swap_buffer, geo.bytesize);
@@ -205,7 +205,7 @@ bool GeneratorLayer::_init() {
 
 void *GeneratorLayer::feed() {
     void *res;
-    if (generator) {
+    if(generator) {
         res = generator->process(fps.get(), NULL);
         jmemcpy(swap_buffer, res, geo.bytesize);
     }

@@ -87,9 +87,9 @@ JS_CONSTRUCTOR("VectorLayer", vector_layer_constructor, CairoLayer);
 
 JSBool CairoLayer::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) {
 
-    jsdouble r,g,b,a;
+    jsdouble r, g, b, a;
 
-    if(argc==1) {
+    if(argc == 1) {
 
         g = js_get_double(argv[idx]);
         func("%s gray [%.2f]", __FUNCTION__, g);
@@ -97,24 +97,24 @@ JSBool CairoLayer::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) {
         color->set_gray(g);
         return JS_TRUE;
 
-    } else if(argc==2) {
+    } else if(argc == 2) {
 
         g = js_get_double(argv[idx]);
-        a = js_get_double(argv[idx+1]);
+        a = js_get_double(argv[idx + 1]);
 
         // g is a double
         // a is a signed integer
         func("%s gray [%.2f] alpha [%.2f]", __FUNCTION__, g, a);
         js_debug_property(cx, argv[idx]);
-        js_debug_property(cx, argv[idx+1]);
+        js_debug_property(cx, argv[idx + 1]);
 
-        color->set_gray_alpha(g,a);
+        color->set_gray_alpha(g, a);
         return JS_TRUE;
 
-    } else if(argc==3) {
+    } else if(argc == 3) {
         r = js_get_double(argv[idx]);
-        g = js_get_double(argv[idx+1]);
-        b = js_get_double(argv[idx+2]);
+        g = js_get_double(argv[idx + 1]);
+        b = js_get_double(argv[idx + 2]);
 
         func("%s r[%.2f] g[%.2f] b[%.2f]", __FUNCTION__, r, g, b);
         //    js_debug_property(cx, &argv[idx]);
@@ -124,12 +124,12 @@ JSBool CairoLayer::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) {
         color->set_rgb(r, g, b);
         return JS_TRUE;
 
-    } else if(argc==4) {
+    } else if(argc == 4) {
 
         r = js_get_double(argv[idx]);
-        g = js_get_double(argv[idx+1]);
-        b = js_get_double(argv[idx+2]);
-        a = js_get_double(argv[idx+3]);
+        g = js_get_double(argv[idx + 1]);
+        b = js_get_double(argv[idx + 2]);
+        a = js_get_double(argv[idx + 3]);
 
         func("%s r[%.2f] g[%.2f] b[%.2f] a[%.2f]", __FUNCTION__, r, g, b, a);
         // js_debug_property(cx, &argv[idx]);
@@ -142,7 +142,7 @@ JSBool CairoLayer::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) {
 
     }
 
-    error("usage of color with %u args not (yet?) supported",argc);
+    error("usage of color with %u args not (yet?) supported", argc);
 
     return JS_FALSE;
 }
@@ -182,7 +182,7 @@ JS(vector_layer_scale) {
     sx = js_get_double(argv[0]);
     sy = js_get_double(argv[1]);
 
-    func("%s x[%.2f] y[%.2f]", __FUNCTION__, sx, sy );
+    func("%s x[%.2f] y[%.2f]", __FUNCTION__, sx, sy);
 
     lay->scale(sx, sy);
 
@@ -226,7 +226,7 @@ JS(vector_layer_lineto) {
     x = js_get_int(argv[0]);
     y = js_get_int(argv[1]);
 
-    func("%s x[%i] y[%i]", __FUNCTION__ , x, y );
+    func("%s x[%i] y[%i]", __FUNCTION__ , x, y);
 
     lay->line_to(x, y);
 
@@ -254,7 +254,7 @@ JS(vector_layer_moveto) {
     x = js_get_int(argv[0]);
     y = js_get_int(argv[1]);
 
-    func("%s x[%i] y[%i]", __FUNCTION__, x, y  );
+    func("%s x[%i] y[%i]", __FUNCTION__, x, y);
 
     lay->move_to(x, y);
 
@@ -275,7 +275,7 @@ JS(vector_layer_quadcurveto) {
     y2 = js_get_int(argv[3]);
 
 
-    lay->quad_curve_to( x1, y1, x2, y2) ;
+    lay->quad_curve_to(x1, y1, x2, y2) ;
 
     return JS_TRUE;
 }
@@ -299,7 +299,7 @@ JS(vector_layer_beziercurveto) {
     y3 = js_get_int(argv[5]);
 
     func("Vector bezier curve :: x1[%i] y1[%i] x2[%i] y2[%i] x3[%i] y3[%i]",
-         x1, y1, x2, y2, x3, y3 );
+         x1, y1, x2, y2, x3, y3);
 
     lay->curve_to(x1, y1, x2, y2, x3, y3);
 
@@ -317,7 +317,7 @@ JS(vector_layer_rect) {
     x2 = js_get_double(argv[2]);
     y2 = js_get_double(argv[3]);
 
-    func("Vector rect :: x[%i] y[%i] to x[%i] y[%i]",x1, y1, x2, y2);
+    func("Vector rect :: x[%i] y[%i] to x[%i] y[%i]", x1, y1, x2, y2);
 
     lay->rect(x1, y1, x2, y2);
 
@@ -341,7 +341,7 @@ JS(vector_layer_arc) {
     angle2 = js_get_double(argv[4]);
 
     func("Vector arc :: x[%i] y[%i] rad[%.2f] angle1[%.2f] angle2[%.2f]",
-         xc, yc, radius, angle1, angle2 );
+         xc, yc, radius, angle1, angle2);
 
     lay->arc(xc, yc, radius, angle1, angle2);
 
@@ -371,20 +371,20 @@ JS(vector_layer_fillrect) {
 }
 
 JS(vector_layer_fill) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     GET_LAYER(CairoLayer);
 
-    if(argc>0)
+    if(argc > 0)
         lay->set_color(cx, argc, argv, 0);
 
     lay->fill();
     return JS_TRUE;
 }
 JS(vector_layer_stroke) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     GET_LAYER(CairoLayer);
 
-    if(argc>0) {
+    if(argc > 0) {
         lay->set_color(cx, argc, argv, 0);
     }
 
@@ -393,20 +393,20 @@ JS(vector_layer_stroke) {
 }
 
 JS(vector_layer_push_color) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     GET_LAYER(CairoLayer);
     lay->push_color();
     return JS_TRUE;
 }
 JS(vector_layer_pop_color) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     GET_LAYER(CairoLayer);
     lay->pop_color();
     return JS_TRUE;
 }
 
 JSP(vector_layer_fillstyle_g) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
     //  GET_LAYER(CairoLayer);
@@ -414,7 +414,7 @@ JSP(vector_layer_fillstyle_g) {
     return JS_TRUE;
 }
 JSP(vector_layer_fillstyle_s) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
     GET_LAYER(CairoLayer);
@@ -435,13 +435,13 @@ JSP(vector_layer_fillstyle_s) {
 }
 
 JSP(vector_layer_strokestyle_g) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
     return JS_TRUE;
 }
 JSP(vector_layer_strokestyle_s) {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
     //  GET_LAYER(CairoLayer);
@@ -459,7 +459,7 @@ JSP(vector_layer_strokestyle_s) {
 }
 
 JSP(vector_layer_linecap_g)     {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
     return JS_TRUE;
@@ -471,13 +471,13 @@ JSP(vector_layer_linecap_s)     {
 
     char *cap = NULL;
     if(JSVAL_IS_STRING(*vp))
-        cap = JS_GetStringBytes( JS_ValueToString(cx, *vp) );
+        cap = JS_GetStringBytes(JS_ValueToString(cx, *vp));
     else {
-        JS_ReportError(cx,"%s: property value is not a string",__FUNCTION__);
-        ::error("%s: property value is not a string",__FUNCTION__);
+        JS_ReportError(cx, "%s: property value is not a string", __FUNCTION__);
+        ::error("%s: property value is not a string", __FUNCTION__);
     }
 
-    func("Vector linecap set :: %s",cap);
+    func("Vector linecap set :: %s", cap);
     if(!cap) return JS_TRUE; // we don't stop the flow
 
     switch(cap[0]) { // we parse fast, using only first letter
@@ -500,18 +500,18 @@ JSP(vector_layer_linecap_s)     {
 }
 
 JSP(vector_layer_linewidth_g)   {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
     GET_LAYER(CairoLayer);
 
-    func("vp is %p : %f",vp, *vp);
+    func("vp is %p : %f", vp, *vp);
 
     return JS_TRUE;
 }
 
 JSP(vector_layer_linewidth_s)   {
-    func("%s",__FUNCTION__);
+    func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
     GET_LAYER(CairoLayer);

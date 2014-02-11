@@ -47,7 +47,7 @@ inline void ccvt_yuyv_420p(int width, int height,
     s1 = (unsigned char *)src;
     s2 = s1; // keep pointer
     n = width * height;
-    for (; n > 0; n--) {
+    for(; n > 0; n--) {
         *dy = *s1;
         dy++;
         s1 += 2;
@@ -56,9 +56,9 @@ inline void ccvt_yuyv_420p(int width, int height,
     /* Two options here: average U/V values, or skip every second row */
     s1 = s2; // restore pointer
     s1++; // point to U
-    for (l = 0; l < height; l += 2) {
+    for(l = 0; l < height; l += 2) {
         s2 = s1 + width * 2; // odd line
-        for (j = 0; j < width; j += 2) {
+        for(j = 0; j < width; j += 2) {
             *du = (*s1 + *s2) / 2;
             du++;
             s1 += 2;
@@ -98,21 +98,21 @@ VideoEncoder::VideoEncoder()
     fps->init(25); // default FPS
     // initialize the encoded data pipe
     // TODO: set the size to width * height * 4 * nframes (3-4)
-    ringbuffer = ringbuffer_create(1048*2096);
+    ringbuffer = ringbuffer_create(1048 * 2096);
 
     shout_init();
-    if ((ice = shout_new()) != NULL) {
+    if((ice = shout_new()) != NULL) {
 
-        if( shout_set_protocol(ice,SHOUT_PROTOCOL_HTTP) )
+        if(shout_set_protocol(ice, SHOUT_PROTOCOL_HTTP))
             error("shout_set_protocol: %s", shout_get_error(ice));
 
-        if( shout_set_format(ice,SHOUT_FORMAT_OGG) )
+        if(shout_set_format(ice, SHOUT_FORMAT_OGG))
             error("shout_set_format: %s", shout_get_error(ice));
 
-        if( shout_set_agent(ice,"FreeJ - freej.dyne.org") )
+        if(shout_set_agent(ice, "FreeJ - freej.dyne.org"))
             error("shout_set_agent: %s", shout_get_error(ice));
 
-        if( shout_set_public(ice,1) )
+        if(shout_set_public(ice, 1))
             error("shout_set_public: %s", shout_get_error(ice));
     }
 
@@ -128,13 +128,13 @@ VideoEncoder::~VideoEncoder() {
     // flush all the ringbuffer to file and stream
     unsigned int encnum = 0;
 
-    if (encbuf) {
+    if(encbuf) {
         do {
-            if ((encnum = ringbuffer_read_space(ringbuffer)) > 0)
+            if((encnum = ringbuffer_read_space(ringbuffer)) > 0)
                 encnum = ringbuffer_read(ringbuffer, encbuf, encnum);
 // 			     ((audio_kbps + video_kbps)*1024)/24);
 
-            if(encnum <=0) break;
+            if(encnum <= 0) break;
 
             if(write_to_disk && filedump_fd) {
                 fwrite(encbuf, 1, encnum, filedump_fd);
@@ -195,9 +195,9 @@ void VideoEncoder::thread_loop() {
 
     uint8_t *surface = (uint8_t *)screen->get_surface();
     time_t *tm = (time_t *)malloc(sizeof(time_t));
-    time (tm);
+    time(tm);
 //   std::cerr << "-- ENC:" << asctime(localtime(tm));
-    if (!surface) {
+    if(!surface) {
         fps->calc();
         fps->delay();
         /* std::cout << "fps->start_tv.tv_sec :" << fps->start_tv.tv_sec << \
@@ -220,19 +220,19 @@ void VideoEncoder::thread_loop() {
     case ViewPort::RGBA32:
         mlt_convert_rgb24a_to_yuv422(surface,
                                      screen->geo.w, screen->geo.h,
-                                     screen->geo.w<<2, (uint8_t*)enc_yuyv, NULL);
+                                     screen->geo.w << 2, (uint8_t*)enc_yuyv, NULL);
         break;
 
     case ViewPort::BGRA32:
         mlt_convert_bgr24a_to_yuv422(surface,
                                      screen->geo.w, screen->geo.h,
-                                     screen->geo.w<<2, (uint8_t*)enc_yuyv, NULL);
+                                     screen->geo.w << 2, (uint8_t*)enc_yuyv, NULL);
         break;
 
     case ViewPort::ARGB32:
         mlt_convert_argb_to_yuv422(surface,
                                    screen->geo.w, screen->geo.h,
-                                   screen->geo.w<<2, (uint8_t*)enc_yuyv, NULL);
+                                   screen->geo.w << 2, (uint8_t*)enc_yuyv, NULL);
         break;
 
     default:
@@ -246,13 +246,13 @@ void VideoEncoder::thread_loop() {
 
     ////// got the YUV, do the encoding
     res = encode_frame();
-    if (res != 0) error("Can't encode frame");
+    if(res != 0) error("Can't encode frame");
 
     /// proceed writing and streaming encoded data in encpipe
 
     encnum = 0;
     if(write_to_disk || write_to_stream) {
-        if ((encnum = ringbuffer_read_space(ringbuffer)) > 0) {
+        if((encnum = ringbuffer_read_space(ringbuffer)) > 0) {
             encbuf = (char *)realloc(encbuf, encnum);
 // 	encbuf = (char *)realloc(encbuf, (((audio_kbps + video_kbps)*1024)/24)); //doesn't change anything for shifting problem
             encnum = ringbuffer_read(ringbuffer, encbuf, encnum);
@@ -271,22 +271,22 @@ void VideoEncoder::thread_loop() {
             	wait_ms = shout_delay(ice);
             	std::cerr << "---- shout delay :" << wait_ms << std::endl;*/
             shout_sync(ice);
-            if( shout_send(ice, (const unsigned char*)encbuf, encnum)
+            if(shout_send(ice, (const unsigned char*)encbuf, encnum)
                     != SHOUTERR_SUCCESS) {
                 error("shout_send: %s", shout_get_error(ice));
             }// else
             //printf("%d %d\n", encnum, (int)shout_queuelen(ice));
         }
         gettimeofday(&m_ActualTime, NULL);
-        if (m_ActualTime.tv_sec == m_OldTime.tv_sec)
-            m_ElapsedTime += ((double)(m_ActualTime.tv_usec - m_OldTime.tv_usec))/1000000.0;
+        if(m_ActualTime.tv_sec == m_OldTime.tv_sec)
+            m_ElapsedTime += ((double)(m_ActualTime.tv_usec - m_OldTime.tv_usec)) / 1000000.0;
         else
             m_ElapsedTime += ((double)(m_ActualTime.tv_sec - m_OldTime.tv_sec)) + \
-                             (((double)(m_ActualTime.tv_usec - m_OldTime.tv_usec))/1000000.0);
+                             (((double)(m_ActualTime.tv_usec - m_OldTime.tv_usec)) / 1000000.0);
         m_OldTime.tv_sec = m_ActualTime.tv_sec;
         m_OldTime.tv_usec = m_ActualTime.tv_usec;
         m_Streamed += encnum;
-        if (m_ElapsedTime >= 3.0) {	//calculate stream rate every minimum 3 seconds
+        if(m_ElapsedTime >= 3.0) {	//calculate stream rate every minimum 3 seconds
             m_StreamRate = ((double)m_Streamed / m_ElapsedTime) / 1000.0;
             m_ElapsedTime = 0;
             m_Streamed = 0;
@@ -299,11 +299,11 @@ double VideoEncoder::getStreamRate() {
 }
 
 void VideoEncoder::thread_teardown() {
-    func("VideoEncoder::run : end thread %p", pthread_self() );
+    func("VideoEncoder::run : end thread %p", pthread_self());
 }
 
 bool VideoEncoder::set_filedump(const char *filename) {
-    int filename_number=1;
+    int filename_number = 1;
     FILE *fp;
 
     if(write_to_disk) { // stop current filedump
@@ -321,7 +321,7 @@ bool VideoEncoder::set_filedump(const char *filename) {
     // another filename is provided, start recording to it
 
     // store the filename
-    strncpy(filedump,filename,512);
+    strncpy(filedump, filename, 512);
 
 
     // file already exists?
@@ -336,17 +336,17 @@ bool VideoEncoder::set_filedump(const char *filename) {
         fclose(fp);
 
         // take point extension pointer ;P
-        point = strrchr(filedump,'.');
+        point = strrchr(filedump, '.');
         lenght_without_extension = (point - filedump);
 
         // copy the string before the  point
-        strncpy (tmp, filedump, lenght_without_extension);
+        strncpy(tmp, filedump, lenght_without_extension);
 
         // insert -n
-        sprintf (tmp + lenght_without_extension, "-%d%s",
-                 filename_number, filedump + lenght_without_extension);
+        sprintf(tmp + lenght_without_extension, "-%d%s",
+                filename_number, filedump + lenght_without_extension);
 
-        strncpy (filedump, tmp, 512);
+        strncpy(filedump, tmp, 512);
 
         // increment number inside filename
         filename_number++;
@@ -354,7 +354,7 @@ bool VideoEncoder::set_filedump(const char *filename) {
         fp = fopen(filedump, "r");
     }
 
-    filedump_fd = fopen(filedump,"w");
+    filedump_fd = fopen(filedump, "w");
     if(!filedump_fd) {
         error("can't record to file %s: %s", filedump_fd, strerror(errno));
         return false;
@@ -372,8 +372,8 @@ bool VideoEncoder::set_filedump(const char *filename) {
 }
 
 bool VideoEncoder::filedump_close() {
-    if (filedump_fd) {
-        if (!fclose (filedump_fd)) {
+    if(filedump_fd) {
+        if(!fclose(filedump_fd)) {
             write_to_disk = false;
             return (true);
         } else {

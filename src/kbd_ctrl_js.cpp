@@ -20,21 +20,21 @@ JSFunctionSpec js_kbd_ctrl_methods[] = {
 /////// Javascript KeyboardController
 JS(js_kbd_ctrl_constructor);
 
-DECLARE_CLASS("KeyboardController",js_kbd_ctrl_class, js_kbd_ctrl_constructor);
+DECLARE_CLASS("KeyboardController", js_kbd_ctrl_class, js_kbd_ctrl_constructor);
 
 /* XXX - this is exactly the same code we have in trigger_ctrl.cpp ...
          we should try to avoid duplicating code around */
 JS(js_kbd_ctrl_constructor) {
-    func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    KbdController *kbd = (KbdController *)Factory<Controller>::get_instance( "KeyboardController" );
-    if (!kbd)
+    KbdController *kbd = (KbdController *)Factory<Controller>::get_instance("KeyboardController");
+    if(!kbd)
         return JS_FALSE;
 
     JS_BeginRequest(cx);
     // initialize with javascript context
-    if (!kbd->initialized) {
-        if(! kbd->init(global_environment) ) {
+    if(!kbd->initialized) {
+        if(! kbd->init(global_environment)) {
             error("failed initializing keyboard controller");
             JS_EndRequest(cx);
             return JS_FALSE;
@@ -44,7 +44,7 @@ JS(js_kbd_ctrl_constructor) {
     }
 
     // assign instance into javascript object
-    if( !JS_SetPrivate(cx, obj, (void*)kbd) ) {
+    if(!JS_SetPrivate(cx, obj, (void*)kbd)) {
         error("failed assigning kbd controller to javascript");
         JS_EndRequest(cx);
         return JS_FALSE;
