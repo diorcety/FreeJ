@@ -26,13 +26,16 @@
 #include <context.h>
 #include <jutils.h>
 
+#ifdef WITH_JAVASCRIPT
 #include <callbacks_js.h> // javascript
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 #include <mouse_ctrl.h>
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Controller, MouseController, MouseController, sdl);
 
+#ifdef WITH_JAVASCRIPT
 JS(js_mouse_ctrl_constructor);
 
 DECLARE_CLASS("MouseController", js_mouse_ctrl_class, js_mouse_ctrl_constructor);
@@ -80,6 +83,8 @@ JS(js_mouse_grab) {
 
     return JS_TRUE;
 }
+
+#endif //WITH_JAVASCRIPT
 
 MouseController::MouseController()
     : SdlController() {
@@ -129,6 +134,7 @@ typedef struct{
 */
 
 int MouseController::motion(int state, int x, int y, int xrel, int yrel) {
+#ifdef WITH_JAVASCRIPT
     jsval js_data[] = {
         INT_TO_JSVAL(state),
         INT_TO_JSVAL(x), INT_TO_JSVAL(y),
@@ -139,9 +145,13 @@ int MouseController::motion(int state, int x, int y, int xrel, int yrel) {
         return(0);
     }
     return(1);
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int MouseController::button(int button, int state, int x, int y) {
+#ifdef WITH_JAVASCRIPT
     jsval js_data[] = {
         INT_TO_JSVAL(button),
         INT_TO_JSVAL(state),
@@ -153,6 +163,9 @@ int MouseController::button(int button, int state, int x, int y) {
         return(0);
     }
     return(1);
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int MouseController::dispatch() {
@@ -175,6 +188,7 @@ void MouseController::grab(bool state) {
     }
 }
 
+#ifdef WITH_JAVASCRIPT
 JS(js_mouse_ctrl_constructor) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
@@ -194,7 +208,9 @@ JS(js_mouse_ctrl_constructor) {
         return JS_FALSE;
     }
 
-    mouse->add_listener(cx, obj);
+    mouse->add_listener(new ControllerListener(cx, obj));
     *rval = OBJECT_TO_JSVAL(obj);
     return JS_TRUE;
 }
+
+#endif //WITH_JAVASCRIPT

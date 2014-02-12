@@ -30,10 +30,12 @@
 #include <closure.h>
 
 #include <context.h>
-#include <jutils.h>
 #include <config.h>
 
+#include <jutils.h>
+#ifdef WITH_JAVASCRIPT
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 
 //#include <fps.h>
 
@@ -53,7 +55,9 @@ Layer::Layer()
     buffer = NULL;
     screen = NULL;
     is_native_sdl_surface = false;
+#ifdef WITH_JAVASCRIPT
     jsclass = &layer_class;
+#endif //WITH_JAVASCRIPT
 
     zoom_x = 1.0;
     zoom_y = 1.0;

@@ -2,7 +2,7 @@ if BUILD_FLASH
 FLASHDIR = flash
 endif
 
-if BUILD_JAVASCRIPT
+if BUILD_JAVASCRIPT_ENGINE
 JAVASCRIPTDIR = javascript
 endif
 

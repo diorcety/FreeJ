@@ -594,6 +594,12 @@ dnl ==============================================================
 dnl compile including the javascript interpreter
 dnl ==============================================================
 
+AC_ARG_ENABLE(javascript,
+    AS_HELP_STRING([--enable-javascript],[enable javascript binding]),
+    [enable_javascript=$enableval],
+    [enable_javascript=yes])
+
+if test x$enable_javascript = xyes; then
 AC_MSG_NOTICE([checking if mozilla-js is ok])
 PKG_CHECK_MODULES([MOZJS_JS],
                   [mozilla-js >= 1.9],
@@ -744,8 +750,10 @@ AC_SUBST(MOZJS_CFLAGS)
 AC_SUBST(MOZJS_LIBS)
 
 AC_DEFINE(WITH_JAVASCRIPT,1,[Define if using libmozjs for spidermonkey javascript])
+fi
+AM_CONDITIONAL([BUILD_JAVASCRIPT_ENGINE], [test x$have_mozjs = xno && test x$enable_javascript = xyes])
+AM_CONDITIONAL([BUILD_JAVASCRIPT], [test x$enable_javascript = xyes])
 
-AM_CONDITIONAL([BUILD_JAVASCRIPT], [test x$have_mozjs = xno])
 
 dnl ==============================================================
 dnl unicap lib
@@ -1142,6 +1150,7 @@ VRB([= Disabled language bindings : $disabled_bindings])
 
 dnl #### shipped libraries, can be static or dynamic
 
+if test x$enable_javascript = xyes; then
 if test x$have_mozjs = xyes; then
 INFO([= javascript interpreter (dynamic)])
 else
@@ -1149,6 +1158,9 @@ INFO([= javascript interpreter (static)])
 fi
 VRB([  LIBS  : $MOZJS_LIBS])
 VRB([  CFLAGS: $MOZJS_CFLAGS])
+else
+INFO([= no javascript])
+fi
 
 if test x$have_sdlgfx = xyes; then
 INFO([= SDL_gfx (dynamic)])

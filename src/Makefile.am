@@ -29,7 +29,7 @@ SOURCES = \
 	xgrab_layer.cpp		opencv_cam_layer.cpp \
 	audio_layer.cpp 	cairo_layer.cpp \
 \
-	screen.cpp		screen_js.cpp      \
+	screen.cpp		\
 	sdl_screen.cpp 		sdlgl_screen.cpp   \
 	gl_screen.cpp		soft_screen.cpp    \
 	aa_screen.cpp \
@@ -63,13 +63,16 @@ JS_SOURCES = 	context_js.cpp  \
 		geo_layer_js.cpp \
 		generator_layer_js.cpp \
 		flash_layer_js.cpp \
-		 \
+		screen_js.cpp \
 		cairo_layer_js.cpp \
 		audio_collector_js.cpp \
 		kbd_ctrl_js.cpp
 
 lib_LTLIBRARIES = libfreej.la
-libfreej_la_SOURCES = $(SOURCES) $(JS_SOURCES)
+libfreej_la_SOURCES = $(SOURCES)
+if BUILD_JAVASCRIPT
+libfreej_la_SOURCES += $(JS_SOURCES)
+endif
 libfreej_la_LIBADD  = $(FREEJ_STATIC_LIBS)
 libfreej_la_LDFLAGS = $(FREEJ_LIBS) -version-info $(FREEJ_VERSION_INFO)
 

@@ -29,10 +29,13 @@
 #include <context.h>
 #include <jutils.h>
 
+#ifdef WITH_JAVASCRIPT
 #include <jsparser.h>
 #include <callbacks_js.h> // javascript
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 
+#ifdef WITH_JAVASCRIPT
 /////// Javascript JoystickController
 JS(js_joy_ctrl_constructor);
 
@@ -45,6 +48,8 @@ JSFunctionSpec js_joy_ctrl_methods[] = {
 #endif
     {0}
 };
+
+#endif //WITH_JAVASCRIPT
 
 
 
@@ -65,9 +70,8 @@ JoyController::~JoyController() {
 }
 
 bool JoyController::init(Context *freej) {
-
-    //bool JoyController::init(Context *context) {
-    func("JoyController::init()");
+    func("%s", __PRETTY_FUNCTION__);
+    Controller::init(freej);
 
     int found = 0;
     int c;
@@ -107,9 +111,6 @@ bool JoyController::init(Context *freej) {
         SDL_JoystickEventState(SDL_ENABLE);
 
     func("%s", __PRETTY_FUNCTION__);
-    env = freej;
-    jsenv = freej->js->global_context;
-    jsobj = freej->js->global_object;
 
     initialized = true;
     return(true);
@@ -122,23 +123,43 @@ int JoyController::poll() {
 }
 
 int JoyController::axismotion(int device, int axis, int value) {
+#ifdef WITH_JAVASCRIPT
     return JSCall("axismotion", 3, "iii", device, axis, value);
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int JoyController::ballmotion(int device, int ball, int xrel, int yrel) {
+#ifdef WITH_JAVASCRIPT
     return JSCall("ballmotion", 4, "iiii", device, ball, xrel, yrel);
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int JoyController::hatmotion(int device, int hat, int value) {
+#ifdef WITH_JAVASCRIPT
     return JSCall("hatmotion", 3, "iii",  device, hat, value);
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int JoyController::button_down(int device, int button) {
+#ifdef WITH_JAVASCRIPT
     return JSCall("button", 3, "iic", device, button, 1);
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int JoyController::button_up(int device, int button) {
+#ifdef WITH_JAVASCRIPT
     return JSCall("button", 3, "iic", device, button, 0);
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int JoyController::dispatch() {
@@ -363,7 +384,7 @@ bool JoyController::rumble(int intensity) {
 
 
 
-
+#ifdef WITH_JAVASCRIPT
 JS(js_joy_ctrl_constructor) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     char excp_msg[MAX_ERR_MSG + 1];
@@ -435,3 +456,4 @@ JS(js_joy_rumble) {
 }
 
 #endif
+#endif //WITH_JAVASCRIPT

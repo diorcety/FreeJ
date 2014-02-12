@@ -20,8 +20,13 @@
  */
 
 
-#include <callbacks_js.h>
+#include <config.h>
+#include <jutils.h>
+#ifdef WITH_JAVASCRIPT
+#include <callbacks_js.h> // javascript
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
+
 #include <termios.h>
 #include <fcntl.h>
 #include <sys/file.h>
@@ -95,8 +100,6 @@ ViMoController::ViMoController()
     : Controller() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
     initialized = active = false;
-    jsenv = NULL;
-    jsobj = NULL;
     filename = NULL;
     fd = 0;
     setName("Video Mouse");
@@ -116,14 +119,17 @@ ViMoController::~ViMoController() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
     rem();
     close();
+#ifdef WITH_JAVASCRIPT
     if(jsobj)
         JS_SetPrivate(jsenv, jsobj, NULL);
     jsobj = NULL;
+#endif //WITH_JAVASCRIPT
     if(filename)
         free(filename);
     free(vmd);
 }
 
+#ifdef WITH_JAVASCRIPT
 JS(js_vimo_ctrl_constructor);
 DECLARE_CLASS("ViMoController", js_vimo_ctrl_class, js_vimo_ctrl_constructor);
 
@@ -132,7 +138,7 @@ JSFunctionSpec js_vimo_ctrl_methods[] = {
     {"close",	js_vimo_close,	0},
     {0}
 };
-
+#endif //WITH_JAVASCRIPT
 
 
 bool ViMoController::open() {
@@ -217,15 +223,21 @@ void ViMoController::close() {
 }
 
 void ViMoController::button(unsigned int button, bool state, unsigned int mask, unsigned int old_mask) {
+#ifdef WITH_JAVASCRIPT
     JSCall("button", 4, "ubuu", button, state, mask, old_mask);
+#endif //WITH_JAVASCRIPT
 }
 
 void ViMoController::inner_wheel(int direction, unsigned int history) {
+#ifdef WITH_JAVASCRIPT
     JSCall("wheel_i", 2, "iu", direction, history);
+#endif //WITH_JAVASCRIPT
 }
 
 void ViMoController::outer_wheel(int speed, int old_speed) {
+#ifdef WITH_JAVASCRIPT
     JSCall("wheel_o", 2, "ii", speed, old_speed);
+#endif //WITH_JAVASCRIPT
 }
 
 int ViMoController::dispatch() {
@@ -347,6 +359,7 @@ int ViMoController::poll() {
 // 	return Controller::activate(state);
 // }
 
+#ifdef WITH_JAVASCRIPT
 JS(js_vimo_open) {
     ViMoController *vmc = (ViMoController *)JS_GetPrivate(cx, obj);
     if(!vmc) {
@@ -408,3 +421,4 @@ JS(js_vimo_ctrl_constructor) {
     *rval = OBJECT_TO_JSVAL(obj);
     return JS_TRUE;
 }
+#endif //WITH_JAVASCRIPT

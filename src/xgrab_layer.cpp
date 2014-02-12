@@ -27,8 +27,10 @@
 #include <jutils.h>
 #include <xgrab_layer.h>
 
+#ifdef WITH_JAVASCRIPT
 #include <callbacks_js.h>
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 #include <sdl_screen.h>
 #include <SDL.h>
 #include "SDL_rotozoom.h"
@@ -45,7 +47,9 @@ XGrabLayer::XGrabLayer()
     //gc = NULL;
 
     setName("XGR");
+#ifdef WITH_JAVASCRIPT
     jsclass = &js_xgrab_class;
+#endif //WITH_JAVASCRIPT
     int r = XInitThreads();
     func("XinitThread: %i", r);
 }
@@ -349,6 +353,7 @@ void XGrabLayer::close() {
 //	}
 }
 
+#ifdef WITH_JAVASCRIPT
 DECLARE_CLASS_GC("XGrabLayer", js_xgrab_class, js_xgrab_constructor, js_layer_gc);
 JS_CONSTRUCTOR("XGrabLayer", js_xgrab_constructor, XGrabLayer);
 
@@ -408,6 +413,7 @@ JS(js_xgrab_close) {
     lay->close();
     return JS_TRUE;
 }
+#endif //WITH_JAVASCRIPT
 
 
 #endif // WITH_XGRAB

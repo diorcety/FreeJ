@@ -30,7 +30,9 @@
 #include <context.h>
 #include <jutils.h>
 
+#ifdef WITH_JAVASCRIPT
 #include <callbacks_js.h>
+#endif //WITH_JAVASCRIPT
 
 FACTORY_REGISTER_INSTANTIATOR(Controller, OscController, OscController, core);
 
@@ -89,6 +91,7 @@ int osc_command_handler(const char *path, const char *types,
 
     func("OSC call to %s with argc %u", cmd->js_cmd, argc);
 
+#ifdef WITH_JAVASCRIPT
     // TODO: arguments are not supported
     // the code below correctly parses them, but then
     // the jsval is not valid as such in JS_CallFunction
@@ -131,6 +134,9 @@ int osc_command_handler(const char *path, const char *types,
     osc->commands_pending.append(jscmd);
 
     return 1;
+#else //WITH_JAVASCRIPT
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 
@@ -159,8 +165,9 @@ int OscController::poll() {
 }
 
 int OscController::dispatch() {
-    int res;
     int c = 0;
+#ifdef WITH_JAVASCRIPT
+    int res;
     // execute pending comamnds (javascript calls)
     JsCommand *jscmd = (JsCommand*) commands_pending.begin();
     while(jscmd) {
@@ -180,10 +187,12 @@ int OscController::dispatch() {
         jscmd = (JsCommand*)commands_pending.begin();
         c++;
     }
+#endif //WITH_JAVASCRIPT
     return c;
 }
 
 
+#ifdef WITH_JAVASCRIPT
 
 /////// Javascript OscController
 JS(js_osc_ctrl_constructor);
@@ -414,4 +423,5 @@ JS(js_osc_ctrl_send) {
 
 //}
 
+#endif //WITH_JAVASCRIPT
 

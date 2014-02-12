@@ -45,8 +45,6 @@ class JSClass;
 // and object
 class JSObject;
 
-class Entry;
-
 class BaseLinklist {
     friend class Entry;
 public:

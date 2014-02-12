@@ -33,14 +33,16 @@
 
 #include <screen.h>
 #include <context.h>
-#include <jutils.h>
 #ifdef WITH_AUDIO
 #include <jack/jack.h>
 #endif
 #include <ringbuffer.h>
 #include <video_layer.h>
 
+#include <jutils.h>
+#ifdef WITH_JAVASCRIPT
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 
 #include <factory.h>
 //#define DEBUG 1
@@ -83,7 +85,9 @@ VideoLayer::VideoLayer()
     video_clock = 0;
     rgba_picture = NULL;
     frame_fifo.length = 0;
+#ifdef WITH_JAVASCRIPT
     jsclass = &video_layer_class;
+#endif //WITH_JAVASCRIPT
 
     eos = new DumbCallback();
 }

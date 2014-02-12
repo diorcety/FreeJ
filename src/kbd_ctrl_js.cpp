@@ -51,7 +51,7 @@ JS(js_kbd_ctrl_constructor) {
     }
 
     *rval = OBJECT_TO_JSVAL(obj);
-    kbd->add_listener(cx, obj);
+    kbd->add_listener(new ControllerListener(cx, obj));
     JS_EndRequest(cx);
     return JS_TRUE;
 }

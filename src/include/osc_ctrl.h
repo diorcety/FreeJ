@@ -36,6 +36,7 @@ public:
     char js_cmd[512];
 };
 
+#ifdef WITH_JAVASCRIPT
 class JsCommand: public Entry {
 public:
     // name is function
@@ -45,6 +46,7 @@ public:
     jsval *argv;
 
 };
+#endif //WITH_JAVASCRIPT
 
 class OscController: public Controller {
 
@@ -57,8 +59,6 @@ public:
 
     bool start(int port);
     void stop();
-
-    Context *freej;
 
     lo_server_thread srv;
 

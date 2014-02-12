@@ -33,12 +33,15 @@
 #include <context.h>
 #include <jutils.h>
 
+#ifdef WITH_JAVASCRIPT
 #include <callbacks_js.h>
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 
 #define WII_FLAGS CWIID_FLAG_MESG_IFC
 //| CWIID_FLAG_NONBLOCK
 
+#ifdef WITH_JAVASCRIPT
 /////// Javascript WiiController
 JS(js_wii_ctrl_constructor) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
@@ -243,6 +246,8 @@ JSFunctionSpec js_wii_ctrl_methods[] = {
     {0}
 };
 
+#endif //WITH_JAVASCRIPT
+
 void wiicontroller_cwiid_callback(cwiid_wiimote_t *dev, int count,
                                   union cwiid_mesg msgs[],
                                   struct timespec *timestamp) {
@@ -423,29 +428,41 @@ bool WiiController::activate(bool state) {
 }
 
 void WiiController::connect_event() {
+#ifdef WITH_JAVASCRIPT
     JSCall("connect", 1, "b", 1);
+#endif //WITH_JAVASCRIPT
 }
 
 void WiiController::disconnect_event() {
+#ifdef WITH_JAVASCRIPT
     JSCall("disconnect", 1, "b", 1);
+#endif //WITH_JAVASCRIPT
 }
 
 void WiiController::error_event(WiiError err) {
+#ifdef WITH_JAVASCRIPT
     JSCall("error", 1, "u", err);
+#endif //WITH_JAVASCRIPT
 }
 
 void WiiController::accel_event(double x, double y, double z) {
+#ifdef WITH_JAVASCRIPT
     JSCall("acceleration", 3, "ddd", x, y, z);
+#endif //WITH_JAVASCRIPT
 }
 
 void WiiController::ir_event(unsigned int source, unsigned int x,
                              unsigned int y, unsigned int size) {
+#ifdef WITH_JAVASCRIPT
     JSCall("ir", 4, "iuui", source, x, y, size);
+#endif //WITH_JAVASCRIPT
 }
 
 void WiiController::button_event(unsigned int button, bool state,
                                  unsigned int mask, unsigned int old_mask) {
+#ifdef WITH_JAVASCRIPT
     JSCall("button", 4, "ubuu", button, state, mask, old_mask);
+#endif //WITH_JAVASCRIPT
 }
 
 bool WiiController::get_rumble() {

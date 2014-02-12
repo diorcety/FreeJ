@@ -157,7 +157,9 @@ public:
 
     Plugger plugger; ///< filter plugins host
 
+#ifdef WITH_JAVASCRIPT
     JsParser *js; ///< javascript parser object
+#endif //WITH_JAVASCRIPT
 
     char main_javascript[512]; ///< if started with a javascript, save the filename here (used by reset)
 

@@ -32,8 +32,11 @@ Entry::Entry() {
     prev = NULL;
     list = NULL;
     data = NULL;
+#ifdef WITH_JAVASCRIPT
     jsclass = NULL;
     jsobj = NULL;
+    jsenv = NULL;
+#endif //WITH_JAVASCRIPT
     select = false;
 }
 

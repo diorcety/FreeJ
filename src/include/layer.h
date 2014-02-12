@@ -215,8 +215,10 @@ public:
     void *buffer; ///< RGBA pixel buffer returned by the layer
 
 
+#ifdef WITH_JAVASCRIPT
     void *js_constructor(Context *env, JSContext *cx,
                          JSObject *obj, int argc, void *aargv, char *err_msg);
+#endif //WITH_JAVASCRIPT
     ///< javascript layer constructor
     //  void layer_gc(JSContext *cx, JSObject *obj);
 

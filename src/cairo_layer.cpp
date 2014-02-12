@@ -25,8 +25,9 @@
 
 
 #include <cairo_layer.h>
-
+#ifdef WITH_JAVASCRIPT
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 #include <factory.h>
 
 // our objects are allowed to be created trough the factory engine
@@ -61,7 +62,9 @@ CairoLayer::CairoLayer()
 
     setName("VEC");
     set_filename("/vector layer");
+#ifdef WITH_JAVASCRIPT
     jsclass = &vector_layer_class;
+#endif //WITH_JAVASCRIPT
 }
 
 CairoLayer::~CairoLayer() {

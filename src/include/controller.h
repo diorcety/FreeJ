@@ -29,27 +29,30 @@
 
 #include <config.h>
 #include <cstdarg> // va_list
+#ifdef WITH_JAVASCRIPT
 #include <jsapi.h> // spidermonkey header
+#endif //WITH_JAVASCRIPT
 
 #include <linklist.h>
 
 class Context;
-class JSObject;
 
 class ControllerListener : public Entry {
 public:
+#ifdef WITH_JAVASCRIPT
     ControllerListener(JSContext *cx, JSObject *obj);
+#endif //WITH_JAVASCRIPT
     ~ControllerListener();
     bool frame();
     // TODO: eliminate runtime resolution -> C++ overhead alert!
+#ifdef WITH_JAVASCRIPT
     bool call(const char *funcname, int argc, jsval *argv);
     bool call(const char *funcname, int argc, const char *format, ...);
-    JSContext *context();
-    JSObject  *object();
+#endif //WITH_JAVASCRIPT
 private:
-    JSContext *jsContext;
-    JSObject *jsObject;
+#ifdef WITH_JAVASCRIPT
     jsval frameFunc;
+#endif //WITH_JAVASCRIPT
 
 };
 
@@ -71,7 +74,6 @@ public:
     virtual int dispatch() = 0; ///< dispatch() is implemented by the specific controller
     ///< distributes the signals to listeners, can be overrided in python
 
-
     bool initialized; ///< is this class initialized on a context?
     bool active; ///< is this class active?
 
@@ -79,19 +81,16 @@ public:
 
     bool javascript; ///< was this controller created by javascript?
 
-    bool add_listener(JSContext *cx, JSObject *obj);
+    bool add_listener(ControllerListener *listener);
 
     void reset();
-    // XXX - all the following properties must be private
-    Context *env; ///< pointer to the Context
 
-    JSContext *jsenv; ///< javascript environment
-    JSObject  *jsobj; ///< this javascript object
     // TODO: eliminate runtime resolution -> C++ overhead alert!
+#ifdef WITH_JAVASCRIPT
     int JSCall(const char *funcname, int argc, jsval *argv);
     int JSCall(const char *funcname, int argc, const char *format, ...);
+#endif //WITH_JAVASCRIPT
     Linklist<ControllerListener> listeners;
-
 };
 
 #endif

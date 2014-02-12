@@ -24,7 +24,9 @@ class BaseLinklist;
 
 template <class T> class Linklist;
 
-// javascript class
+// javascript context
+class JSContext;
+// , class
 class JSClass;
 // and object
 class JSObject;
@@ -64,13 +66,13 @@ public:
     // and now also as JSObject -> jsval
     void *data;
 
-// XXX - should be defined only if built with javascript support
-//       but there is still some code which blindly references
-//       these members.
-//#ifdef WITH_JAVASCRIPT
+#ifdef WITH_JAVASCRIPT
+    JSContext *jsenv; ///< pointer to the javasript context
     JSClass *jsclass; ///< pointer to the javascript class
     JSObject *jsobj; ///< pointer to the javascript instantiated object
-//#endif
+    JSContext *context() {return jsenv;} // TO REMOVE
+    JSObject  *object() {return jsobj;} // TO REMOVE
+#endif //WITH_JAVASCRIPT
 
 };
 

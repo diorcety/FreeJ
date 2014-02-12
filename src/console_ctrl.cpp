@@ -95,7 +95,6 @@ int quit_proc(Context *env, char *cmd) {
 
 
 SlwConsole::SlwConsole() : ConsoleController() {
-    env = NULL;
     active = false;
     paramsel = 1;
 
@@ -150,7 +149,6 @@ bool SlwConsole::slw_init() {
     // title
     tit = new SlwTitle();
     tit->setName("console title");
-    tit->env = env;
     slw->place(tit, 0, 0, slw->w, 2);
     tit->init();
     /////////////////////////////////
@@ -158,7 +156,6 @@ bool SlwConsole::slw_init() {
     // layer and filter selector
     sel = new SlwSelector();
     sel->setName("layer & filter selector");
-    sel->env = env;
     slw->place(sel, 0, 2, slw->w, 8);
     sel->init();
     ////////////////////////////
@@ -174,7 +171,6 @@ bool SlwConsole::slw_init() {
     // status line
     rdl = new SlwReadline();
     rdl->setName("console readline");
-    rdl->env = env;
     slw->place(rdl, 0, slw->h - 1, slw->w, slw->h);
     rdl->init();
     ////////////////////////////
@@ -224,7 +220,6 @@ int SlwConsole::poll() {
 
     if(real_quit) {
         notice("QUIT requested from console! bye bye");
-        env->quit = true;
         real_quit = false;
         return 0;
     }

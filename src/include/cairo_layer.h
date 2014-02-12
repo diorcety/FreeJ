@@ -25,7 +25,9 @@
 #include <color.h>
 
 #include <cairo.h>
+#ifdef WITH_JAVASCRIPT
 #include <jsapi.h>
+#endif //WITH_JAVASCRIPT
 
 class CairoColor: public Color {
 
@@ -56,7 +58,9 @@ public:
     Color *color;
     Color *saved_color;
 
+#ifdef WITH_JAVASCRIPT
     JSBool set_color(JSContext *cx, uintN argc, jsval *argv, int idx);
+#endif //WITH_JAVASCRIPT
 
     ///////////////////////////////////////////////
     // public methods exported to language bindings

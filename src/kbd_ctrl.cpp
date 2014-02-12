@@ -22,9 +22,11 @@
 #include <context.h>
 #include <jutils.h>
 
+#ifdef WITH_JAVASCRIPT
 #include <jsparser.h>
 #include <callbacks_js.h> // javascript
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 #include <factory.h>
 
 #define SDL_REPEAT_DELAY	200
@@ -47,12 +49,10 @@ KbdController::~KbdController() {
 
 bool KbdController::init(Context *freej) {
     func("%s", __PRETTY_FUNCTION__);
+    Controller::init(freej);
 
     /* enable key repeat */
     SDL_EnableKeyRepeat(SDL_REPEAT_DELAY, SDL_REPEAT_INTERVAL);
-
-
-    env = freej;
 
     initialized = true;
 
@@ -67,7 +67,7 @@ int KbdController::poll() {
 }
 
 int KbdController::key_event(const char *state, bool shift, bool ctrl, bool alt, bool num, const char *keyname) {
-
+#ifdef WITH_JAVASCRIPT
     Uint16 uni[] = {keysym->unicode, 0};
     //#snprintf(uni, 2, "X %s X", (char*)&keysym->unicode);
     // universal call
@@ -100,7 +100,7 @@ int KbdController::key_event(const char *state, bool shift, bool ctrl, bool alt,
         jsval fval = JSVAL_VOID;
         return JSCall(funcname, 0, &fval);
     }
-
+#endif //WITH_JAVASCRIPT
     return 0;
 }
 

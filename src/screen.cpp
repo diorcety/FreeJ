@@ -44,9 +44,6 @@ ViewPort::ViewPort()
     resize_w = 0;
     resize_h = 0;
 
-    jsclass = NULL;
-    jsobj = NULL;
-
     audio = NULL;
     m_SampleRate = NULL;
     indestructible = false;

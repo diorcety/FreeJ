@@ -30,11 +30,13 @@
 #include <context.h>
 #include <jutils.h>
 
-
+#ifdef WITH_JAVASCRIPT
 #include <callbacks_js.h> // javascript
 #include <jsparser.h>
 #include <jsparser_data.h>
+#endif //WITH_JAVASCRIPT
 
+#ifdef WITH_JAVASCRIPT
 JS(js_trigger_ctrl_constructor);
 
 DECLARE_CLASS("TriggerController", js_trigger_ctrl_class, js_trigger_ctrl_constructor);
@@ -44,6 +46,8 @@ JSFunctionSpec js_trigger_ctrl_methods[] = {
 };
 
 FACTORY_REGISTER_INSTANTIATOR(Controller, TriggerController, TriggerController, core);
+
+#endif //WITH_JAVASCRIPT
 
 TriggerController::TriggerController()
     : Controller() {
@@ -84,6 +88,8 @@ int TriggerController::dispatch() {
     return(1);
 }
 
+#ifdef WITH_JAVASCRIPT
+
 JS(js_trigger_ctrl_constructor) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     int check_thread;
@@ -119,9 +125,11 @@ JS(js_trigger_ctrl_constructor) {
     }
 
     *rval = OBJECT_TO_JSVAL(obj);
-    trigger->add_listener(cx, obj);
+    trigger->add_listener(new ControllerListener(cx, obj));
     JS_EndRequest(cx);
     if(!check_thread)
         JS_ClearContextThread(cx);
     return JS_TRUE;
 }
+
+#endif //WITH_JAVASCRIPT

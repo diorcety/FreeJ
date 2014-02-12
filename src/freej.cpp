@@ -374,11 +374,13 @@ int main(int argc, char **argv) {
     /* execute processing */
     if(processing[0]) {
         freej->interactive = false;
+#ifdef WITH_JAVASCRIPT
         char tmp[1024];
 
         // parse includes our extra processing.js library
         snprintf(tmp, 1023, "include(\"processing.js\");script = read_file(\"%s\");Processing(script);", processing);
         freej->js->parse(tmp);
+#endif //WITH_JAVASCRIPT
 
         if(freej->quit) exit(1);
         else freej->interactive = true;

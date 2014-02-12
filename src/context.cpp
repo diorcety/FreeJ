@@ -27,8 +27,6 @@
 #include <blitter.h>
 #include <controller.h>
 
-
-#include <jsparser.h>
 #include <video_encoder.h>
 #include <audio_collector.h>
 #include <fps.h>
@@ -36,10 +34,11 @@
 #include <signal.h>
 #include <errno.h>
 
-#include <jutils.h>
 #include <fastmemcpy.h>
 
+#include <jutils.h>
 #ifdef WITH_JAVASCRIPT
+#include <jsparser.h>
 #include <jsparser_data.h>
 #endif
 
@@ -114,8 +113,9 @@ Context::Context() {
     poll_events     = true;
 
     fps_speed       = 25;
-
+#ifdef WITH_JAVASCRIPT
     js = NULL;
+#endif //WITH_JAVASCRIPT
     main_javascript[0] = 0x0;
 
     layers_description = (char*)
@@ -283,6 +283,7 @@ void Context::cafudda(double secs) {
         scr = (ViewPort*)scr->next;
 
     }
+#ifdef WITH_JAVASCRIPT
     /////////////////////////////
     // TODO - try to garbage collect only if we have been faster
     //        than fps
@@ -290,6 +291,7 @@ void Context::cafudda(double secs) {
     //       because it still triggers deadlocks somewhere
     if(js)
         js->gc();
+#endif //WITH_JAVASCRIPT
     /// FPS calculation
     fps.calc();
     fps.delay();
@@ -356,10 +358,6 @@ bool Context::register_controller(Controller *ctrl) {
         func("initialising controller %s (%p)", ctrl->getName().c_str(), ctrl);
 
         ctrl->init(this);
-
-    } else if(ctrl->env != this) {
-
-        error("controller is already initialised with another context: %x", ctrl->env);
 
     } else
         warning("controller was already initialised on this context");
@@ -430,21 +428,31 @@ void Context::rem_layer(Layer *lay) {
 
 
 int Context::open_script(char *filename) {
+#ifdef WITH_JAVASCRIPT
     if(!js) {
         error("can't open script %s: javascript interpreter is not initialized", filename);
         return 0;
     }
     return js->open(filename);
+#else //WITH_JAVASCRIPT
+    error("Compiled without javascript. Can't open a script file");
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 
 int Context::parse_js_cmd(const char *cmd) {
+#ifdef WITH_JAVASCRIPT
     if(!js) {
         error("javascript interpreter is not initialized");
         error("can't parse script \"%s\"", cmd);
         return 0;
     }
     return js->parse(cmd);
+#else //WITH_JAVASCRIPT
+    error("Compiled without javascript. Can't execute a script command");
+    return 0;
+#endif //WITH_JAVASCRIPT
 }
 
 int Context::reset() {
@@ -481,13 +489,16 @@ int Context::reset() {
         }
     }
 
+#ifdef WITH_JAVASCRIPT
     if(js)
         js->reset();
+#endif //WITH_JAVASCRIPT
     //does anyone care about reset() return value?
     return 1;
 }
 
 bool Context::config_check(const char *filename) {
+#ifdef WITH_JAVASCRIPT
     char tmp[512];
 
     if(!js) {
@@ -537,6 +548,10 @@ bool Context::config_check(const char *filename) {
     }
 
     return(false);
+#else //WITH_JAVASCRIPT
+    error("Compiled without javascript. Can't run configuration");
+    return(false);
+#endif //WITH_JAVASCRIPT
 }
 
 void Context::resize(int w, int h) {
