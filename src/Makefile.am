@@ -9,7 +9,7 @@ SOURCES = \
 	context.cpp		layer.cpp	\
 	fps.cpp			blitter.cpp	\
 	sdl_blits.cpp		linear_blits.cpp \
-	iterator.cpp		linklist.cpp	\
+	iterator.cpp		entity.cpp	\
 	jsync.cpp		closure.cpp	\
 	callback.cpp		cpu_accel.cpp	\
 	plugin.cpp		plugger.cpp	\

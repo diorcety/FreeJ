@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <string>
+#include "entity.h"
 
 /* void warning(const char *format, ...); */
 void func(const char *format, ...);
@@ -128,55 +129,6 @@ public:
 private:
     T *compbuf[MAX_COMPLETION*sizeof(T*)]; // completion buffer
 };
-
-
-
-class Entry {
-    friend class Linklist<Entry>;
-
-public:
-    Entry();
-    virtual ~Entry();
-
-    void setName(const std::string &name);
-    const std::string &getName() const;
-    void setDescription(const std::string &description);
-    const std::string &getDescription() const;
-    bool up();
-    bool down();
-    bool move(int pos);
-    bool swap(int pos);
-    void rem();
-    void sel(bool on);
-
-    Entry *next;
-    Entry *prev;
-
-    BaseLinklist *list;
-
-    bool select;
-
-protected:
-    std::string name;
-    std::string description;
-
-public:
-
-    // generic data pointer, so far only used in console
-    // and now also as JSObject -> jsval
-    void *data;
-
-// XXX - should be defined only if built with javascript support
-//       but there is still some code which blindly references
-//       these members.
-//#ifdef WITH_JAVASCRIPT
-    JSClass *jsclass; ///< pointer to the javascript class
-    JSObject *jsobj; ///< pointer to the javascript instantiated object
-//#endif
-
-};
-
-
 
 
 ///////////////////////////////////////////////////////////////

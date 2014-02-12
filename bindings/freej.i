@@ -6,6 +6,7 @@
 
 #include "context.h"
 #include "linklist.h"
+#include "entity.h"
 #include "screen.h"
 
 #include "layer.h"
@@ -130,6 +131,7 @@ freej_entry_typemap_in(Encoder);
 %feature("director") WrapperLogger;
 %include "logging.h"
 
+%include "entity.h"
 %include "linklist.h"
 %template(EntryLinkList) Linklist<Entry>;
 

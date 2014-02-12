@@ -1,4 +1,4 @@
-/*  C++ Linked list class, threadsafe (boolean is atom)
+/*  C++ Entity class
  *
  *  (c) Copyright 2001-2004 Denis Roio aka jaromil <jaromil@dyne.org>
  *
@@ -18,21 +18,14 @@
  *
  * "$Id$"
  *
- -------------------------------------------------------------------------
-   linked list container class
-
-   NOTE: add and rem don't take care of deleting pointers
-   that has to be done by the process that creates them and
-   knows which inheriting class they are (delete is done in main)
-*/
+ */
 
 #include <stdlib.h>
 #include <string.h>
 
 #include <jutils.h>
+#include <entity.h>
 #include <linklist.h>
-
-
 
 Entry::Entry() {
     next = NULL;
