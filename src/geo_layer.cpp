@@ -25,10 +25,6 @@
 #include <context.h>
 #include <geo_layer.h>
 
-#ifdef WITH_JAVASCRIPT
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
-
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Layer, GeoLayer, GeometryLayer, basic);
 
@@ -41,10 +37,6 @@ GeoLayer::GeoLayer()
     setName("GEO");
     set_filename("/geometrical layer");
     is_native_sdl_surface = true;
-
-#ifdef WITH_JAVASCRIPT
-    jsclass = &geometry_layer_class;
-#endif //WITH_JAVASCRIPT
 }
 
 GeoLayer::~GeoLayer() {

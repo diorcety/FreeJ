@@ -30,25 +30,6 @@
 #include <context.h>
 #include <jutils.h>
 
-#ifdef WITH_JAVASCRIPT
-#include <callbacks_js.h> // javascript
-#include <jsparser.h>
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
-
-#ifdef WITH_JAVASCRIPT
-JS(js_trigger_ctrl_constructor);
-
-DECLARE_CLASS("TriggerController", js_trigger_ctrl_class, js_trigger_ctrl_constructor);
-
-JSFunctionSpec js_trigger_ctrl_methods[] = {
-    {0}
-};
-
-FACTORY_REGISTER_INSTANTIATOR(Controller, TriggerController, TriggerController, core);
-
-#endif //WITH_JAVASCRIPT
-
 TriggerController::TriggerController()
     : Controller() {
     setName("Trigger");
@@ -87,49 +68,3 @@ int TriggerController::dispatch() {
 
     return(1);
 }
-
-#ifdef WITH_JAVASCRIPT
-
-JS(js_trigger_ctrl_constructor) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-    int check_thread;
-
-    TriggerController *trigger = (TriggerController *)Factory<Controller>::get_instance("TriggerController");
-    if(!trigger)
-        return JS_FALSE;
-
-    check_thread = JS_GetContextThread(cx);
-    if(!check_thread)
-        JS_SetContextThread(cx);
-    JS_BeginRequest(cx);
-    // initialize with javascript context
-    if(!trigger->initialized) {
-        if(! trigger->init(global_environment)) {
-            error("failed initializing keyboard controller");
-            JS_EndRequest(cx);
-            if(!check_thread)
-                JS_ClearContextThread(cx);
-            return JS_FALSE;
-        }
-        // mark that this controller was initialized by javascript
-        trigger->javascript = true;
-    }
-
-    // assign instance into javascript object
-    if(!JS_SetPrivate(cx, obj, (void*)trigger)) {
-        error("failed assigning trigger controller to javascript");
-        JS_EndRequest(cx);
-        if(!check_thread)
-            JS_ClearContextThread(cx);
-        return JS_FALSE;
-    }
-
-    *rval = OBJECT_TO_JSVAL(obj);
-    trigger->add_listener(new ControllerListener(cx, obj));
-    JS_EndRequest(cx);
-    if(!check_thread)
-        JS_ClearContextThread(cx);
-    return JS_TRUE;
-}
-
-#endif //WITH_JAVASCRIPT

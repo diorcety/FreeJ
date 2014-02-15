@@ -27,10 +27,6 @@
 #include <jutils.h>
 #include <xgrab_layer.h>
 
-#ifdef WITH_JAVASCRIPT
-#include <callbacks_js.h>
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
 #include <sdl_screen.h>
 #include <SDL.h>
 #include "SDL_rotozoom.h"
@@ -47,9 +43,6 @@ XGrabLayer::XGrabLayer()
     //gc = NULL;
 
     setName("XGR");
-#ifdef WITH_JAVASCRIPT
-    jsclass = &js_xgrab_class;
-#endif //WITH_JAVASCRIPT
     int r = XInitThreads();
     func("XinitThread: %i", r);
 }
@@ -352,68 +345,5 @@ void XGrabLayer::close() {
 //	if (win) {
 //	}
 }
-
-#ifdef WITH_JAVASCRIPT
-DECLARE_CLASS_GC("XGrabLayer", js_xgrab_class, js_xgrab_constructor, js_layer_gc);
-JS_CONSTRUCTOR("XGrabLayer", js_xgrab_constructor, XGrabLayer);
-
-JSFunctionSpec js_xgrab_methods[] = {
-    ENTRY_METHODS  ,
-    {"open",      js_xgrab_open,  1},
-    {"close",     js_xgrab_close, 1},
-    {0}
-};
-#if 0
-//JS_CONSTRUCTOR("ViewPort",js_xgrab_constructor,XGrabLayer);
-JS(js_xgrab_constructor) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-
-    XGrabLayer *xg = new XGrabLayer();
-
-    // initialize with javascript context
-    if(! xg->init(cx, obj)) {
-        error("failed initializing xgrab");
-        delete xg;
-        return JS_FALSE;
-    }
-    if(argc == 1) {
-        jsint winid = js_get_int(argv[0]);
-        if(!JS_NewNumberValue(cx, xg->open(winid), rval)) {
-            error("failed initializing xgrab controller");
-            delete xg;
-            return JS_FALSE;
-        }
-    }
-    // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)xg)) {
-        error("failed assigning xgrab controller to javascript");
-        delete xg;
-        return JS_FALSE;
-    }
-    //*rval = OBJECT_TO_JSVAL(obj);
-    return JS_TRUE;
-}
-#endif
-JS(js_xgrab_open) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-    GET_LAYER(XGrabLayer);
-
-    if(argc == 0) {
-        return JS_NewNumberValue(cx, lay->open(), rval);
-    }
-
-    if(argc == 1) {
-        jsint winid = js_get_int(argv[0]);
-        return JS_NewNumberValue(cx, lay->open(winid), rval);
-    }
-    JS_ERROR("Wrong number of arguments");
-}
-JS(js_xgrab_close) {
-    GET_LAYER(XGrabLayer);
-    lay->close();
-    return JS_TRUE;
-}
-#endif //WITH_JAVASCRIPT
-
 
 #endif // WITH_XGRAB

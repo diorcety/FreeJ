@@ -23,11 +23,8 @@
 #include <jutils.h>
 #include <context.h>
 
-
 #include <cairo_layer.h>
-#ifdef WITH_JAVASCRIPT
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
+
 #include <factory.h>
 
 // our objects are allowed to be created trough the factory engine
@@ -40,7 +37,9 @@ CairoColor::CairoColor(cairo_t *cai) : Color() {
     a = 255.;
     cairo = cai;
 }
+
 CairoColor::~CairoColor() { }
+
 void CairoColor::set() {
     double sr = r / 255.;
     double sg = g / 255.;
@@ -48,7 +47,7 @@ void CairoColor::set() {
     double sa = a / 255.;
     func("Color::set r[%.2f] g[%.2f] b[%.2f] a[%.2f]", sr, sg, sb, sa);
     cairo_set_source_rgba(cairo, sr, sg, sb, sa);
-};
+}
 
 CairoLayer::CairoLayer()
     : Layer() {
@@ -62,9 +61,6 @@ CairoLayer::CairoLayer()
 
     setName("VEC");
     set_filename("/vector layer");
-#ifdef WITH_JAVASCRIPT
-    jsclass = &vector_layer_class;
-#endif //WITH_JAVASCRIPT
 }
 
 CairoLayer::~CairoLayer() {

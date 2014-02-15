@@ -26,6 +26,15 @@
 #ifdef WITH_FFMPEG
 #include <video_layer.h>
 
+class VideoLayerJS: public VideoLayer {
+public:
+    VideoLayerJS();
+};
+
+VideoLayerJS::VideoLayerJS() {
+    jsclass = &video_layer_class;
+}
+
 DECLARE_CLASS_GC("MovieLayer", video_layer_class, video_layer_constructor, js_layer_gc);
 
 ////////////////////////////////
@@ -40,7 +49,7 @@ JSFunctionSpec video_layer_methods[] = {
     {0}
 };
 
-JS_CONSTRUCTOR("MovieLayer", video_layer_constructor, VideoLayer);
+JS_CONSTRUCTOR("MovieLayer", video_layer_constructor, VideoLayerJS);
 
 
 

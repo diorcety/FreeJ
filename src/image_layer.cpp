@@ -31,9 +31,6 @@
 #include <config.h>
 
 #include <jutils.h>
-#ifdef WITH_JAVASCRIPT
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
 #include <factory.h>
 
 // our objects are allowed to be created trough the factory engine
@@ -48,10 +45,6 @@ ImageLayer::ImageLayer()
 
     setName("IMG");
     is_native_sdl_surface = true;
-
-#ifdef WITH_JAVASCRIPT
-    jsclass = &image_layer_class;
-#endif //WITH_JAVASCRIPT
 
     opened = false;
 }

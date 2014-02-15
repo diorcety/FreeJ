@@ -33,50 +33,6 @@
 //#include <plugger.h>
 #include <jutils.h>
 
-#ifdef WITH_JAVASCRIPT
-#include <jsparser.h>
-#include <callbacks_js.h> // javascript
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
-
-#ifdef WITH_JAVASCRIPT
-JS(js_midi_ctrl_constructor);
-
-DECLARE_CLASS_GC("MidiController", js_midi_ctrl_class, js_midi_ctrl_constructor, js_ctrl_gc);
-
-JS(midi_connect);
-JS(midi_connect_from);
-JSFunctionSpec js_midi_ctrl_methods[] = {
-    {"connect_from", midi_connect_from, 3},
-    //    {"connect", midi_connect, 4 },
-    {0}
-};
-
-JS(js_midi_ctrl_constructor) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-    MidiController *midi = new MidiController();
-    // assign instance into javascript object
-    // initialize with javascript context
-    if(! midi->init(global_environment)) {
-        error("failed initializing midi controller");
-        delete midi;
-        return JS_FALSE;
-    }
-    if(! JS_SetPrivate(cx, obj, (void*)midi)) {
-        error("failed assigning midi controller to javascript");
-        delete midi;
-        return JS_FALSE;
-    }
-
-    // assign the real js object
-    midi->jsobj = obj;
-    midi->javascript = true;
-
-    *rval = OBJECT_TO_JSVAL(obj);
-    return JS_TRUE;
-}
-#endif //WITH_JAVASCRIPT
-
 MidiController::MidiController(): SdlController() {
     setName("Midi Controller");
     seq_handle = NULL;
@@ -87,31 +43,6 @@ MidiController::~MidiController() {
     if(seq_handle)
         snd_seq_close(seq_handle);
 }
-
-#ifdef WITH_JAVASCRIPT
-
-JS(midi_connect_from) {
-    func("%u:%s:%s argc: %u", __LINE__, __FILE__, __FUNCTION__, argc);
-    JS_CHECK_ARGC(3);
-    int res = 0;
-
-    MidiController *midi = (MidiController *) JS_GetPrivate(cx, obj);
-    if(!midi) {
-        error("%u:%s:%s :: Midi core data is NULL",
-              __LINE__, __FILE__, __FUNCTION__);
-        return JS_FALSE;
-    }
-
-    // int snd_seq_connect_to(snd_seq_t * seq, int myport, int dest_client, int dest_port)
-    jsint myport = js_get_int(argv[0]);
-    jsint dest_client = js_get_int(argv[1]);
-    jsint dest_port = js_get_int(argv[2]);
-
-    res = midi->connect_from(int(myport), int(dest_client), int(dest_port));
-
-    return JS_NewNumberValue(cx, res, rval);
-}
-#endif //WITH_JAVASCRIPT
 
 int MidiController::connect_from(int myport, int dest_client, int dest_port) {
     // Returns: 0 on success or negative error code
@@ -168,80 +99,23 @@ int MidiController::dispatch() {
 }
 
 int MidiController::event_ctrl(int channel, int param, int value) {
-#ifdef WITH_JAVASCRIPT
-    func("midi Control event on Channel\t%2d: %5d %5d (param/value)", channel, param, value);
-    if(jsenv == NULL) {
-        error("Midi handle action: jsobj is null");
-        return(0);
-    }
-    jsval js_data[] = { channel, param, value };
-    JSCall("event_ctrl", 3, js_data);
-    return(1);
-#else //WITH_JAVASCRIPT
     return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 int MidiController::event_pitch(int channel, int param, int value) {
-#ifdef WITH_JAVASCRIPT
-    func("midi Pitchbender event on Channel\t%2d: %5d %5d   ",  channel, param, value);
-    if(jsenv == NULL) {
-        error("Midi handle action: jsobj is null");
-        return(0);
-    }
-    jsval js_data[] = { channel, param, value };
-    JSCall("event_pitch", 3, js_data);
-    return(1);
-#else //WITH_JAVASCRIPT
     return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 int MidiController::event_noteon(int channel, int note, int velocity) {
-#ifdef WITH_JAVASCRIPT
-    func("midi Note On event on Channel\t%2d: %5d %5d      ", channel, note, velocity);
-    if(jsenv == NULL) {
-        error("Midi handle action: jsobj is null");
-        return(0);
-    }
-    jsval js_data[] = { channel, note, velocity };
-    JSCall("event_noteon", 3, js_data);
-    return(1);
-#else //WITH_JAVASCRIPT
     return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 int MidiController::event_noteoff(int channel, int note, int velocity) {
-#ifdef WITH_JAVASCRIPT
-    func("midi Note Off event on Channel\t%2d: %5d      ", channel, note);
-
-    if(jsenv == NULL) {
-        error("Midi handle action: jsobj is null");
-        return(0);
-    }
-
-    jsval js_data[] = { channel, note, velocity };
-    JSCall("event_noteoff", 3, js_data);
-    return(1);
-#else //WITH_JAVASCRIPT
     return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 int MidiController::event_pgmchange(int channel, int param, int value) {
-#ifdef WITH_JAVASCRIPT
-    func("midi PGM change event on Channel\t%2d: %5d %5d ", channel, param, value);
-    if(jsenv == NULL) {
-        error("Midi handle action: jsobj is null");
-        return(0);
-    }
-    jsval js_data[] = { channel, param, value };
-    JSCall("event_pgmchange", 3, js_data);
-    return(1);
-#else //WITH_JAVASCRIPT
     return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 /*
@@ -299,7 +173,7 @@ int MidiController::poll() {
     return dispatch();
 }
 
-#endif
+#endif //WITH_MIDI
 
 
 

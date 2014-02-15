@@ -35,10 +35,12 @@ public:
     virtual int dispatch();
     virtual int key_event(const char *state, bool shift, bool ctrl, bool alt, bool num, const char *keyname);
 
-private:
+protected:
     SDL_keysym *keysym;
     char keyname[512];
     char funcname[512];
+
+private:
     // allow to use Factory on this class
     FACTORY_ALLOWED
 };

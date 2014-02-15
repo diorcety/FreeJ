@@ -26,6 +26,15 @@
 #ifdef WITH_CAIRO
 #include <cairo_layer.h>
 
+class CairoLayerJS: public CairoLayer {
+public:
+    CairoLayerJS();
+};
+
+
+CairoLayerJS::CairoLayerJS() {
+    jsclass = &vector_layer_class;
+}
 
 DECLARE_CLASS_GC("VectorLayer", vector_layer_class, vector_layer_constructor, js_layer_gc);
 
@@ -81,7 +90,7 @@ JSPropertySpec vector_layer_properties[] = {
 
 // properties TODO: fillStyle, strokeStyle, lineCap, lineWidth
 
-JS_CONSTRUCTOR("VectorLayer", vector_layer_constructor, CairoLayer);
+JS_CONSTRUCTOR("VectorLayer", vector_layer_constructor, CairoLayerJS);
 
 
 

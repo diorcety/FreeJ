@@ -163,7 +163,7 @@ public:
                 return (T*)create_instance();
         }
         return NULL;
-    };
+    }
 
     static inline T*get_instance(const char *category) {
         FTagMap::iterator pair = defaults_map->find(category);

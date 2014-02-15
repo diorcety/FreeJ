@@ -26,6 +26,16 @@
 #if defined WITH_TEXTLAYER
 #include <text_layer.h>
 
+
+class TextLayerJS: public TextLayer {
+public:
+    TextLayerJS();
+};
+
+TextLayerJS::TextLayerJS() {
+    jsclass = &txt_layer_class;
+}
+
 DECLARE_CLASS_GC("TextLayer", txt_layer_class, txt_layer_constructor, js_layer_gc);
 
 
@@ -43,7 +53,7 @@ JSFunctionSpec txt_layer_methods[] = {
 };
 
 
-JS_CONSTRUCTOR("TextLayer", txt_layer_constructor, TextLayer);
+JS_CONSTRUCTOR("TextLayer", txt_layer_constructor, TextLayerJS);
 
 JS(txt_layer_color) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);

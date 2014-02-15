@@ -66,7 +66,16 @@ JS_SOURCES = 	context_js.cpp  \
 		screen_js.cpp \
 		cairo_layer_js.cpp \
 		audio_collector_js.cpp \
-		kbd_ctrl_js.cpp
+		kbd_ctrl_js.cpp \
+		joy_ctrl_js.cpp \
+		vimo_ctrl_js.cpp \
+		trigger_ctrl_js.cpp \
+		controller_js.cpp \
+		xgrab_layer_js.cpp \
+		mouse_ctrl_js.cpp \
+		wiimote_ctrl_js.cpp \
+		osc_ctrl_js.cpp \
+		midi_ctrl_js.cpp
 
 lib_LTLIBRARIES = libfreej.la
 libfreej_la_SOURCES = $(SOURCES)

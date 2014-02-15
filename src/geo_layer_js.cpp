@@ -25,6 +25,14 @@
 #include <config.h>
 #include <geo_layer.h>
 
+class GeoLayerJS: public GeoLayer {
+    GeoLayerJS();
+};
+
+GeoLayerJS::GeoLayerJS() {
+    jsclass = &geometry_layer_class;
+}
+
 DECLARE_CLASS_GC("GeometryLayer", geometry_layer_class, geometry_layer_constructor, js_layer_gc);
 
 ////////////////////////////////
@@ -60,7 +68,7 @@ JSFunctionSpec geometry_layer_methods[] = {
 };
 
 // JSBool fun(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
-JS_CONSTRUCTOR("GeometryLayer", geometry_layer_constructor, GeoLayer);
+JS_CONSTRUCTOR("GeometryLayer", geometry_layer_constructor, GeoLayerJS);
 
 /// color handling, a macro and some overloading tricks
 #define OPTIONAL_COLOR_ARG(num) \

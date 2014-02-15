@@ -28,10 +28,6 @@
 #include <text_layer.h>
 #include <jutils.h>
 
-#ifdef WITH_JAVASCRIPT
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
-
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Layer, TextLayer, TextLayer, truetype);
 
@@ -58,9 +54,6 @@ TextLayer::TextLayer()
     type = Layer::TEXT;
     setName("TXT");
     surf = NULL;
-#ifdef WITH_JAVASCRIPT
-    jsclass = &txt_layer_class;
-#endif //WITH_JAVASCRIPT
 
     {
         // setup specific layer parameters

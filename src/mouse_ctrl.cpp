@@ -26,65 +26,11 @@
 #include <context.h>
 #include <jutils.h>
 
-#ifdef WITH_JAVASCRIPT
-#include <callbacks_js.h> // javascript
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
 #include <mouse_ctrl.h>
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Controller, MouseController, MouseController, sdl);
 
-#ifdef WITH_JAVASCRIPT
-JS(js_mouse_ctrl_constructor);
-
-DECLARE_CLASS("MouseController", js_mouse_ctrl_class, js_mouse_ctrl_constructor);
-
-JSBool js_add_p(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
-    func("add prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
-    return JS_TRUE;
-}
-JSBool js_del_p(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
-    func("del prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
-    return JS_TRUE;
-}
-
-// JSClass js_mouse_ctrl_class = {
-// 	"MouseController", JSCLASS_HAS_PRIVATE,
-// 	//	js_add_p,  js_del_p, // add, del
-// 	JS_PropertyStub,  JS_PropertyStub,
-
-// 	JS_PropertyStub,  JS_PropertyStub,
-// 	JS_EnumerateStub, JS_ResolveStub,
-// 	JS_ConvertStub,   js_ctrl_gc,
-// 	NULL,   NULL,
-// 	js_mouse_ctrl_constructor
-// };
-//static JSClass *jsclass_s = &js_mouse_ctrl_class;
-
-JSFunctionSpec js_mouse_ctrl_methods[] = {
-    {"grab",	js_mouse_grab,	1},
-    {0}
-};
-
-JS(js_mouse_grab) {
-    JS_CHECK_ARGC(1);
-
-    jsint state = js_get_int(argv[0]);
-
-    MouseController *mouse = (MouseController *) JS_GetPrivate(cx, obj);
-    if(!mouse) {
-        error("%u:%s:%s :: Mouse core data is NULL",
-              __LINE__, __FILE__, __FUNCTION__);
-        return JS_FALSE;
-    }
-
-    mouse->grab(state);
-
-    return JS_TRUE;
-}
-
-#endif //WITH_JAVASCRIPT
 
 MouseController::MouseController()
     : SdlController() {
@@ -134,38 +80,11 @@ typedef struct{
 */
 
 int MouseController::motion(int state, int x, int y, int xrel, int yrel) {
-#ifdef WITH_JAVASCRIPT
-    jsval js_data[] = {
-        INT_TO_JSVAL(state),
-        INT_TO_JSVAL(x), INT_TO_JSVAL(y),
-        INT_TO_JSVAL(xrel), INT_TO_JSVAL(yrel)
-    };
-    if(!JSCall("motion", 5, js_data)) {
-        error("Can't call method motion() on mouse listeners");
-        return(0);
-    }
-    return(1);
-#else //WITH_JAVASCRIPT
     return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 int MouseController::button(int button, int state, int x, int y) {
-#ifdef WITH_JAVASCRIPT
-    jsval js_data[] = {
-        INT_TO_JSVAL(button),
-        INT_TO_JSVAL(state),
-        INT_TO_JSVAL(x),
-        INT_TO_JSVAL(y)
-    };
-    if(!JSCall("button", 4, js_data)) {
-        error("Can't call method button() on mouse listeners");
-        return(0);
-    }
-    return(1);
-#else //WITH_JAVASCRIPT
     return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 int MouseController::dispatch() {
@@ -187,30 +106,3 @@ void MouseController::grab(bool state) {
         SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 }
-
-#ifdef WITH_JAVASCRIPT
-JS(js_mouse_ctrl_constructor) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-
-    MouseController *mouse = (MouseController *)Factory<Controller>::get_instance("MouseController");
-
-    // initialize with javascript context
-    if(! mouse->init(global_environment)) {
-        error("failed initializing mouse controller");
-        delete mouse;
-        return JS_FALSE;
-    }
-
-    // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)mouse)) {
-        error("failed assigning mouse controller to javascript");
-        delete mouse;
-        return JS_FALSE;
-    }
-
-    mouse->add_listener(new ControllerListener(cx, obj));
-    *rval = OBJECT_TO_JSVAL(obj);
-    return JS_TRUE;
-}
-
-#endif //WITH_JAVASCRIPT

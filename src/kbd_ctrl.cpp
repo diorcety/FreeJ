@@ -22,11 +22,6 @@
 #include <context.h>
 #include <jutils.h>
 
-#ifdef WITH_JAVASCRIPT
-#include <jsparser.h>
-#include <callbacks_js.h> // javascript
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
 #include <factory.h>
 
 #define SDL_REPEAT_DELAY	200
@@ -67,40 +62,6 @@ int KbdController::poll() {
 }
 
 int KbdController::key_event(const char *state, bool shift, bool ctrl, bool alt, bool num, const char *keyname) {
-#ifdef WITH_JAVASCRIPT
-    Uint16 uni[] = {keysym->unicode, 0};
-    //#snprintf(uni, 2, "X %s X", (char*)&keysym->unicode);
-    // universal call
-    if(JSCall("key", 7, "buusWuu",
-              event.key.state,
-              keysym->scancode,
-              keysym->sym,
-              SDL_GetKeyName(keysym->sym),
-              uni,
-              keysym->mod,
-              event.key.which
-             ))
-        return 1; // returned true, we are done!
-
-    //Uint16 keysym->unicode
-    //char * SDL_GetKeyName(keysym->sym);
-    //func("KB u: %u / ks: %s", keysym->unicode, SDL_GetKeyName(keysym->sym));
-
-    // funcname = "state_[shift_][ctrl_][alt_][num_]keyname"
-    if(strlen(keyname)) {
-        sprintf(funcname, "%s_%s%s%s%s%s",
-                state,
-                (shift ? "shift_" : ""),
-                (ctrl ?  "ctrl_"  : ""),
-                (alt ?   "alt_"   : ""),
-                (num ?   "num_"   : ""),
-                keyname);
-
-        func("%s calling method %s()", __func__, funcname);
-        jsval fval = JSVAL_VOID;
-        return JSCall(funcname, 0, &fval);
-    }
-#endif //WITH_JAVASCRIPT
     return 0;
 }
 

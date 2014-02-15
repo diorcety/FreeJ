@@ -12,6 +12,47 @@
 #include <kbd_ctrl.h>
 #include <config.h>
 
+class KbdControllerJS: public KbdController {
+public:
+    virtual int key_event(const char *state, bool shift, bool ctrl, bool alt, bool num, const char *keyname);
+};
+
+int KbdControllerJS::key_event(const char *state, bool shift, bool ctrl, bool alt, bool num, const char *keyname) {
+    Uint16 uni[] = {keysym->unicode, 0};
+    //#snprintf(uni, 2, "X %s X", (char*)&keysym->unicode);
+    // universal call
+    if(JSCall("key", 7, "buusWuu",
+              event.key.state,
+              keysym->scancode,
+              keysym->sym,
+              SDL_GetKeyName(keysym->sym),
+              uni,
+              keysym->mod,
+              event.key.which
+             ))
+        return 1; // returned true, we are done!
+
+    //Uint16 keysym->unicode
+    //char * SDL_GetKeyName(keysym->sym);
+    //func("KB u: %u / ks: %s", keysym->unicode, SDL_GetKeyName(keysym->sym));
+
+    // funcname = "state_[shift_][ctrl_][alt_][num_]keyname"
+    if(strlen(keyname)) {
+        sprintf(funcname, "%s_%s%s%s%s%s",
+                state,
+                (shift ? "shift_" : ""),
+                (ctrl ?  "ctrl_"  : ""),
+                (alt ?   "alt_"   : ""),
+                (num ?   "num_"   : ""),
+                keyname);
+
+        func("%s calling method %s()", __func__, funcname);
+        jsval fval = JSVAL_VOID;
+        return JSCall(funcname, 0, &fval);
+    }
+    return 0;
+}
+
 JSFunctionSpec js_kbd_ctrl_methods[] = {
 // idee: dis/enable repeat
     {0}
@@ -27,7 +68,7 @@ DECLARE_CLASS("KeyboardController", js_kbd_ctrl_class, js_kbd_ctrl_constructor);
 JS(js_kbd_ctrl_constructor) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    KbdController *kbd = (KbdController *)Factory<Controller>::get_instance("KeyboardController");
+    KbdController *kbd = new KbdControllerJS();
     if(!kbd)
         return JS_FALSE;
 

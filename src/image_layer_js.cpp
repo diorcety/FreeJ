@@ -24,6 +24,16 @@
 #include <config.h>
 #include <image_layer.h>
 
+class ImageLayerJS: public ImageLayer {
+public:
+    ImageLayerJS();
+};
+
+
+ImageLayerJS::ImageLayerJS() {
+    jsclass = &image_layer_class;
+}
+
 DECLARE_CLASS_GC("ImageLayer", image_layer_class, image_layer_constructor, js_layer_gc);
 
 ////////////////////////////////
@@ -34,7 +44,7 @@ JSFunctionSpec image_layer_methods[] = {
     {0}
 };
 
-JS_CONSTRUCTOR("ImageLayer", image_layer_constructor, ImageLayer);
+JS_CONSTRUCTOR("ImageLayer", image_layer_constructor, ImageLayerJS);
 JS(image_layer_open) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
