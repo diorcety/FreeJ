@@ -29,6 +29,8 @@
 class CairoLayerJS: public CairoLayer {
 public:
     CairoLayerJS();
+
+    JSBool set_color(JSContext *cx, uintN argc, jsval *argv, int idx);
 };
 
 
@@ -36,65 +38,7 @@ CairoLayerJS::CairoLayerJS() {
     jsclass = &vector_layer_class;
 }
 
-DECLARE_CLASS_GC("VectorLayer", vector_layer_class, vector_layer_constructor, js_layer_gc);
-
-////////////////////////////////
-// Vector Layer methods
-// basically exposing Cairo's API
-
-JSFunctionSpec vector_layer_methods[] = {
-    ENTRY_METHODS,
-    { "set_color",        vector_layer_color,            4 },
-    { "translate",        vector_layer_translate,        2 },
-    { "scale",            vector_layer_scale,            2 },
-    { "rotate",           vector_layer_rotate,           1 },
-    { "save",             vector_layer_save,             0 },
-    { "restore",          vector_layer_restore,          0 },
-    { "lineTo",           vector_layer_lineto,           2 },
-    { "beginPath",        vector_layer_beginpath,        0 },
-    { "moveTo",           vector_layer_moveto,           2 },
-    { "quadraticCurveTo", vector_layer_quadcurveto,      4 },
-    { "bezierCurveTo",    vector_layer_beziercurveto,    6 },
-    { "arc",              vector_layer_arc,              5 },
-    { "rect",             vector_layer_rect,             4 },
-    { "closePath",        vector_layer_closepath,        0 },
-    { "fill",             vector_layer_fill,             4 },
-    { "fillRect",         vector_layer_fillrect,         4 },
-    { "stroke",           vector_layer_stroke,           4 },
-    { "push_color",       vector_layer_push_color,       0 },
-    { "pop_color",        vector_layer_pop_color,        0 },
-    {0}
-};
-
-
-JSPropertySpec vector_layer_properties[] = {
-    {
-        "fillStyle",   0, JSPROP_ENUMERATE | JSPROP_PERMANENT,
-        vector_layer_fillstyle_g, vector_layer_fillstyle_s
-    },
-    {
-        "strokeStyle", 1, JSPROP_ENUMERATE | JSPROP_PERMANENT,
-        vector_layer_strokestyle_g, vector_layer_strokestyle_s
-    },
-    {
-        "lineCap",     2, JSPROP_ENUMERATE | JSPROP_PERMANENT,
-        vector_layer_linecap_g, vector_layer_linecap_s
-    },
-    {
-        "lineWidth",   3, JSPROP_ENUMERATE | JSPROP_PERMANENT,
-        vector_layer_linewidth_g, vector_layer_linewidth_s
-    },
-    {0}
-};
-
-
-// properties TODO: fillStyle, strokeStyle, lineCap, lineWidth
-
-JS_CONSTRUCTOR("VectorLayer", vector_layer_constructor, CairoLayerJS);
-
-
-
-JSBool CairoLayer::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) {
+JSBool CairoLayerJS::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) {
 
     jsdouble r, g, b, a;
 
@@ -156,9 +100,65 @@ JSBool CairoLayer::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) {
     return JS_FALSE;
 }
 
+DECLARE_CLASS_GC("VectorLayer", vector_layer_class, vector_layer_constructor, js_layer_gc);
+
+////////////////////////////////
+// Vector Layer methods
+// basically exposing Cairo's API
+
+JSFunctionSpec vector_layer_methods[] = {
+    ENTRY_METHODS,
+    { "set_color",        vector_layer_color,            4 },
+    { "translate",        vector_layer_translate,        2 },
+    { "scale",            vector_layer_scale,            2 },
+    { "rotate",           vector_layer_rotate,           1 },
+    { "save",             vector_layer_save,             0 },
+    { "restore",          vector_layer_restore,          0 },
+    { "lineTo",           vector_layer_lineto,           2 },
+    { "beginPath",        vector_layer_beginpath,        0 },
+    { "moveTo",           vector_layer_moveto,           2 },
+    { "quadraticCurveTo", vector_layer_quadcurveto,      4 },
+    { "bezierCurveTo",    vector_layer_beziercurveto,    6 },
+    { "arc",              vector_layer_arc,              5 },
+    { "rect",             vector_layer_rect,             4 },
+    { "closePath",        vector_layer_closepath,        0 },
+    { "fill",             vector_layer_fill,             4 },
+    { "fillRect",         vector_layer_fillrect,         4 },
+    { "stroke",           vector_layer_stroke,           4 },
+    { "push_color",       vector_layer_push_color,       0 },
+    { "pop_color",        vector_layer_pop_color,        0 },
+    {0}
+};
+
+
+JSPropertySpec vector_layer_properties[] = {
+    {
+        "fillStyle",   0, JSPROP_ENUMERATE | JSPROP_PERMANENT,
+        vector_layer_fillstyle_g, vector_layer_fillstyle_s
+    },
+    {
+        "strokeStyle", 1, JSPROP_ENUMERATE | JSPROP_PERMANENT,
+        vector_layer_strokestyle_g, vector_layer_strokestyle_s
+    },
+    {
+        "lineCap",     2, JSPROP_ENUMERATE | JSPROP_PERMANENT,
+        vector_layer_linecap_g, vector_layer_linecap_s
+    },
+    {
+        "lineWidth",   3, JSPROP_ENUMERATE | JSPROP_PERMANENT,
+        vector_layer_linewidth_g, vector_layer_linewidth_s
+    },
+    {0}
+};
+
+
+// properties TODO: fillStyle, strokeStyle, lineCap, lineWidth
+
+JS_CONSTRUCTOR("VectorLayer", vector_layer_constructor, CairoLayerJS);
+
 JS(vector_layer_color) {
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     lay->set_color(cx, argc, argv, 0);
     return JS_TRUE;
@@ -168,7 +168,7 @@ JS(vector_layer_translate) {
 
     JS_CHECK_ARGC(2);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsint tx, ty;
 
@@ -185,7 +185,7 @@ JS(vector_layer_translate) {
 JS(vector_layer_scale) {
     JS_CHECK_ARGC(2);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsdouble sx, sy;
     sx = js_get_double(argv[0]);
@@ -202,7 +202,7 @@ JS(vector_layer_scale) {
 JS(vector_layer_rotate) {
     JS_CHECK_ARGC(1);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsdouble angle = js_get_double(argv[0]);
 
@@ -215,12 +215,12 @@ JS(vector_layer_rotate) {
 }
 
 JS(vector_layer_save) {
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
     lay->save();
     return JS_TRUE;
 }
 JS(vector_layer_restore) {
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
     lay->restore();
     return JS_TRUE;
 }
@@ -229,7 +229,7 @@ JS(vector_layer_lineto) {
 
     JS_CHECK_ARGC(2);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsint x, y;
     x = js_get_int(argv[0]);
@@ -243,12 +243,12 @@ JS(vector_layer_lineto) {
 }
 
 JS(vector_layer_beginpath) {
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
     lay->new_path();
     return JS_TRUE;
 }
 JS(vector_layer_closepath) {
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
     lay->close_path();
     return JS_TRUE;
 }
@@ -257,7 +257,7 @@ JS(vector_layer_moveto) {
 
     JS_CHECK_ARGC(2);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsint x, y;
     x = js_get_int(argv[0]);
@@ -273,7 +273,7 @@ JS(vector_layer_moveto) {
 JS(vector_layer_quadcurveto) {
 
     JS_CHECK_ARGC(4);
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsint x1, y1;
     x1 = js_get_int(argv[0]);
@@ -293,7 +293,7 @@ JS(vector_layer_beziercurveto) {
 
     JS_CHECK_ARGC(6);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsint x1, y1;
     x1 = js_get_int(argv[0]);
@@ -318,7 +318,7 @@ JS(vector_layer_beziercurveto) {
 JS(vector_layer_rect) {
     JS_CHECK_ARGC(4);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsdouble x1, y1, x2, y2;
     x1 = js_get_double(argv[0]);
@@ -338,7 +338,7 @@ JS(vector_layer_arc) {
 
     JS_CHECK_ARGC(5);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsint xc, yc;
     xc = js_get_int(argv[0]);
@@ -361,7 +361,7 @@ JS(vector_layer_fillrect) {
 
     JS_CHECK_ARGC(4);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     jsint x1, y1;
     x1 = js_get_int(argv[0]);
@@ -381,7 +381,7 @@ JS(vector_layer_fillrect) {
 
 JS(vector_layer_fill) {
     func("%s", __FUNCTION__);
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     if(argc > 0)
         lay->set_color(cx, argc, argv, 0);
@@ -391,7 +391,7 @@ JS(vector_layer_fill) {
 }
 JS(vector_layer_stroke) {
     func("%s", __FUNCTION__);
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     if(argc > 0) {
         lay->set_color(cx, argc, argv, 0);
@@ -403,13 +403,13 @@ JS(vector_layer_stroke) {
 
 JS(vector_layer_push_color) {
     func("%s", __FUNCTION__);
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
     lay->push_color();
     return JS_TRUE;
 }
 JS(vector_layer_pop_color) {
     func("%s", __FUNCTION__);
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
     lay->pop_color();
     return JS_TRUE;
 }
@@ -426,7 +426,7 @@ JSP(vector_layer_fillstyle_s) {
     func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     // check if this makes sense
     cairo_set_fill_rule(lay->cairo, (cairo_fill_rule_t)*vp);
@@ -476,7 +476,7 @@ JSP(vector_layer_linecap_g)     {
 JSP(vector_layer_linecap_s)     {
     //  js_debug_property(cx, vp);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     char *cap = NULL;
     if(JSVAL_IS_STRING(*vp))
@@ -512,7 +512,7 @@ JSP(vector_layer_linewidth_g)   {
     func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     func("vp is %p : %f", vp, *vp);
 
@@ -523,7 +523,7 @@ JSP(vector_layer_linewidth_s)   {
     func("%s", __FUNCTION__);
     //  js_debug_property(cx, vp);
 
-    GET_LAYER(CairoLayer);
+    GET_LAYER(CairoLayerJS);
 
     JS_PROP_DOUBLE(wid, *vp);
 

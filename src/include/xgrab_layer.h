@@ -30,9 +30,7 @@
 //#include <screen.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#ifdef WITH_JAVASCRIPT
-#include <callbacks_js.h>
-#endif //WITH_JAVASCRIPT
+
 //#include <X11/extensions/Xvlib.h>
 
 class XGrabLayer: public Layer {

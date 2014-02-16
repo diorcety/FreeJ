@@ -23,6 +23,15 @@
 
 #include <osc_ctrl.h>
 
+class JsCommand: public Entry {
+public:
+    // name is function
+    jsval function;
+    char *format;
+    int argc;
+    jsval *argv;
+
+};
 
 static void osc_error_handler(int num, const char *msg, const char *path) {
     error("OSC server error %d in path %s: %s\n", num, path, msg);
