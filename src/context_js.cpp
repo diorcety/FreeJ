@@ -636,7 +636,7 @@ JS(entry_move) {
     GET_LAYER(Layer);
 
     int pos = JSVAL_TO_INT(argv[0]);
-    if(!lay->move(pos))
+    if(!lay->move(pos - 1))
         warning("cannot move %s to position %u", lay->getName().c_str(), pos);
 
     return JS_TRUE;

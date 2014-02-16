@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <string>
+
 #include "entity.h"
 
 /* void warning(const char *format, ...); */
@@ -32,7 +33,7 @@ void func(const char *format, ...);
 #define THREADSAFE 1
 
 #ifdef THREADSAFE
-#include <pthread.h>
+#include <mutex>          // std::mutex
 #endif
 
 
@@ -47,42 +48,39 @@ class JSObject;
 
 class BaseLinklist {
     friend class Entry;
+
 public:
     BaseLinklist() {
-#ifdef THREADSAFE
-        pthread_mutexattr_init(&mattr);
-        pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_RECURSIVE);
-        pthread_mutex_init(&mutex, &mattr);
-#endif
-    };
-    virtual ~BaseLinklist() {
-#ifdef THREADSAFE
-        pthread_mutex_destroy(&mutex);
-        pthread_mutexattr_destroy(&mattr);
-#endif
-    };
+    }
 
-    Entry *selection;
-    virtual Entry *_pick(int pos) = 0;
+    virtual ~BaseLinklist() {
+    }
 
 #ifdef THREADSAFE
     void lock() {
-        pthread_mutex_lock(&mutex);
-    };
+        mtx.lock();
+    }
+
     void unlock() {
-        pthread_mutex_unlock(&mutex);
-    };
+        mtx.unlock();
+    }
 #endif
+
+    virtual Entry *_pick(int pos) = 0;
+
+private:
 #ifdef THREADSAFE
-    pthread_mutex_t mutex;
-    pthread_mutexattr_t mattr;
+    std::mutex mtx;
 #endif
+
 protected:
+    Entry *selection;
     /* don't touch these from outside
        use begin() and end() and len() methods */
     Entry *first;
     Entry *last;
     int length;
+
 };
 
 template <class T>
@@ -93,27 +91,24 @@ public:
 
     T *begin() {
         return((T*)first);
-    };
+    }
+
     T *end() {
         return((T*)last);
-    };
+    }
+
     int len() {
         return(length);
-    };
+    }
 
     void append(T *addr);
     void prepend(T *addr);
-    void insert(T *addr, int pos);
-    void insert_after(T *addr, T *pos);
     void rem(int pos);
     void sel(int pos);
     void clear();
-    bool moveup(int pos);
-    bool movedown(int pos);
-    bool moveto(int num, int pos);
-    Entry *_pick(int pos);
-
     T *pick(int pos);
+    virtual Entry *_pick(int pos);
+
     T *search(const char *name, int *idx = NULL);
     T **completion(char *needle);
 
@@ -121,7 +116,7 @@ public:
 
     T *operator[](int pos) {
         return pick(pos);
-    };
+    }
 
 
 private:
@@ -207,65 +202,6 @@ template <class T> void Linklist<T>::prepend(T *addr) {
 #endif
 }
 
-// inserts an element after the given one
-template <class T> void Linklist<T>::insert_after(T *addr, T *pos) {
-
-    // take it out from other lists
-    if(addr->list) addr->rem();
-
-#ifdef THREADSAFE
-    lock();
-#endif
-    if(pos->next) {
-        pos->next->prev = addr;
-        addr->next = pos->next;
-    } else last = addr;  // it's the last
-
-    addr->prev = pos;
-    pos->next = addr;
-
-    length++;
-    addr->list = this;
-
-#ifdef THREADSAFE
-    unlock();
-#endif
-}
-
-/* adds an element at the position specified
-   if pos is out of bounds adds it at the beginning or the end
-   the element occupying allready the position slides down
-   THIS FUNCTION IS NOT YET RELIABLE
- */
-template <class T> void Linklist<T>::insert(T *addr, int pos) {
-    if(length <= pos) { /* adds it at the end */
-        append(addr);
-        return;
-    } else if(pos <= 1) {
-        prepend(addr);
-        return;
-    }
-
-    if(addr->list) addr->rem();
-
-    T *ptr = pick(pos);
-
-#ifdef THREADSAFE
-    lock();
-#endif
-    ptr->prev->next = addr;
-    addr->prev = ptr->prev;
-
-    ptr->prev = addr;
-    addr->next = ptr;
-
-    length++;
-    addr->list = this;
-#ifdef THREADSAFE
-    unlock();
-#endif
-}
-
 /* clears the list
    i don't delete filters here because they have to be deleted
    from the procedure creating them. so this call simply discards
@@ -281,12 +217,6 @@ template <class T> void Linklist<T>::clear() {
 #ifdef THREADSAFE
     unlock();
 #endif
-}
-
-// virtual implementation for typecasting workaround
-// internal use only by the Entry
-template <class T> Entry *Linklist<T>::_pick(int pos) {
-    return((Entry*)pick(pos));
 }
 
 /* takes one element from the list
@@ -321,6 +251,12 @@ template <class T> T *Linklist<T>::pick(int pos) {
             ptr = (T*)ptr->prev;  // to be checked
     }
     return(ptr);
+}
+
+// virtual implementation for typecasting workaround
+// internal use only by the Entry
+template <class T> Entry *Linklist<T>::_pick(int pos) {
+    return((Entry*)pick(pos));
 }
 
 /* search the linklist for the entry matching *name
@@ -369,27 +305,6 @@ template <class T> T **Linklist<T>::completion(char *needle) {
     return compbuf;
 }
 
-/* this function is a wrapper around Entry::up()
-   better to use that if you have a pointer to your Entry */
-template <class T> bool Linklist<T>::moveup(int pos) {
-    T *p = pick(pos);
-    if(!p) return(false);
-    return(p->up());
-}
-
-template <class T> bool Linklist<T>::movedown(int pos) {
-    T *p = pick(pos);
-    if(!p) return(false);
-    return(p->down());
-}
-
-template <class T> bool Linklist<T>::moveto(int num, int pos) {
-    T
-    *p = pick(num);
-    if(!p) return(false);
-    return(p->move(pos));
-}
-
 /* removes one element from the list */
 template <class T> void Linklist<T>::rem(int pos) {
     T *ptr = pick(pos);
@@ -411,7 +326,7 @@ template <class T> void Linklist<T>::sel(int pos) {
 
     if(!pos) {
         while(ptr) {
-            ptr->select = false;
+            ptr->sel(false);
             ptr = (T*)ptr->next;
         }
         selection = NULL;

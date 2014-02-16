@@ -26,7 +26,7 @@
 
 // other functions are pure virtual
 JS(js_ctrl_constructor);
-DECLARE_CLASS("Controller", js_ctrl_class, NULL);
+DECLARE_CLASS("Controller", js_ctrl_class, NULL)
 
 JSFunctionSpec js_ctrl_methods[] = {
     {"activate", controller_activate, 0},

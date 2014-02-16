@@ -85,6 +85,7 @@ class Layer : public Entry, public JSyncThread {
     friend class ViewPort;
 
 public:
+    SHARED_PTR(Layer)
 
     enum Type {
         UNKNOWN,
@@ -129,7 +130,7 @@ public:
 
     char *get_filename() {
         return filename;
-    };
+    }
     ///< Get Layer's filename
 
     /**
@@ -262,6 +263,7 @@ private:
     int res;
     Iterator *iter;
     Iterator *itertmp;
+
     // colorkey point
     uint8_t colorkey_r;
     uint8_t colorkey_g;

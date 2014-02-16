@@ -28,7 +28,7 @@
 #include <video_encoder.h>
 #include <oggtheora_encoder.h>
 
-DECLARE_CLASS("VideoEncoder", js_vid_enc_class, js_vid_enc_constructor);
+DECLARE_CLASS("VideoEncoder", js_vid_enc_class, js_vid_enc_constructor)
 
 ////////////////////////////////
 // Video Encoder methods

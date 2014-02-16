@@ -100,7 +100,7 @@ JSBool CairoLayerJS::set_color(JSContext *cx, uintN argc, jsval *argv, int idx) 
     return JS_FALSE;
 }
 
-DECLARE_CLASS_GC("VectorLayer", vector_layer_class, vector_layer_constructor, js_layer_gc);
+DECLARE_CLASS_GC("VectorLayer", vector_layer_class, vector_layer_constructor, js_layer_gc)
 
 ////////////////////////////////
 // Vector Layer methods

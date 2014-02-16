@@ -28,7 +28,7 @@
 #include <filter.h>
 
 
-DECLARE_CLASS("Filter", filter_class, filter_constructor);
+DECLARE_CLASS("Filter", filter_class, filter_constructor)
 
 JSFunctionSpec filter_methods[] = {
     {"set_parameter",           filter_set_parameter,             4},

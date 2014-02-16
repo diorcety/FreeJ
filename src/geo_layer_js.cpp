@@ -33,7 +33,7 @@ GeoLayerJS::GeoLayerJS() {
     jsclass = &geometry_layer_class;
 }
 
-DECLARE_CLASS_GC("GeometryLayer", geometry_layer_class, geometry_layer_constructor, js_layer_gc);
+DECLARE_CLASS_GC("GeometryLayer", geometry_layer_class, geometry_layer_constructor, js_layer_gc)
 
 ////////////////////////////////
 // Geometry Layer methods

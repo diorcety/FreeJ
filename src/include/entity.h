@@ -32,7 +32,8 @@ class JSClass;
 class JSObject;
 
 class Entry {
-    friend class Linklist<Entry>;
+    template<typename U>
+    friend class Linklist;
 
 public:
     Entry();
@@ -45,7 +46,6 @@ public:
     bool up();
     bool down();
     bool move(int pos);
-    bool swap(int pos);
     void rem();
     void sel(bool on);
 
@@ -54,9 +54,8 @@ public:
 
     BaseLinklist *list;
 
-    bool select;
-
 protected:
+    bool select;
     std::string name;
     std::string description;
 

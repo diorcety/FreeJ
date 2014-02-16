@@ -25,7 +25,7 @@
 #include <blitter.h>
 #include <factory.h>
 
-DECLARE_CLASS("Screen", screen_class, screen_constructor);
+DECLARE_CLASS("Screen", screen_class, screen_constructor)
 
 JSFunctionSpec screen_methods[] = {
     ENTRY_METHODS,

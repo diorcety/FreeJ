@@ -293,7 +293,7 @@ int Layer::do_iterators() {
 bool Layer::set_parameter(int idx) {
 
     Parameter *param;
-    param = (Parameter*)parameters->pick(idx);
+    param = (Parameter*)parameters->pick(idx - 1);
     if(!param) {
         error("parameter %s not found in layer %s", param->getName().c_str(), name.c_str());
         return false;

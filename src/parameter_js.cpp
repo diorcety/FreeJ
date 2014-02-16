@@ -22,7 +22,7 @@
 
 #include <parameter.h>
 
-DECLARE_CLASS("Parameter", parameter_class, parameter_constructor);
+DECLARE_CLASS("Parameter", parameter_class, parameter_constructor)
 
 JSFunctionSpec parameter_methods[] = {
     // TODO

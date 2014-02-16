@@ -51,7 +51,7 @@ void ViMoControllerJS::outer_wheel(int speed, int old_speed) {
 }
 
 JS(js_vimo_ctrl_constructor);
-DECLARE_CLASS("ViMoController", js_vimo_ctrl_class, js_vimo_ctrl_constructor);
+DECLARE_CLASS("ViMoController", js_vimo_ctrl_class, js_vimo_ctrl_constructor)
 
 JSFunctionSpec js_vimo_ctrl_methods[] = {
     {"open",    js_vimo_open,   0},

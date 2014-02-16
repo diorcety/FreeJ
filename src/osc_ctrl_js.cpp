@@ -133,7 +133,7 @@ int OscControllerJS::dispatch() {
 
 
         free(jscmd->argv); // must free previous callod on argv
-        commands_pending.rem(1);
+        commands_pending.rem(0);
         delete jscmd;
         jscmd = (JsCommand*)commands_pending.begin();
         c++;
@@ -144,7 +144,7 @@ int OscControllerJS::dispatch() {
 /////// Javascript OscController
 JS(js_osc_ctrl_constructor);
 
-DECLARE_CLASS("OscController", js_osc_ctrl_class, js_osc_ctrl_constructor);
+DECLARE_CLASS("OscController", js_osc_ctrl_class, js_osc_ctrl_constructor)
 
 JS(js_osc_ctrl_start);
 JS(js_osc_ctrl_stop);

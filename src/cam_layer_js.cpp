@@ -24,7 +24,7 @@
 #include <layer.h>
 #include <config.h>
 
-DECLARE_CLASS("CamLayer", cam_layer_class, cam_layer_constructor);
+DECLARE_CLASS("CamLayer", cam_layer_class, cam_layer_constructor)
 
 ////////////////////////////////
 // CamLayer methods

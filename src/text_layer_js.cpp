@@ -36,7 +36,7 @@ TextLayerJS::TextLayerJS() {
     jsclass = &txt_layer_class;
 }
 
-DECLARE_CLASS_GC("TextLayer", txt_layer_class, txt_layer_constructor, js_layer_gc);
+DECLARE_CLASS_GC("TextLayer", txt_layer_class, txt_layer_constructor, js_layer_gc)
 
 
 ////////////////////////////////

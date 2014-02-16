@@ -254,7 +254,7 @@ JS(js_wii_ctrl_dump) {
     return JS_TRUE;
 }
 
-DECLARE_CLASS_GC("WiiController", js_wii_ctrl_class, js_wii_ctrl_constructor, js_ctrl_gc);
+DECLARE_CLASS_GC("WiiController", js_wii_ctrl_class, js_wii_ctrl_constructor, js_ctrl_gc)
 
 JSFunctionSpec js_wii_ctrl_methods[] = {
     {"open",           js_wii_ctrl_open,       1},

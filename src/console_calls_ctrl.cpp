@@ -675,7 +675,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     // free entries allocated in memory
     e = files.begin();
     while(e) {
-        files.rem(1);
+        files.rem(0);
         delete e;
         e = files.begin();
     }

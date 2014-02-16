@@ -211,67 +211,6 @@ bool Entry::move(int pos) {
     return(true);
 }
 
-bool Entry::swap(int pos) {
-    func("Entry::swap(%i) - NEW LINKLIST SWAP, TRYING IT...");
-    if(!list) return(false);
-#ifdef THREADSAFE
-    list->lock();
-#endif
-
-    Entry *tn, *tp;
-
-    Entry *swapping = list->_pick(pos);
-
-    if(!swapping) {
-#ifdef THREADSAFE
-        list->unlock();
-#endif
-        return(false);
-    }
-
-    if(swapping == this) {
-#ifdef THREADSAFE
-        list->unlock();
-#endif
-        return (true);
-    }
-
-    tn = swapping->next;
-    tp = swapping->prev;
-
-    swapping->next = (next == swapping) ? this : next;
-    next = (tn == this) ? swapping : tn;
-    swapping->prev = (prev == swapping) ? this : prev;
-    prev = (tp == this) ? swapping : tp;
-
-    // update head of the list if necessary
-    if(!prev) {
-        list->first = this;
-    } else {
-        prev->next = this;
-        if(!swapping->prev)
-            list->first = swapping;
-        else
-            swapping->prev->next = swapping;
-    }
-    // update the tail of the list if necessary
-    if(!next) {
-        list->last = this;
-    } else {
-        next->prev = this;
-        if(!swapping->next)
-            list->last = swapping;
-        else
-            swapping->next->prev = swapping;
-    }
-#ifdef THREADSAFE
-    list->unlock();
-#endif
-    func("LINKLIST MOVE RETURNS SUCCESS");
-
-    return(true);
-}
-
 void Entry::rem() {
     bool lastone = false;
     if(!list) return;

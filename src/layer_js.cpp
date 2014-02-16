@@ -28,7 +28,7 @@
 
 void js_layer_gc(JSContext *cx, JSObject *obj);
 
-DECLARE_CLASS("Layer", layer_class, layer_constructor);
+DECLARE_CLASS("Layer", layer_class, layer_constructor)
 
 JSFunctionSpec layer_methods[] = {
     ENTRY_METHODS,

@@ -59,7 +59,7 @@ int MouseControllerJS::button(int button, int state, int x, int y) {
 
 JS(js_mouse_ctrl_constructor);
 
-DECLARE_CLASS("MouseController", js_mouse_ctrl_class, js_mouse_ctrl_constructor);
+DECLARE_CLASS("MouseController", js_mouse_ctrl_class, js_mouse_ctrl_constructor)
 
 JSBool js_add_p(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     func("add prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));

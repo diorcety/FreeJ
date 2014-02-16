@@ -34,7 +34,7 @@ ImageLayerJS::ImageLayerJS() {
     jsclass = &image_layer_class;
 }
 
-DECLARE_CLASS_GC("ImageLayer", image_layer_class, image_layer_constructor, js_layer_gc);
+DECLARE_CLASS_GC("ImageLayer", image_layer_class, image_layer_constructor, js_layer_gc)
 
 ////////////////////////////////
 // Image Layer methods

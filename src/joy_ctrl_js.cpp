@@ -58,7 +58,7 @@ int JoyControllerJS::button_up(int device, int button) {
 /////// Javascript JoystickController
 JS(js_joy_ctrl_constructor);
 
-DECLARE_CLASS_GC("JoystickController", js_joy_ctrl_class, js_joy_ctrl_constructor, js_ctrl_gc);
+DECLARE_CLASS_GC("JoystickController", js_joy_ctrl_class, js_joy_ctrl_constructor, js_ctrl_gc)
 
 JSFunctionSpec js_joy_ctrl_methods[] = {
 #ifdef HAVE_LINUX

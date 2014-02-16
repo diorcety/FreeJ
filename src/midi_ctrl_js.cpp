@@ -95,7 +95,7 @@ int MidiControllerJS::event_pgmchange(int channel, int param, int value) {
 
 JS(js_midi_ctrl_constructor);
 
-DECLARE_CLASS_GC("MidiController", js_midi_ctrl_class, js_midi_ctrl_constructor, js_ctrl_gc);
+DECLARE_CLASS_GC("MidiController", js_midi_ctrl_class, js_midi_ctrl_constructor, js_ctrl_gc)
 
 JS(midi_connect);
 JS(midi_connect_from);

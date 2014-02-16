@@ -61,7 +61,7 @@ JSFunctionSpec js_kbd_ctrl_methods[] = {
 /////// Javascript KeyboardController
 JS(js_kbd_ctrl_constructor);
 
-DECLARE_CLASS("KeyboardController", js_kbd_ctrl_class, js_kbd_ctrl_constructor);
+DECLARE_CLASS("KeyboardController", js_kbd_ctrl_class, js_kbd_ctrl_constructor)
 
 /* XXX - this is exactly the same code we have in trigger_ctrl.cpp ...
          we should try to avoid duplicating code around */
