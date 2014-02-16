@@ -201,8 +201,7 @@ bool Layer::set_blit(const char *bname) {
         current_blit = b; // start using
         need_crop = true;
         blitter->crop(this, screen);
-        blitter->blitlist.sel(0);
-        b->sel(true);
+        blitter->mSelectedBlit = b;
         act("blit %s set for layer %s", current_blit->getName().c_str(), name.c_str());
     } else {
         warning("can't set blit for layer %s: not added on any screen yet", name.c_str());
@@ -293,7 +292,7 @@ int Layer::do_iterators() {
 bool Layer::set_parameter(int idx) {
 
     Parameter *param;
-    param = (Parameter*)parameters->pick(idx - 1);
+    param = (Parameter*)parameters->pick(idx);
     if(!param) {
         error("parameter %s not found in layer %s", param->getName().c_str(), name.c_str());
         return false;

@@ -99,7 +99,7 @@ void * run_context(void * data) {
 }
 
 Context::Context() {
-
+    mSelectedScreen = NULL;
     //audio           = NULL;
 
     /* initialize fps counter */
@@ -189,8 +189,7 @@ bool Context::add_screen(ViewPort *scr) {
         return false;
     }
     screens.prepend(scr);
-    screens.sel(0);
-    scr->sel(true);
+    mSelectedScreen = scr;
     screen = screens.begin();
     func("screen %s successfully added", scr->getName().c_str());
     act("screen %s now on top", screen->getName().c_str());
@@ -320,7 +319,7 @@ void Context::handle_controllers() {
         if(event.key.state == SDL_PRESSED)
             if(event.key.keysym.mod & KMOD_CTRL)
                 if(event.key.keysym.sym == SDLK_f) {
-                    ViewPort *scr = screens.selected();
+                    ViewPort *scr = mSelectedScreen;
                     scr->fullscreen();
                     res = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYEVENTMASK | SDL_QUITMASK);
                     if(res < 0) warning("SDL_PeepEvents error");
@@ -391,7 +390,7 @@ bool Context::add_encoder(VideoEncoder *enc) {
     func("%s", __PRETTY_FUNCTION__);
 
     ViewPort *scr;
-    scr = screens.selected();
+    scr = mSelectedScreen;
     if(!scr) {
         error("no screen initialized, can't add encoder %s", enc->getName().c_str());
         return(false);
@@ -407,7 +406,7 @@ bool Context::add_layer(Layer *lay) {
     warning("a list of screens (view ports) is available");
     warning("kijk in Context::screens Linklist");
 
-    ViewPort *scr = screens.selected();
+    ViewPort *scr = mSelectedScreen;
     if(!scr) {
         error("no screen initialized, can't add layer %s", lay->getName().c_str());
         return(false);
@@ -419,7 +418,7 @@ bool Context::add_layer(Layer *lay) {
 void Context::rem_layer(Layer *lay) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    ViewPort *scr = screens.selected();
+    ViewPort *scr = mSelectedScreen;
     if(scr)
         scr->rem_layer(lay);
 }
@@ -551,7 +550,7 @@ bool Context::config_check(const char *filename) {
 }
 
 void Context::resize(int w, int h) {
-    ViewPort *scr = screens.selected();
+    ViewPort *scr = mSelectedScreen;
     scr->resize_w = w;
     scr->resize_h = h;
     scr->resizing = true;
@@ -559,7 +558,7 @@ void Context::resize(int w, int h) {
 }
 
 void *Context::coords(int x, int y) {
-    ViewPort *scr = screens.selected();
+    ViewPort *scr = mSelectedScreen;
     return(scr->coords(x, y));
 }
 
@@ -598,7 +597,7 @@ Layer *Context::open(char *file, int w, int h) {
 
     if(!w || !h) {
         // uses the size of currently selected screen
-        ViewPort *screen = screens.selected();
+        ViewPort *screen = mSelectedScreen;
         w = screen->geo.w;
         h = screen->geo.h;
     }

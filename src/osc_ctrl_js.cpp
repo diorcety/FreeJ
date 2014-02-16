@@ -133,7 +133,7 @@ int OscControllerJS::dispatch() {
 
 
         free(jscmd->argv); // must free previous callod on argv
-        commands_pending.rem(0);
+        commands_pending.rem(1);
         delete jscmd;
         jscmd = (JsCommand*)commands_pending.begin();
         c++;

@@ -58,6 +58,7 @@ public:
 private:
 
     Linklist<Entry> history;
+    Entry *mSelectedHistory;
 
     /* input console command */
     bool commandline;

@@ -45,13 +45,17 @@ int console_param_selection(Context *env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    Layer *lay = (Layer*)env->screens.selected()->layers.selected();
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstance* filt =
-        (FilterInstance*)lay->filters.selected();
+    FilterInstance* filt = lay->mSelectedFilter;
 
     // find the values after the first blank space
     char *p;
@@ -117,13 +121,17 @@ int console_param_selection(Context *env, char *cmd) {
 }
 
 int console_param_completion(Context *env, char *cmd) {
-    Layer *lay = (Layer*)env->screens.selected()->layers.selected();
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstance* filt =
-        (FilterInstance*)lay->filters.selected();
+    FilterInstance* filt = lay->mSelectedFilter;
 
     Linklist<Parameter> *parameters;
     if(filt) parameters = &filt->parameters;
@@ -187,7 +195,12 @@ int console_blit_selection(Context *env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    Layer *lay = (Layer*)env->screens.selected()->layers.selected();
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -203,7 +216,12 @@ int console_blit_completion(Context *env, char *cmd) {
 
     if(!cmd) return 0;
 
-    Layer *lay = (Layer*)env->screens.selected()->layers.selected();
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -262,15 +280,21 @@ int console_blit_param_selection(Context *env, char *cmd) {
     Blit *b;
     int idx;
 
-    Layer *lay = (Layer*)env->screens.selected()->layers.selected();
-
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
-    lay = (Layer*)env->screens.selected()->layers.selected();
+
+
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
+
     b = lay->current_blit;
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
@@ -306,12 +330,17 @@ int console_blit_param_completion(Context *env, char *cmd) {
     Parameter *p, **params;
     Blit *b;
 
-    Layer *lay = (Layer*)env->screens.selected()->layers.selected();
-
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
+
     b = lay->current_blit;
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
@@ -381,7 +410,12 @@ int console_filter_selection(Context *env, char *cmd) {
         return 0;
     }
 
-    Layer *lay = (Layer*)env->screens.selected()->layers.selected();
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer selected for effect %s", filt->getName().c_str());
         return 0;
@@ -515,7 +549,12 @@ int console_open_layer(Context *env, char *cmd) {
         l->active = true;
         //    l->fps=env->fps_speed;
 
-        len = env->screens.selected()->layers.len();
+        ViewPort *screen = env->mSelectedScreen;
+        if(!screen) {
+            ::error("no screen currently selected");
+            return 0;
+        }
+        len = screen->layers.len();
         notice("layer successfully created, now you have %i layers", len);
         return len;
     }
@@ -526,10 +565,18 @@ int console_open_layer(Context *env, char *cmd) {
 #if defined WITH_TEXTLAYER
 #include <text_layer.h>
 int console_print_text_layer(Context *env, char *cmd) {
-
-    ((TextLayer*)env->screens.selected()->layers.selected())->write(cmd);
-    return env->screens.selected()->layers.len();
-
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *lay = screen->mSelectedLayer;
+    if(!lay) {
+        ::error("no layer currently selected");
+        return 0;
+    }
+    ((TextLayer*)lay)->write(cmd);
+    return screen->layers.len();
 }
 
 int console_open_text_layer(Context *env, char *cmd) {
@@ -548,7 +595,12 @@ int console_open_text_layer(Context *env, char *cmd) {
     txt->active = true;
 
     notice("layer successfully created with text: %s", cmd);
-    return env->screens.selected()->layers.len();
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    return screen->layers.len();
 }
 
 #endif
@@ -675,7 +727,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     // free entries allocated in memory
     e = files.begin();
     while(e) {
-        files.rem(0);
+        files.rem(1);
         delete e;
         e = files.begin();
     }
@@ -760,9 +812,15 @@ int console_generator_completion(Context *env, char *cmd) {
 int console_generator_selection(Context *env, char *cmd) {
     GeneratorLayer *tmp = new GeneratorLayer();
     if(!tmp) return 0;
-    if(!tmp->init(env->screens.selected()->geo.w,
-                  env->screens.selected()->geo.h,
-                  env->screens.selected()->geo.bpp)) {
+
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    if(!tmp->init(env->screen->geo.w,
+                  env->screen->geo.h,
+                  env->screen->geo.bpp)) {
         error("can't initialize generator layer");
         delete tmp;
         return 0;

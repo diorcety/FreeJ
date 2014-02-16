@@ -64,7 +64,11 @@ template <class T> class Linklist;
 #define MAX_WIDTH 768
 
 class Context {
+public:
+    ViewPort * mSelectedScreen;
+
 private:
+
     static bool factory_initialized;
     /* doublesize calculation */
     uint64_t **doubletab;

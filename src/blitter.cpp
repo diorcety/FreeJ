@@ -39,7 +39,6 @@ Blit::Blit() : Entry() {
     setDescription("none");
 
     value = 0.0;
-
     fun = NULL;
     type = NONE;
     past_frame = NULL;
@@ -58,7 +57,7 @@ Blit::~Blit() {
 }
 
 Blitter::Blitter() {
-
+    mSelectedBlit = NULL;
     screen = NULL;
 
     old_lay_x = 0;

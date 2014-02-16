@@ -47,7 +47,6 @@ public:
     bool down();
     bool move(int pos);
     void rem();
-    void sel(bool on);
 
     Entry *next;
     Entry *prev;
@@ -55,7 +54,6 @@ public:
     BaseLinklist *list;
 
 protected:
-    bool select;
     std::string name;
     std::string description;
 

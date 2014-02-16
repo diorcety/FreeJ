@@ -98,18 +98,27 @@ bool SlwSelector::feed(int key) {
 
     bool res = false;
 
-    if(env->screens.selected()->layers.len() > 0) { // there are layers
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return false;
+    }
+
+    if(screen->layers.len() > 0) { // there are layers
 
         res = true;
 
         // get the one selected
-        le = env->screens.selected()->layers.selected();
+        le = screen->mSelectedLayer;
         if(!le) {
-            env->screens.selected()->layers.begin();
-            le->sel(true);
+            screen->mSelectedLayer = screen->layers.begin();
         }
 
-        fe = ((Layer*)le)->filters.selected();
+        fe = ((Layer*)le)->mSelectedFilter;
+        if(!screen) {
+            ::error("no filter currently selected");
+            return false;
+        }
 
         // switch over operations and perform
         switch(key) {
@@ -119,8 +128,7 @@ bool SlwSelector::feed(int key) {
             if(!fe) break;  // no filter
 
             fe = fe->prev; // take the upper one
-            ((Layer*)le)->filters.sel(0); // deselect all filters
-            if(fe) fe->sel(true);  // select only the current
+            ((Layer*)le)->mSelectedFilter = (FilterInstance*)fe;
 
             break;
 
@@ -129,11 +137,10 @@ bool SlwSelector::feed(int key) {
             if(!fe) {
                 fe = ((Layer*)le)->filters.begin();
                 if(!fe) break;  // no filters
-                else fe->sel(true);
+                else ((Layer*)le)->mSelectedFilter = (FilterInstance*)fe;
             } else if(fe->next) {
                 fe = fe->next;
-                ((Layer*)le)->filters.sel(0);
-                fe->sel(true);
+                ((Layer*)le)->mSelectedFilter = (FilterInstance*)fe;
             }
             break;
 
@@ -143,13 +150,12 @@ bool SlwSelector::feed(int key) {
 
                 // move to the previous or the other end
                 if(!le->prev)
-                    le = env->screens.selected()->layers.end();
+                    le = screen->layers.end();
                 else
                     le = le->prev;
 
                 // select only this layer
-                env->screens.selected()->layers.sel(0);
-                le->sel(true);
+                screen->mSelectedLayer = ((Layer*)le);
 
             } else { // a filter is selected: move across filter parameters
 
@@ -165,12 +171,11 @@ bool SlwSelector::feed(int key) {
 
                 // move to the next layer or the other end
                 if(!le->next)
-                    le = env->screens.selected()->layers.begin();
+                    le = screen->layers.begin();
                 else le = le->next;
 
                 // select only the current
-                env->screens.selected()->layers.sel(0);
-                le->sel(true);
+                screen->mSelectedLayer = ((Layer*)le);
 
             } else { // move across filter parameters
 
@@ -221,19 +226,25 @@ bool SlwSelector::feed(int key) {
 bool SlwSelector::refresh() {
     int sellayercol = 0, layercol, pos;
 
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return false;
+    }
+
     /* print info the selected layer */
     blank();
 
     // also put info from encoders, if active
     // so far supported only one encoder
-    VideoEncoder *enc = env->screens.selected()->encoders.begin();
+    VideoEncoder *enc = screen->encoders.begin();
     if(enc) {
         snprintf(tmp, w, "Stream: video %u kb/s : audio %u kb/s : encoded %u kb",
                  enc->video_kbps, enc->audio_kbps, enc->bytes_encoded / 1024);
         putnch(tmp, 1, 0, 0);
     }
 
-    layer = env->screens.selected()->layers.selected();
+    layer = screen->mSelectedLayer;
     if(layer) {
         snprintf(tmp, w, "Layer: %s blit: %s [%.0f] geometry x%i y%i w%u h%u",
                  layer->get_filename(), layer->current_blit->getName().c_str(), layer->current_blit->value,
@@ -248,8 +259,8 @@ bool SlwSelector::refresh() {
     putnch(tmp, 1, 1, 0);
 
 
-    if(env->screens.selected()->layers.len()) {
-        Layer *l = env->screens.selected()->layers.begin();
+    if(screen->layers.len()) {
+        Layer *l = screen->layers.begin();
         //    int color;
         int tmpsize = 0;
         layercol = 0;
@@ -260,7 +271,7 @@ bool SlwSelector::refresh() {
 
         /* take layer selected and first */
         if(layer)
-            filter = layer->filters.selected();
+            filter = layer->mSelectedFilter;
 
         while(l) { /* draw the layer's list */
             layercol += tmpsize + 4;
@@ -288,7 +299,7 @@ bool SlwSelector::refresh() {
     if(layer) {
         FilterInstance *f;
 
-        filter = layer->filters.selected();
+        filter = layer->mSelectedFilter;
 
 //     SLsmg_gotorc(3,1);
 //     SLsmg_set_color(FILTERS_COLOR);

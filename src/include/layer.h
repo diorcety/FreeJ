@@ -39,7 +39,6 @@ class Blitter;
 class Blit;
 class ViewPort;
 
-
 class JSContext;
 
 
@@ -86,6 +85,8 @@ class Layer : public Entry, public JSyncThread {
 
 public:
     SHARED_PTR(Layer)
+
+    FilterInstance * mSelectedFilter;
 
     enum Type {
         UNKNOWN,
@@ -181,7 +182,9 @@ public:
     Geometry geo_rotozoom;
     ///< Geometrical information about the Rotozoom
 
+private:
     Linklist<Iterator> iterators;
+public:
     ///< Iterator list of value modifiers
     int do_iterators(); ///< process all registered iterators
 

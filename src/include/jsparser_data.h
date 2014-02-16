@@ -297,14 +297,13 @@ JS(entry_down);
 JS(entry_move);
 JS(entry_next);
 JS(entry_prev);
-JS(entry_select);
+//JS(entry_select);
 #define ENTRY_METHODS \
     {"move",            entry_move,             1}, \
     {"up",              entry_up,               0}, \
     {"down",            entry_down,             0}, \
     {"next",            entry_next,             0}, \
-    {"prev",            entry_prev,             0}, \
-    {"select",          entry_select,           0}
+    {"prev",            entry_prev,             0}
 
 ////////////////////////////////
 // Screen methods

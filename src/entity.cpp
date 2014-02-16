@@ -37,7 +37,6 @@ Entry::Entry() {
     jsobj = NULL;
     jsenv = NULL;
 #endif //WITH_JAVASCRIPT
-    select = false;
 }
 
 Entry::~Entry() {
@@ -212,7 +211,6 @@ bool Entry::move(int pos) {
 }
 
 void Entry::rem() {
-    bool lastone = false;
     if(!list) return;
 #ifdef THREADSAFE
     list->lock();
@@ -220,22 +218,13 @@ void Entry::rem() {
 
     if(next) { // if there is a next
         next->prev = prev; // link it to the previous
-        if(select) { // change selection if we are selected
-            next->select = select; // inherit selection
-            list->selection = next;
-        }
     } else {
         list->last = prev; // else just make it the last
-        lastone = true;
     }
 
 
     if(prev) { // if there is a previous
         prev->next = next; // link it to the next
-        if(select) { // change selection if we are selected
-            if(lastone) prev->select = select;
-            list->selection = prev;
-        }
     } else list->first = next;  // else just make it a first
 
     list->length--;
@@ -246,12 +235,3 @@ void Entry::rem() {
 #endif
     list = NULL;
 }
-
-void Entry::sel(bool on) {
-    if(!list)
-        return;
-    select = on;
-    if(select)
-        list->selection = this;
-}
-

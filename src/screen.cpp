@@ -122,18 +122,15 @@ bool ViewPort::add_layer(Layer *lay) {
 
     // setup default blit (if any)
     if(lay->blitter) {
-        lay->current_blit =
-            (Blit*)lay->blitter->default_blit;
-        lay->blitter->blitlist.sel(0);
-        lay->current_blit->sel(true);
+        lay->current_blit = (Blit*)lay->blitter->default_blit;
+        lay->blitter->mSelectedBlit = lay->current_blit;
     }
     // center the position
     //lay->geo.x = (screen->w - lay->geo.w)/2;
     //lay->geo.y = (screen->h - lay->geo.h)/2;
     //  screen->blitter->crop( lay, screen );
     layers.prepend(lay);
-    layers.sel(0);
-    lay->sel(true);
+    mSelectedLayer = lay;
     lay->active = true;
     func("layer %s added to screen %s", lay->getName().c_str(), name.c_str());
     return(true);
@@ -190,9 +187,7 @@ bool ViewPort::add_encoder(VideoEncoder *enc) {
 
     encoders.append(enc);
 
-    encoders.sel(0);
-
-    enc->sel(true);
+    mSelectedEncoder = enc;
 
     act("encoder %s added to screen %s", enc->getName().c_str(), name.c_str());
     return true;

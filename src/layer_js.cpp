@@ -127,13 +127,13 @@ JS(selected_layer) {
     JSObject *objtmp;
     jsval val;
 
-    if(global_environment->screens.selected()->layers.len() == 0) {
+    if(global_environment->mSelectedScreen->layers.len() == 0) {
         error("can't return selected layer: no layers are present");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
     }
 
-    lay = (Layer*)global_environment->screens.selected()->layers.selected();
+    lay = global_environment->mSelectedScreen->mSelectedLayer;
 
     if(!lay) {
         warning("there is no selected layer");

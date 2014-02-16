@@ -74,13 +74,11 @@ private:
 #endif
 
 protected:
-    Entry *selection;
     /* don't touch these from outside
        use begin() and end() and len() methods */
     Entry *first;
     Entry *last;
     int length;
-
 };
 
 template <class T>
@@ -103,24 +101,18 @@ public:
 
     void append(T *addr);
     void prepend(T *addr);
+    void insert_after(T *addr, T *pos);
     void rem(int pos);
-    void sel(int pos);
     void clear();
     T *pick(int pos);
-    virtual Entry *_pick(int pos);
+    Entry *_pick(int pos);
 
     T *search(const char *name, int *idx = NULL);
     T **completion(char *needle);
 
-    T *selected();
-
     T *operator[](int pos) {
         return pick(pos);
     }
-
-
-private:
-    T *compbuf[MAX_COMPLETION*sizeof(T*)]; // completion buffer
 };
 
 
@@ -136,7 +128,7 @@ template <class T> Linklist<T>::Linklist() {
     length = 0;
     first = NULL;
     last = NULL;
-    selection = NULL;
+    // selection = NULL; TODA AAA
 }
 
 template <class T> Linklist<T>::~Linklist() {
@@ -156,7 +148,6 @@ template <class T> void Linklist<T>::append(T *addr) {
         last->next = NULL;
         last->prev = NULL;
         first = last;
-        first->sel(true);
     } else { /* add the entry to the end */
         ptr = (T*)last;
         ptr->next = addr;
@@ -202,6 +193,31 @@ template <class T> void Linklist<T>::prepend(T *addr) {
 #endif
 }
 
+// inserts an element after the given one
+template <class T> void Linklist<T>::insert_after(T *addr, T *pos) {
+
+    // take it out from other lists
+    if(addr->list) addr->rem();
+
+#ifdef THREADSAFE
+    lock();
+#endif
+    if(pos->next) {
+        pos->next->prev = addr;
+        addr->next = pos->next;
+    } else last = addr;  // it's the last
+
+    addr->prev = pos;
+    pos->next = addr;
+
+    length++;
+    addr->list = this;
+
+#ifdef THREADSAFE
+    unlock();
+#endif
+}
+
 /* clears the list
    i don't delete filters here because they have to be deleted
    from the procedure creating them. so this call simply discards
@@ -210,7 +226,6 @@ template <class T> void Linklist<T>::clear() {
 #ifdef THREADSAFE
     lock();
 #endif
-    sel(0);
     length = 0;
     first = NULL;
     last = NULL;
@@ -280,6 +295,7 @@ template <class T> T *Linklist<T>::search(const char *name, int *idx) {
 /* searches all the linklist for entries starting with *needle
    returns a list of indexes where to reach the matches */
 template <class T> T **Linklist<T>::completion(char *needle) {
+    static T *compbuf[MAX_COMPLETION*sizeof(T*)]; // completion buffer
     int c;
     int found;
     int len = strlen(needle);
@@ -310,52 +326,6 @@ template <class T> void Linklist<T>::rem(int pos) {
     T *ptr = pick(pos);
     if(ptr == NULL) return;
     ptr->rem();
-}
-
-/* selects ONLY ONE, deselects the others
-   use Entry::sel() if you want to do multiple selects */
-template <class T> void Linklist<T>::sel(int pos) {
-    int c;
-    T *ptr = (T*)first;
-
-    if(!first) return;
-    if(pos > length) {
-        //    warning("selection out of range on linklist [%p]",this);
-        return;
-    }
-
-    if(!pos) {
-        while(ptr) {
-            ptr->sel(false);
-            ptr = (T*)ptr->next;
-        }
-        selection = NULL;
-        return;
-    }
-
-    for(c = 1; c <= length; c++) {
-        if(c == pos) ptr->sel(true);
-        else ptr->sel(false);
-        ptr = (T*)ptr->prev;
-    }
-}
-
-/* returns the last one selected
-   this is supposed to be used with single selections */
-template <class T> T *Linklist<T>::selected() {
-    if(!first) return NULL;  // no entries at all
-    return (T*)selection;       // now faster <= haha
-    /*
-       if(!last) return NULL; // no entries at all
-
-       int c;
-       T *ptr = last;
-       for(c=length;c>0;c--) {
-       if(ptr->select) return ptr;
-       ptr = ptr->prev;
-       }
-       return NULL;
-     */
 }
 
 #endif

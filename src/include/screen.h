@@ -91,8 +91,11 @@ class VideoEncoder;
  */
 
 class ViewPort : public Entry {
+public:
     SHARED_PTR(ViewPort);
     friend class Layer;
+    Layer * mSelectedLayer;
+    VideoEncoder *mSelectedEncoder;
 public:
     ViewPort();
     virtual ~ViewPort();

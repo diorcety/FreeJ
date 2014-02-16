@@ -71,6 +71,17 @@
 %immutable Parameter::description;
 
 %ignore Linklist::operator[];
+%ignore Controller::listeners;
+%ignore ViewPort::encoders;
+%ignore ViewPort::layers;
+%ignore Layer::filters;
+%ignore Blitter::blitlist;
+%ignore Blit::parameters;
+%ignore FilterInstance::parameters;
+%ignore Context::controllers;
+%ignore Context::filters;
+%ignore Context::generators;
+%ignore Context::screens;
 
 %apply unsigned long { uint16_t };
 
@@ -115,6 +126,7 @@ freej_entry_typemap_in(Encoder);
 %include "freej.h"
 %include "jutils.h"
 %include "context.h"
+%include "sharedptr.h"
 %include "screen.h"
 %template(ScreenFactory) Factory<ViewPort>;
 
@@ -140,6 +152,7 @@ freej_entry_typemap_in(Encoder);
 
 %include "filter.h"
 %template(FilterLinkList) Linklist<Filter>;
+%include "filter_instance.h"
 %template(FilterInstanceLinkList) Linklist<FilterInstance>;
 
 %include "blitter.h"

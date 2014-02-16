@@ -290,7 +290,7 @@ JS(register_encoder) {
 
 JS(fullscreen) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-    global_environment->screens.selected()->fullscreen();
+    global_environment->mSelectedScreen->fullscreen();
     //  global_environment->clear_all = !global_environment->clear_all;
     return JS_TRUE;
 }
@@ -341,7 +341,7 @@ JS(set_resolution) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     int w = JSVAL_TO_INT(argv[0]);
     int h = JSVAL_TO_INT(argv[1]);
-    global_environment->screens.selected()->resize(w, h);
+    global_environment->mSelectedScreen->resize(w, h);
     return JS_TRUE;
 }
 
@@ -630,13 +630,14 @@ JS(entry_up) {
     return JS_TRUE;
 }
 
+
 JS(entry_move) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     GET_LAYER(Layer);
 
     int pos = JSVAL_TO_INT(argv[0]);
-    if(!lay->move(pos - 1))
+    if(!lay->move(pos))
         warning("cannot move %s to position %u", lay->getName().c_str(), pos);
 
     return JS_TRUE;
@@ -678,31 +679,6 @@ JS(entry_prev) {
     JS_SetPrivate(cx, objtmp, (void*) res);
 
     *rval = OBJECT_TO_JSVAL(objtmp);
-
-    return JS_TRUE;
-}
-
-JS(entry_select) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-
-    Entry *tmp;
-
-    GET_LAYER(Layer);
-
-    // select only one
-    lay->sel(true);
-
-    // deselects all others in the list
-    tmp = lay->prev;
-    while(tmp) {
-        tmp->sel(false);
-        tmp = tmp->prev;
-    }
-    tmp = lay->next;
-    while(tmp) {
-        tmp->sel(false);
-        tmp = tmp->next;
-    }
 
     return JS_TRUE;
 }

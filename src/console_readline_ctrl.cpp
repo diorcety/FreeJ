@@ -37,6 +37,7 @@
 SlwReadline::SlwReadline()
     : SLangWidget() {
 
+    mSelectedHistory = NULL;
     movestep = 2;
     parser = DEFAULT;
     commandline = false;
@@ -187,13 +188,18 @@ bool SlwReadline::parser_default(int key) {
 
     //  ::func("pressed %u",key);
 
-    if(env->screens.selected()->layers.len() > 0) { // there are layers
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+
+    if(screen->layers.len() > 0) { // there are layers
 
         // get the one selected
-        le = env->screens.selected()->layers.selected();
+        le = screen->mSelectedLayer;
         if(!le) {
-            env->screens.selected()->layers.begin();
-            le->sel(true);
+             screen->mSelectedLayer = screen->layers.begin();
         }
 
         // switch over operations and perform
@@ -312,7 +318,7 @@ bool SlwReadline::parser_default(int key) {
        break;
      */
     case KEY_CTRL_F:
-        env->screens.selected()->fullscreen();
+        screen->fullscreen();
         break;
 
     case KEY_CTRL_X:
@@ -358,11 +364,14 @@ bool SlwReadline::parser_movelayer(int key) {
 
     commandline = false; // print statusline
 
-    // get the one selected
-    Layer *layer = (Layer*)env->screens.selected()->layers.selected();
+    ViewPort *screen = env->mSelectedScreen;
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+    Layer *layer = screen->mSelectedLayer;
     if(!layer) {
-        env->screens.selected()->layers.begin();
-        layer->sel(true);
+        screen->mSelectedLayer = screen->layers.begin();
     }
 
     switch(key) {
@@ -440,8 +449,8 @@ bool SlwReadline::parser_movelayer(int key) {
     case KEY_SPACE:
         // place at the center
         layer->set_position
-            ((env->screens.selected()->geo.w - layer->geo.w) / 2,
-            (env->screens.selected()->geo.h - layer->geo.h) / 2);
+            ((screen->geo.w - layer->geo.w) / 2,
+            (screen->geo.h - layer->geo.h) / 2);
         break;
 
     case SL_KEY_ENTER:
@@ -502,15 +511,14 @@ bool SlwReadline::parser_commandline(int key) {
 
     case SL_KEY_UP:
         // pick from history
-        entr = history.selected();
+        entr = mSelectedHistory;
         if(!entr) { // select the latest
             entr = history.end();
-            if(entr) entr->sel(true);
+            if(entr) mSelectedHistory = entr;
         } else {
             entr = entr->prev;
             if(entr) {
-                history.sel(0);
-                entr->sel(true);
+                mSelectedHistory = entr;
             }
         }
         if(!entr) break;  // no hist

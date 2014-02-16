@@ -21,11 +21,9 @@
 #define __sharedptr_h__
 
 #include <memory>
-template<typename T>
-using shared_ptr = std::shared_ptr<T>;
 
-#define SHARED_PTR(CLASS)               \
-    typedef shared_ptr<CLASS> Ptr;      \
-    typedef shared_ptr<CLASS> WeakPtr;  \
+#define SHARED_PTR(CLASS)                    \
+    typedef std::shared_ptr<CLASS> Ptr;      \
+    typedef std::shared_ptr<CLASS> WeakPtr;  \
 
 #endif //__shared_ptr_h__

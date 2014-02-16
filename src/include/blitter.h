@@ -127,6 +127,7 @@ public:
 
 
     Linklist<Blit> blitlist; ///< list of available blits
+    Blit *mSelectedBlit;
 
     /* ==== CROP */
     /** @param force crop even if nothing changed */
