@@ -32,18 +32,18 @@ DECLARE_CLASS("Layer", layer_class, layer_constructor);
 
 JSFunctionSpec layer_methods[] = {
     ENTRY_METHODS,
-    {"activate",	layer_activate,	        0},
-    {"deactivate",	layer_deactivate,	0},
-    {"start",		layer_start,		0},
-    {"stop",		layer_stop,		0},
-    {"set_blit",	layer_set_blit,	        1},
-    {"get_blit",	layer_get_blit,	        0},
-    {"set_blit_value",	layer_set_blit_value,	1},
-    {"get_blit_value",	layer_get_blit_value,	0},
+    {"activate",        layer_activate,         0},
+    {"deactivate",      layer_deactivate,       0},
+    {"start",           layer_start,            0},
+    {"stop",            layer_stop,             0},
+    {"set_blit",        layer_set_blit,         1},
+    {"get_blit",        layer_get_blit,         0},
+    {"set_blit_value",  layer_set_blit_value,   1},
+    {"get_blit_value",  layer_get_blit_value,   0},
     {"fade_blit_value", layer_fade_blit_value,  2},
-    {"set_position",	layer_set_position,	2},
-    {"add_filter",      layer_add_filter,	1},
-    {"rem_filter",	layer_rem_filter,	1},
+    {"set_position",    layer_set_position,     2},
+    {"add_filter",      layer_add_filter,       1},
+    {"rem_filter",      layer_rem_filter,       1},
     {"rotate",          layer_rotate,           1},
     {"zoom",            layer_zoom,             2},
     {"fit",             layer_fit,              0},
@@ -59,7 +59,7 @@ JSPropertySpec layer_properties[] = {
     // ro
     { "filename",   4, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, layer_get_filename, NULL },
     { "w",          5, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, layer_get_width, NULL },
-    { "h" ,         6, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, layer_get_height, NULL },
+    { "h",         6, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, layer_get_height, NULL },
     { "filters",    7, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, layer_list_filters, NULL },
     { "parameters", 8, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY, layer_list_parameters, NULL },
     // TODO: blits - list_blits
@@ -93,8 +93,8 @@ JS(layer_constructor) {
 
     Layer *layer;
     /*  if (jsclass_s != OBJ_GET_CLASS(cx, obj)) {
-      JS_ERROR("Sorry, this gimmik is not supported.");
-      } */
+       JS_ERROR("Sorry, this gimmik is not supported.");
+       } */
 
     if(argc < 1)
         JS_ERROR("missing argument");

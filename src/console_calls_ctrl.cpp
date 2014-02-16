@@ -64,14 +64,14 @@ int console_param_selection(Context *env, char *cmd) {
             break;
         }
 
-    while(*p == ' ') p++; // jump all spaces
-    if(*p == '\0') return 0; // no value was given
+    while(*p == ' ') p++;  // jump all spaces
+    if(*p == '\0') return 0;  // no value was given
 
     if(filt) { ///////////////////////// parameters for filter
 
         // find the parameter
         param = (Parameter*)filt->parameters.search(cmd, &idx);
-        if(! param) {
+        if(!param) {
             error("parameter %s not found in filter %s", cmd, filt->proto->getName().c_str());
             return 0;
         } else
@@ -80,7 +80,7 @@ int console_param_selection(Context *env, char *cmd) {
 
     } else if(lay->parameters) { /////// parameters for layer
         param = (Parameter*)lay->parameters->search(cmd, &idx);
-        if(! param) {
+        if(!param) {
             error("parameter %s not found in layers %s", cmd, lay->getName().c_str());
             return 0;
         } else
@@ -96,7 +96,7 @@ int console_param_selection(Context *env, char *cmd) {
 
     if(filt) {
 
-        if(! filt->set_parameter(idx)) {
+        if(!filt->set_parameter(idx)) {
             error("error setting value %s for parameter %s on filter %s",
                   p, param->getName().c_str(), filt->proto->getName().c_str());
             return 0;
@@ -104,7 +104,7 @@ int console_param_selection(Context *env, char *cmd) {
 
     } else {
 
-        if(! lay->set_parameter(idx)) {
+        if(!lay->set_parameter(idx)) {
             error("error setting value %s for parameter %s on layer %s",
                   p, param->getName().c_str(), lay->getName().c_str());
             return 0;
@@ -127,7 +127,7 @@ int console_param_completion(Context *env, char *cmd) {
 
     Linklist<Parameter> *parameters;
     if(filt) parameters = &filt->parameters;
-    else     parameters = lay->parameters;
+    else parameters = lay->parameters;
 
     if(!parameters) return 0;
 
@@ -195,6 +195,7 @@ int console_blit_selection(Context *env, char *cmd) {
     lay->set_blit(cmd); // now this takes a string!
     return 1;
 }
+
 int console_blit_completion(Context *env, char *cmd) {
     int c;
     Entry **blits;
@@ -210,7 +211,7 @@ int console_blit_completion(Context *env, char *cmd) {
 
     blits = (Entry**)lay->blitter->blitlist.completion(cmd);
 
-    if(!blits[0]) return 0; // none found
+    if(!blits[0]) return 0;  // none found
 
     if(!blits[1]) { // exact match, then fill in command
         b = (Blit*) blits[0];
@@ -286,10 +287,10 @@ int console_blit_param_selection(Context *env, char *cmd) {
             break;
         }
 
-    while(*p == ' ') p++; // jump all spaces
-    if(*p == '\0') return 0; // no value was given
+    while(*p == ' ') p++;  // jump all spaces
+    if(*p == '\0') return 0;  // no value was given
     param = (Parameter*)b->parameters.search(cmd, &idx);
-    if(! param) {
+    if(!param) {
         error("parameter %s not found in blit %s", cmd, b->getName().c_str());
         return 0;
     } else
@@ -386,7 +387,7 @@ int console_filter_selection(Context *env, char *cmd) {
         return 0;
     }
 
-    if(! filt->apply(lay)) {
+    if(!filt->apply(lay)) {
         ::error("error applying filter %s on layer %s", filt->getName().c_str(), lay->getName().c_str());
         return 0;
     }
@@ -396,6 +397,7 @@ int console_filter_selection(Context *env, char *cmd) {
 //  ff->sel(true);
     return 1;
 }
+
 int console_filter_completion(Context *env, char *cmd) {
     int c;
     Filter **res;
@@ -404,11 +406,11 @@ int console_filter_completion(Context *env, char *cmd) {
     // QUAAA
     res = env->filters.completion(cmd);
 
-    if(!res[0]) return 0; // no hit
+    if(!res[0]) return 0;  // no hit
 
     if(!res[1]) { // exact match: fill in the command
         filt = res[0];
-        if(!filt) return 0; // doublecheck safety fix
+        if(!filt) return 0;  // doublecheck safety fix
         ::notice("%s :: %s", filt->getName().c_str(), filt->getDescription().c_str());
         snprintf(cmd, 511, "%s", res[0]->getName().c_str());
         c = 1;
@@ -502,11 +504,11 @@ int console_open_layer(Context *env, char *cmd) {
     Layer *l = env->open(cmd);
     if(l) {
         /*
-          if(!l->init(env)) {
+           if(!l->init(env)) {
             error("can't initialize layer");
             delete l;
-          } else {
-          */
+           } else {
+         */
         //	  l->set_fps(env->fps_speed);
         l->start();
         env->screen->add_layer(l);
@@ -548,6 +550,7 @@ int console_open_text_layer(Context *env, char *cmd) {
     notice("layer successfully created with text: %s", cmd);
     return env->screens.selected()->layers.len();
 }
+
 #endif
 
 #if defined (HAVE_DARWIN) || defined (HAVE_FREEBSD)
@@ -558,9 +561,10 @@ int filebrowse_completion_selector(const struct dirent *dir)
 {
     if(dir->d_name[0] == '.')
         if(dir->d_name[1] != '.')
-            return(0); // skip hidden files
+            return(0);  // skip hidden files
     return(1);
 }
+
 int console_filebrowse_completion(Context *env, char *cmd) {
     Linklist<Entry> files;
     Entry *e;
@@ -587,7 +591,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
 
         // parse backwards to the first '/' and zero it,
         // store the word of the right part in needle
-        for(c = strlen(path); path[c] != '/' && c > 0; c--);
+        for(c = strlen(path); path[c] != '/' && c > 0; c--) ;
         strncpy(needle, &path[c + 1], MAX_CMDLINE);
         path[c + 1] = '\0';
         incomplete = true;
@@ -600,7 +604,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     } else { // we have a file!
 
         if(S_ISREG(filestatus.st_mode))
-            return 1; // is a regular file!
+            return 1;  // is a regular file!
 
         // is it a directory? then append the trailing slash
         if(S_ISDIR(filestatus.st_mode)) {
@@ -617,8 +621,8 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     func("file completion: %s", cmd);
     // at this point in path there should be something valid
     found = scandir
-            (path, &filelist,
-             filebrowse_completion_selector, alphasort);
+                (path, &filelist,
+                filebrowse_completion_selector, alphasort);
 
     if(found < 0) {
         error("filebrowse_completion: scandir: %s", strerror(errno));
@@ -664,7 +668,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
         notice("list of all files in %s:", path);
         e = files.begin();
         for(c = 0, e = files.begin();
-                e; e = e->next, c++)
+            e; e = e->next, c++)
             ::act("%s", e->getName().c_str());
 
     }
@@ -781,3 +785,4 @@ int console_generator_selection(Context *env, char *cmd) {
     notice("generator %s successfully created", tmp->getName().c_str());
     return 1;
 }
+

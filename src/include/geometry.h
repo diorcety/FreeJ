@@ -27,7 +27,7 @@
    image bounds.
 
    @brief Collects geometrical information about Layer, Screen and other components
-*/
+ */
 class Geometry {
 
 public:

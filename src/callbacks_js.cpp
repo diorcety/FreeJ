@@ -38,10 +38,10 @@
 JSErrorFormatString jsFreej_ErrorFormatString[JSFreejErr_Limit] = {
 #if JS_HAS_DFLT_MSG_STRINGS
 #define MSG_DEF(name, number, count, exception, format) \
-    { format, count } ,
+    { format, count },
 #else
 #define MSG_DEF(name, number, count, exception, format) \
-    { NULL, count } ,
+    { NULL, count },
 #endif
 #include "jsfreej.msg"
 #undef MSG_DEF
@@ -56,18 +56,18 @@ JSFreej_GetErrorMessage(void *userRef, const char *locale, const uintN errorNumb
 }
 
 #define CHECK_JSENV() \
-  if(!global_environment) { \
-    error("%s : can't find freej context", __FUNCTION__); \
-    return 0; \
-  } \
-  if(!global_environment->js) { \
-    error("%s : freej context without a javascript parser", __FUNCTION__); \
-    return 0; \
-  } \
-  if(!global_environment->js->global_context) { \
-    error("%s : called on a NULL javascript context", __FUNCTION__); \
-    return 0; \
-  }
+    if(!global_environment) { \
+        error("%s : can't find freej context", __FUNCTION__); \
+        return 0; \
+    } \
+    if(!global_environment->js) { \
+        error("%s : freej context without a javascript parser", __FUNCTION__); \
+        return 0; \
+    } \
+    if(!global_environment->js->global_context) { \
+        error("%s : called on a NULL javascript context", __FUNCTION__); \
+        return 0; \
+    }
 
 /* we declare the Context pointer static here
    in order to have it accessed from callback functions
@@ -107,7 +107,6 @@ char *js_get_string(jsval val) {
     JS_ClearContextThread(global_environment->js->global_context);
     return res;
 }
-
 
 jsint js_get_int(jsval val) {
     CHECK_JSENV();
@@ -207,7 +206,7 @@ jsdouble js_get_double(jsval val) {
         }
         {
             jsdouble tmp;
-            if(! JS_ValueToNumber(global_environment->js->global_context, val, &tmp)) {
+            if(!JS_ValueToNumber(global_environment->js->global_context, val, &tmp)) {
                 error("argument is of unknown type, cannot interpret");
             } else res = tmp;
         }
@@ -253,11 +252,11 @@ JSBool _js_is_instanceOf(JSContext* cx, JSClass* clasp, jsval v, const char* cal
     JS_BeginRequest(cx);
     if(!v || !JSVAL_IS_OBJECT(v)) {
         JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-                             JSSMSG_FJ_WICKED , caller, "argument is not an object"
-                            );
+                             JSSMSG_FJ_WICKED, caller, "argument is not an object"
+                             );
         JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,
-                             JSSMSG_FJ_WICKED , caller, "argument is not an object"
-                            );
+                             JSSMSG_FJ_WICKED, caller, "argument is not an object"
+                             );
         JS_EndRequest(cx);
         JS_ClearContextThread(global_environment->js->global_context);
         return JS_FALSE;

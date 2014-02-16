@@ -45,14 +45,14 @@
 /*         JSEXN_LIMIT */
 /* } JSExnType; */
 /* FIXME:
-I don't know how to override which JSException type we want ... we don't get ours from jsfreej.msg api still uses js.msg :(
-static JSExnType errorToExceptionNum[] = {
-#define MSG_DEF(name, number, count, exception, format) \
+   I don't know how to override which JSException type we want ... we don't get ours from jsfreej.msg api still uses js.msg :(
+   static JSExnType errorToExceptionNum[] = {
+   #define MSG_DEF(name, number, count, exception, format) \
     exception,
-#include "jsfreej.msg"
-#undef MSG_DEF
-};
-*/
+   #include "jsfreej.msg"
+   #undef MSG_DEF
+   };
+ */
 typedef enum JSFreejErrNum {
 #define MSG_DEF(name, number, count, exception, format) \
     name = number,
@@ -66,25 +66,25 @@ const JSErrorFormatString * JSFreej_GetErrorMessage(void *userRef, const char *l
 // exception stuff end
 
 #define JS(fun) \
-  JSBool fun(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+    JSBool fun(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 
 #define JSP(fun) \
-  JSBool fun(JSContext *cx, JSObject *obj, jsval idval, jsval *vp)
+    JSBool fun(JSContext *cx, JSObject *obj, jsval idval, jsval *vp)
 
 #define JS_ERROR(str) do { \
-    ::error(str);					  \
-    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,	\
-			 JSSMSG_FJ_WICKED,			\
-			 __FUNCTION__,str);			\
-    return JS_FALSE;						\
-  } while(0)
+        ::error(str);                                         \
+        JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,     \
+                             JSSMSG_FJ_WICKED,                      \
+                             __FUNCTION__,str);                     \
+        return JS_FALSE;                                            \
+} while(0)
 
 #define JS_CHECK_ARGC(num) \
-  if(argc<num) { \
-    error("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__); \
-    error("not enough arguments: minimum %u needed",num); \
-    return(JS_FALSE); \
-  }
+    if(argc<num) { \
+        error("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__); \
+        error("not enough arguments: minimum %u needed",num); \
+        return (JS_FALSE); \
+    }
 
 // our auxiliary functions to fetch jsvals
 jsint js_get_int(jsval val);
@@ -94,85 +94,85 @@ jsdouble js_get_double(jsval val);
 
 
 #define JS_PROP_DOUBLE(variable, vp) \
-  jsdouble variable; \
-  variable = js_get_double(vp);
+    jsdouble variable; \
+    variable = js_get_double(vp);
 
 #define JS_PROP_INT(variable, vp) \
-  jsint variable; \
-  variable = js_get_int(vp);
+    jsint variable; \
+    variable = js_get_int(vp);
 
 #define JS_PROP_STRING(variable) \
-  if(JSVAL_IS_STRING(vp)) \
-    variable = JS_GetStringBytes \
-      ( JS_ValueToString(cx, vp) ); \
-  else { \
-    JS_ReportError(cx,"%s: property value is not a string",__FUNCTION__); \
-    ::error("%s: property value is not a string",__FUNCTION__);	\
-  }
+    if(JSVAL_IS_STRING(vp)) \
+        variable = JS_GetStringBytes \
+                       ( JS_ValueToString(cx, vp) ); \
+    else { \
+        JS_ReportError(cx,"%s: property value is not a string",__FUNCTION__); \
+        ::error("%s: property value is not a string",__FUNCTION__); \
+    }
 
 
 // set the return value as a string
 #define JS_RETURN_STRING(cb_msg) \
-  JSString *cb_str = JS_NewStringCopyZ(cx, cb_msg); \
-  *rval = STRING_TO_JSVAL(cb_str)
+    JSString *cb_str = JS_NewStringCopyZ(cx, cb_msg); \
+    *rval = STRING_TO_JSVAL(cb_str)
 
 #define DECLARE_CLASS(class_name, class_struct, class_constructor) \
-JSClass class_struct = { \
-  class_name, JSCLASS_HAS_PRIVATE, \
-  JS_PropertyStub,  JS_PropertyStub, \
-  JS_PropertyStub,  JS_PropertyStub, \
-  JS_EnumerateStub, JS_ResolveStub, \
-  JS_ConvertStub,   JS_FinalizeStub, \
-  NULL,   NULL, \
-  class_constructor \
-};
+    JSClass class_struct = { \
+        class_name, JSCLASS_HAS_PRIVATE, \
+        JS_PropertyStub,  JS_PropertyStub, \
+        JS_PropertyStub,  JS_PropertyStub, \
+        JS_EnumerateStub, JS_ResolveStub, \
+        JS_ConvertStub,   JS_FinalizeStub, \
+        NULL,   NULL, \
+        class_constructor \
+    };
 //static JSClass *jsclass_s = &class_struct;
 
 #define DECLARE_CLASS_GC(class_name, class_struct, class_constructor, gc_callback) \
-JSClass class_struct = { \
-  class_name, JSCLASS_HAS_PRIVATE, \
-  JS_PropertyStub,  JS_PropertyStub, \
-  JS_PropertyStub,  JS_PropertyStub, \
-  JS_EnumerateStub, JS_ResolveStub, \
-  JS_ConvertStub,   JS_FinalizeStub, \
-  NULL,   NULL, \
-  class_constructor \
-};
+    JSClass class_struct = { \
+        class_name, JSCLASS_HAS_PRIVATE, \
+        JS_PropertyStub,  JS_PropertyStub, \
+        JS_PropertyStub,  JS_PropertyStub, \
+        JS_EnumerateStub, JS_ResolveStub, \
+        JS_ConvertStub,   JS_FinalizeStub, \
+        NULL,   NULL, \
+        class_constructor \
+    };
 // s/JS_FinalizeStub/gc_callback/ to activate GC in JS (not working currently)
 //static JSClass *jsclass_s = &class_struct;
 
 #define REGISTER_CLASS(class_name, class_struct, class_constructor, class_properties, class_methods, parent_class) \
     layer_object = JS_InitClass(cx, obj, parent_class, \
-				&class_struct, class_constructor, 0, \
-				class_properties, class_methods, 0, 0); \
+                                &class_struct, class_constructor, 0, \
+                                class_properties, class_methods, 0, 0); \
     if(!layer_object) { \
-      ::error("JsParser::init() can't instantiate %s class",class_name); \
+        ::error("JsParser::init() can't instantiate %s class",class_name); \
     }
 
 
 #define JS_CONSTRUCTOR(constructor_name, constructor_func, constructor_class) \
-JS(constructor_func) {                                                        \
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);                            \
-  constructor_class *layer = NULL;                                            \
-  char excp_msg[MAX_ERR_MSG + 1];                                             \
-  layer = (constructor_class *)Factory<Layer>::new_instance( constructor_name ); \
-  if(!layer) {                                                                \
-    error("cannot create %s", constructor_name);                              \
-    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,                   \
-                         JSSMSG_FJ_CANT_CREATE, __func__,                     \
-                      "cannot create constructor_class");                     \
-    return JS_FALSE;                                                          \
-  }                                                                           \
-  rval = (jsval*)layer->js_constructor(global_environment, cx, obj, argc, argv, excp_msg);   \
-  if(!rval) {                                                                 \
-    delete layer;                                                             \
-    JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,                   \
-                         JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);          \
-    return JS_FALSE;                                                          \
-  }                                                                           \
-  layer->data = (void*)rval;                                                  \
-  return JS_TRUE;							      \
-}
+    JS(constructor_func) {                                                        \
+        func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);                            \
+        constructor_class *layer = NULL;                                            \
+        char excp_msg[MAX_ERR_MSG + 1];                                             \
+        layer = (constructor_class *)Factory<Layer>::new_instance( constructor_name ); \
+        if(!layer) {                                                                \
+            error("cannot create %s", constructor_name);                              \
+            JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,                   \
+                                 JSSMSG_FJ_CANT_CREATE, __func__,                     \
+                                 "cannot create constructor_class");                     \
+            return JS_FALSE;                                                          \
+        }                                                                           \
+        rval = (jsval*)layer->js_constructor(global_environment, cx, obj, argc, argv, excp_msg);   \
+        if(!rval) {                                                                 \
+            delete layer;                                                             \
+            JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,                   \
+                                 JSSMSG_FJ_CANT_CREATE, __func__, excp_msg);          \
+            return JS_FALSE;                                                          \
+        }                                                                           \
+        layer->data = (void*)rval;                                                  \
+        return JS_TRUE;                                                             \
+    }
 /* this was removed from the error proccedure in the macro above:
    cx->newborn[GCX_OBJECT] = NULL;
    as since javascript 1.7 the newborn field of struct doesn't exists anymore
@@ -182,15 +182,15 @@ JS(constructor_func) {                                                        \
 // it can be then referenced as *lay
 
 #define GET_LAYER(layer_class) \
-layer_class *lay = (layer_class *) JS_GetPrivate(cx,obj); \
-if(!lay) { \
-  error("%s:%u:%s :: Layer core data is NULL", \
-	__FILE__,__LINE__,__FUNCTION__);				\
-  JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,		\
-		       JSSMSG_FJ_CANT_CREATE, __func__,			\
-		       "class instance is not usable");		\
-  return JS_TRUE; \
-}
+    layer_class *lay = (layer_class *) JS_GetPrivate(cx,obj); \
+    if(!lay) { \
+        error("%s:%u:%s :: Layer core data is NULL", \
+              __FILE__,__LINE__,__FUNCTION__);                                \
+        JS_ReportErrorNumber(cx, JSFreej_GetErrorMessage, NULL,               \
+                             JSSMSG_FJ_CANT_CREATE, __func__,                 \
+                             "class instance is not usable");         \
+        return JS_TRUE; \
+    }
 
 
 extern Context *global_environment;

@@ -39,30 +39,30 @@ template <class T> class Linklist;
 
 /**
    Macro declaration of parameters
-*/
+ */
 #define CHAR_SET(func,var) \
-char var[MAX_VALUE_SIZE]; \
-void func(char *in) { \
-if(strncmp(var,in,MAX_VALUE_SIZE)==0) return; \
-else strncpy(var,in,MAX_VALUE_SIZE); \
-} \
-char *func() { return var; };
+    char var[MAX_VALUE_SIZE]; \
+    void func(char *in) { \
+        if(strncmp(var,in,MAX_VALUE_SIZE)==0) return; \
+        else strncpy(var,in,MAX_VALUE_SIZE); \
+    } \
+    char *func() { return var; };
 
 #define INT_SET(func,var) \
-int var; \
-void func(int in) { \
-if(var==in) return; \
-else var=in; \
-} \
-int func() { return var; };
+    int var; \
+    void func(int in) { \
+        if(var==in) return; \
+        else var=in; \
+    } \
+    int func() { return var; };
 
 #define FLOAT_SET(func,var) \
-float var; \
-void func(float in) { \
-if(var==in) return; \
-else var=in; \
-} \
-float func() { return var; };
+    float var; \
+    void func(float in) { \
+        if(var==in) return; \
+        else var=in; \
+    } \
+    float func() { return var; };
 
 class Shouter : public Entry {
 private:

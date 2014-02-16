@@ -38,7 +38,8 @@ CairoColor::CairoColor(cairo_t *cai) : Color() {
     cairo = cai;
 }
 
-CairoColor::~CairoColor() { }
+CairoColor::~CairoColor() {
+}
 
 void CairoColor::set() {
     double sr = r / 255.;
@@ -65,8 +66,8 @@ CairoLayer::CairoLayer()
 
 CairoLayer::~CairoLayer() {
 
-    if(cairo)  cairo_destroy(cairo);
-    if(surf)   cairo_surface_destroy(surf);
+    if(cairo) cairo_destroy(cairo);
+    if(surf) cairo_surface_destroy(surf);
     if(pixels) free(pixels);
     if(color) free(color);
 }
@@ -74,10 +75,10 @@ CairoLayer::~CairoLayer() {
 bool CairoLayer::_init() {
     // create the surface
     stride = cairo_format_stride_for_width
-             (CAIRO_FORMAT_ARGB32, geo.w);
+                 (CAIRO_FORMAT_ARGB32, geo.w);
     pixels = malloc(stride * geo.h);
     surf = cairo_image_surface_create_for_data
-           ((unsigned char*)pixels, CAIRO_FORMAT_ARGB32, geo.w, geo.h, stride);
+               ((unsigned char*)pixels, CAIRO_FORMAT_ARGB32, geo.w, geo.h, stride);
     // create the drawing context
     cairo = cairo_create(surf);
     // This  function references  target,  so you  can immediately  call
@@ -112,52 +113,67 @@ void CairoLayer::close() {
 void CairoLayer::save() {
     cairo_save(cairo);
 }
+
 void CairoLayer::restore() {
     cairo_restore(cairo);
 }
+
 void CairoLayer::new_path() {
     cairo_new_path(cairo);
 }
+
 void CairoLayer::close_path() {
     cairo_close_path(cairo);
 }
+
 void CairoLayer::scale(double xx, double yy) {
     func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
     cairo_scale(cairo, xx, yy);
 }
+
 void CairoLayer::rotate(double angle) {
     cairo_rotate(cairo, angle);
 }
+
 void CairoLayer::translate(int xx, int yy) {
     func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
     cairo_translate(cairo, xx, yy);
 }
+
 void CairoLayer::move_to(double xx, double yy) {
     func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
     cairo_move_to(cairo, xx, yy);
 }
+
 void CairoLayer::line_to(double xx, double yy) {
     func("%s :: x[%.2f] y[%.2f]", __FUNCTION__, xx, yy);
     cairo_line_to(cairo, xx, yy);
 }
+
 void CairoLayer::curve_to(int x1, int y1, int x2, int y2, int x3, int y3) {
     cairo_curve_to(cairo, x1, y1, x2, y2, x3, y3);
 }
+
 void CairoLayer::arc(double xc, double yc, double radius, double angle1, double angle2) {
     cairo_arc(cairo, xc, yc, radius, angle1, angle2);
 }
+
 void CairoLayer::rect(double x1, double y1, double x2, double y2) {
     cairo_rectangle(cairo, x1, y1, x2, y2);
 }
+
 void CairoLayer::fill() {
     cairo_fill(cairo);
 }
+
 void CairoLayer::stroke() {
     cairo_stroke(cairo);
 }
+
 void CairoLayer::set_line_width(double wid) {
     cairo_set_line_width(cairo, wid);
 }
+
 int CairoLayer::get_line_width() {
     return cairo_get_line_width(cairo);
 }
@@ -191,6 +207,7 @@ void CairoLayer::push_color() {
     saved_color = color;
     color = new CairoColor(cairo);
 }
+
 void CairoLayer::pop_color() {
     if(!saved_color) {
         warning("no previourly saved color found");

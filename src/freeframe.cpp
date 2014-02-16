@@ -94,7 +94,7 @@ int Freeframe::open(char *file) {
         CFStringRef filestring = CFStringCreateWithCString(NULL, file, kCFStringEncodingUTF8);
         CFURLRef filepath = CFURLCreateWithFileSystemPath(NULL, filestring, kCFURLPOSIXPathStyle, 1);;
         CFBundleRef bundle = CFBundleCreate(NULL, filepath);
-        plgMain = (plugMainUnion(*)(DWORD, void*, DWORD))CFBundleGetFunctionPointerForName(bundle, CFSTR("plugMain"));
+        plgMain = (plugMainUnion (*)(DWORD, void*, DWORD))CFBundleGetFunctionPointerForName(bundle, CFSTR("plugMain"));
         CFRelease(filestring);
         CFRelease(filepath);
 #endif
@@ -220,3 +220,4 @@ char *Freeframe::get_parameter_description(int i) {
 int Freeframe::type() {
     return Filter::FREEFRAME;
 }
+

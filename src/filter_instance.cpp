@@ -18,7 +18,7 @@
  * Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
 
-$Id:$
+   $Id:$
 
  */
 
@@ -82,7 +82,7 @@ bool FilterInstance::set_parameter(int idx) {
     Parameter *param;
     param = (Parameter*)parameters[idx];
 
-    if(! param) {
+    if(!param) {
         error("parameter [%u] not found in filter %s", idx, proto->getName().c_str());
         return false;
     } else {
@@ -103,7 +103,7 @@ bool FilterInstance::get_parameter(int idx) {
     Parameter *param;
     param = (Parameter*)parameters[idx];
 
-    if(! param) {
+    if(!param) {
         error("parameter %s not found in filter %s", param->getName().c_str(), proto->getName().c_str());
         return false;
     } else {
@@ -140,3 +140,4 @@ bool FilterInstance::inuse() {
         return true;
     return false;
 }
+

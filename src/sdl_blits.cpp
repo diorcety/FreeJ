@@ -35,8 +35,8 @@ BLIT sdl_rgb(void *src, SDL_Rect *src_rect,
              Geometry *geo, Linklist<Parameter> *param) {
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-               (src, geo->w, geo->h, geo->bpp,
-                geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, 0x0);
+                   (src, geo->w, geo->h, geo->bpp,
+                   geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, 0x0);
 
     SDL_BlitSurface(sdl_surf, src_rect, dst, dst_rect);
     //SDL_UpdateRects(sdl_surf, 1, dst_rect);
@@ -52,8 +52,8 @@ BLIT sdl_alpha(void *src, SDL_Rect *src_rect,
     unsigned int int_alpha = (unsigned int) alpha;
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-               (src, geo->w, geo->h, geo->bpp,
-                geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, 0x0);
+                   (src, geo->w, geo->h, geo->bpp,
+                   geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, 0x0);
 
     SDL_SetAlpha(sdl_surf, SDL_SRCALPHA | SDL_RLEACCEL, int_alpha);
 
@@ -71,8 +71,8 @@ BLIT sdl_srcalpha(void *src, SDL_Rect *src_rect,
     unsigned int int_alpha = (unsigned int) alpha;
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-               (src, geo->w, geo->h, geo->bpp,
-                geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
+                   (src, geo->w, geo->h, geo->bpp,
+                   geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
     SDL_SetAlpha(sdl_surf, SDL_SRCALPHA | SDL_RLEACCEL, int_alpha);
 
@@ -90,8 +90,8 @@ BLIT sdl_chromakey(void *src, SDL_Rect *src_rect,
     // TODO color
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-               (src, geo->w, geo->h, geo->bpp,
-                geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
+                   (src, geo->w, geo->h, geo->bpp,
+                   geo->bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
     // TODO
     SDL_SetColorKey(sdl_surf, SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
@@ -158,3 +158,4 @@ void setup_sdl_blits(Blitter *blitter) {
 //   blitter->blitlist.prepend(b);
 
 }
+

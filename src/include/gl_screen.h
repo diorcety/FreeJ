@@ -36,7 +36,8 @@ struct Vertex {
 class GlScreen : public ViewPort {
 public:
     GlScreen();
-    ~GlScreen() { };
+    ~GlScreen() {
+    };
 
 
 
@@ -66,7 +67,8 @@ public:
     //  bool glblitX(Layer *layer);
     GLuint texturize(Layer *layer);
     Vertex g_quadVertices[4];
-    void setup_blits(Layer *lay) {};
+    void setup_blits(Layer *lay) {
+    };
 
 
     //  bool lock();

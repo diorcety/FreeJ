@@ -25,7 +25,7 @@
 #include <layer.h>
 #include <vroot.h>
 
-class XScreenSaverLayer: public Layer {
+class XScreenSaverLayer : public Layer {
 
 public:
     XScreenSaverLayer();

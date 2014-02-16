@@ -24,8 +24,8 @@
 
 #include <vimo_ctrl.h>
 
-class ViMoControllerJS: public ViMoController {
- public:
+class ViMoControllerJS : public ViMoController {
+public:
     ~ViMoControllerJS();
     virtual void button(unsigned int button, bool state, unsigned int mask, unsigned int old_mask);
     virtual void inner_wheel(int direction, unsigned int history);
@@ -54,8 +54,8 @@ JS(js_vimo_ctrl_constructor);
 DECLARE_CLASS("ViMoController", js_vimo_ctrl_class, js_vimo_ctrl_constructor);
 
 JSFunctionSpec js_vimo_ctrl_methods[] = {
-    {"open",	js_vimo_open,	0},
-    {"close",	js_vimo_close,	0},
+    {"open",    js_vimo_open,   0},
+    {"close",   js_vimo_close,  0},
     {0}
 };
 
@@ -91,7 +91,7 @@ JS(js_vimo_ctrl_constructor) {
     ViMoController *vimo = new ViMoControllerJS();
 
     // initialize with javascript context
-    if(! vimo->init(global_environment)) {
+    if(!vimo->init(global_environment)) {
         error("failed initializing ViMo controller");
         delete vimo;
         return JS_FALSE;
@@ -106,7 +106,7 @@ JS(js_vimo_ctrl_constructor) {
     }
 
     // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)vimo)) {
+    if(!JS_SetPrivate(cx, obj, (void*)vimo)) {
         error("failed assigning ViMo controller to javascript");
         delete vimo;
         return JS_FALSE;

@@ -103,7 +103,7 @@ int Iterator::cafudda() {
 
         case BOUNCE:
             if(*value >= max) aim = min;
-            else aim = max; // if(*value<=min)
+            else aim = max;  // if(*value<=min)
             break;
 
         case PULSE: // go back to the initial value and stop
@@ -122,18 +122,23 @@ int Iterator::cafudda() {
 void Iterator::set_min(float val)    {
     min = val;
 }
+
 void Iterator::set_max(float val)    {
     max = val;
 }
+
 void Iterator::set_step(float val)   {
     step = val;
 }
+
 void Iterator::set_aim(float val)    {
     aim = val;
 }
+
 void Iterator::set_value(float *val) {
     value = val;
 }
+
 void Iterator::set_envelope(iterator_envelope_t e) {
     envelope = e;
 }
@@ -151,7 +156,7 @@ void Iterator::set_mode(iterator_mode_t m) {
         break;
 
     case PULSE:
-        saved_value = (float) * value;
+        saved_value = (float) *value;
         break;
 
     default:
@@ -161,3 +166,4 @@ void Iterator::set_mode(iterator_mode_t m) {
 
     mode = m;
 }
+

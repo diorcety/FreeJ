@@ -113,6 +113,7 @@ void *Layer::get_data() {
 void Layer::set_data(void *data) {
     priv_data = data;
 }
+
 bool Layer::init(int wdt, int hgt, int bpp) {
 
     geo.init(wdt, hgt, bpp);
@@ -293,7 +294,7 @@ bool Layer::set_parameter(int idx) {
 
     Parameter *param;
     param = (Parameter*)parameters->pick(idx);
-    if(! param) {
+    if(!param) {
         error("parameter %s not found in layer %s", param->getName().c_str(), name.c_str());
         return false;
     } else {
@@ -310,14 +311,12 @@ bool Layer::set_parameter(int idx) {
     return true;
 }
 
-
 void Layer::set_filename(const char *f) {
     const char *p = f + strlen(f);
     while(*p != '/' && (p >= f))
         p--;
     strncpy(filename, p + 1, 256);
 }
-
 
 void Layer::_set_position(int x, int y) {
     geo.x = x;
@@ -348,7 +347,6 @@ void Layer::set_y_position(int y) {
     deferred_calls->add_job(job);
 }
 
-
 void Layer::_set_zoom(double x, double y) {
     if((x == 1) && (y == 1)) {
         zooming = false;
@@ -368,7 +366,6 @@ void Layer::set_zoom(double x, double y) {
     deferred_calls->add_job(job);
 }
 
-
 void Layer::_set_rotate(double angle) {
     if(!angle) {
         rotating = false;
@@ -386,7 +383,6 @@ void Layer::set_rotate(double angle) {
     Closure *job = NewClosure(this, &Layer::_set_rotate, angle);
     deferred_calls->add_job(job);
 }
-
 
 void Layer::_fit(bool maintain_aspect_ratio) {
     double width_zoom, height_zoom;
@@ -497,6 +493,7 @@ void *Layer::js_constructor(Context *env, JSContext *cx, JSObject *obj,
     return ret;
 
 }
+
 #endif
 
 bool Layer::_init() {
@@ -515,3 +512,4 @@ void Layer::close() {
     func("base Layer::close() called passing");
     return;
 }
+

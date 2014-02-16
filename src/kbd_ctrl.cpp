@@ -24,8 +24,8 @@
 
 #include <factory.h>
 
-#define SDL_REPEAT_DELAY	200
-#define SDL_REPEAT_INTERVAL	20
+#define SDL_REPEAT_DELAY        200
+#define SDL_REPEAT_INTERVAL     20
 
 #define SDL_KEYEVENTMASK (SDL_KEYDOWNMASK|SDL_KEYUPMASK)
 
@@ -75,7 +75,7 @@ int KbdController::dispatch() {
     else if(event.key.state == SDL_RELEASED)
         state = "released";
     else
-        return 0; // no key state change
+        return 0;  // no key state change
 
     keysym = &event.key.keysym;
 
@@ -92,7 +92,7 @@ int KbdController::dispatch() {
 
     // check normal alphabet and letters
     if((keysym->sym >= SDLK_0 && keysym->sym <= SDLK_9)
-            || (keysym->sym >= SDLK_a && keysym->sym <= SDLK_z)) {
+       || (keysym->sym >= SDLK_a && keysym->sym <= SDLK_z)) {
         tmp[0] = keysym->sym;
         tmp[1] = 0x0;
         sprintf(keyname, "%s", tmp);
@@ -105,7 +105,7 @@ int KbdController::dispatch() {
         sprintf(keyname, "%s", tmp);
     } else {
         switch(keysym->sym) {
-            // check arrows
+        // check arrows
         case SDLK_UP:
             sprintf(keyname,        "up");
             break;
@@ -133,7 +133,7 @@ int KbdController::dispatch() {
         case SDLK_PAGEDOWN:
             sprintf(keyname,  "pagedown");
             break;
-            // check special keys
+        // check special keys
         case SDLK_BACKSPACE:
             sprintf(keyname, "backspace");
             break;
@@ -164,7 +164,7 @@ int KbdController::dispatch() {
         case SDLK_EQUALS:
             sprintf(keyname,     "equal");
             break;
-            // check numeric keypad special keys
+        // check numeric keypad special keys
         case SDLK_KP_PERIOD:
             num = true;
             sprintf(keyname,   "period");
@@ -200,3 +200,4 @@ int KbdController::dispatch() {
     }
     return key_event(state, shift, ctrl, alt, num, keyname);
 }
+

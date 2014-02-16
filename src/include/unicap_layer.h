@@ -30,7 +30,7 @@
 #define UNICAP_USER_CAPTURE 2
 
 
-class UnicapLayer: public Layer {
+class UnicapLayer : public Layer {
 
 public:
     UnicapLayer();

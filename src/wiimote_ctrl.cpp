@@ -363,7 +363,7 @@ void WiiController::cwiid_update_ir(unsigned int source, unsigned int x,
 }
 
 void WiiController::_cwiid_sync_update_ir(unsigned int source, unsigned int x,
-        unsigned int y, unsigned int size) {
+                                          unsigned int y, unsigned int size) {
     // TODO(shammash): consider using IR to calc yaw
     ir_event(source, x, y, size);
 }

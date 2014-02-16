@@ -55,7 +55,7 @@ void setup_sdl_blits(Blitter *blitter);
 void setup_linear_blits(Blitter *blitter);
 
 
-class Blit: public Entry {
+class Blit : public Entry {
     friend class Blitter;
     friend class ViewPort;
 

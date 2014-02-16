@@ -96,10 +96,10 @@ bool SdlGlScreen::_init() {
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);   // Enable OpenGL Doublebuffering
 
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);		//Use at least 5 bits of Red
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);	//Use at least 5 bits of Green
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);		//Use at least 5 bits of Blue
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);	//Use at least 16 bits for the depth buffer
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);            //Use at least 5 bits of Red
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);  //Use at least 5 bits of Green
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);           //Use at least 5 bits of Blue
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16); //Use at least 16 bits for the depth buffer
 
     setres(geo.w, geo.h);
 
@@ -117,11 +117,11 @@ bool SdlGlScreen::_init() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         /* antialiasing
-        glShadeModel (GL_SMOOTH);
-        glEnable (GL_POLYGON_SMOOTH);
-        glEnable (GL_LINE_SMOOTH);
-        glEnable (GL_POINT_SMOOTH);
-        */
+           glShadeModel (GL_SMOOTH);
+           glEnable (GL_POLYGON_SMOOTH);
+           glEnable (GL_LINE_SMOOTH);
+           glEnable (GL_POINT_SMOOTH);
+         */
         glClearDepth(1.0f);
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_DEPTH_TEST);
@@ -164,7 +164,6 @@ void SdlGlScreen::setup_blits(Layer *lay) {
     lay->blitter = b;
 }
 
-
 void SdlGlScreen::resize(int resize_w, int resize_h) {
     surface = SDL_SetVideoMode(resize_w, resize_h, 32, sdl_flags);
     geo.init(resize_w, resize_h, 32);
@@ -203,31 +202,31 @@ void SdlGlScreen::blit(Layer *lay) {
     check_opengl_error();
 
     // reset opengl environment.
-// 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-// 	glGetError ();
-// 	glMatrixMode( GL_MODELVIEW );
-// 	glGetError ();
-// 	glLoadIdentity();
-// 	glGetError ();
-// 	glTranslatef( x_translation, y_translation, -1 );
-// 	glGetError ();
+//      glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+//      glGetError ();
+//      glMatrixMode( GL_MODELVIEW );
+//      glGetError ();
+//      glLoadIdentity();
+//      glGetError ();
+//      glTranslatef( x_translation, y_translation, -1 );
+//      glGetError ();
 
     // rotation
     /*
-    glRotatef( y_rotation, 0.0f, 1.0f, 0.0f );
-    glRotatef( x_rotation, 1.0f, 0.0f, 0.0f );
+       glRotatef( y_rotation, 0.0f, 1.0f, 0.0f );
+       glRotatef( x_rotation, 1.0f, 0.0f, 0.0f );
 
-    glRotatef( rotation, 0.0f, 0.0f, 1.0f );
-    */
+       glRotatef( rotation, 0.0f, 0.0f, 1.0f );
+     */
     // change scale
     //glScaled(zoom, zoom, zoom);
     //zoom-=0.01;
 
     // draw the screen quad
-// 	glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
-// 	glGetError ();
-// 	glDrawArrays( GL_QUADS, 0, 4 );
-// 	check_opengl_error();
+//      glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
+//      glGetError ();
+//      glDrawArrays( GL_QUADS, 0, 4 );
+//      check_opengl_error();
 }
 
 void SdlGlScreen::show() {
@@ -240,11 +239,10 @@ void *SdlGlScreen::get_surface() {
     return screen->pixels;
 }
 
-
-
 void SdlGlScreen::clear() {
     SDL_FillRect(screen, NULL, 0x0);
 }
+
 void SdlGlScreen::fullscreen() {
     SDL_WM_ToggleFullScreen(surface);
 }

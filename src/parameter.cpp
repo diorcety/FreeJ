@@ -16,7 +16,7 @@
  * Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
 
- $Id$
+   $Id$
 
  */
 
@@ -73,7 +73,6 @@ Parameter::~Parameter() {
     free(min_value);
     free(max_value);
 }
-
 
 bool Parameter::set(void *val) {
     ////////////////////////////////////////
@@ -158,7 +157,7 @@ bool Parameter::parse(char *p) {
         bool val;
         func("parsing bool parameter");
         char *pp;
-        for(pp = p; (*pp != '1') & (*pp != '0') ; pp++) {
+        for(pp = p; (*pp != '1') & (*pp != '0'); pp++) {
             if(pp - p > 128) {
                 error("error parsing value [%s] for parameter %s", p, name.c_str());
                 return false;

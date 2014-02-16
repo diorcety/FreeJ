@@ -41,7 +41,7 @@
 class Context;
 
 
-class FFmpegEncoder: public VideoEncoder {
+class FFmpegEncoder : public VideoEncoder {
 
 public:
 

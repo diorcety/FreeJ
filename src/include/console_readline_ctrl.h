@@ -42,8 +42,7 @@ public:
 
     enum parser_t { DEFAULT,
                     COMMANDLINE,
-                    MOVELAYER
-                  } parser; // which parser to use for keys
+                    MOVELAYER} parser; // which parser to use for keys
     void set_parser(parser_t parser);
 
     /* takes a pointer to the function which will be

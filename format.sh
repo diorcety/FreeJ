@@ -22,14 +22,16 @@ for file2indent in $file_list
 do 
 echo "Indenting file $file2indent"
 #!/bin/bash
-astyle "$file2indent" --options="./format.astylerc"
+uncrustify -f "$file2indent" -c "./format.cfg" -o indentoutput.tmp
+mv indentoutput.tmp "$file2indent"
 
 done
 else
 if [ -f "$1" ]; then
 echo "Indenting one file $1"
 #!/bin/bash
-astyle "$1" --options="./format.astylerc"
+uncrustify -f "$1" -c "./format.cfg" -o indentoutput.tmp
+mv indentoutput.tmp "$1"
 
 else
 echo "ERROR: As parameter given directory or file does not exist!"

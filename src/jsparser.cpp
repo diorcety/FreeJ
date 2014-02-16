@@ -120,7 +120,7 @@ void JsExecutionContext::init_class() {
     if(!JS_DefineFunctions(cx, obj, global_functions)) {
         JS_EndRequest(cx);
         error("JsParser :: error defining global functions");
-        return ;
+        return;
     }
 
     ///////////////////////////////////////////////////////////
@@ -381,7 +381,7 @@ void JsParser::init() {
     /* Create a new runtime environment. */
     js_runtime = global_runtime->rt; // XXX - for retrocompatibilty
     if(!js_runtime) {
-        return ; /* XXX should return int or ptr! */
+        return;  /* XXX should return int or ptr! */
     }
 
     /* Create a new context. */
@@ -389,7 +389,7 @@ void JsParser::init() {
 
     /* if global_context does not have a value, end the program here */
     if(global_context == NULL) {
-        return ;
+        return;
     }
 
     global_object = global_runtime->obj;
@@ -476,7 +476,7 @@ int JsParser::open(JSContext *cx, JSObject *obj, const char* script_file) {
         JS_ReportErrorNumber(
             cx, JSFreej_GetErrorMessage, NULL,
             JSSMSG_FJ_WICKED, script_file, strerror(errno)
-        );
+            );
         return 0;
     }
     buf = readFile(fd, &len);
@@ -485,7 +485,7 @@ int JsParser::open(JSContext *cx, JSObject *obj, const char* script_file) {
         JS_ReportErrorNumber(
             cx, JSFreej_GetErrorMessage, NULL,
             JSSMSG_FJ_WICKED, script_file, "No buffer for file .... out of memory?"
-        );
+            );
         return 0;
     }
     return evaluate(cx, obj, script_file, buf, len);
@@ -512,7 +512,7 @@ int JsParser::use(JSContext *cx, JSObject *obj, const char* script_file) {
         JS_ReportErrorNumber(
             cx, JSFreej_GetErrorMessage, NULL,
             JSSMSG_FJ_WICKED, script_file, strerror(errno)
-        );
+            );
         return 0;
     }
     buf = readFile(fd, &len);
@@ -522,16 +522,16 @@ int JsParser::use(JSContext *cx, JSObject *obj, const char* script_file) {
         JS_ReportErrorNumber(
             cx, JSFreej_GetErrorMessage, NULL,
             JSSMSG_FJ_WICKED, script_file, "No buffer for file .... out of memory?"
-        );
+            );
         return 0;
     }
     JS_BeginRequest(cx);
 
     /* TODO -- FIX
-    // use a clean obj and put freej inside
-    scriptObject = JS_NewObject(cx, &UseScriptClass, NULL, NULL);
-    init_class(cx, scriptObject);
-    */
+       // use a clean obj and put freej inside
+       scriptObject = JS_NewObject(cx, &UseScriptClass, NULL, NULL);
+       init_class(cx, scriptObject);
+     */
     notice("%s from: %p new: %p glob: %p", __PRETTY_FUNCTION__, obj, scriptObject, global_object);
     if(!scriptObject) {
         JS_ReportError(cx, "Can't create script");
@@ -812,3 +812,4 @@ void js_debug_argument(JSContext *cx, jsval vp) {
              num, num, num);
     }
 }
+

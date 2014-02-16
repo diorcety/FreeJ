@@ -46,7 +46,7 @@ FACTORY_REGISTER_INSTANTIATOR(Layer, V4L2CamLayer, CamLayer, v4l2);
 
 Res::Res(unsigned int sz) {
     m_size = sz;
-    m_sizes = (unsigned int(*)[2]) malloc(sz * sizeof(*m_sizes));
+    m_sizes = (unsigned int(*)[2])malloc(sz * sizeof(*m_sizes));
     m_idx = 0;
     m_curIdx = 0;
 }
@@ -153,7 +153,7 @@ bool V4L2CamLayer::open(const char *devfile) {
 
     // Switch to the first video input (example 1-2)
     int index = 0;
-    if(-1 == ioctl(fd, VIDIOC_G_INPUT, &index)) {		//gets the current video input
+    if(-1 == ioctl(fd, VIDIOC_G_INPUT, &index)) {               //gets the current video input
         error("VIDIOC_G_INPUT: %s", strerror(errno));
         return(false);
     }
@@ -183,7 +183,7 @@ bool V4L2CamLayer::open(const char *devfile) {
         notice("format description :%s", fmtdesc.description);
         if(!m_res)
             m_res = new Res(ARRAY_RESOLUTION_SIZE);
-        for(unsigned int i = 0; ; i++) {
+        for(unsigned int i = 0;; i++) {
             memset(&framesize, 0, sizeof framesize);
             framesize.pixel_format = fmtdesc.pixelformat;
             framesize.index = i;
@@ -266,7 +266,7 @@ bool V4L2CamLayer::open(const char *devfile) {
     memset(&reqbuf, 0, sizeof(reqbuf));
     reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     reqbuf.memory = V4L2_MEMORY_MMAP;
-    reqbuf.count = 4;	//reduced to reduce the display delay (thanks snawrocki)
+    reqbuf.count = 4;   //reduced to reduce the display delay (thanks snawrocki)
     if(-1 == ioctl(fd, VIDIOC_REQBUFS, &reqbuf)) {
         if(errno == EINVAL)
             error("video capturing by mmap-streaming is not supported");
@@ -415,7 +415,7 @@ void V4L2CamLayer::chgRes(int idx, Res *res) {
 
     // Switch to the first video input (example 1-2)
     int index = 0;
-    if(-1 == ioctl(fd, VIDIOC_G_INPUT, &index)) {		//gets the current video input
+    if(-1 == ioctl(fd, VIDIOC_G_INPUT, &index)) {               //gets the current video input
         error("VIDIOC_G_INPUT: %s", strerror(errno));
         this->start();
         return;
@@ -463,7 +463,7 @@ void V4L2CamLayer::chgRes(int idx, Res *res) {
     memset(&reqbuf, 0, sizeof(reqbuf));
     reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     reqbuf.memory = V4L2_MEMORY_MMAP;
-    reqbuf.count = 4;	//reduced to reduce the display delay (thanks snawrocki)
+    reqbuf.count = 4;   //reduced to reduce the display delay (thanks snawrocki)
     if(-1 == ioctl(fd, VIDIOC_REQBUFS, &reqbuf)) {
         if(errno == EINVAL)
             error("video capturing by mmap-streaming is not supported");

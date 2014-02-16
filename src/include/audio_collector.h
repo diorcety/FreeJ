@@ -55,18 +55,22 @@ public:
     float *GetAudioBuffer() {
         return m_AudioBuffer;
     }
+
     float GetHarmonic(int h);
     bool  IsConnected();
     void  SetGain(float s) {
         m_Gain = s;
     }
+
     void  SetSmoothingBias(float s) {
         if(s < 2 && s > 0) m_SmoothingBias = s;
     }
+
     //  void  Process(const string &filename);
     bool  IsProcessing() {
         return m_Processing;
     }
+
     float BufferTime() {
         return m_BufferTime;
     }
@@ -93,15 +97,15 @@ private:
     float *m_AudioBuffer;
     float *m_FFTBuffer;
     float *m_FFTOutput;
-    int    m_FFTBuffers;
-    int    m_InputPort;
+    int m_FFTBuffers;
+    int m_InputPort;
 
     float *m_JackBuffer;
 
-    int    m_Dspfd;
+    int m_Dspfd;
     short *m_OSSBuffer;
-    float  m_OneOverSHRT_MAX;
-    bool   m_Processing;
+    float m_OneOverSHRT_MAX;
+    bool m_Processing;
     float *m_ProcessBuffer;
     unsigned int m_ProcessPos;
     unsigned int m_ProcessLength;

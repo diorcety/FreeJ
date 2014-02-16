@@ -12,7 +12,7 @@
 #include <kbd_ctrl.h>
 #include <config.h>
 
-class KbdControllerJS: public KbdController {
+class KbdControllerJS : public KbdController {
 public:
     virtual int key_event(const char *state, bool shift, bool ctrl, bool alt, bool num, const char *keyname);
 };
@@ -29,8 +29,8 @@ int KbdControllerJS::key_event(const char *state, bool shift, bool ctrl, bool al
               uni,
               keysym->mod,
               event.key.which
-             ))
-        return 1; // returned true, we are done!
+              ))
+        return 1;  // returned true, we are done!
 
     //Uint16 keysym->unicode
     //char * SDL_GetKeyName(keysym->sym);
@@ -75,7 +75,7 @@ JS(js_kbd_ctrl_constructor) {
     JS_BeginRequest(cx);
     // initialize with javascript context
     if(!kbd->initialized) {
-        if(! kbd->init(global_environment)) {
+        if(!kbd->init(global_environment)) {
             error("failed initializing keyboard controller");
             JS_EndRequest(cx);
             return JS_FALSE;

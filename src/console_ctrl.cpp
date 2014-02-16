@@ -93,7 +93,6 @@ int quit_proc(Context *env, char *cmd) {
     return 0;
 }
 
-
 SlwConsole::SlwConsole() : ConsoleController() {
     active = false;
     paramsel = 1;
@@ -184,8 +183,6 @@ bool SlwConsole::slw_init() {
     return true;
 }
 
-
-
 int SlwConsole::dispatch() {
     int key = SLkp_getkey();
 
@@ -251,25 +248,26 @@ void SlwConsole::refresh() {
 
 }
 
-
-
-
-
 void SlwConsole::notice(const char *msg) {
     log->append(msg);
 }
+
 void SlwConsole::warning(const char *msg) {
     log->append(msg);
 }
+
 void SlwConsole::act(const char *msg) {
     log->append(msg);
 }
+
 void SlwConsole::error(const char *msg) {
     log->append(msg);
 }
+
 void SlwConsole::func(const char *msg) {
     log->append(msg);
 }
+
 void SlwConsole::old_printlog(const char *msg) {
     log->append(msg);
 }

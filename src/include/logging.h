@@ -69,9 +69,11 @@ public:
 class Loggable {
 public:
     class Error : public FreejError {
-    public:
+public:
         Error(const std::string& msg, int rv)
-            : FreejError(msg, rv) { }
+            : FreejError(msg, rv) {
+        }
+
     };
 
     Loggable();
@@ -81,6 +83,7 @@ public:
     LogLevel get_loglevel() {
         return loglevel_;
     }
+
     void set_loglevel(LogLevel level) {
         loglevel_ = level;
     }
@@ -118,9 +121,11 @@ private:
 class WrapperLogger : public Logger {
 public:
     class Error : public FreejError {
-    public:
+public:
         Error(const std::string& msg, int rv)
-            : FreejError(msg, rv) { }
+            : FreejError(msg, rv) {
+        }
+
     };
 
     WrapperLogger();

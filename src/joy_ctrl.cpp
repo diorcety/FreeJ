@@ -54,7 +54,7 @@ bool JoyController::init(Context *freej) {
     int c;
 
     num = SDL_NumJoysticks();
-    if(num > 4) num = 4; // we support maximum 4 joysticks
+    if(num > 4) num = 4;  // we support maximum 4 joysticks
 
     func("num joysticks %i", num);
     for(c = 0; c < num; c++) {
@@ -154,7 +154,6 @@ int JoyController::dispatch() {
     return 0;
 }
 
-
 #ifdef HAVE_LINUX
 
 
@@ -165,15 +164,15 @@ int JoyController::dispatch() {
 #define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
 
 /*
-static const char* effect_names[] = {
+   static const char* effect_names[] = {
     (const char*)"Sine vibration",
     (const char*)"Constant Force",
     (const char*)"Spring Condition",
     (const char*)"Damping Condition",
     (const char*)"Strong Rumble",
     (const char*)"Weak Rumble"
-};
-*/
+   };
+ */
 
 bool JoyController::init_rumble(char *devfile) {
     unsigned long features[4];
@@ -337,4 +336,5 @@ bool JoyController::rumble(int intensity) {
     return(true);
 
 }
+
 #endif

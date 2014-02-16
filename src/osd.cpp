@@ -17,8 +17,8 @@
  */
 
 /*
-  THIS CODE IS NOT USED ANYMORE (5 feb 2009) -jrml
-*/
+   THIS CODE IS NOT USED ANYMORE (5 feb 2009) -jrml
+ */
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -53,13 +53,13 @@ uint32_t *Osd::print(const char *text, uint32_t *pos, int hsize, int vsize) {
 
         /* control screen bounds */
         if(diocrap - (uint32_t *)buffer > (env->screen->size - env->screen->pitch))
-            return diocrap - newline; /* low bound */
+            return diocrap - newline;  /* low bound */
         while(diocrap - (uint32_t *)buffer < env->screen->pitch)
             ptr = diocrap += v;
 
         //    for (x=0; x<len; x++)
         x = 0;
-        uint32_t *limit = env->screen->w * env->screen->h + (uint32_t *) env->screen->get_surface() ;
+        uint32_t *limit = env->screen->w * env->screen->h + (uint32_t *) env->screen->get_surface();
         if(ptr + env->screen->w * hsize < limit) {
             while(text[x] != '\0') {
                 f = fontdata[text[x] * CHAR_HEIGHT + y];
@@ -93,7 +93,8 @@ Osd::Osd() {
     env = NULL;
 }
 
-Osd::~Osd() { }
+Osd::~Osd() {
+}
 
 void Osd::init(Context *screen) {
     this->env = screen;
@@ -104,24 +105,24 @@ void Osd::init(Context *screen) {
     resize();
 
     /* add ipernaut logo layer
-    if(!ipernaut) {
-      char tmp[512];
-      sprintf(tmp,"%s/freej/ipernav.png",DATADIR);
-      ipernaut = create_layer(env, tmp);
-      if(!ipernaut) ipernaut = create_layer(env, "../doc/ipernav.png");
-      if(!ipernaut) ipernaut = create_layer(env, "doc/ipernav.png");
-      if(!ipernaut) ipernaut = create_layer(env, "ipernav.png");
-      if(ipernaut) {
+       if(!ipernaut) {
+       char tmp[512];
+       sprintf(tmp,"%s/freej/ipernav.png",DATADIR);
+       ipernaut = create_layer(env, tmp);
+       if(!ipernaut) ipernaut = create_layer(env, "../doc/ipernav.png");
+       if(!ipernaut) ipernaut = create_layer(env, "doc/ipernav.png");
+       if(!ipernaut) ipernaut = create_layer(env, "ipernav.png");
+       if(ipernaut) {
         if(ipernaut->init(env)) {
-    ipernaut->blitter.set_blit("ALPHA");
-    ipernaut->blitter.fade_value(1,128);
+       ipernaut->blitter.set_blit("ALPHA");
+       ipernaut->blitter.fade_value(1,128);
         } else {
-    delete ipernaut;
-    ipernaut = NULL;
+       delete ipernaut;
+       ipernaut = NULL;
         }
-      }
-    }
-    */
+       }
+       }
+     */
 
     active = false; // deactivate by default
     set_osd(status_msg); /* let jutils know about the osd */
@@ -161,24 +162,24 @@ void Osd::print() {
     if(!active) return;
 
     /*
-    if(_calibrate) {
-      // vert up left
-      vline(screen->coords(HBOUND,VBOUND>>2),VBP<<1,screen->pitch,screen->bpp);
-      // vert up right
-      vline(screen->coords(screen->w-HBOUND,VBOUND>>2),VBP<<1,screen->pitch,screen->bpp);
-      // vert down left
-      vline(screen->coords(HBOUND,screen->h-(VBOUND<<1)),VBP<<1,screen->pitch,screen->bpp);
-      // vert down right
-      vline(screen->coords(screen->w-HBOUND,screen->h-(VBOUND<<1)),VBP<<1,screen->pitch,screen->bpp);
-      // horiz up left
-      hline(screen->coords(HBOUND-HBP,VBOUND),HBP<<1,screen->bpp);
-      // horiz up right
-      hline(screen->coords(screen->w-HBOUND-HBP,VBOUND),HBP<<1,screen->bpp);
-      // horiz down left
-      hline(screen->coords(HBOUND-HBP,screen->h-VBOUND),HBP<<1,screen->bpp);
-      // horiz down right
-      hline(screen->coords(screen->w-HBOUND-HBP,screen->h-VBOUND),HBP<<1,screen->bpp);
-    } */
+       if(_calibrate) {
+       // vert up left
+       vline(screen->coords(HBOUND,VBOUND>>2),VBP<<1,screen->pitch,screen->bpp);
+       // vert up right
+       vline(screen->coords(screen->w-HBOUND,VBOUND>>2),VBP<<1,screen->pitch,screen->bpp);
+       // vert down left
+       vline(screen->coords(HBOUND,screen->h-(VBOUND<<1)),VBP<<1,screen->pitch,screen->bpp);
+       // vert down right
+       vline(screen->coords(screen->w-HBOUND,screen->h-(VBOUND<<1)),VBP<<1,screen->pitch,screen->bpp);
+       // horiz up left
+       hline(screen->coords(HBOUND-HBP,VBOUND),HBP<<1,screen->bpp);
+       // horiz up right
+       hline(screen->coords(screen->w-HBOUND-HBP,VBOUND),HBP<<1,screen->bpp);
+       // horiz down left
+       hline(screen->coords(HBOUND-HBP,screen->h-VBOUND),HBP<<1,screen->bpp);
+       // horiz down right
+       hline(screen->coords(screen->w-HBOUND-HBP,screen->h-VBOUND),HBP<<1,screen->bpp);
+       } */
 
     env->screen->lock();
 
@@ -225,20 +226,20 @@ bool Osd::calibrate() {
 }
 
 /*
-bool Osd::fps() {
-  //  if(_fps) env->clear(); //scr(screen->get_surface(),screen->size);
-  _fps = !_fps;
-  env->track_fps = _fps;
-  return _fps;
-}
+   bool Osd::fps() {
+   //  if(_fps) env->clear(); //scr(screen->get_surface(),screen->size);
+   _fps = !_fps;
+   env->track_fps = _fps;
+   return _fps;
+   }
 
-void Osd::_show_fps() {
-  char fps[10];
-  _set_color(white);
-  sprintf(fps,"%.1f",env->fps);
-  print(fps,fps_offset,1,1);
-}
-*/
+   void Osd::_show_fps() {
+   char fps[10];
+   _set_color(white);
+   sprintf(fps,"%.1f",env->fps);
+   print(fps,fps_offset,1,1);
+   }
+ */
 void Osd::_selection() {
     char msg[256];
 
@@ -258,16 +259,17 @@ void Osd::_selection() {
     print(msg, selection_offset, 1, 1);
 
 }
+
 /*
-void Osd::statusmsg(char *format, ...) {
-  if(_credits) credits();
-  va_list arg;
-  va_start(arg,format);
-  vsnprintf(status_msg,49,format,arg);
-  status_msg[50] = '\0';
-  va_end(arg);
-}
-*/
+   void Osd::statusmsg(char *format, ...) {
+   if(_credits) credits();
+   va_list arg;
+   va_start(arg,format);
+   vsnprintf(status_msg,49,format,arg);
+   status_msg[50] = '\0';
+   va_end(arg);
+   }
+ */
 void Osd::_layerlist() {
     char *lname;
     //  unsigned int vpos = VBOUND+TOPLIST;
@@ -280,7 +282,7 @@ void Osd::_layerlist() {
 
     env->layers.lock();
     Layer *l = (Layer *)env->layers.begin(),
-           *laysel = (Layer*) env->layers.selected();
+    *laysel = (Layer*) env->layers.selected();
 
     while(l) {
 
@@ -383,6 +385,7 @@ void Osd::draw_credits() {
 bool Osd::credits() {
     return credits(!_credits);
 }
+
 bool Osd::credits(bool s) {
     if(!env) return false;
 
@@ -442,3 +445,4 @@ void Osd::clean() {
     }
     env->screen->unlock();
 }
+

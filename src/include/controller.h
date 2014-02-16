@@ -22,7 +22,7 @@
 /**
    @file controller.h
    @brief FreeJ generic Controller interface
-*/
+ */
 
 #ifndef __CONTROLLER_H__
 #define __CONTROLLER_H__
@@ -56,7 +56,7 @@ private:
 
 };
 
-class Controller: public Entry {
+class Controller : public Entry {
     friend class Context;
 
 public:

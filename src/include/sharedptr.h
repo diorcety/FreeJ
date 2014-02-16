@@ -25,8 +25,8 @@ template<typename T>
 using shared_ptr = std::shared_ptr<T>;
 
 #define SHARED_PTR(CLASS)                   \
-	public:                             \
-	typedef shared_ptr<CLASS> Ptr;      \
-	typedef shared_ptr<CLASS> WeakPtr;  \
- 
+public:                             \
+    typedef shared_ptr<CLASS> Ptr;      \
+    typedef shared_ptr<CLASS> WeakPtr;  \
+
 #endif //__shared_ptr_h__

@@ -36,7 +36,8 @@ public:
     void crop(Layer *layer);
     void show();
     void clear();
-    void fullscreen() {};
+    void fullscreen() {
+    };
     void *get_surface();
     SDL_Surface *scr;
 

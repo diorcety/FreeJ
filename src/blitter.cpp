@@ -80,8 +80,6 @@ Blitter::~Blitter() {
 
 }
 
-
-
 // char *Blitter::getName().c_str() {
 //   return name;
 // }
@@ -101,21 +99,21 @@ Blitter::~Blitter() {
 
 
                                                          screen->w
-  0,0___________________________________________________ ->
+   0,0___________________________________________________ ->
    '                 ^                                  '
-   | screen          |scr_stride_up                     |
-   |                 |                                  |
-   |       x,y_______V________________ w                |
-   | scr_sx '                         '                 |
-   | stride | layer                   |                 |
-   |<------>|                         |                 |
-   |        |                         |<-------------...|
-   |...---->|                         | scr_stride_dx   |
-   |        '-------------------------'                 |
-   |       h                                            |
-   |                                                    |
+ | screen          |scr_stride_up                     |
+ |                 |                                  |
+ |       x,y_______V________________ w                |
+ | scr_sx '                         '                 |
+ | stride | layer                   |                 |
+ ||<------>|                         |                 |
+ |        |                         |<-------------...|
+ ||...---->|                         | scr_stride_dx   |
+ |        '-------------------------'                 |
+ |       h                                            |
+ |                                                    |
    '----------------------------------------------------'
-   |
+ |
    V screen->h
 
    we have a couple of cases in which both x and y as well
@@ -124,19 +122,19 @@ Blitter::~Blitter() {
    for instance, if the layer goes out of the left bound (x<0):
 
             0,0____________________
- (offset)    '                     '
-  x,y________|_________            |  offset is the point of start
+   (offset)    '                     '
+   x,y________|_________            |  offset is the point of start
    '         |         '           |  scr_stride is added to screen every line
-   |layer    |         |           |  lay_stride is added to layer every line
-   |         |         | scr_stride|
-   |         |         |<--------->|
-   |         |         |           |
+ ||layer    |         |           |  lay_stride is added to layer every line
+ |         |         | scr_stride|
+ |         |         |<--------->|
+ |         |         |           |
    '_________|_________'           |
    <-------->|                     |
    lay_stride'---------------------'
 
      so the algorithm of the crop will look like:
-*/
+ */
 
 
 void Blitter::crop(Layer *lay, ViewPort *scr) {
@@ -271,7 +269,6 @@ void Blitter::crop(Layer *lay, ViewPort *scr) {
     lay->need_crop = false;
 }
 
-
 //////////////////
 
 ///////// LEFTOVERS
@@ -281,12 +278,12 @@ void Blitter::crop(Layer *lay, ViewPort *scr) {
 //      crop the layer only if necessary */
 //   if(!force)
 //     if( (lay->geo->x == old_lay_x)
-// 	&& (lay->geo->y == old_lay_y)
-// 	&& (lay->geo->w == old_lay_w)
-// 	&& (lay->geo->h == old_lay_h)
-// 	&& (scr->w == old_scr_w)
-// 	&& (scr->h == old_scr_h)
-// 	)
+//      && (lay->geo->y == old_lay_y)
+//      && (lay->geo->w == old_lay_w)
+//      && (lay->geo->h == old_lay_h)
+//      && (scr->w == old_scr_w)
+//      && (scr->h == old_scr_h)
+//      )
 //       return;
 
 

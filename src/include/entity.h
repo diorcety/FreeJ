@@ -70,8 +70,14 @@ public:
     JSContext *jsenv; ///< pointer to the javasript context
     JSClass *jsclass; ///< pointer to the javascript class
     JSObject *jsobj; ///< pointer to the javascript instantiated object
-    JSContext *context() {return jsenv;} // TO REMOVE
-    JSObject  *object() {return jsobj;} // TO REMOVE
+    JSContext *context() {
+        return jsenv;
+    }                                    // TO REMOVE
+
+    JSObject  *object() {
+        return jsobj;
+    }                                   // TO REMOVE
+
 #endif //WITH_JAVASCRIPT
 
 };

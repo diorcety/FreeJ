@@ -40,6 +40,7 @@ FFmpegEncoder::FFmpegEncoder()
     setName("encoder/ffmpeg");
 
 }
+
 FFmpegEncoder::~FFmpegEncoder() {
     func("FFmpegEncoder:::~FFmpegEncoder");
 
@@ -225,6 +226,7 @@ bool FFmpegEncoder::write_frame() {
     env->screen->unlock();
     return true;
 }
+
 AVFrame *FFmpegEncoder::prepare_image(AVFrame *picture_ptr) {
     SdlScreen *sdl_screen;
     //    if(frame_count>STREAM_NB_FRAMES) {
@@ -249,6 +251,7 @@ AVFrame *FFmpegEncoder::prepare_image(AVFrame *picture_ptr) {
                 sdl_screen->h);
     return picture_ptr;
 }
+
 void FFmpegEncoder::open() {
     /* open the output file, if needed */
     if(!(aof->flags & AVFMT_NOFILE)) {
@@ -261,13 +264,13 @@ void FFmpegEncoder::open() {
     av_write_header(afc);
 }
 
-
 void FFmpegEncoder::convert_to_YUV420P() {
     //    create_dummy_image(tmp_picture,codec);
     img_convert((AVPicture *)picture, codec->pix_fmt, (AVPicture *)tmp_picture, PIX_FMT_YUV420P,
                 codec->width,
                 codec->height);
 }
+
 void FFmpegEncoder::set_encoding_parameter() {
     AVCodecContext *acc = &video_stream->codec;
 
@@ -301,4 +304,5 @@ void FFmpegEncoder::set_encoding_parameter() {
     if(!strcmp(afc->oformat->name, "mp4") || !strcmp(afc->oformat->name, "mov") || !strcmp(afc->oformat->name, "3gp"))
         acc->flags |= CODEC_FLAG_GLOBAL_HEADER;
 }
+
 #endif

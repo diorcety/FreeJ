@@ -7,7 +7,7 @@
    Written by Denis Oliver Kropp <dok@directfb.org>,
               Andreas Hundt <andi@fischlustig.de> and
               Sven Neumann <sven@convergence.de>.
-	      Silvano Galliani aka kysucix <kysucix@dyne.org> sse2 version
+              Silvano Galliani aka kysucix <kysucix@dyne.org> sse2 version
 
    Fast memcpy code was taken from xine (see below).
 
@@ -25,7 +25,7 @@
    License along with this library; if not, write to the
    Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
-*/
+ */
 
 /*
  * Copyright (C) 2001 the xine project
@@ -67,53 +67,53 @@
 
    From IA-32 Intel Architecture Software Developer's Manual Volume 1,
 
-  Order Number 245470:
-  "10.4.6. Cacheability Control, Prefetch, and Memory Ordering Instructions"
+   Order Number 245470:
+   "10.4.6. Cacheability Control, Prefetch, and Memory Ordering Instructions"
 
-  Data referenced by a program can be temporal (data will be used
-  again) or non-temporal (data will be referenced once and not reused
-  in the immediate future). To make efficient use of the processor's
-  caches, it is generally desirable to cache temporal data and not
-  cache non-temporal data. Overloading the processor's caches with
-  non-temporal data is sometimes referred to as "polluting the
-  caches".  The non-temporal data is written to memory with
-  Write-Combining semantics.
+   Data referenced by a program can be temporal (data will be used
+   again) or non-temporal (data will be referenced once and not reused
+   in the immediate future). To make efficient use of the processor's
+   caches, it is generally desirable to cache temporal data and not
+   cache non-temporal data. Overloading the processor's caches with
+   non-temporal data is sometimes referred to as "polluting the
+   caches".  The non-temporal data is written to memory with
+   Write-Combining semantics.
 
-  The PREFETCHh instructions permits a program to load data into the
-  processor at a suggested cache level, so that it is closer to the
-  processors load and store unit when it is needed. If the data is
-  already present in a level of the cache hierarchy that is closer to
-  the processor, the PREFETCHh instruction will not result in any data
-  movement.  But we should you PREFETCHNTA: Non-temporal data fetch
-  data into location close to the processor, minimizing cache
-  pollution.
+   The PREFETCHh instructions permits a program to load data into the
+   processor at a suggested cache level, so that it is closer to the
+   processors load and store unit when it is needed. If the data is
+   already present in a level of the cache hierarchy that is closer to
+   the processor, the PREFETCHh instruction will not result in any data
+   movement.  But we should you PREFETCHNTA: Non-temporal data fetch
+   data into location close to the processor, minimizing cache
+   pollution.
 
-  The MOVNTQ (store quadword using non-temporal hint) instruction
-  stores packed integer data from an MMX register to memory, using a
-  non-temporal hint.  The MOVNTPS (store packed single-precision
-  floating-point values using non-temporal hint) instruction stores
-  packed floating-point data from an XMM register to memory, using a
-  non-temporal hint.
+   The MOVNTQ (store quadword using non-temporal hint) instruction
+   stores packed integer data from an MMX register to memory, using a
+   non-temporal hint.  The MOVNTPS (store packed single-precision
+   floating-point values using non-temporal hint) instruction stores
+   packed floating-point data from an XMM register to memory, using a
+   non-temporal hint.
 
-  The SFENCE (Store Fence) instruction controls write ordering by
-  creating a fence for memory store operations. This instruction
-  guarantees that the results of every store instruction that precedes
-  the store fence in program order is globally visible before any
-  store instruction that follows the fence. The SFENCE instruction
-  provides an efficient way of ensuring ordering between procedures
-  that produce weakly-ordered data and procedures that consume that
-  data.
+   The SFENCE (Store Fence) instruction controls write ordering by
+   creating a fence for memory store operations. This instruction
+   guarantees that the results of every store instruction that precedes
+   the store fence in program order is globally visible before any
+   store instruction that follows the fence. The SFENCE instruction
+   provides an efficient way of ensuring ordering between procedures
+   that produce weakly-ordered data and procedures that consume that
+   data.
 
-  If you have questions please contact with me: Nick Kurshev:
-  nickols_k@mail.ru.
-*/
+   If you have questions please contact with me: Nick Kurshev:
+   nickols_k@mail.ru.
+ */
 
 /*  mmx v.1 Note: Since we added alignment of destinition it speedups
     of memory copying on PentMMX, Celeron-1 and P2 upto 12% versus
     standard (non MMX-optimized) version.
     Note: on K6-2+ it speedups memory copying upto 25% and
           on K7 and P3 about 500% (5 times).
-*/
+ */
 
 /* Additional notes on gcc assembly and processors: [MF]
    prefetch is specific for AMD processors, the intel ones should be
@@ -125,7 +125,7 @@
 
    quote of the day:
     "Using prefetches efficiently is more of an art than a science"
-*/
+ */
 
 #include <sys/time.h>
 #include <time.h>
@@ -143,15 +143,15 @@
 #ifdef ARCH_X86
 
 /* for small memory blocks (<256 bytes) this version is faster */
-#define small_memcpy(to,from,n)\
-{\
-register unsigned long int dummy;\
-__asm__ __volatile__(\
-  "rep; movsb"\
-  :"=&D"(to), "=&S"(from), "=&c"(dummy)\
-  :"0" (to), "1" (from),"2" (n)\
-  : "memory");\
-}
+#define small_memcpy(to,from,n) \
+    { \
+        register unsigned long int dummy; \
+        __asm__ __volatile__ ( \
+            "rep; movsb" \
+            : "=&D" (to), "=&S" (from), "=&c" (dummy) \
+            : "0" (to), "1" (from),"2" (n) \
+            : "memory"); \
+    }
 /* On K6 femms is faster of emms. On K7 femms is directly mapped on emms. */
 #ifdef HAVE_3DNOW
 #define EMMS     "femms"
@@ -183,7 +183,7 @@ __asm__ __volatile__(\
 #endif
 
 
-static void * agp_memcpy(void *to, const void *from , size_t len) {
+static void * agp_memcpy(void *to, const void *from, size_t len) {
     void *retval;
     size_t i;
     retval = to;
@@ -206,10 +206,10 @@ static void * agp_memcpy(void *to, const void *from , size_t len) {
            It would be better to have a number of instructions which
            perform reading and writing to be multiple to a number of
            processor's decoders, but it's not always possible.
-        */
+         */
         for(; i > 0; i--) {
-            __asm__ __volatile__(
-                PREFETCH" 320(%0)\n"
+            __asm__ __volatile__ (
+                PREFETCH " 320(%0)\n"
                 "movq (%0), %%mm0\n"
                 "movq 8(%0), %%mm1\n"
                 "movq 16(%0), %%mm2\n"
@@ -218,25 +218,25 @@ static void * agp_memcpy(void *to, const void *from , size_t len) {
                 "movq 40(%0), %%mm5\n"
                 "movq 48(%0), %%mm6\n"
                 "movq 56(%0), %%mm7\n"
-                MOVNTQ" %%mm0, (%1)\n"
-                MOVNTQ" %%mm1, 8(%1)\n"
-                MOVNTQ" %%mm2, 16(%1)\n"
-                MOVNTQ" %%mm3, 24(%1)\n"
-                MOVNTQ" %%mm4, 32(%1)\n"
-                MOVNTQ" %%mm5, 40(%1)\n"
-                MOVNTQ" %%mm6, 48(%1)\n"
-                MOVNTQ" %%mm7, 56(%1)\n"
-                :: "r"(from), "r"(to) : "memory");
+                MOVNTQ " %%mm0, (%1)\n"
+                MOVNTQ " %%mm1, 8(%1)\n"
+                MOVNTQ " %%mm2, 16(%1)\n"
+                MOVNTQ " %%mm3, 24(%1)\n"
+                MOVNTQ " %%mm4, 32(%1)\n"
+                MOVNTQ " %%mm5, 40(%1)\n"
+                MOVNTQ " %%mm6, 48(%1)\n"
+                MOVNTQ " %%mm7, 56(%1)\n"
+                :: "r" (from), "r" (to) : "memory");
             from = ((const unsigned char *)from) + 64;
             to   = ((unsigned char *)to) + 64;
         }
 #ifdef HAVE_MMX2
         /* since movntq is weakly-ordered, a "sfence"
-        * is needed to become ordered again. */
-        __asm__ __volatile__("sfence":::"memory");
+         * is needed to become ordered again. */
+        __asm__ __volatile__ ("sfence" ::: "memory");
 #endif
         /* enables to use FPU */
-        __asm__ __volatile__(EMMS:::"memory");
+        __asm__ __volatile__ (EMMS::: "memory");
     }
     /*
      *	Now do the tail of the block
@@ -245,7 +245,6 @@ static void * agp_memcpy(void *to, const void *from , size_t len) {
     return retval;
 }
 
-
 /* linux kernel __memcpy (from: /include/asm/string.h) */
 static inline void * __memcpy(void * to, const void * from, size_t n) {
     int d0, d1, d2;
@@ -253,7 +252,7 @@ static inline void * __memcpy(void * to, const void * from, size_t n) {
     if(n < 4) {
         small_memcpy(to, from, n);
     } else
-        __asm__ __volatile__(
+        __asm__ __volatile__ (
             "rep ; movsl\n\t"
             "testb $2,%b4\n\t"
             "je 1f\n\t"
@@ -262,8 +261,8 @@ static inline void * __memcpy(void * to, const void * from, size_t n) {
             "je 2f\n\t"
             "movsb\n"
             "2:"
-            : "=&c"(d0), "=&D"(d1), "=&S"(d2)
-            :"0"(n/4), "q"(n), "1"((long) to), "2"((long) from)
+            : "=&c" (d0), "=&D" (d1), "=&S" (d2)
+            : "0" (n/4), "q" (n), "1" ((long) to), "2" ((long) from)
             : "memory");
 
     return(to);
@@ -293,7 +292,7 @@ static void * mmx_memcpy(void * to, const void * from, size_t len) {
         i = len >> 6; /* len/64 */
         len &= 63;
         for(; i > 0; i--) {
-            __asm__ __volatile__(
+            __asm__ __volatile__ (
                 "movq (%0), %%mm0\n"
                 "movq 8(%0), %%mm1\n"
                 "movq 16(%0), %%mm2\n"
@@ -310,11 +309,11 @@ static void * mmx_memcpy(void * to, const void * from, size_t len) {
                 "movq %%mm5, 40(%1)\n"
                 "movq %%mm6, 48(%1)\n"
                 "movq %%mm7, 56(%1)\n"
-                :: "r"(from), "r"(to) : "memory");
+                :: "r" (from), "r" (to) : "memory");
             from = ((const unsigned char *)from) + 64;
             to   = ((unsigned char *)to) + 64;
         }
-        __asm__ __volatile__("emms":::"memory");
+        __asm__ __volatile__ ("emms" ::: "memory");
     }
     /*
      * Now do the tail of the block
@@ -331,9 +330,9 @@ static void * mmx_memcpy(void * to, const void * from, size_t len) {
  * things 32 bits at a time even when we don't know the size of the
  * area at compile-time..
  */
-void mymemzero(void * s, unsigned long c , size_t count) {
+void mymemzero(void * s, unsigned long c, size_t count) {
     int d0, d1;
-    __asm__ __volatile__(
+    __asm__ __volatile__ (
         "rep ; stosl\n\t"
         "testb $2,%b3\n\t"
         "je 1f\n\t"
@@ -342,9 +341,9 @@ void mymemzero(void * s, unsigned long c , size_t count) {
         "je 2f\n\t"
         "stosb\n"
         "2:"
-        : "=&c"(d0), "=&D"(d1)
-        :"a"(c), "q"(count), "0"(count/4), "1"((long) s)
-        :"memory");
+        : "=&c" (d0), "=&D" (d1)
+        : "a" (c), "q" (count), "0" (count/4), "1" ((long) s)
+        : "memory");
 }
 
 #ifdef HAVE_SSE
@@ -357,13 +356,13 @@ static void * mmx2_memcpy(void * to, const void * from, size_t len) {
     retval = to;
 
     /* PREFETCH has effect even for MOVSB instruction ;) */
-    __asm__ __volatile__(
+    __asm__ __volatile__ (
         "   prefetchnta (%0)\n"
         "   prefetchnta 64(%0)\n"
         "   prefetchnta 128(%0)\n"
         "   prefetchnta 192(%0)\n"
         "   prefetchnta 256(%0)\n"
-        : : "r"(from));
+        : : "r" (from));
 
     if(len >= MIN_LEN) {
         register unsigned long int delta;
@@ -377,7 +376,7 @@ static void * mmx2_memcpy(void * to, const void * from, size_t len) {
         i = len >> 6; /* len/64 */
         len &= 63;
         for(; i > 0; i--) {
-            __asm__ __volatile__(
+            __asm__ __volatile__ (
                 "prefetchnta 320(%0)\n"
                 "movq (%0), %%mm0\n"
                 "movq 8(%0), %%mm1\n"
@@ -395,14 +394,14 @@ static void * mmx2_memcpy(void * to, const void * from, size_t len) {
                 "movntq %%mm5, 40(%1)\n"
                 "movntq %%mm6, 48(%1)\n"
                 "movntq %%mm7, 56(%1)\n"
-                :: "r"(from), "r"(to) : "memory");
+                :: "r" (from), "r" (to) : "memory");
             from = ((const unsigned char *)from) + 64;
             to   = ((unsigned char *)to) + 64;
         }
         /* since movntq is weakly-ordered, a "sfence"
-        * is needed to become ordered again. */
-        __asm__ __volatile__("sfence":::"memory");
-        __asm__ __volatile__("emms":::"memory");
+         * is needed to become ordered again. */
+        __asm__ __volatile__ ("sfence" ::: "memory");
+        __asm__ __volatile__ ("emms" ::: "memory");
     }
     /*
      * Now do the tail of the block
@@ -412,21 +411,21 @@ static void * mmx2_memcpy(void * to, const void * from, size_t len) {
 }
 
 /* SSE note: i tried to move 128 bytes a time instead of 64 but it
-didn't make any measureable difference. i'm using 64 for the sake of
-simplicity. [MF] */
+   didn't make any measureable difference. i'm using 64 for the sake of
+   simplicity. [MF] */
 static void * sse_memcpy(void * to, const void * from, size_t len) {
     void *retval;
     size_t i;
     retval = to;
 
     /* PREFETCH has effect even for MOVSB instruction ;) */
-    __asm__ __volatile__(
+    __asm__ __volatile__ (
         "   prefetchnta (%0)\n"
         "   prefetchnta 64(%0)\n"
         "   prefetchnta 128(%0)\n"
         "   prefetchnta 192(%0)\n"
         "   prefetchnta 256(%0)\n"
-        : : "r"(from));
+        : : "r" (from));
 
     if(len >= MIN_LEN) {
         register unsigned long int delta;
@@ -442,7 +441,7 @@ static void * sse_memcpy(void * to, const void * from, size_t len) {
         if(((unsigned long)from) & 15)
             /* if SRC is misaligned */
             for(; i > 0; i--) {
-                __asm__ __volatile__(
+                __asm__ __volatile__ (
                     "prefetchnta 320(%0)\n"
                     "movups (%0), %%xmm0\n"
                     "movups 16(%0), %%xmm1\n"
@@ -452,7 +451,7 @@ static void * sse_memcpy(void * to, const void * from, size_t len) {
                     "movntps %%xmm1, 16(%1)\n"
                     "movntps %%xmm2, 32(%1)\n"
                     "movntps %%xmm3, 48(%1)\n"
-                    :: "r"(from), "r"(to) : "memory");
+                    :: "r" (from), "r" (to) : "memory");
                 from = ((const unsigned char *)from) + 64;
                 to   = ((unsigned char *)to) + 64;
             }
@@ -462,9 +461,9 @@ static void * sse_memcpy(void * to, const void * from, size_t len) {
                It allows to use movaps instead of movups, which required
                data to be aligned or a general-protection exception (#GP)
                is generated.
-            */
+             */
             for(; i > 0; i--) {
-                __asm__ __volatile__(
+                __asm__ __volatile__ (
                     "prefetchnta 320(%0)\n"
                     "movaps (%0), %%xmm0\n"
                     "movaps 16(%0), %%xmm1\n"
@@ -474,15 +473,15 @@ static void * sse_memcpy(void * to, const void * from, size_t len) {
                     "movntps %%xmm1, 16(%1)\n"
                     "movntps %%xmm2, 32(%1)\n"
                     "movntps %%xmm3, 48(%1)\n"
-                    :: "r"(from), "r"(to) : "memory");
+                    :: "r" (from), "r" (to) : "memory");
                 from = ((const unsigned char *)from) + 64;
                 to   = ((unsigned char *)to) + 64;
             }
         /* since movntq is weakly-ordered, a "sfence"
          * is needed to become ordered again. */
-        __asm__ __volatile__("sfence":::"memory");
+        __asm__ __volatile__ ("sfence" ::: "memory");
         /* enables to use FPU */
-        __asm__ __volatile__("emms":::"memory");
+        __asm__ __volatile__ ("emms" ::: "memory");
     }
     /*
      * Now do the tail of the block
@@ -499,7 +498,7 @@ static void * sse2_memcpy(void * to, const void * from, size_t len) {
     /* PREFETCH has effect even for MOVSB instruction ;) */
     /* Is that useful ? kysucix */
 
-    __asm__ __volatile__(
+    __asm__ __volatile__ (
         "   prefetchnta (%0)\n"
         "   prefetchnta 64(%0)\n"
         "   prefetchnta 128(%0)\n"
@@ -510,8 +509,8 @@ static void * sse2_memcpy(void * to, const void * from, size_t len) {
                     "   prefetchnta 384(%0)\n"
                     "   prefetchnta 448(%0)\n"
                     "   prefetchnta 512(%0)\n"
-        */
-        : : "r"(from));
+         */
+        : : "r" (from));
 
     if(len >= MIN_LEN) {
         register unsigned long int delta;
@@ -527,7 +526,7 @@ static void * sse2_memcpy(void * to, const void * from, size_t len) {
         if(((unsigned long)from) & 15)
             /* if SRC is misaligned */
             for(; i > 0; i--) {
-                __asm__ __volatile__(
+                __asm__ __volatile__ (
                     "prefetchnta 640(%0)\n"
 
                     "movdqu (%0), %%xmm0\n"
@@ -549,7 +548,7 @@ static void * sse2_memcpy(void * to, const void * from, size_t len) {
                     "movntdq %%xmm5, 80(%1)\n"
                     "movntdq %%xmm6, 96(%1)\n"
                     "movntdq %%xmm7, 112(%1)\n"
-                    :: "r"(from), "r"(to) : "memory");
+                    :: "r" (from), "r" (to) : "memory");
                 from = ((const unsigned char *)from) + 128;
                 to   = ((unsigned char *)to) + 128;
             }
@@ -559,9 +558,9 @@ static void * sse2_memcpy(void * to, const void * from, size_t len) {
                It allows to use movaps instead of movups, which required
                data to be aligned or a general-protection exception (#GP)
                is generated.
-            */
+             */
             for(; i > 0; i--) {
-                __asm__ __volatile__(
+                __asm__ __volatile__ (
                     "prefetchnta 640(%0)\n"
 
                     "movapd (%0), %%xmm0\n"
@@ -583,15 +582,15 @@ static void * sse2_memcpy(void * to, const void * from, size_t len) {
                     "movntdq %%xmm5, 80(%1)\n"
                     "movntdq %%xmm6, 96(%1)\n"
                     "movntdq %%xmm7, 112(%1)\n"
-                    :: "r"(from), "r"(to) : "memory");
+                    :: "r" (from), "r" (to) : "memory");
                 from = ((const unsigned char *)from) + 128;
                 to   = ((unsigned char *)to) + 128;
             }
         /* since movntq is weakly-ordered, a "sfence"
          * is needed to become ordered again. */
-        __asm__ __volatile__("mfence":::"memory");
+        __asm__ __volatile__ ("mfence" ::: "memory");
         /* enables to use FPU */
-        __asm__ __volatile__("emms":::"memory");
+        __asm__ __volatile__ ("emms" ::: "memory");
     }
     /*
      * Now do the tail of the block
@@ -599,6 +598,7 @@ static void * sse2_memcpy(void * to, const void * from, size_t len) {
     if(len) __memcpy(to, from, len);
     return retval;
 }
+
 #endif /* USE_SSE */
 #endif /* USE_MMX */
 
@@ -614,8 +614,8 @@ static void *linux_kernel_memcpy(void *to, const void *from, size_t len) {
 static struct {
     const char         *name;
     void               *(*function)(void *to, const void *from, size_t len);
-    unsigned long long    time;
-    __u32                 cpu_require;
+    unsigned long long time;
+    __u32 cpu_require;
 } memcpy_method[] = {
     { NULL, NULL, 0, 0},
     { "glibc memcpy()",            memcpy, 0, 0},
@@ -640,9 +640,10 @@ static struct {
 #ifdef ARCH_X86
 static inline unsigned long long int rdtsc() {
     unsigned long long int x;
-    __asm__ volatile(".byte 0x0f, 0x31" : "=A"(x));
+    __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
     return x;
 }
+
 #else
 static inline unsigned long long int rdtsc() {
     struct timeval tv;
@@ -650,6 +651,7 @@ static inline unsigned long long int rdtsc() {
     gettimeofday(&tv, NULL);
     return (tv.tv_sec * 1000000 + tv.tv_usec);
 }
+
 #endif
 
 

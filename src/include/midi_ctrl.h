@@ -33,7 +33,7 @@
 
 class Context;
 
-class MidiController: public SdlController {
+class MidiController : public SdlController {
 public:
     MidiController();
     virtual ~MidiController();

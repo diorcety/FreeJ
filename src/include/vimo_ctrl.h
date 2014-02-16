@@ -33,7 +33,7 @@ class JSObject;
 
 union ViMoData;
 
-class ViMoController: public Controller {
+class ViMoController : public Controller {
     friend class Context;
 
 public:

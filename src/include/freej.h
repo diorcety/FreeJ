@@ -39,9 +39,9 @@
     @verbatim
 
    ViewPort---(Blit)______________Layer_____Filter
-           \   vvvv                    \____Filter
-            \-(Blit)____Layer__Filter   \___Filter
-             \ vvvv         \__Filter        ...
+ \   vvvv                    \____Filter
+ \\-(Blit)____Layer__Filter   \___Filter
+ \ vvvv         \__Filter        ...
               (Blit)__Layer  \_Filter
                               \Filter
                                 ...
@@ -74,7 +74,7 @@
                            returns false if is not accessible
 
     bool init(Context *scr)  if the open was successful, call this and
-			     the Layer will enter the chain
+                             the Layer will enter the chain
 
     bool feed()   this function is executed by the Context when
                   it needs to grab more data in the Layer

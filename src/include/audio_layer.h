@@ -24,7 +24,7 @@
 #include <context.h>
 
 
-class AudioLayer: public Layer {
+class AudioLayer : public Layer {
 
 public:
     AudioLayer();
@@ -53,7 +53,7 @@ private:
     float *m_JackBuffer;
     unsigned int m_ProcessPos;
     unsigned int m_ProcessLength;
-    bool   m_Processing;
+    bool m_Processing;
     pthread_mutex_t* m_Mutex;
     float *m_Buffer;
 };

@@ -29,7 +29,7 @@ DECLARE_CLASS("CamLayer", cam_layer_class, cam_layer_constructor);
 ////////////////////////////////
 // CamLayer methods
 JSFunctionSpec cam_layer_methods[] = {
-    ENTRY_METHODS  ,
+    ENTRY_METHODS,
     //    name		native		        nargs
     {     "open",         cam_layer_open,            1},
 

@@ -66,8 +66,8 @@ void AaScreen::setup_blits(Layer *lay) {
 bool AaScreen::_init() {
 
     /* width/height image setup */
-    ascii_hwparms.width  = geo.w / 2;// / 2;
-    ascii_hwparms.height = geo.h / 2;// / 2;
+    ascii_hwparms.width  = geo.w / 2; // / 2;
+    ascii_hwparms.height = geo.h / 2; // / 2;
 
     ascii_rndparms = aa_getrenderparams();
     ascii_rndparms->bright = 60;
@@ -104,12 +104,12 @@ void AaScreen::blit(Layer *src) {
     play = (uint32_t*) src->buffer   + b->lay_offset;
 
     // iterates the blit on each horizontal line
-    for(c = b->lay_height ; c > 0 ; c--) {
+    for(c = b->lay_height; c > 0; c--) {
 
         (*b->fun)
-        ((void*)play, (void*)pscr,
-         b->lay_bytepitch,// * src->geo.bpp>>3,
-         &b->parameters);
+            ((void*)play, (void*)pscr,
+            b->lay_bytepitch, // * src->geo.bpp>>3,
+            &b->parameters);
 
         // strides down to the next line
         pscr += b->scr_stride + b->lay_pitch;
@@ -120,14 +120,17 @@ void AaScreen::blit(Layer *src) {
 }
 
 uint32_t AaScreen::rgba_to_r(uint32_t c) {
-    return       c & 0xff;
+    return c & 0xff;
 }
+
 uint32_t AaScreen::rgba_to_g(uint32_t c) {
     return (c >> 8) & 0xff;
 }
+
 uint32_t AaScreen::rgba_to_b(uint32_t c) {
     return (c >> 16) & 0xff;
 }
+
 uint32_t AaScreen::rgba_to_a(uint32_t c) {
     return (c >> 24);
 }

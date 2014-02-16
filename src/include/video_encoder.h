@@ -58,11 +58,11 @@ class ViewPort;
  *   - VideoEncoder::write_frame
  *
  * @brief Encodes output from Screen
-*/
+ */
 
 
 //class VideoEncoder: public Entry,public JSyncThread{
-class VideoEncoder: public Entry, public JSyncThread {
+class VideoEncoder : public Entry, public JSyncThread {
 
 public:
 
@@ -128,7 +128,7 @@ private:
     char *encbuf;
     struct timeval m_ActualTime, m_OldTime, m_lastTime;
     double m_StreamRate;
-    int 	 m_Streamed;
+    int m_Streamed;
     double m_ElapsedTime;
 
 

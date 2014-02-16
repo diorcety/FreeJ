@@ -30,8 +30,8 @@ Color::Color() {
     //set();
 }
 
-Color::~Color() { }
-
+Color::~Color() {
+}
 
 void Color::set_rgb(double nr, double ng, double nb) {
     r = nr;
@@ -52,6 +52,8 @@ void Color::set_rgba(double nr, double ng, double nb, double na) {
 void Color::set_gray(double g) {
     set_rgb(g, g, g);
 }
+
 void Color::set_gray_alpha(double g, double a) {
     set_rgba(g, g, g, a);
 }
+

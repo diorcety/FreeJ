@@ -18,7 +18,7 @@
 
 /* @file plugger.h
    @brief Plugin Filter dispatcher header
-*/
+ */
 
 #ifndef __plugger_h__
 #define __plugger_h__
@@ -41,7 +41,7 @@ class Context;
    returned upon request to the host application of FreeJ controllers.
 
    @brief Collects DLO plugins that can be used as Effect or Layer
-*/
+ */
 class Plugger {
 public:
     Plugger(); ///< Plugger onstructor
@@ -53,7 +53,7 @@ public:
        @param env the context environment where to save found plugins
        @param type the type name of the plugins to look for (ie. "filters")
        @return number of valid plugins found
-    */
+     */
     int refresh(Context *env);
 
 

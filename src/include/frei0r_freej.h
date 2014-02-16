@@ -30,7 +30,7 @@
 #include <filter.h>
 #include <factory.h>
 
-class Freior: public Filter {
+class Freior : public Filter {
     friend class GenF0rLayer;
 #ifdef WITH_COCOA
     friend class CVF0rLayer;

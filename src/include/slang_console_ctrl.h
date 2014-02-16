@@ -37,12 +37,12 @@
 
 
 /* TODO port to slang 2
-#if SLANG_VERSION >= 20000
-#define SLANG_ERROR()  SLang_get_error()
-#else
-#define SLANG_ERROR()  SLang_Error
-#endif
-*/
+   #if SLANG_VERSION >= 20000
+   #define SLANG_ERROR()  SLang_get_error()
+   #else
+   #define SLANG_ERROR()  SLang_Error
+   #endif
+ */
 
 extern volatile int SLang_Error; // hack for fucking debian!
 
@@ -57,7 +57,7 @@ class SlwTitle;
 class SlwReadline;
 
 
-class SlwConsole: public ConsoleController {
+class SlwConsole : public ConsoleController {
 public:
 
     SlwConsole();
@@ -70,7 +70,8 @@ public:
 
     bool slw_init();
 
-    void close() {};
+    void close() {
+    };
 
     void notice(const char *msg);
     void error(const char *msg);

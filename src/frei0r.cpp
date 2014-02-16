@@ -44,7 +44,7 @@ static void get_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx
 
     switch(f->param_infos[idx - 1].type) {
 
-        // idx-1 because frei0r's index starts from 0
+    // idx-1 because frei0r's index starts from 0
     case F0R_PARAM_BOOL:
         (*f->f0r_get_param_value)(filt->core, (f0r_param_t)param->value, idx - 1);
         func("bool value is %s", (*(bool*)param->value == true) ? "true" : "false");
@@ -90,13 +90,13 @@ static void set_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx
 
     switch(f->param_infos[idx - 1].type) {
 
-        // idx-1 because frei0r's index starts from 0
+    // idx-1 because frei0r's index starts from 0
     case F0R_PARAM_BOOL:
 
         func("bool value is %s", (*(bool*)param->value == true) ? "true" : "false");
 
         (*f->f0r_set_param_value)
-        (filt->core, new f0r_param_bool(*(bool*)param->value), idx - 1);
+            (filt->core, new f0r_param_bool(*(bool*)param->value), idx - 1);
 
         break;
 
@@ -132,6 +132,7 @@ static void set_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx
     }
 
 }
+
 // end of parameter callbacks
 
 Freior::Freior()

@@ -56,8 +56,8 @@ bool GeoLayer::_init() {
     }
 
 //   fsurf = SDL_CreateRGBSurface(SDL_HWSURFACE,
-// 			      geo.w,geo.h,32,
-// 			      red_bitmask,green_bitmask,blue_bitmask,alpha_bitmask);
+//                            geo.w,geo.h,32,
+//                            red_bitmask,green_bitmask,blue_bitmask,alpha_bitmask);
 //   if (!fsurf) {
 //     error("can't allocate GeoLayer memory surface");
 //     return(false);
@@ -80,7 +80,6 @@ void GeoLayer::close() {
     /* neither this */
     return;
 }
-
 
 void *GeoLayer::feed() {
     /* TODO: check synchronisation here
@@ -338,3 +337,4 @@ int GeoLayer::bezier(int16_t *vx, int16_t *vy, int num_vertex, int steps, uint32
     if(res < 0) error("error in %s", __PRETTY_FUNCTION__);
     return(res);
 }
+

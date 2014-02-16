@@ -41,6 +41,7 @@ FFT::FFT(int length) :
     m_Spectrum(new fftw_complex[length]) {
     m_Plan = fftw_plan_dft_r2c_1d(m_FFTLength, m_In, m_Spectrum, FFTW_ESTIMATE);
 }
+
 #else
     m_Spectrum(new fftwf_complex[length]) {
     m_Plan = fftwf_plan_dft_r2c_1d(m_FFTLength, m_In, m_Spectrum, FFTW_ESTIMATE);
@@ -111,12 +112,12 @@ AudioCollector::AudioCollector(char *port, int n_BufferLength, unsigned int n_Sa
     pthread_mutex_init(m_Mutex, NULL);
 
     Jack = JackClient::Get();
-// 	Jack->SetCallback(AudioCallback,(void*)this);
+//      Jack->SetCallback(AudioCallback,(void*)this);
     Jack->Attach("freej");
     if(Jack->IsAttached()) {
         int id = Jack->AddInputPort();
-// 		Jack->SetInputBuf(id,m_JackBuffer);
-        Jack->ConnectInput(id, port);		//connects output port name passed in param to constructor
+//              Jack->SetInputBuf(id,m_JackBuffer);
+        Jack->ConnectInput(id, port);           //connects output port name passed in param to constructor
         //to the new Input port created "freej::In0"
         std::cerr << "Input port ID " << id << std::endl;
     } else {
@@ -175,7 +176,7 @@ bool AudioCollector::IsConnected() {
 }
 
 float AudioCollector::GetHarmonic(int h) {
-    return  m_FFTOutput[h % NUM_BARS];
+    return m_FFTOutput[h % NUM_BARS];
 }
 
 float *AudioCollector::GetFFT() {
@@ -209,53 +210,54 @@ float *AudioCollector::GetFFT() {
     }
 
     /*for (int n=1; n<NUM_BARS-1; n++)
-    {
-    	m_FFTOutput[n]=(m_FFTOutput[n-1]+m_FFTOutput[n]+m_FFTOutput[n+1])/3.0f;
-    } */
+       {
+        m_FFTOutput[n]=(m_FFTOutput[n-1]+m_FFTOutput[n]+m_FFTOutput[n+1])/3.0f;
+       } */
 
     return m_FFTOutput;
 }
+
 /*
-void AudioCollector::Process(const string &filename)
-{
-	if (m_Processing) return;
+   void AudioCollector::Process(const string &filename)
+   {
+        if (m_Processing) return;
 
-	SF_INFO info;
-	info.format=0;
+        SF_INFO info;
+        info.format=0;
 
-	SNDFILE* file = sf_open (filename.c_str(), SFM_READ, &info) ;
-	if (!file) {
-	  error("Error opening [%s] : %s", filename, sf_strerror(file));
-	}
+        SNDFILE* file = sf_open (filename.c_str(), SFM_READ, &info) ;
+        if (!file) {
+          error("Error opening [%s] : %s", filename, sf_strerror(file));
+        }
 
-	m_ProcessBuffer = new float[info.frames];
-	memset((void*)m_ProcessBuffer,0,info.frames*sizeof(float));
-	m_ProcessLength=info.frames;
+        m_ProcessBuffer = new float[info.frames];
+        memset((void*)m_ProcessBuffer,0,info.frames*sizeof(float));
+        m_ProcessLength=info.frames;
 
-	// mix down to mono if need be
-	if (info.channels>1)
-	{
-		float *Buffer = new float[info.frames*info.channels];
-		sf_readf_float(file,Buffer,info.frames*info.channels);
-		int from=0;
-		for (int n=0; n<info.frames; n++)
-		{
-			for (int c=0; c<info.channels; c++)
-			{
-				m_ProcessBuffer[n]=(m_ProcessBuffer[n]+Buffer[from++])/2.0f;
-			}
-		}
-	}
-	else
-	{
-		sf_readf_float(file, m_ProcessBuffer, info.frames);
-	}
-	sf_close(file);
+        // mix down to mono if need be
+        if (info.channels>1)
+        {
+                float *Buffer = new float[info.frames*info.channels];
+                sf_readf_float(file,Buffer,info.frames*info.channels);
+                int from=0;
+                for (int n=0; n<info.frames; n++)
+                {
+                        for (int c=0; c<info.channels; c++)
+                        {
+                                m_ProcessBuffer[n]=(m_ProcessBuffer[n]+Buffer[from++])/2.0f;
+                        }
+                }
+        }
+        else
+        {
+                sf_readf_float(file, m_ProcessBuffer, info.frames);
+        }
+        sf_close(file);
 
-	m_Processing=true;
-	m_ProcessPos=0;
-}
-*/
+        m_Processing=true;
+        m_ProcessPos=0;
+   }
+ */
 
 void AudioCollector::get_audio(void *dest) {
     if(!pthread_mutex_trylock(m_Mutex)) {

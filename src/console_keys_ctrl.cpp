@@ -27,5 +27,5 @@
 #include <layer.h>
 #include <jutils.h>
 
-#include <keycodes.h> // from lib/slw 
+#include <keycodes.h> // from lib/slw
 

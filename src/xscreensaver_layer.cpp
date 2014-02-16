@@ -68,7 +68,7 @@ bool XScreenSaverLayer::open(const char *file) {
     // Window XCreateSimpleWindow(display, parent, x, y, width, height,
     //                           border_width, border, background)
     back_win = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 0, 0,
-                                   400 , 300, 0, blackColor, blackColor);
+                                   400, 300, 0, blackColor, blackColor);
 
     // We want to get MapNotify events
     XSelectInput(dpy, back_win, StructureNotifyMask);
@@ -95,7 +95,7 @@ bool XScreenSaverLayer::open(const char *file) {
     // gc = XCreateGC(dpy, back_win, gcm, &gcv);
 
 
-    for(;;) {
+    for(;; ) {
         XEvent e;
         XNextEvent(dpy, &e);
         if(e.type == MapNotify)
@@ -119,7 +119,7 @@ bool XScreenSaverLayer::open(const char *file) {
     // int res =  system(args);
     // notice("Xlayer::open exec result %i", res);
 
-    notice("Opened XScreenSaver '%s' with back_win %p", file , back_win);
+    notice("Opened XScreenSaver '%s' with back_win %p", file, back_win);
 
     opened = true;
 
@@ -179,8 +179,8 @@ void XScreenSaverLayer::pause(bool set) {
 // bool XScreenSaverLayer::keypress(int key) {
 //   bool res = true;
 //   switch(key) {
-// 	case 'p': pause(!paused);
-// 	  break;
+//      case 'p': pause(!paused);
+//        break;
 //   default: res = false; break;
 //   }
 //   return res;

@@ -37,7 +37,7 @@
    classes, methods, properties - everything is declared here
    that's the best place to start documenting, in order to experiment
    with javascript and freej.
-*/
+ */
 
 
 
@@ -531,21 +531,21 @@ JS(stream_description);
 
 /*
 
-#ifdef WITH_AVIFILE
-////////////////////////////////
-// Avi Layer methods
-JS(avi_layer_forward);
-JS(avi_layer_rewind);
-JS(avi_layer_mark_in);
-JS(avi_layer_mark_in_now);
-JS(avi_layer_mark_out);
-JS(avi_layer_mark_out_now);
-JS(avi_layer_getpos);
-JS(avi_layer_setpos);
-JS(avi_layer_pause);
-#endif
+   #ifdef WITH_AVIFILE
+   ////////////////////////////////
+   // Avi Layer methods
+   JS(avi_layer_forward);
+   JS(avi_layer_rewind);
+   JS(avi_layer_mark_in);
+   JS(avi_layer_mark_in_now);
+   JS(avi_layer_mark_out);
+   JS(avi_layer_mark_out_now);
+   JS(avi_layer_getpos);
+   JS(avi_layer_setpos);
+   JS(avi_layer_pause);
+   #endif
 
-*/
+ */
 
 
 #endif

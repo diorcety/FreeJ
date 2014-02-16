@@ -101,7 +101,7 @@ VirtualRootWindowOfScreen(screen) Screen *screen;
             unsigned long id = 0;
             char c;
             if(1 == sscanf(xss_id, " 0x%lx %c", &id, &c) ||
-                    1 == sscanf(xss_id, " %lu %c",   &id, &c)) {
+               1 == sscanf(xss_id, " %lu %c",   &id, &c)) {
                 root = (Window) id;
                 save_screen = screen;
                 return root;
@@ -125,7 +125,7 @@ VirtualRootWindowOfScreen(screen) Screen *screen;
                                       &actual_type, &actual_format,
                                       &nitems, &bytesafter,
                                       (unsigned char **) &newRoot) == Success
-                        && newRoot) {
+                   && newRoot) {
                     root = *newRoot;
                     break;
                 }

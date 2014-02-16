@@ -4,7 +4,7 @@
 #include <controller.h>
 #include <SDL.h>
 
-class SdlController: public Controller {
+class SdlController : public Controller {
 public:
     SDL_Event event; ///< SDL event structure
 

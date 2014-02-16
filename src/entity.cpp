@@ -69,8 +69,8 @@ bool Entry::up() {
 #endif
 
     Entry *tprev = prev,
-           *tnext = next,
-            *pp = prev->prev;
+    *tnext = next,
+    *pp = prev->prev;
 
     if(!next)
         list->last = prev;
@@ -104,8 +104,8 @@ bool Entry::down() {
 #endif
 
     Entry *tprev = prev,
-           *tnext = next,
-            *nn = next->next;
+    *tnext = next,
+    *nn = next->next;
 
     if(!prev)
         list->first = next;
@@ -297,7 +297,7 @@ void Entry::rem() {
             if(lastone) prev->select = select;
             list->selection = prev;
         }
-    } else list->first = next; // else just make it a first
+    } else list->first = next;  // else just make it a first
 
     list->length--;
     prev = NULL;
@@ -315,3 +315,4 @@ void Entry::sel(bool on) {
     if(select)
         list->selection = this;
 }
+

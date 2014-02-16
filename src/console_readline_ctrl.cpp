@@ -29,7 +29,7 @@
 #include <console_calls_ctrl.h>
 #include <console_readline_ctrl.h>
 
-#include <keycodes.h> // from lib/slw 
+#include <keycodes.h> // from lib/slw
 
 
 
@@ -113,7 +113,6 @@ bool SlwReadline::refresh() {
     return(true);
 }
 
-
 void SlwReadline::set_parser(parser_t pars) {
     switch(pars) {
 
@@ -143,7 +142,6 @@ void SlwReadline::set_parser(parser_t pars) {
     }
 
 }
-
 
 /* setup the flags and environment to read a new input
    saves the pointer to the command processing function
@@ -176,7 +174,6 @@ int SlwReadline::readline(const char *msg, cmd_process_t *proc, cmd_complete_t *
     return 1;
 }
 
-
 ////////////////////////////////////////////
 // KEY PARSERS
 ////////////////////////////////////////////
@@ -204,18 +201,18 @@ bool SlwReadline::parser_default(int key) {
 
 
 //     case KEY_CTRL_M: {
-// 		Layer *l=((Layer*)le);
-// 		if (l->fps->get() > 0)
-// 			l->set_fps(0);
-// 		else
-// 			if (l->fps_old > 0)
-// 				l->set_fps(l->fps_old);
-// 			else
-// 				l->set_fps(env->fps_speed);
-// 		l->signal_feed();
-// 		::notice("Layer.set_fps(%f)", l->fps);
-// 	}
-// 	break;
+//              Layer *l=((Layer*)le);
+//              if (l->fps->get() > 0)
+//                      l->set_fps(0);
+//              else
+//                      if (l->fps_old > 0)
+//                              l->set_fps(l->fps_old);
+//                      else
+//                              l->set_fps(env->fps_speed);
+//              l->signal_feed();
+//              ::notice("Layer.set_fps(%f)", l->fps);
+//      }
+//      break;
 
         case KEY_CTRL_E:
             readline("add new Effect - press TAB for completion:",
@@ -248,10 +245,10 @@ bool SlwReadline::parser_default(int key) {
             set_parser(MOVELAYER);
             break;
 
-            //  case KEY_CTRL_J:
-            //    ::notice("JAZZ mode activated, press keys to pulse layers");
-            //  parser = JAZZ;
-            //  break;
+        //  case KEY_CTRL_J:
+        //    ::notice("JAZZ mode activated, press keys to pulse layers");
+        //  parser = JAZZ;
+        //  break;
 
         default:
             //      ((Layer*)le)->keypress( key );
@@ -288,32 +285,32 @@ bool SlwReadline::parser_default(int key) {
 
         act("ctrl+c  = Quit FreeJ");
         break;
-        /*
-        case '!':
-        env->osd.active = !env->osd.active;
-        break;
-        */
+    /*
+       case '!':
+       env->osd.active = !env->osd.active;
+       break;
+     */
 
     case '@':
         env->clear_all = !env->clear_all;
         break;
 
-        /*
-        case '<':
-        // decrease global fps
-        if(env->fps_speed>1)
-          env->fps_speed--;
-        else break;
-        //    env->set_fps_interval(env->fps_speed);
-        //    ::act("Frames per second decreased to %i",env->fps_speed);
-        break;
-        case '>':
-        // increase global fps
-        env->fps_speed++;
-        //    env->set_fps_interval(env->fps_speed);
-        //    ::act("Frames per second increased to %i",env->fps_speed);
-        break;
-        */
+    /*
+       case '<':
+       // decrease global fps
+       if(env->fps_speed>1)
+       env->fps_speed--;
+       else break;
+       //    env->set_fps_interval(env->fps_speed);
+       //    ::act("Frames per second decreased to %i",env->fps_speed);
+       break;
+       case '>':
+       // increase global fps
+       env->fps_speed++;
+       //    env->set_fps_interval(env->fps_speed);
+       //    ::act("Frames per second increased to %i",env->fps_speed);
+       break;
+     */
     case KEY_CTRL_F:
         env->screens.selected()->fullscreen();
         break;
@@ -369,11 +366,11 @@ bool SlwReadline::parser_movelayer(int key) {
     }
 
     switch(key) {
-        // XXX(shammash): set zoom/rotate/position are closures so they don't get
-        // executed immediately. zoom_x, zoom_y, rotate and so on might not contain a
-        // value up-to-date
+    // XXX(shammash): set zoom/rotate/position are closures so they don't get
+    // executed immediately. zoom_x, zoom_y, rotate and so on might not contain a
+    // value up-to-date
 
-        // zoom
+    // zoom
     case KEY_PLUS:
         layer->set_zoom(layer->zoom_x + 0.01,
                         layer->zoom_y + 0.01);
@@ -386,7 +383,7 @@ bool SlwReadline::parser_movelayer(int key) {
         layer->set_zoom(1, 1);
         break;
 
-        // rotation
+    // rotation
     case '<':
         layer->set_rotate(layer->rotate + 0.5);
         break;
@@ -443,8 +440,8 @@ bool SlwReadline::parser_movelayer(int key) {
     case KEY_SPACE:
         // place at the center
         layer->set_position
-        ((env->screens.selected()->geo.w - layer->geo.w) / 2,
-         (env->screens.selected()->geo.h - layer->geo.h) / 2);
+            ((env->screens.selected()->geo.w - layer->geo.w) / 2,
+            (env->screens.selected()->geo.h - layer->geo.h) / 2);
         break;
 
     case SL_KEY_ENTER:
@@ -460,7 +457,6 @@ bool SlwReadline::parser_movelayer(int key) {
     }
     return(res);
 }
-
 
 // read a command from commandline
 // handles completion and execution from function pointers previously setup
@@ -517,7 +513,7 @@ bool SlwReadline::parser_commandline(int key) {
                 entr->sel(true);
             }
         }
-        if(!entr) break; // no hist
+        if(!entr) break;  // no hist
         strncpy(command, (char*)entr->data, MAX_CMDLINE);
         // type the command on the consol
         cursor = strlen(command);
@@ -572,13 +568,13 @@ bool SlwReadline::parser_commandline(int key) {
         //    SLsmg_gotorc(SLtt_Screen_Rows - 1,cursor);
         break;
 
-        /* the following ctrl combos are to imitate
-           the Emacs commandline behaviour
-           c-e goto end of line,
-           c-d delete,
-           c-k delete until end of line
-           c-u delete previous until beginning of line
-        */
+    /* the following ctrl combos are to imitate
+       the Emacs commandline behaviour
+       c-e goto end of line,
+       c-d delete,
+       c-k delete until end of line
+       c-u delete previous until beginning of line
+     */
 
     case SL_KEY_LEFT:
         if(cursor) cursor--;
@@ -636,14 +632,14 @@ bool SlwReadline::parser_commandline(int key) {
     /* add char at cursor position
        insert mode       FIX ME!
        must save temporarly the chars to advance
-    */
+     */
     if(key >= 32 && key < 127) {
-        for(c = cursor; command[c] != EOL; c++); // go to the EOL
+        for(c = cursor; command[c] != EOL; c++) ;  // go to the EOL
 
         command[c + 1] = EOL; // be sure we have a EOL
 
         for(; c > cursor; c--)
-            command[c] = command[c - 1]; // move backwards switching right
+            command[c] = command[c - 1];  // move backwards switching right
 
         command[cursor] = key; // insert new char
 

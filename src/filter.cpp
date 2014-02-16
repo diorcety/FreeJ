@@ -16,7 +16,7 @@
  * Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
 
-$Id: $
+   $Id: $
 
  */
 
@@ -41,16 +41,16 @@ Filter::Filter()
 }
 
 /*
-static const char *KnownFilters[] = {
-#ifdef WITH_FREI0R
+   static const char *KnownFilters[] = {
+   #ifdef WITH_FREI0R
     "Freior",
-#endif
-#ifdef WITH_COCOA
+   #endif
+   #ifdef WITH_COCOA
     "CoreImage",
-#endif
+   #endif
     "FreeFrame"
-};
-*/
+   };
+ */
 
 Filter::~Filter() {
 
@@ -103,7 +103,6 @@ const char *Filter::author()  {
     return "Unknown";
 }
 
-
 int Filter::get_parameter_type(int i) {
     return -1; // this method must be extended by subclasses (perhaps it should be pure virtual?)
 }
@@ -134,3 +133,4 @@ void Filter::apply_parameters(FilterInstance *inst) {
     }
     inst->parameters.unlock();
 }
+

@@ -32,7 +32,7 @@ extern "C" {
 #include <cwiid.h>
 }
 
-class WiiController: public Controller {
+class WiiController : public Controller {
 
 public:
 
@@ -63,6 +63,7 @@ public:
     bool get_accel_report() {
         return _get_report(CWIID_RPT_ACC);
     }
+
     bool set_accel_report(bool state) {
         return _set_report(state, CWIID_RPT_ACC);
     }
@@ -72,6 +73,7 @@ public:
     bool get_ir_report() {
         return _get_report(CWIID_RPT_IR);
     }
+
     bool set_ir_report(bool state) {
         return _set_report(state, CWIID_RPT_IR);
     }
@@ -81,6 +83,7 @@ public:
     bool get_button_report() {
         return _get_report(CWIID_RPT_BTN);
     }
+
     bool set_button_report(bool state) {
         return _set_report(state, CWIID_RPT_BTN);
     }
@@ -95,9 +98,11 @@ public:
     double x() {
         return _x;
     }
+
     double y() {
         return _y;
     }
+
     double z() {
         return _z;
     }
@@ -130,7 +135,7 @@ private:
     bool _set_report(bool state, unsigned int type);
     bool _get_report(unsigned int type);
 
-    double  _x,  _y,  _z;
+    double _x,  _y,  _z;
 
     uint16_t _buttons;
 

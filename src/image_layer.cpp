@@ -20,7 +20,7 @@
 /**
    @file image_layer.h
    @brief FreeJ Layer class to show images (SDL_image)
-*/
+ */
 
 
 #include <SDL_image.h>
@@ -126,3 +126,4 @@ void ImageLayer::close() {
     free(black_image);
     tmpImage = NULL;
 }
+

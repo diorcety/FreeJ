@@ -84,14 +84,14 @@ Context *freej = NULL;
 ViewPort *screen = NULL;
 char screen_name[16];
 
-int   debug_level = 0;
-char  layer_files[MAX_CLI_CHARS];
-int   cli_chars = 0;
-int   width = 400;
-int   height = 300;
-int   magn = 0;
-char  javascript[512]; // script filename
-char  processing[512]; // script filename
+int debug_level = 0;
+char layer_files[MAX_CLI_CHARS];
+int cli_chars = 0;
+int width = 400;
+int height = 300;
+int magn = 0;
+char javascript[512];  // script filename
+char processing[512];  // script filename
 
 int fps = 25;
 
@@ -148,15 +148,15 @@ void cmdline(int argc, char **argv) {
             sscanf(optarg, "%ux%u", &width, &height);
 //      freej.screen->resize(width,height);
             /* what the fuck ???
-            if(width<320) {
-            error("display width can't be smaller than 400 pixels");
-            width = 320;
+               if(width<320) {
+               error("display width can't be smaller than 400 pixels");
+               width = 320;
                  }
                  if(height<240) {
-            error("display height can't be smaller than 300 pixels");
-            width = 240;
+               error("display height can't be smaller than 300 pixels");
+               width = 240;
                  }
-                 */
+             */
             break;
         case 'S':
             snprintf(screen_name, 16, "%s", optarg);
@@ -263,7 +263,6 @@ void cmdline(int argc, char **argv) {
 #endif
 }
 
-
 /* ===================================== */
 
 // scandir selection for .js or .freej
@@ -274,10 +273,9 @@ int script_selector(const struct dirent *dir)
 #endif
 {
     if(strstr(dir->d_name, ".freej")) return(1);
-    if(strstr(dir->d_name, ".js"))    return(1);
+    if(strstr(dir->d_name, ".js")) return(1);
     return(0);
 }
-
 
 // load all default scripts in $DATADIR/freej and ~/.freej
 int scripts(char *path) {
@@ -303,6 +301,7 @@ int scripts(char *path) {
 
     return 1;
 }
+
 //[js]
 
 #ifndef HAVE_DARWIN
@@ -341,7 +340,7 @@ int main(int argc, char **argv) {
        set_rtpriority is inside jutils.cpp
        if(set_rtpriority(true))
        notice("running as root: high priority realtime scheduling allowed.");
-    */
+     */
 
 
 
@@ -439,9 +438,9 @@ int main(int argc, char **argv) {
            processing materia */
         freej->cafudda(1.0);
         /* also layers have the cafudda() function
-         which is called by the Context class (freej instance here)
-         so it's a tree of cafudda calls originating from here
-         all synched to the environment, yea, feels good */
+           which is called by the Context class (freej instance here)
+           so it's a tree of cafudda calls originating from here
+           all synched to the environment, yea, feels good */
     }
 
 
@@ -454,4 +453,5 @@ int main(int argc, char **argv) {
 
     exit(1);
 }
+
 #endif

@@ -20,7 +20,7 @@
 /**
    @file screen.h
    @brief FreeJ generic Screen interface
-*/
+ */
 
 #ifndef __SCREEN_H__
 #define __SCREEN_H__
@@ -88,7 +88,7 @@ class VideoEncoder;
    affecting the visualization of mixed results in output.
 
    @brief Output screen where results are visualized
-*/
+ */
 
 class ViewPort : public Entry {
     SHARED_PTR(ViewPort);

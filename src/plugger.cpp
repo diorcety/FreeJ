@@ -101,7 +101,6 @@ int selector(const struct dirent *dir) {
     return(0);
 }
 
-
 int Plugger::refresh(Context *env) {
 
     char *dir;
@@ -172,7 +171,7 @@ int Plugger::refresh(Context *env) {
 #ifdef WITH_FREEFRAME
                 {
                     Freeframe *fr = (Freeframe *)Factory<Filter>::new_instance("FreeframeFilter");
-                    if(! fr->open(temp)) {
+                    if(!fr->open(temp)) {
                         delete fr;
                     } else { // freeframe effect found
                         // check what kind of plugin is and place it
@@ -212,7 +211,6 @@ int Plugger::refresh(Context *env) {
     return 0;
 }
 
-
 void Plugger::addsearchdir(const char *dir) {
     char temp[1024];
     if(!dircheck(dir))
@@ -225,3 +223,4 @@ void Plugger::addsearchdir(const char *dir) {
         _searchpath = strdup(dir);
     }
 }
+

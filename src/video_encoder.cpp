@@ -72,8 +72,6 @@ inline void ccvt_yuyv_420p(int width, int height,
     }
 }
 
-
-
 VideoEncoder::VideoEncoder()
     : Entry(), JSyncThread() {
 
@@ -121,7 +119,7 @@ VideoEncoder::VideoEncoder()
 
     //uncomment this and beyond to see how long it takes between two frames
     /*  m_OldTime.tv_sec = m_lastTime.tv_sec;
-      m_OldTime.tv_usec = m_lastTime.tv_usec;*/
+       m_OldTime.tv_usec = m_lastTime.tv_usec;*/
 }
 
 VideoEncoder::~VideoEncoder() {
@@ -132,7 +130,7 @@ VideoEncoder::~VideoEncoder() {
         do {
             if((encnum = ringbuffer_read_space(ringbuffer)) > 0)
                 encnum = ringbuffer_read(ringbuffer, encbuf, encnum);
-// 			     ((audio_kbps + video_kbps)*1024)/24);
+//                           ((audio_kbps + video_kbps)*1024)/24);
 
             if(encnum <= 0) break;
 
@@ -191,7 +189,7 @@ void VideoEncoder::thread_loop() {
        mlt_convert_argb_to_yuv422
        (see mlt_frame.h in mltframework.org sourcecode)
        i can't tell as i don't have PPC, waiting for u mr.goil :)
-    */
+     */
 
     uint8_t *surface = (uint8_t *)screen->get_surface();
     time_t *tm = (time_t *)malloc(sizeof(time_t));
@@ -201,7 +199,7 @@ void VideoEncoder::thread_loop() {
         fps->calc();
         fps->delay();
         /* std::cout << "fps->start_tv.tv_sec :" << fps->start_tv.tv_sec << \
-        " tv_usec :" << fps->start_tv.tv_usec << "   \r" << std::endl; */
+           " tv_usec :" << fps->start_tv.tv_usec << "   \r" << std::endl; */
         return;
     }
     fps->calc();
@@ -254,10 +252,10 @@ void VideoEncoder::thread_loop() {
     if(write_to_disk || write_to_stream) {
         if((encnum = ringbuffer_read_space(ringbuffer)) > 0) {
             encbuf = (char *)realloc(encbuf, encnum);
-// 	encbuf = (char *)realloc(encbuf, (((audio_kbps + video_kbps)*1024)/24)); //doesn't change anything for shifting problem
+//      encbuf = (char *)realloc(encbuf, (((audio_kbps + video_kbps)*1024)/24)); //doesn't change anything for shifting problem
             encnum = ringbuffer_read(ringbuffer, encbuf, encnum);
-// 	encnum = ringbuffer_read(ringbuffer, encbuf,
-// 			       ((audio_kbps + video_kbps)*1024)/24);
+//      encnum = ringbuffer_read(ringbuffer, encbuf,
+//                             ((audio_kbps + video_kbps)*1024)/24);
         }
     }
 
@@ -268,14 +266,14 @@ void VideoEncoder::thread_loop() {
 
         if(write_to_stream && ice) {
             /*	int	wait_ms;
-            	wait_ms = shout_delay(ice);
-            	std::cerr << "---- shout delay :" << wait_ms << std::endl;*/
+                wait_ms = shout_delay(ice);
+                std::cerr << "---- shout delay :" << wait_ms << std::endl;*/
             shout_sync(ice);
             if(shout_send(ice, (const unsigned char*)encbuf, encnum)
-                    != SHOUTERR_SUCCESS) {
+               != SHOUTERR_SUCCESS) {
                 error("shout_send: %s", shout_get_error(ice));
-            }// else
-            //printf("%d %d\n", encnum, (int)shout_queuelen(ice));
+            } // else
+             //printf("%d %d\n", encnum, (int)shout_queuelen(ice));
         }
         gettimeofday(&m_ActualTime, NULL);
         if(m_ActualTime.tv_sec == m_OldTime.tv_sec)
@@ -286,7 +284,7 @@ void VideoEncoder::thread_loop() {
         m_OldTime.tv_sec = m_ActualTime.tv_sec;
         m_OldTime.tv_usec = m_ActualTime.tv_usec;
         m_Streamed += encnum;
-        if(m_ElapsedTime >= 3.0) {	//calculate stream rate every minimum 3 seconds
+        if(m_ElapsedTime >= 3.0) {      //calculate stream rate every minimum 3 seconds
             m_StreamRate = ((double)m_Streamed / m_ElapsedTime) / 1000.0;
             m_ElapsedTime = 0;
             m_Streamed = 0;
@@ -384,3 +382,4 @@ bool VideoEncoder::filedump_close() {
         return (true);
     }
 }
+

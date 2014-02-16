@@ -23,7 +23,7 @@
 #include <layer.h>
 #include <factory.h>
 
-class GeneratorLayer: public Layer {
+class GeneratorLayer : public Layer {
 public:
     GeneratorLayer();
     ~GeneratorLayer();

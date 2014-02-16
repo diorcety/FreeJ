@@ -57,7 +57,7 @@ extern "C" {
 #pragma once
 #endif /* _MSC_VER > 1000 */
 
-#define WIN32_LEAN_AND_MEAN		/* Exclude rarely-used stuff from Windows headers */
+#define WIN32_LEAN_AND_MEAN             /* Exclude rarely-used stuff from Windows headers */
 #include <windows.h>
 
 #else
@@ -72,66 +72,66 @@ typedef unsigned char BYTE;
  *	#defines
  */
 
-#define FF_EFFECT			0
-#define FF_SOURCE			1
+#define FF_EFFECT                       0
+#define FF_SOURCE                       1
 
-#define FF_FAIL				0xFFFFFFFF
-#define FF_SUCCESS			0
-#define FF_TRUE				1
-#define FF_FALSE			0
-#define FF_SUPPORTED			1
-#define FF_UNSUPPORTED			0
+#define FF_FAIL                         0xFFFFFFFF
+#define FF_SUCCESS                      0
+#define FF_TRUE                         1
+#define FF_FALSE                        0
+#define FF_SUPPORTED                    1
+#define FF_UNSUPPORTED                  0
 
-#define FF_GETINFO			0
-#define FF_INITIALISE			1
-#define FF_DEINITIALISE			2
-#define FF_PROCESSFRAME			3
-#define FF_GETNUMPARAMETERS		4
-#define FF_GETPARAMETERNAME		5
-#define FF_GETPARAMETERDEFAULT		6
-#define FF_GETPARAMETERDISPLAY		7
-#define FF_SETPARAMETER			8
-#define FF_GETPARAMETER			9
-#define FF_GETPLUGINCAPS		10
-#define FF_INSTANTIATE			11
-#define FF_DEINSTANTIATE		12
-#define FF_GETEXTENDEDINFO		13
-#define FF_PROCESSFRAMECOPY		14
-#define FF_GETPARAMETERTYPE		15
+#define FF_GETINFO                      0
+#define FF_INITIALISE                   1
+#define FF_DEINITIALISE                 2
+#define FF_PROCESSFRAME                 3
+#define FF_GETNUMPARAMETERS             4
+#define FF_GETPARAMETERNAME             5
+#define FF_GETPARAMETERDEFAULT          6
+#define FF_GETPARAMETERDISPLAY          7
+#define FF_SETPARAMETER                 8
+#define FF_GETPARAMETER                 9
+#define FF_GETPLUGINCAPS                10
+#define FF_INSTANTIATE                  11
+#define FF_DEINSTANTIATE                12
+#define FF_GETEXTENDEDINFO              13
+#define FF_PROCESSFRAMECOPY             14
+#define FF_GETPARAMETERTYPE             15
 
-#define FF_CAP_16BITVIDEO		0
-#define FF_CAP_24BITVIDEO		1
-#define FF_CAP_32BITVIDEO		2
-#define FF_CAP_PROCESSFRAMECOPY		3
-#define FF_CAP_MINIMUMINPUTFRAMES	10
-#define FF_CAP_MAXIMUMINPUTFRAMES	11
-#define FF_CAP_COPYORINPLACE		15
+#define FF_CAP_16BITVIDEO               0
+#define FF_CAP_24BITVIDEO               1
+#define FF_CAP_32BITVIDEO               2
+#define FF_CAP_PROCESSFRAMECOPY         3
+#define FF_CAP_MINIMUMINPUTFRAMES       10
+#define FF_CAP_MAXIMUMINPUTFRAMES       11
+#define FF_CAP_COPYORINPLACE            15
 
-#define FF_CAP_PREFER_NONE		0
-#define FF_CAP_PREFER_INPLACE		1
-#define FF_CAP_PREFER_COPY		2
-#define	FF_CAP_PREFER_BOTH		3
+#define FF_CAP_PREFER_NONE              0
+#define FF_CAP_PREFER_INPLACE           1
+#define FF_CAP_PREFER_COPY              2
+#define FF_CAP_PREFER_BOTH              3
 
-#define FF_TYPE_BOOLEAN			0
-#define FF_TYPE_EVENT			1
-#define FF_TYPE_RED			2
-#define FF_TYPE_GREEN			3
-#define FF_TYPE_BLUE			4
-#define FF_TYPE_XPOS			5
-#define FF_TYPE_YPOS			6
-#define FF_TYPE_STANDARD		10
-#define FF_TYPE_TEXT			100
+#define FF_TYPE_BOOLEAN                 0
+#define FF_TYPE_EVENT                   1
+#define FF_TYPE_RED                     2
+#define FF_TYPE_GREEN                   3
+#define FF_TYPE_BLUE                    4
+#define FF_TYPE_XPOS                    5
+#define FF_TYPE_YPOS                    6
+#define FF_TYPE_STANDARD                10
+#define FF_TYPE_TEXT                    100
 
 /*
  *	FreeFrame types
  */
 
 typedef struct PlugInfoStructTag {
-    DWORD	APIMajorVersion;
-    DWORD	APIMinorVersion;
-    BYTE	uniqueID[4];			/* 4 chars uniqueID - not null terminated */
-    BYTE	pluginName[16];			/* 16 chars plugin friendly name - not null terminated */
-    DWORD	pluginType;			/* Effect or source */
+    DWORD APIMajorVersion;
+    DWORD APIMinorVersion;
+    BYTE uniqueID[4];                           /* 4 chars uniqueID - not null terminated */
+    BYTE pluginName[16];                        /* 16 chars plugin friendly name - not null terminated */
+    DWORD pluginType;                           /* Effect or source */
 } PlugInfoStruct;
 
 typedef struct PlugExtendedInfoStructTag {
@@ -144,12 +144,12 @@ typedef struct PlugExtendedInfoStructTag {
 } PlugExtendedInfoStruct;
 
 typedef struct VideoInfoStructTag {
-    DWORD frameWidth;			/* width of frame in pixels */
-    DWORD frameHeight;			/* height of frame in pixels */
-    DWORD bitDepth;				/* enumerated indicator of bit depth of video */
+    DWORD frameWidth;                   /* width of frame in pixels */
+    DWORD frameHeight;                  /* height of frame in pixels */
+    DWORD bitDepth;                             /* enumerated indicator of bit depth of video */
     /* 0 = 16 bit 5-6-5   1 = 24bit packed   2 = 32bit */
-    DWORD orientation;			/* video frame orientation meaningful values:
-						   1 = origin at top left 2 = origin at bottom left */
+    DWORD orientation;                  /* video frame orientation meaningful values:
+                                                   1 = origin at top left 2 = origin at bottom left */
 
 } VideoInfoStruct;
 
@@ -178,7 +178,7 @@ typedef union plugMainUnionTag {
     char *svalue;
 } plugMainUnion;
 
-typedef plugMainUnion plugMainType(DWORD, LPVOID, DWORD);
+typedef plugMainUnion plugMainType (DWORD, LPVOID, DWORD);
 
 /*
  *	Function prototypes
@@ -207,7 +207,7 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, DWORD lpReserved
 
 __declspec(dllexport) LPVOID __stdcall plugMain(DWORD functionCode, LPVOID pParam, DWORD reserved);
 
-typedef __declspec(dllimport) LPVOID (__stdcall *FF_Main_FuncPtr)(DWORD, LPVOID, DWORD);
+typedef __declspec (dllimport) LPVOID (__stdcall *FF_Main_FuncPtr)(DWORD, LPVOID, DWORD);
 
 #elif defined(LINUX)
 

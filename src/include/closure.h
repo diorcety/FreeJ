@@ -43,9 +43,11 @@ class Closure;
 class ClosureQueue {
 public:
     class Error : public FreejError {
-    public:
+public:
         Error(const std::string& msg, int rv)
-            : FreejError(msg, rv) { }
+            : FreejError(msg, rv) {
+        }
+
     };
 
     ClosureQueue();
@@ -64,15 +66,19 @@ private:
 class ThreadedClosureQueue : ClosureQueue {
 public:
     class Error : public FreejError {
-    public:
+public:
         Error(const std::string& msg, int rv)
-            : FreejError(msg, rv) { }
+            : FreejError(msg, rv) {
+        }
+
     };
 
     class ThreadError : public Error {
-    public:
+public:
         ThreadError(const std::string& msg, int rv)
-            : Error(msg, rv) { }
+            : Error(msg, rv) {
+        }
+
     };
 
     ThreadedClosureQueue();
@@ -141,9 +147,11 @@ private:
 class Closure {
 public:
     class Error : public FreejError {
-    public:
+public:
         Error(const std::string& msg, int rv)
-            : FreejError(msg, rv) { }
+            : FreejError(msg, rv) {
+        }
+
     };
 
     Closure(bool synchronized) : synchronized_(synchronized) {
@@ -157,6 +165,7 @@ public:
                 throw Error("Preliminary lock of cond_mutex_", r);
         }
     }
+
     virtual ~Closure() {
         if(synchronized_) {
             int r;
@@ -171,6 +180,7 @@ public:
                       __PRETTY_FUNCTION__, strerror(r));
         }
     }
+
     void run() {
         run_();
         if(synchronized_) {
@@ -183,9 +193,11 @@ public:
                 throw Error("Post-signal unlocking of cond_mutex_", r);
         }
     }
+
     bool is_synchronized() {
         return synchronized_;
     }
+
     void wait() {
         if(synchronized_) {
             int r;
@@ -193,6 +205,7 @@ public:
                 throw Error("Waiting cond_", r);
         }
     }
+
 private:
     bool synchronized_;
     virtual void run_() = 0;
@@ -208,7 +221,9 @@ public:
 
     FunctionClosure0(FunctionType function, bool synchronized)
         : Closure(synchronized),
-          function_(function) {}
+        function_(function) {
+    }
+
     ~FunctionClosure0();
 
     void run_() {
@@ -227,8 +242,11 @@ public:
 
     MethodClosure0(Class* object, MethodType method, bool synchronized)
         : Closure(synchronized),
-          object_(object), method_(method) {}
-    ~MethodClosure0() {}
+        object_(object), method_(method) {
+    }
+
+    ~MethodClosure0() {
+    }
 
     void run_() {
         (object_->*method_)();
@@ -248,10 +266,12 @@ public:
     FunctionClosure1(FunctionType function, bool synchronized,
                      Arg1 arg1)
         : Closure(synchronized),
-          function_(function),
-          arg1_(arg1) {}
-    ~FunctionClosure1() {}
+        function_(function),
+        arg1_(arg1) {
+    }
 
+    ~FunctionClosure1() {
+    }
 
     void run_() {
         function_(arg1_);
@@ -271,9 +291,12 @@ public:
     MethodClosure1(Class* object, MethodType method, bool synchronized,
                    Arg1 arg1)
         : Closure(synchronized),
-          object_(object), method_(method),
-          arg1_(arg1) {}
-    ~MethodClosure1() {}
+        object_(object), method_(method),
+        arg1_(arg1) {
+    }
+
+    ~MethodClosure1() {
+    }
 
     void run_() {
         (object_->*method_)(arg1_);
@@ -294,9 +317,12 @@ public:
     FunctionClosure2(FunctionType function, bool synchronized,
                      Arg1 arg1, Arg2 arg2)
         : Closure(synchronized),
-          function_(function),
-          arg1_(arg1), arg2_(arg2) {}
-    ~FunctionClosure2() {}
+        function_(function),
+        arg1_(arg1), arg2_(arg2) {
+    }
+
+    ~FunctionClosure2() {
+    }
 
     void run_() {
         function_(arg1_, arg2_);
@@ -317,9 +343,12 @@ public:
     MethodClosure2(Class* object, MethodType method, bool synchronized,
                    Arg1 arg1, Arg2 arg2)
         : Closure(synchronized),
-          object_(object), method_(method),
-          arg1_(arg1), arg2_(arg2) {}
-    ~MethodClosure2() {}
+        object_(object), method_(method),
+        arg1_(arg1), arg2_(arg2) {
+    }
+
+    ~MethodClosure2() {
+    }
 
     void run_() {
         (object_->*method_)(arg1_, arg2_);
@@ -341,9 +370,12 @@ public:
     FunctionClosure3(FunctionType function, bool synchronized,
                      Arg1 arg1, Arg2 arg2, Arg3 arg3)
         : Closure(synchronized),
-          function_(function),
-          arg1_(arg1), arg2_(arg2), arg3_(arg3) {}
-    ~FunctionClosure3() {}
+        function_(function),
+        arg1_(arg1), arg2_(arg2), arg3_(arg3) {
+    }
+
+    ~FunctionClosure3() {
+    }
 
     void run_() {
         function_(arg1_, arg2_, arg3_);
@@ -365,9 +397,12 @@ public:
     MethodClosure3(Class* object, MethodType method, bool synchronized,
                    Arg1 arg1, Arg2 arg2, Arg3 arg3)
         : Closure(synchronized),
-          object_(object), method_(method),
-          arg1_(arg1), arg2_(arg2), arg3_(arg3) {}
-    ~MethodClosure3() {}
+        object_(object), method_(method),
+        arg1_(arg1), arg2_(arg2), arg3_(arg3) {
+    }
+
+    ~MethodClosure3() {
+    }
 
     void run_() {
         (object_->*method_)(arg1_, arg2_, arg3_);
@@ -390,9 +425,12 @@ public:
     FunctionClosure4(FunctionType function, bool synchronized,
                      Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
         : Closure(synchronized),
-          function_(function),
-          arg1_(arg1), arg2_(arg2), arg3_(arg3), arg4_(arg4) {}
-    ~FunctionClosure4() {}
+        function_(function),
+        arg1_(arg1), arg2_(arg2), arg3_(arg3), arg4_(arg4) {
+    }
+
+    ~FunctionClosure4() {
+    }
 
     void run_() {
         function_(arg1_, arg2_, arg3_, arg4_);
@@ -408,7 +446,7 @@ private:
 
 
 template < typename Class, typename Arg1, typename Arg2, typename Arg3,
-         typename Arg4 >
+           typename Arg4 >
 class MethodClosure4 : public Closure {
 public:
     typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2, Arg3 arg3,
@@ -417,9 +455,12 @@ public:
     MethodClosure4(Class* object, MethodType method, bool synchronized,
                    Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
         : Closure(synchronized),
-          object_(object), method_(method),
-          arg1_(arg1), arg2_(arg2), arg3_(arg3), arg4_(arg4) {}
-    ~MethodClosure4() {}
+        object_(object), method_(method),
+        arg1_(arg1), arg2_(arg2), arg3_(arg3), arg4_(arg4) {
+    }
+
+    ~MethodClosure4() {
+    }
 
     void run_() {
         (object_->*method_)(arg1_, arg2_, arg3_, arg4_);
@@ -554,7 +595,7 @@ inline Closure* NewSyncClosure(void (*function)(Arg1, Arg2, Arg3, Arg4),
 }
 
 template < typename Class, typename Arg1, typename Arg2, typename Arg3,
-         typename Arg4 >
+           typename Arg4 >
 inline Closure* NewClosure(Class* object,
                            void (Class::*method)(Arg1, Arg2, Arg3, Arg4),
                            Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
@@ -563,7 +604,7 @@ inline Closure* NewClosure(Class* object,
 }
 
 template < typename Class, typename Arg1, typename Arg2, typename Arg3,
-         typename Arg4 >
+           typename Arg4 >
 inline Closure* NewSyncClosure(Class* object,
                                void (Class::*method)(Arg1, Arg2, Arg3, Arg4),
                                Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {

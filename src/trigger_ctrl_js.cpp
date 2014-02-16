@@ -49,7 +49,7 @@ JS(js_trigger_ctrl_constructor) {
     JS_BeginRequest(cx);
     // initialize with javascript context
     if(!trigger->initialized) {
-        if(! trigger->init(global_environment)) {
+        if(!trigger->init(global_environment)) {
             error("failed initializing keyboard controller");
             JS_EndRequest(cx);
             if(!check_thread)

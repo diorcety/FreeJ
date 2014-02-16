@@ -37,6 +37,7 @@ public:
         if(!m_Singleton) m_Singleton = new JackClient;
         return m_Singleton;
     }
+
     static void PackUpAndGoHome() {
         if(m_Singleton)  {
             delete m_Singleton;
@@ -49,10 +50,12 @@ public:
     bool   IsAttached()                   {
         return m_Attached;
     }
-    void   SetCallback(void(*Run)(void*, unsigned int), void *Context) {
+
+    void   SetCallback(void (*Run)(void*, unsigned int), void *Context) {
         RunCallback = Run;
         RunContext = Context;
     }
+
     void   GetPortNames(std::vector<std::string> &InputNames, std::vector<std::string> &OutputNames);
     void   ConnectInput(int n, const std::string &JackPort);
     void   ConnectOutput(int n, const std::string &JackPort);
@@ -61,22 +64,24 @@ public:
     std::string GetInputName(int ID)           {
         return m_InputPortMap[ID]->Name;
     }
+
     std::string GetOutputName(int ID)          {
         return m_OutputPortMap[ID]->Name;
     }
+
     void   SetInputBuf(int ID, float* s);
     void   SetOutputBuf(int ID, float* s);
-    int 	 AddInputPort();
-    int 	 AddOutputPort();
+    int          AddInputPort();
+    int          AddOutputPort();
 
     int SetRingbufferPtr(ringbuffer_t *rb, int samplerate, int channels); ///< connect a rinbuffer to JACK out
-    static long unsigned int  m_BufferSize;
-    static long unsigned int  m_SampleRate;
-    static bool               m_Attached;
-    ringbuffer_t *audio_mix_ring;	//ringbuffer to be streamed
+    static long unsigned int m_BufferSize;
+    static long unsigned int m_SampleRate;
+    static bool m_Attached;
+    ringbuffer_t *audio_mix_ring;       //ringbuffer to be streamed
     ringbuffer_t *first;
-    int 		   m_ringbufferchannels;
-    void	isEncoded(bool isEnc);
+    int m_ringbufferchannels;
+    void        isEncoded(bool isEnc);
 
 protected:
     JackClient();
@@ -90,22 +95,23 @@ private:
 
 
     class JackPort {
-    public:
+public:
         JackPort() :
-            Connected(false), Buf(NULL), Port(NULL) {}
+            Connected(false), Buf(NULL), Port(NULL) {
+        }
 
-        std::string         Name;
-        bool           Connected;
+        std::string Name;
+        bool Connected;
         float*         Buf;
         jack_port_t*   Port;
-        std::string         ConnectedTo;
+        std::string ConnectedTo;
         ringbuffer_t *in_ring;
-        bool	connected;	//setted in ::Process
+        bool connected;         //setted in ::Process
     };
 
     ringbuffer_t*      m_ringbuffer;
-// 	int 		   m_ringbufferchannels;
-    char* 		   m_inbuf;
+//      int                m_ringbufferchannels;
+    char*                  m_inbuf;
 
 
     static JackClient*        m_Singleton;
@@ -115,9 +121,9 @@ private:
     int m_NextInputID;
     int m_NextOutputID;
 
-    static void(*RunCallback)(void*, unsigned int bufsize);
+    static void (*RunCallback)(void*, unsigned int bufsize);
     static void *RunContext;
-    bool	m_Encoded;
+    bool m_Encoded;
 };
 
 #endif

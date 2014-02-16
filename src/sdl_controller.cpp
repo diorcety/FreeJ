@@ -31,4 +31,3 @@ void SdlController::poll_sdlevents(Uint32 eventmask) {
     //return 1;
 }
 
-

@@ -72,12 +72,12 @@ int mlt_convert_rgb24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 b = *s++;
                 *alpha++ = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 r = *s++;
                 g = *s++;
                 b = *s++;
                 *alpha++ = *s++;
-                RGB2YUV(r, g, b, y1, u1 , v1);
+                RGB2YUV(r, g, b, y1, u1, v1);
                 *d++ = y0;
                 *d++ = (u0 + u1) >> 1;
                 *d++ = y1;
@@ -88,7 +88,7 @@ int mlt_convert_rgb24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 b = *s++;
                 *alpha++ = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 *d++ = y0;
                 *d++ = u0;
             }
@@ -101,12 +101,12 @@ int mlt_convert_rgb24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 b = *s++;
                 s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 r = *s++;
                 g = *s++;
                 b = *s++;
                 s++;
-                RGB2YUV(r, g, b, y1, u1 , v1);
+                RGB2YUV(r, g, b, y1, u1, v1);
                 *d++ = y0;
                 *d++ = (u0 + u1) >> 1;
                 *d++ = y1;
@@ -117,7 +117,7 @@ int mlt_convert_rgb24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 b = *s++;
                 s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 *d++ = y0;
                 *d++ = u0;
             }
@@ -139,11 +139,11 @@ int mlt_convert_rgb24_to_yuv422(uint8_t *rgb, int width, int height, int stride,
             r = *s++;
             g = *s++;
             b = *s++;
-            RGB2YUV(r, g, b, y0, u0 , v0);
+            RGB2YUV(r, g, b, y0, u0, v0);
             r = *s++;
             g = *s++;
             b = *s++;
-            RGB2YUV(r, g, b, y1, u1 , v1);
+            RGB2YUV(r, g, b, y1, u1, v1);
             *d++ = y0;
             *d++ = (u0 + u1) >> 1;
             *d++ = y1;
@@ -153,7 +153,7 @@ int mlt_convert_rgb24_to_yuv422(uint8_t *rgb, int width, int height, int stride,
             r = *s++;
             g = *s++;
             b = *s++;
-            RGB2YUV(r, g, b, y0, u0 , v0);
+            RGB2YUV(r, g, b, y0, u0, v0);
             *d++ = y0;
             *d++ = u0;
         }
@@ -176,12 +176,12 @@ int mlt_convert_bgr24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 r = *s++;
                 *alpha++ = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 b = *s++;
                 g = *s++;
                 r = *s++;
                 *alpha++ = *s++;
-                RGB2YUV(r, g, b, y1, u1 , v1);
+                RGB2YUV(r, g, b, y1, u1, v1);
                 *d++ = y0;
                 *d++ = (u0 + u1) >> 1;
                 *d++ = y1;
@@ -192,7 +192,7 @@ int mlt_convert_bgr24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 r = *s++;
                 *alpha++ = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 *d++ = y0;
                 *d++ = u0;
             }
@@ -205,12 +205,12 @@ int mlt_convert_bgr24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 r = *s++;
                 s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 b = *s++;
                 g = *s++;
                 r = *s++;
                 s++;
-                RGB2YUV(r, g, b, y1, u1 , v1);
+                RGB2YUV(r, g, b, y1, u1, v1);
                 *d++ = y0;
                 *d++ = (u0 + u1) >> 1;
                 *d++ = y1;
@@ -221,7 +221,7 @@ int mlt_convert_bgr24a_to_yuv422(uint8_t *rgba, int width, int height, int strid
                 g = *s++;
                 r = *s++;
                 s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 *d++ = y0;
                 *d++ = u0;
             }
@@ -242,11 +242,11 @@ int mlt_convert_bgr24_to_yuv422(uint8_t *rgb, int width, int height, int stride,
             b = *s++;
             g = *s++;
             r = *s++;
-            RGB2YUV(r, g, b, y0, u0 , v0);
+            RGB2YUV(r, g, b, y0, u0, v0);
             b = *s++;
             g = *s++;
             r = *s++;
-            RGB2YUV(r, g, b, y1, u1 , v1);
+            RGB2YUV(r, g, b, y1, u1, v1);
             *d++ = y0;
             *d++ = (u0 + u1) >> 1;
             *d++ = y1;
@@ -256,7 +256,7 @@ int mlt_convert_bgr24_to_yuv422(uint8_t *rgb, int width, int height, int stride,
             b = *s++;
             g = *s++;
             r = *s++;
-            RGB2YUV(r, g, b, y0, u0 , v0);
+            RGB2YUV(r, g, b, y0, u0, v0);
             *d++ = y0;
             *d++ = u0;
         }
@@ -279,12 +279,12 @@ int mlt_convert_argb_to_yuv422(uint8_t *rgba, int width, int height, int stride,
                 r = *s++;
                 g = *s++;
                 b = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 *alpha++ = *s++;
                 r = *s++;
                 g = *s++;
                 b = *s++;
-                RGB2YUV(r, g, b, y1, u1 , v1);
+                RGB2YUV(r, g, b, y1, u1, v1);
                 *d++ = y0;
                 *d++ = (u0 + u1) >> 1;
                 *d++ = y1;
@@ -295,7 +295,7 @@ int mlt_convert_argb_to_yuv422(uint8_t *rgba, int width, int height, int stride,
                 r = *s++;
                 g = *s++;
                 b = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 *d++ = y0;
                 *d++ = u0;
             }
@@ -308,12 +308,12 @@ int mlt_convert_argb_to_yuv422(uint8_t *rgba, int width, int height, int stride,
                 r = *s++;
                 g = *s++;
                 b = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 s++;
                 r = *s++;
                 g = *s++;
                 b = *s++;
-                RGB2YUV(r, g, b, y1, u1 , v1);
+                RGB2YUV(r, g, b, y1, u1, v1);
                 *d++ = y0;
                 *d++ = (u0 + u1) >> 1;
                 *d++ = y1;
@@ -324,7 +324,7 @@ int mlt_convert_argb_to_yuv422(uint8_t *rgba, int width, int height, int stride,
                 r = *s++;
                 g = *s++;
                 b = *s++;
-                RGB2YUV(r, g, b, y0, u0 , v0);
+                RGB2YUV(r, g, b, y0, u0, v0);
                 *d++ = y0;
                 *d++ = u0;
             }
@@ -349,11 +349,12 @@ int mlt_convert_yuv420p_to_yuv422(uint8_t *yuv420p, int width, int height, int s
         register uint8_t *v = V + (i / 2) * (half);
 
         for(j = 0; j < half; j++) {
-            *d ++ = *Y ++;
-            *d ++ = *u ++;
-            *d ++ = *Y ++;
-            *d ++ = *v ++;
+            *d++ = *Y++;
+            *d++ = *u++;
+            *d++ = *Y++;
+            *d++ = *v++;
         }
     }
     return ret;
 }
+

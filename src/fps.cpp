@@ -55,6 +55,7 @@ FPS::~FPS() {
     delete[] fpsd.data;
 
 }
+
 void FPS::init(double rate) {
 
 
@@ -83,7 +84,7 @@ void FPS::calc() {
     _period = (1000000 / _fps) / _ratio;
 
     if((done.tv_sec > 0)
-            || (done.tv_usec >= _period)) {
+       || (done.tv_usec >= _period)) {
         start_tv.tv_sec = now_tv.tv_sec;
         start_tv.tv_usec = now_tv.tv_usec;
         // FIXME: statistics here, too ?!
@@ -100,12 +101,12 @@ void FPS::calc() {
     // statistic only
     /*  if (done.tv_usec)
           curr_fps = 1000000 /  done.tv_usec;
-      else
+       else
           curr_fps = 0;
 
-      fpsd.sum = fpsd.sum - fpsd.data[fpsd.i] + curr_fps;
-      fpsd.data[fpsd.i] = curr_fps;
-      if (++fpsd.i >= fpsd.n) fpsd.i = 0;*/
+       fpsd.sum = fpsd.sum - fpsd.data[fpsd.i] + curr_fps;
+       fpsd.data[fpsd.i] = curr_fps;
+       if (++fpsd.i >= fpsd.n) fpsd.i = 0;*/
 
 }
 
@@ -122,10 +123,10 @@ double FPS::set(double rate) {
         fps_old = _fps;
     _passes = 0.0;
     fps = rate; // public
-    _period = 1000000 / rate;	//_period in us
+    _period = 1000000 / rate;   //_period in us
     _fps = rate;
     _ratio = 1.0;
-    m_OrgSets = false;	//tells to the next delay call to catch the new starting time
+    m_OrgSets = false;  //tells to the next delay call to catch the new starting time
 
     return fps_old;
 }
@@ -134,8 +135,8 @@ double FPS::set(double rate) {
 void FPS::delay() {
     struct timespec remaining = { 0, 0 };
     timeval did;
-    if(wake_ts.tv_nsec > 100000) {	//if > to 100 us
-        wake_ts.tv_nsec = wake_ts.tv_nsec - 100000;	// - 100 us
+    if(wake_ts.tv_nsec > 100000) {      //if > to 100 us
+        wake_ts.tv_nsec = wake_ts.tv_nsec - 100000;     // - 100 us
     }
     do {
         if(nanosleep(&wake_ts, &remaining) == -1) {
@@ -171,11 +172,13 @@ void FPS::delay() {
     m_OldTime.tv_sec = start_tv.tv_sec;
     m_OldTime.tv_usec = start_tv.tv_usec;
 }
+
 #else
 
 void FPS::delay() {
     select_sleep(wake_ts.tv_sec * 1000000 + wake_ts.tv_nsec / 1000);
 }
+
 #endif
 
 void FPS::select_sleep(long usec) {
@@ -187,3 +190,4 @@ void FPS::select_sleep(long usec) {
     tv.tv_usec = usec;
     select(max_fd, &fd, NULL, NULL, &tv);
 }
+

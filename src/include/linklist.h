@@ -79,7 +79,7 @@ public:
 #endif
 protected:
     /* don't touch these from outside
-    use begin() and end() and len() methods */
+       use begin() and end() and len() methods */
     Entry *first;
     Entry *last;
     int length;
@@ -207,7 +207,6 @@ template <class T> void Linklist<T>::prepend(T *addr) {
 #endif
 }
 
-
 // inserts an element after the given one
 template <class T> void Linklist<T>::insert_after(T *addr, T *pos) {
 
@@ -220,7 +219,7 @@ template <class T> void Linklist<T>::insert_after(T *addr, T *pos) {
     if(pos->next) {
         pos->next->prev = addr;
         addr->next = pos->next;
-    } else last = addr; // it's the last
+    } else last = addr;  // it's the last
 
     addr->prev = pos;
     pos->next = addr;
@@ -233,12 +232,11 @@ template <class T> void Linklist<T>::insert_after(T *addr, T *pos) {
 #endif
 }
 
-
 /* adds an element at the position specified
    if pos is out of bounds adds it at the beginning or the end
    the element occupying allready the position slides down
    THIS FUNCTION IS NOT YET RELIABLE
-*/
+ */
 template <class T> void Linklist<T>::insert(T *addr, int pos) {
     if(length <= pos) { /* adds it at the end */
         append(addr);
@@ -296,7 +294,7 @@ template <class T> Entry *Linklist<T>::_pick(int pos) {
    returns NULL if called with pos=0 or pos>length
    returns Entry pointer otherwise
    this function is then overloading the operator[]
-*/
+ */
 template <class T> T *Linklist<T>::pick(int pos) {
     if(pos < 1) {
         //	  warning("linklist access at element 0 while first element is 1");
@@ -320,7 +318,7 @@ template <class T> T *Linklist<T>::pick(int pos) {
     } else { /// | | | p | | |
         ptr = (T*)last;
         for(c = length; c > pos; c--)
-            ptr = (T*)ptr->prev; // to be checked
+            ptr = (T*)ptr->prev;  // to be checked
     }
     return(ptr);
 }
@@ -357,7 +355,7 @@ template <class T> T **Linklist<T>::completion(char *needle) {
     T *ptr = (T*)last;
     if(!ptr) return compbuf;
 
-    for(found = 0, c = 1 ; ptr ; c++ , ptr = (T*)ptr->prev) {
+    for(found = 0, c = 1; ptr; c++, ptr = (T*)ptr->prev) {
         if(!len) { // 0 lenght needle: return the full list
             compbuf[found] = ptr;
             found++;
@@ -371,7 +369,6 @@ template <class T> T **Linklist<T>::completion(char *needle) {
     return compbuf;
 }
 
-
 /* this function is a wrapper around Entry::up()
    better to use that if you have a pointer to your Entry */
 template <class T> bool Linklist<T>::moveup(int pos) {
@@ -379,17 +376,20 @@ template <class T> bool Linklist<T>::moveup(int pos) {
     if(!p) return(false);
     return(p->up());
 }
+
 template <class T> bool Linklist<T>::movedown(int pos) {
     T *p = pick(pos);
     if(!p) return(false);
     return(p->down());
 }
+
 template <class T> bool Linklist<T>::moveto(int num, int pos) {
     T
     *p = pick(num);
     if(!p) return(false);
     return(p->move(pos));
 }
+
 /* removes one element from the list */
 template <class T> void Linklist<T>::rem(int pos) {
     T *ptr = pick(pos);
@@ -428,19 +428,19 @@ template <class T> void Linklist<T>::sel(int pos) {
 /* returns the last one selected
    this is supposed to be used with single selections */
 template <class T> T *Linklist<T>::selected() {
-    if(!first) return NULL; // no entries at all
+    if(!first) return NULL;  // no entries at all
     return (T*)selection;       // now faster <= haha
     /*
-    if(!last) return NULL; // no entries at all
+       if(!last) return NULL; // no entries at all
 
-    int c;
-    T *ptr = last;
-    for(c=length;c>0;c--) {
-      if(ptr->select) return ptr;
-      ptr = ptr->prev;
-    }
-    return NULL;
-    */
+       int c;
+       T *ptr = last;
+       for(c=length;c>0;c--) {
+       if(ptr->select) return ptr;
+       ptr = ptr->prev;
+       }
+       return NULL;
+     */
 }
 
 #endif

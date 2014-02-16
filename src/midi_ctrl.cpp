@@ -33,7 +33,7 @@
 //#include <plugger.h>
 #include <jutils.h>
 
-MidiController::MidiController(): SdlController() {
+MidiController::MidiController() : SdlController() {
     setName("Midi Controller");
     seq_handle = NULL;
 }
@@ -70,7 +70,7 @@ int MidiController::dispatch() {
              ev->time.tick, // time
              ev->source.client, ev->source.port,
              ev->dest.client, ev->dest.port
-            );
+             );
 
         switch(ev->type) {
         case SND_SEQ_EVENT_CONTROLLER:
@@ -119,7 +119,7 @@ int MidiController::event_pgmchange(int channel, int param, int value) {
 }
 
 /*
-typedef struct snd_seq_event {
+   typedef struct snd_seq_event {
          snd_seq_event_type_t type;
          unsigned char flags;
          unsigned char tag;
@@ -141,8 +141,8 @@ typedef struct snd_seq_event {
                  snd_seq_ev_instr_begin_t instr_begin;
                  snd_seq_ev_sample_control_t sample;
          } data;
- } snd_seq_event_t;
-*/
+   } snd_seq_event_t;
+ */
 
 bool MidiController::init(Context *freej) {
     func("%s", __PRETTY_FUNCTION__);
@@ -179,16 +179,16 @@ int MidiController::poll() {
 
 /*
 
-obtain subscription information
-int snd_seq_get_port_subscription (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
+   obtain subscription information
+   int snd_seq_get_port_subscription (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
 
-subscribe a port connection
-int   snd_seq_subscribe_port (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
-unsubscribe a connection between ports
-int   snd_seq_unsubscribe_port (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
+   subscribe a port connection
+   int   snd_seq_subscribe_port (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
+   unsubscribe a connection between ports
+   int   snd_seq_unsubscribe_port (snd_seq_t *handle, snd_seq_port_subscribe_t *sub)
 
-void capture_keyboard(snd_seq_t *seq)
-{
+   void capture_keyboard(snd_seq_t *seq)
+   {
         snd_seq_addr_t sender, dest;
         snd_seq_port_subscribe_t *subs;
         sender.client = 64;
@@ -202,10 +202,10 @@ void capture_keyboard(snd_seq_t *seq)
         snd_seq_port_subscribe_set_time_update(subs, 1);
         snd_seq_port_subscribe_set_time_real(subs, 1);
         snd_seq_subscribe_port(seq, subs);
-}
+   }
 
-void coupling(snd_seq_t *seq)
-{
+   void coupling(snd_seq_t *seq)
+   {
         snd_seq_addr_t sender, dest;
         snd_seq_port_subscribe_t *subs;
         sender.client = 128;
@@ -216,6 +216,6 @@ void coupling(snd_seq_t *seq)
         snd_seq_port_subscribe_set_sender(subs, &sender);
         snd_seq_port_subscribe_set_dest(subs, &dest);
         snd_seq_subscribe_port(seq, subs);
-}
+   }
 
-*/
+ */

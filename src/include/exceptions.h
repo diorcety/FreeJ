@@ -23,10 +23,13 @@
 class FreejError : public std::runtime_error {
 public:
     FreejError(const std::string& msg = "", int rv = 0)
-        : std::runtime_error(msg), rv(rv) { }
+        : std::runtime_error(msg), rv(rv) {
+    }
+
     int retval() {
         return rv;
     }
+
 private:
     int rv;
 };

@@ -20,7 +20,6 @@ BLIT blit_xor(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
         *d ^= *s;
 }
 
-
 BLIT rgb_jmemcpy(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
     jmemcpy(dst, src, bytes);
 }
@@ -30,7 +29,7 @@ BLIT red_channel(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
     register uint8_t *s = (uint8_t*)src;
     register uint8_t *d = (uint8_t*)dst;
     for(c = bytes >> 2; c > 0; c--, s += 4, d += 4)
-        * (d + rchan) = *(s + rchan);
+        *(d + rchan) = *(s + rchan);
 }
 
 BLIT green_channel(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
@@ -38,7 +37,7 @@ BLIT green_channel(void *src, void *dst, int bytes, Linklist<Parameter> *params)
     register uint8_t *s = (uint8_t*)src;
     register uint8_t *d = (uint8_t*)dst;
     for(c = bytes >> 2; c > 0; c--, s += 4, d += 4)
-        * (d + gchan) = *(s + gchan);
+        *(d + gchan) = *(s + gchan);
 }
 
 BLIT blue_channel(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
@@ -46,7 +45,7 @@ BLIT blue_channel(void *src, void *dst, int bytes, Linklist<Parameter> *params) 
     register uint8_t *s = (uint8_t*)src;
     register uint8_t *d = (uint8_t*)dst;
     for(c = bytes >> 2; c > 0; c--, s += 4, d += 4)
-        * (d + bchan) = *(s + bchan);
+        *(d + bchan) = *(s + bchan);
 }
 
 BLIT red_mask(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
@@ -57,10 +56,10 @@ BLIT red_mask(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
     for(c = bytes >> 2; c > 0; c--, s++, d++)
         *d |= *s & red_bitmask;
 
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterBinarizeUsingThreshold
-    ((unsigned char*)dst, (unsigned char*)dst, bytes, v);
+        ((unsigned char*)dst, (unsigned char*)dst, bytes, v);
 }
 
 BLIT green_mask(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
@@ -71,10 +70,10 @@ BLIT green_mask(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
     for(c = bytes >> 2; c > 0; c--, s++, d++)
         *d |= *s & green_bitmask;
 
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterBinarizeUsingThreshold
-    ((unsigned char*)dst, (unsigned char*)dst, bytes, v);
+        ((unsigned char*)dst, (unsigned char*)dst, bytes, v);
 }
 
 BLIT blue_mask(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
@@ -85,12 +84,11 @@ BLIT blue_mask(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
     for(c = bytes >> 2; c > 0; c--, s++, d++)
         *d |= *s & blue_bitmask;
 
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterBinarizeUsingThreshold
-    ((unsigned char*)dst, (unsigned char*)dst, bytes, v);
+        ((unsigned char*)dst, (unsigned char*)dst, bytes, v);
 }
-
 
 BLIT schiffler_add(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
     SDL_imageFilterAdd((unsigned char*)src, (unsigned char*)dst, (unsigned char*)dst, bytes);
@@ -147,55 +145,52 @@ BLIT schiffler_neg(void *src, void *dst, int bytes, Linklist<Parameter> *params)
 }
 
 BLIT schiffler_addbyte(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterAddByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
 BLIT schiffler_addbytetohalf(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterAddByteToHalf((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
 BLIT schiffler_subbyte(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterSubByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
 BLIT schiffler_shl(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterShiftLeft((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
 BLIT schiffler_shlb(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterShiftLeftByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
 BLIT schiffler_shr(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterShiftRight((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
 BLIT schiffler_mulbyte(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
 
     SDL_imageFilterMultByByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
 BLIT schiffler_binarize(void *src, void *dst, int bytes, Linklist<Parameter> *params) {
-    unsigned char v = (unsigned int) * (float*)(params->begin()->value); // only one value
+    unsigned char v = (unsigned int) *(float*)(params->begin()->value);  // only one value
     SDL_imageFilterBinarizeUsingThreshold
-    ((unsigned char*)src, (unsigned char*)dst, bytes, v);
+        ((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
-
-
-
 
 void setup_linear_blits(Blitter *blitter) {
     Blit *b;
@@ -489,3 +484,4 @@ void setup_linear_blits(Blitter *blitter) {
 
 
 }
+

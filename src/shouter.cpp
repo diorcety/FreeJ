@@ -31,10 +31,10 @@ Shouter::Shouter()
     : Entry() {
 
     /*
-      int vermaj,vermin,verpat;
-      shout_version(&vermaj,&vermin,&verpat);
-      func("Shouter::Shouter() using libshout version %i.%i.%i",vermaj,vermin,verpat);
-    */
+       int vermaj,vermin,verpat;
+       shout_version(&vermaj,&vermin,&verpat);
+       func("Shouter::Shouter() using libshout version %i.%i.%i",vermaj,vermin,verpat);
+     */
 
     // shout_init();
 
@@ -95,13 +95,13 @@ bool Shouter::start() {
     }
 
     /*
-      if(shout_get_connected(ice)) {
-      // if allready connected, reconnect
-      func("icecast still connected: disconnecting");
-      shout_close(ice);
-      shout_sync(ice);
-      }
-    */
+       if(shout_get_connected(ice)) {
+       // if allready connected, reconnect
+       func("icecast still connected: disconnecting");
+       shout_close(ice);
+       shout_sync(ice);
+       }
+     */
     act("starting stream to %s server %s on port %u", srv, host(), port());
 
     res = shout_open(ice);

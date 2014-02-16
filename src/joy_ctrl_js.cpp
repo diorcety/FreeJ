@@ -25,7 +25,7 @@
 #include <generator_layer.h>
 
 
-class JoyControllerJS: public JoyController {
+class JoyControllerJS : public JoyController {
 public:
     virtual int axismotion(int device, int axis, int value);
     virtual int ballmotion(int device, int ball, int xrel, int yrel);
@@ -75,13 +75,13 @@ JS(js_joy_ctrl_constructor) {
     JoyController *joy = new JoyControllerJS();
 
     // initialize with javascript context
-    if(! joy->init(global_environment)) {
+    if(!joy->init(global_environment)) {
         sprintf(excp_msg, "failed initializing joystick controller");
         goto error;
     }
 
     // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)joy)) {
+    if(!JS_SetPrivate(cx, obj, (void*)joy)) {
         sprintf(excp_msg, "failed assigning joystick controller to javascript");
         goto error;
     }

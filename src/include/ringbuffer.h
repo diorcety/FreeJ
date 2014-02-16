@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-*/
+ */
 
 #ifndef _RINGBUFFER_H
 #define _RINGBUFFER_H
@@ -45,17 +45,17 @@ typedef struct {
     char  *buf;
     size_t len;
 }
-ringbuffer_data_t ;
+ringbuffer_data_t;
 
 typedef struct {
-    char		 *buf;
+    char                 *buf;
     volatile size_t write_ptr;
     volatile size_t read_ptr;
-    size_t	  size;
-    size_t	  size_mask;
-    int		  mlocked;
+    size_t size;
+    size_t size_mask;
+    int mlocked;
 }
-ringbuffer_t ;
+ringbuffer_t;
 
 /**
  * Allocates a ringbuffer data structure of a specified size. The

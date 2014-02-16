@@ -26,7 +26,7 @@
 
 #include <cairo.h>
 
-class CairoColor: public Color {
+class CairoColor : public Color {
 
 public:
     CairoColor(cairo_t *cai);
@@ -40,7 +40,7 @@ private:
 
 };
 
-class CairoLayer: public Layer {
+class CairoLayer : public Layer {
 
 public:
     CairoLayer();

@@ -30,9 +30,9 @@
 
 AudioLayer::AudioLayer()
     : Layer(),
-      m_JackBuffer(NULL),
-      m_ProcessPos(0),
-      m_Processing(false) {
+    m_JackBuffer(NULL),
+    m_ProcessPos(0),
+    m_Processing(false) {
     notice("Audio layer initialized.");
     JackClient *Jack = JackClient::Get();
     if(!Jack->IsAttached()) {
@@ -53,18 +53,15 @@ AudioLayer::~AudioLayer() {
     close();
 }
 
-
 bool AudioLayer::open(const char *file) {
     opened = true;
     return(true);
 }
 
-
 void *AudioLayer::feed() {
     // add data to the ring-buffer
     return NULL;
 }
-
 
 void AudioLayer::close() {
     if(!opened) return;
@@ -74,12 +71,12 @@ void AudioLayer::AudioCallback_i(unsigned int Size) {
     /*
      *  TODO: check buffer-size - compare counter or use ring-buffer
      *
-    	if (Size<=BufferLength && !pthread_mutex_trylock(m_Mutex))
-    	{
-    	  jmemcpy((void*)m_Buffer,(void*)m_JackBuffer,BufferLength*sizeof(float));
-    	  pthread_mutex_unlock(m_Mutex);
-    	}
-    */
+        if (Size<=BufferLength && !pthread_mutex_trylock(m_Mutex))
+        {
+          jmemcpy((void*)m_Buffer,(void*)m_JackBuffer,BufferLength*sizeof(float));
+          pthread_mutex_unlock(m_Mutex);
+        }
+     */
 }
 
 void AudioLayer::AudioCallback(void *Context, unsigned int Size) {

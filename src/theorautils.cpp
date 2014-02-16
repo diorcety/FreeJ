@@ -51,6 +51,7 @@ int ogg_pipe_read(char *name, ringbuffer_t *rb, char *dest, size_t cnt) {
     }
     return ringbuffer_read(rb, dest, cnt);
 }
+
 int ogg_pipe_write(const char *name, ringbuffer_t *rb, char *src, size_t cnt) {
     while(ringbuffer_write_space(rb) < cnt) {
         std::cerr << name << " pipe write not ready" << std::endl;
@@ -59,8 +60,6 @@ int ogg_pipe_write(const char *name, ringbuffer_t *rb, char *src, size_t cnt) {
     }
     return ringbuffer_write(rb, src, cnt);
 }
-
-
 
 static double rint(double x) {
     if(x < 0.0)
@@ -345,7 +344,7 @@ void *timer_start(void) {
     return (void *)start;
 }
 
-int	sampleError;
+int sampleError;
 SRC_STATE *src_state;
 SRC_DATA *src_data;
 double ratio, averageR, oldVideoTime;
@@ -392,7 +391,7 @@ void oggmux_init(oggmux_info *info) {
         }
         vorbis_info_init(&info->vi); //
         if(!(info->vorbis_quality >= -0.1) || !(info->vorbis_quality <= 1.0))
-            info->vorbis_quality = 0.5;	//if quality has a wrong value, sets to 0.5
+            info->vorbis_quality = 0.5;  //if quality has a wrong value, sets to 0.5
         if(vorbis_encode_setup_vbr(&info->vi, info->channels, info->sample_rate, info->vorbis_quality)) {
             std::cerr << "Mode initialisation failed: invalid parameters for quality" << std::endl;
             vorbis_info_clear(&info->vi);
@@ -445,7 +444,7 @@ void oggmux_init(oggmux_info *info) {
 //---------------------- vorbis_analysis_init renvoie 0 comme avec la commande oggenc !!
 
         if(!vorbis_analysis_init(&info->vd, &info->vi)) {
-// 	  std::cerr << "-------- vorbis_analysis_init failed, seems normal !!" << std::endl;
+//        std::cerr << "-------- vorbis_analysis_init failed, seems normal !!" << std::endl;
         }
 
         vorbis_comment_init(&info->vc);
@@ -568,7 +567,7 @@ void oggmux_init(oggmux_info *info) {
                 std::cerr << "-------- ogg_stream_packetin header failed !!" << std::endl;
                 //return;
             }
-            while((result = ogg_stream_flush(&info->vo, &og))) {	//2 Vorbis  same as encode.c
+            while((result = ogg_stream_flush(&info->vo, &og))) {        //2 Vorbis  same as encode.c
                 if(!result) break;
                 int ret = 0;
                 if(!(ret = ogg_pipe_write("write vorbis header", info->ringbuffer, (char*)og.header, og.header_len))) {
@@ -626,13 +625,13 @@ void oggmux_init(oggmux_info *info) {
     if(info->with_skeleton) {
         add_fisbone_packet(info);
         while(1) {
-            int result = ogg_stream_flush(&info->so, &og);	//3 with_skeleton
+            int result = ogg_stream_flush(&info->so, &og);      //3 with_skeleton
             if(result < 0) {
                 /* can't get here */
                 error("Internal Ogg library error.");
                 return;
             }
-            if(result == 0)  break;
+            if(result == 0) break;
             ogg_pipe_write("write theora header", info->ringbuffer, (char*)og.header, og.header_len);
             ogg_pipe_write("write theora body", info->ringbuffer, (char*)og.body, og.body_len);
 
@@ -647,7 +646,7 @@ void oggmux_init(oggmux_info *info) {
      * the actual data in each stream will start
      * on a new page, as per spec. */
     while(1 && !info->audio_only) {
-        int result = ogg_stream_flush(&info->to, &og);	//4 theora
+        int result = ogg_stream_flush(&info->to, &og);  //4 theora
         if(result < 0) {
             /* can't get here */
             std::cerr << "--------  Internal Ogg library error !!" << std::endl << std::flush;
@@ -663,7 +662,7 @@ void oggmux_init(oggmux_info *info) {
         for(n = 0; n < info->n_kate_streams; ++n) {
             oggmux_kate_stream *ks = info->kate_streams + n;
             while(1) {
-                int result = ogg_stream_flush(&ks->ko, &og);	//6 kate
+                int result = ogg_stream_flush(&ks->ko, &og);    //6 kate
                 if(result < 0) {
                     /* can't get here */
                     error("Internal Ogg library error.");
@@ -688,7 +687,7 @@ void oggmux_init(oggmux_info *info) {
         op.bytes = 0; /* e_o_s packet is an empty packet */
         ogg_stream_packetin(&info->so, &op);
 
-        result = ogg_stream_flush(&info->so, &og);	//7 with_skeleton
+        result = ogg_stream_flush(&info->so, &og);      //7 with_skeleton
         if(result < 0) {
             /* can't get here */
             error("Internal Ogg library error.");
@@ -719,7 +718,6 @@ void oggmux_add_video(oggmux_info *info, yuv_buffer *yuv, int e_o_s) {
     }
 }
 
-
 /**
  * adds audio samples to encoding sink
  * @param buffer pointer to buffer
@@ -737,9 +735,9 @@ void oggmux_add_audio(oggmux_info *info, float * buffer, int bytes, int samples,
         /* end of audio stream */
         if(e_o_s)
             vorbis_analysis_wrote(&info->vd, 0);
-    } else {	//resample code
+    } else {    //resample code
         sampleOut = (float *)realloc(sampleOut, ((samples * info->channels * sizeof(float)) \
-                                     + (1.2 * ((samples * info->channels * sizeof(float))))));
+                                                 + (1.2 * ((samples * info->channels * sizeof(float))))));
         memset(src_data, 0, sizeof(SRC_DATA));
         src_data->data_in = buffer;
         src_data->input_frames = (long)samples;
@@ -753,19 +751,19 @@ void oggmux_add_audio(oggmux_info *info, float * buffer, int bytes, int samples,
             std::cerr << "--- resample error :" << src_strerror(processError) << std::endl;
         }
 
-        vorbis_buffer = vorbis_analysis_buffer(&info->vd, src_data->output_frames_gen);	//samples = rv/(channels*sizeof(float))
+        vorbis_buffer = vorbis_analysis_buffer(&info->vd, src_data->output_frames_gen); //samples = rv/(channels*sizeof(float))
         for(j = 0; j < info->channels; j++) {
-            for(i = 0, c = 0; i < src_data->output_frames_gen ; i++, c += info->channels) {
+            for(i = 0, c = 0; i < src_data->output_frames_gen; i++, c += info->channels) {
                 vorbis_buffer[j][i] = sampleOut[c + j];
             }
         }
         vorbis_analysis_wrote(&info->vd, src_data->output_frames_gen);
     }
     int ret;
-    while((ret = vorbis_analysis_blockout(&info->vd, &info->vb)) == 1) {	//idem
+    while((ret = vorbis_analysis_blockout(&info->vd, &info->vb)) == 1) {        //idem
         /* analysis, assume we want to use bitrate management */
-        vorbis_analysis(&info->vb, NULL);				//idem
-        vorbis_bitrate_addblock(&info->vb);				//idem
+        vorbis_analysis(&info->vb, NULL);                               //idem
+        vorbis_bitrate_addblock(&info->vb);                             //idem
 
         int bet;
         /* weld packets into the bitstream */
@@ -873,7 +871,6 @@ static void print_stats(oggmux_info *info, double timebase) {
              remaining_hours, remaining_minutes, remaining_seconds);
 }
 
-
 static void write_audio_page(oggmux_info *info) {
     int ret;
 
@@ -951,11 +948,11 @@ static void write_kate_page(oggmux_info *info, int idx) {
 
 
     /*
-    info->kkbps = rint (info->kate_bytesout * 8. / info->katetime * .001);
-    if(info->kkbps<0)
-      info->kkbps=0;
-    print_stats(info, info->katetime);
-    */
+       info->kkbps = rint (info->kate_bytesout * 8. / info->katetime * .001);
+       if(info->kkbps<0)
+       info->kkbps=0;
+       print_stats(info, info->katetime);
+     */
 }
 
 static int find_best_valid_kate_page(oggmux_info *info) {
@@ -992,7 +989,7 @@ void oggmux_flush(oggmux_info *info, int e_o_s) {
         /* Get pages for both streams, if not already present, and if available.*/
         if(!info->audio_only && !info->videopage_valid) {
             int v_next = 0;
-            if(ogg_stream_pageout(&info->to, &og) > 0) {			//2
+            if(ogg_stream_pageout(&info->to, &og) > 0) {                        //2
                 v_next = 1;
             }
             if(v_next) {
@@ -1003,10 +1000,10 @@ void oggmux_flush(oggmux_info *info, int e_o_s) {
                 }
                 info->videopage_len = len;
                 memcpy(info->videopage, og.header, og.header_len);
-                memcpy(info->videopage + og.header_len , og.body, og.body_len);
+                memcpy(info->videopage + og.header_len, og.body, og.body_len);
 
                 info->videopage_valid = 1;
-                if(ogg_page_granulepos(&og) > 0) {					//3
+                if(ogg_page_granulepos(&og) > 0) {                                      //3
                     info->videotime = theora_granule_time(&info->td,
                                                           ogg_page_granulepos(&og));
                     if(info->videotime == -1) {
@@ -1028,7 +1025,7 @@ void oggmux_flush(oggmux_info *info, int e_o_s) {
                 }
                 info->audiopage_len = len;
                 memcpy(info->audiopage, og.header, og.header_len);
-                memcpy(info->audiopage + og.header_len , og.body, og.body_len);
+                memcpy(info->audiopage + og.header_len, og.body, og.body_len);
 
                 info->audiopage_valid = 1;
                 if(ogg_page_granulepos(&og) > 0) {
@@ -1041,20 +1038,20 @@ void oggmux_flush(oggmux_info *info, int e_o_s) {
                         oldVideoTime = info->videotime;
                         ratio = ((info->videotime - info->audiotime) / 60.0) + averageR;
                         averageR = (ratio + (averageR * (samplesA - 1))) / samplesA;
-// 	      std::cerr << "ratio :" << ratio << " averageR :" << averageR;
+//            std::cerr << "ratio :" << ratio << " averageR :" << averageR;
                         if(ratio > (averageR * 1.01)) {
                             ratio = averageR * 1.01;
-// 		std::cerr << " resampled at:" << ratio << std::endl;
+//              std::cerr << " resampled at:" << ratio << std::endl;
                         } else if(ratio < (averageR * 0.99)) {
                             ratio = averageR * 0.99;
-// 		std::cerr << " resampled at:" << ratio << std::endl;
+//              std::cerr << " resampled at:" << ratio << std::endl;
                         }
-// 	      else
-// 		std::cerr << " resampled at:" << ratio << std::endl;
+//            else
+//              std::cerr << " resampled at:" << ratio << std::endl;
                     }
                 }
                 /*	  std::cerr << "--- Vorbis time :" << info->audiotime << " Theora time :" \
-                	      << info->videotime << std::endl << std::flush;*/
+                              << info->videotime << std::endl << std::flush;*/
             }
         }
 
@@ -1065,7 +1062,7 @@ void oggmux_flush(oggmux_info *info, int e_o_s) {
                 if(!ks->katepage_valid) {
                     int k_next = 0;
                     /* always flush kate stream */
-                    if(ogg_stream_flush(&ks->ko, &og) > 0) {	//8 kate
+                    if(ogg_stream_flush(&ks->ko, &og) > 0) {    //8 kate
                         k_next = 1;
                     }
                     if(k_next) {
@@ -1076,7 +1073,7 @@ void oggmux_flush(oggmux_info *info, int e_o_s) {
                         }
                         ks->katepage_len = len;
                         memcpy(ks->katepage, og.header, og.header_len);
-                        memcpy(ks->katepage + og.header_len , og.body, og.body_len);
+                        memcpy(ks->katepage + og.header_len, og.body, og.body_len);
 
                         ks->katepage_valid = 1;
                         if(ogg_page_granulepos(&og) > 0) {
@@ -1090,15 +1087,15 @@ void oggmux_flush(oggmux_info *info, int e_o_s) {
 
 #ifdef HAVE_KATE
 #define CHECK_KATE_OUTPUT(which) \
-        if (best>=0 && info->kate_streams[best].katetime/*-1.0*/<=info->which##time) { \
-          write_kate_page(info, best); \
-          continue; \
-        }
+    if (best>=0 && info->kate_streams[best].katetime /*-1.0*/<=info->which ## time) { \
+        write_kate_page(info, best); \
+        continue; \
+    }
 #else
 #define CHECK_KATE_OUTPUT(which) ((void)0)
 #endif
 
-        /*best=*/find_best_valid_kate_page(info);
+        /*best=*/ find_best_valid_kate_page(info);
 
         if(info->video_only && info->videopage_valid) {
 //         CHECK_KATE_OUTPUT(video);
@@ -1141,7 +1138,7 @@ void oggmux_close(oggmux_info *info) {
     int n;
 
     if(!info->video_only) {
-        ogg_stream_clear(&info->vo);	//segfault here !!
+        ogg_stream_clear(&info->vo);    //segfault here !!
         vorbis_block_clear(&info->vb);
         vorbis_dsp_clear(&info->vd);
         vorbis_comment_clear(&info->vc);
@@ -1180,3 +1177,4 @@ void oggmux_close(oggmux_info *info) {
             free(info->kate_streams[n].katepage);
     }
 }
+

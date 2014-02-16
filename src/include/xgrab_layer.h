@@ -33,7 +33,7 @@
 
 //#include <X11/extensions/Xvlib.h>
 
-class XGrabLayer: public Layer {
+class XGrabLayer : public Layer {
 protected:
     bool _init();
 

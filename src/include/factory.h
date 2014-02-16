@@ -82,14 +82,14 @@
     static int isRegistered;
 
 #define FACTORY_REGISTER_INSTANTIATOR(__base_class, __class_name, __category, __id) \
-    static __class_name * get##__class_name() \
+    static __class_name * get ## __class_name() \
     { \
-        func("Creating %s -- %s", #__base_class, #__class_name);\
+        func("Creating %s -- %s", # __base_class, # __class_name); \
         return new __class_name(); \
     } \
     int __class_name::isRegistered = Factory<__base_class>::register_instantiator( \
-        #__category, #__id, (Instantiator)get##__class_name \
-    );
+        # __category, # __id, (Instantiator)get ## __class_name \
+        );
 
 typedef void *(*Instantiator)();
 typedef std::map<std::string, Instantiator> FInstantiatorsMap;

@@ -22,7 +22,7 @@
 
    @desc this is the main FreeJ engine, containing the main loop
    cafudda() and referencing the tree of instantiated objects
-*/
+ */
 
 #ifndef __context_h__
 #define __context_h__
@@ -84,18 +84,18 @@ private:
     //static Factory<Layer> layer_factory; // Layer Factory
     // Default layer types
     /*
-    inline void default_layertypes()
-    {
-      default_layertypes_map.insert(FIdPair("GeometryLayer", "basic"));
-    }
+       inline void default_layertypes()
+       {
+       default_layertypes_map.insert(FIdPair("GeometryLayer", "basic"));
+       }
 
-    //static Factory<Controller> controller_factory; // Controller Factory
-    // Default controller types
-    inline void default_controllertypes()
-    {
-      default_controllertypes_map.insert(FIdPair("KeyboardController", "sdl"));
-    }
-    */
+       //static Factory<Controller> controller_factory; // Controller Factory
+       // Default controller types
+       inline void default_controllertypes()
+       {
+       default_controllertypes_map.insert(FIdPair("KeyboardController", "sdl"));
+       }
+     */
 
 public:
 

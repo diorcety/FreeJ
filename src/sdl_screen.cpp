@@ -120,9 +120,9 @@ void SdlScreen::blit(Layer *src) {
         // if we have to rotate or scale,
         // create a sdl surface from current pixel buffer
         pre_rotozoom = SDL_CreateRGBSurfaceFrom
-                       (src->buffer,
-                        src->geo.w, src->geo.h, src->geo.bpp,
-                        src->geo.bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
+                           (src->buffer,
+                           src->geo.w, src->geo.h, src->geo.bpp,
+                           src->geo.bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
         if(src->rotating) {
 
@@ -162,12 +162,12 @@ void SdlScreen::blit(Layer *src) {
         play = (uint32_t*) offset        + b->lay_offset;
 
         // iterates the blit on each horizontal line
-        for(c = b->lay_height ; c > 0 ; c--) {
+        for(c = b->lay_height; c > 0; c--) {
 
             (*b->fun)
-            ((void*)play, (void*)pscr,
-             b->lay_bytepitch,// * src->geo.bpp>>3,
-             &b->parameters);
+                ((void*)play, (void*)pscr,
+                b->lay_bytepitch, // * src->geo.bpp>>3,
+                &b->parameters);
 
             // strides down to the next line
             pscr += b->scr_stride + b->lay_pitch;
@@ -179,8 +179,8 @@ void SdlScreen::blit(Layer *src) {
 
         if(src->blitter->geo)
             (*b->sdl_fun)
-            (offset, &b->sdl_rect, sdl_screen,
-             NULL, src->blitter->geo, &b->parameters);
+                (offset, &b->sdl_rect, sdl_screen,
+                NULL, src->blitter->geo, &b->parameters);
 
     }
 
@@ -197,8 +197,8 @@ void SdlScreen::blit(Layer *src) {
 //     for(c = b->lay_height; c>0; c--) {
 
 //       (*b->past_fun)
-// 	((void*)play, (void*)ppast, (void*)pscr,
-// 	 b->lay_bytepitch);
+//      ((void*)play, (void*)ppast, (void*)pscr,
+//       b->lay_bytepitch);
 
 //       // copy the present to the past
 //       jmemcpy(ppast, play, geo->pitch);
@@ -265,6 +265,7 @@ void *SdlScreen::get_surface() {
 void SdlScreen::clear() {
     SDL_FillRect(sdl_screen, NULL, 0x0);
 }
+
 void SdlScreen::fullscreen() {
     switch_fullscreen = true;
 }

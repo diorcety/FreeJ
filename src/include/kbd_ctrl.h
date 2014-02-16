@@ -24,7 +24,7 @@
 
 #include <SDL.h>
 
-class KbdController: public SdlController {
+class KbdController : public SdlController {
 
 public:
     KbdController();

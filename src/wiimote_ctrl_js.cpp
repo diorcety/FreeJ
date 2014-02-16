@@ -28,7 +28,7 @@
 
 #ifdef WITH_CWIID
 
-class WiiControllerJS: public WiiController {
+class WiiControllerJS : public WiiController {
 public:
     virtual void connect_event();
     virtual void disconnect_event();
@@ -60,12 +60,12 @@ void WiiControllerJS::accel_event(double x, double y, double z) {
 }
 
 void WiiControllerJS::ir_event(unsigned int source, unsigned int x,
-                             unsigned int y, unsigned int size) {
+                               unsigned int y, unsigned int size) {
     JSCall("ir", 4, "iuui", source, x, y, size);
 }
 
 void WiiControllerJS::button_event(unsigned int button, bool state,
-                                 unsigned int mask, unsigned int old_mask) {
+                                   unsigned int mask, unsigned int old_mask) {
     JSCall("button", 4, "ubuu", button, state, mask, old_mask);
 }
 
@@ -76,13 +76,13 @@ JS(js_wii_ctrl_constructor) {
 
     WiiController *wii = new WiiControllerJS();
     // initialize with javascript context
-    if(! wii->init(global_environment)) {
+    if(!wii->init(global_environment)) {
         sprintf(excp_msg, "failed initializing WiiMote controller");
         goto error;
     }
 
     // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)wii)) {
+    if(!JS_SetPrivate(cx, obj, (void*)wii)) {
         sprintf(excp_msg, "failed assigning WiiMote controller to javascript");
         goto error;
     }

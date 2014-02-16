@@ -98,7 +98,7 @@
  */
 
 /**
- *\addtogroup icons Icons for frei0r effects
+   *\addtogroup icons Icons for frei0r effects
  * @section sec_icons Icons for frei0r effects
  *
  * Each frei0r effect can have an associated icon.
@@ -127,13 +127,13 @@
  * \<icon_path\> can be obtained in the following way:
  *
  * @verbatim
-  <plugin_path>                   |     <icon_path>
- ----------------------------------------------------------------------------
- $HOME/.frei0r-1/lib/<vendor>     | $HOME/.frei0r-1/icons/<vendor>
- /usr/local/lib/frei0r-1/<vendor> | /usr/local/share/frei0r-1/icons/<vendor>
- /usr/lib/frei0r-1/<vendor>       | /usr/share/frei0r-1/icons/<vendor>
-          *                       | <plugin_path>
- @endverbatim
+   <plugin_path>                   |     <icon_path>
+   ----------------------------------------------------------------------------
+   $HOME/.frei0r-1/lib/<vendor>     | $HOME/.frei0r-1/icons/<vendor>
+   /usr/local/lib/frei0r-1/<vendor> | /usr/local/share/frei0r-1/icons/<vendor>
+   /usr/lib/frei0r-1/<vendor>       | /usr/share/frei0r-1/icons/<vendor>
+ *                       | <plugin_path>
+   @endverbatim
  *
  * (The wildcard '*' stands for any other plugin_path)
  *
@@ -494,7 +494,7 @@ void f0r_set_param_value(f0r_instance_t instance,
  * \param param pointer to the parameter value
  * \param param_index index of the parameter
  *
-  * \see f0r_set_param_value
+ * \see f0r_set_param_value
  */
 void f0r_get_param_value(f0r_instance_t instance,
                          f0r_param_t param, int param_index);

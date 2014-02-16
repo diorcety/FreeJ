@@ -53,10 +53,16 @@ GeneratorLayer::~GeneratorLayer() {
 
 /// set_parameter callback for generator layers
 // TODO
-static void set_freeframe_layer_parameter(Layer *lay, Parameter *param, int idx) { }
-static void get_freeframe_layer_parameter(Layer *lay, Parameter *param, int idx) { }
+static void set_freeframe_layer_parameter(Layer *lay, Parameter *param, int idx) {
+}
+
+static void get_freeframe_layer_parameter(Layer *lay, Parameter *param, int idx) {
+}
+
 #ifdef WITH_FREI0R
-static void get_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) { }
+static void get_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
+}
+
 static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
     GeneratorLayer *layer = (GeneratorLayer*)lay;
 
@@ -65,10 +71,10 @@ static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
 
     switch(f->param_infos[idx - 1].type) {
 
-        // idx-1 because frei0r's index starts from 0
+    // idx-1 because frei0r's index starts from 0
     case F0R_PARAM_BOOL:
         (*f->f0r_set_param_value)
-        (layer->generator->core, new f0r_param_bool(*(bool*)val), idx - 1);
+            (layer->generator->core, new f0r_param_bool(*(bool*)val), idx - 1);
         break;
 
     case F0R_PARAM_DOUBLE:
@@ -101,6 +107,7 @@ static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
               f->param_infos[idx].type);
     }
 }
+
 #endif
 
 void GeneratorLayer::register_generators(Linklist<Filter> *gens) {
@@ -211,5 +218,4 @@ void *GeneratorLayer::feed() {
     }
     return swap_buffer;
 }
-
 

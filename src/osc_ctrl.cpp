@@ -35,25 +35,25 @@ FACTORY_REGISTER_INSTANTIATOR(Controller, OscController, OscController, core);
 /* convert a big endian 32 bit string to an int for internal use */
 //#ifdef ARCH_X86
 /*
-static int toInt(const char* b) {
-  return
+   static int toInt(const char* b) {
+   return
     (( (int) b[3]) & 0xff)        +
     ((((int) b[2]) & 0xff) << 8)  +
     ((((int) b[1]) & 0xff) << 16) +
     ((((int) b[0]) & 0xff) << 24) ;
-}
-//#else
+   }
+   //#else
 
-static int toInt(const char *b)
-{
-  return
+   static int toInt(const char *b)
+   {
+   return
     (( (int) b[0]) & 0xff)        +
     (( (int) b[1]  & 0xff) << 8)  +
     ((((int) b[2]) & 0xff) << 16) +
     ((((int) b[3]) & 0xff) << 24) ;
-}
-//#endif
-*/
+   }
+   //#endif
+ */
 
 OscController::OscController()
     : Controller() {

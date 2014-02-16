@@ -30,7 +30,7 @@
 #include <layer.h>
 
 
-class TextLayer: public Layer {
+class TextLayer : public Layer {
 
 public:
     TextLayer();

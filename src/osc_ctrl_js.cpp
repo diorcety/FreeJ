@@ -23,7 +23,7 @@
 
 #include <osc_ctrl.h>
 
-class JsCommand: public Entry {
+class JsCommand : public Entry {
 public:
     // name is function
     jsval function;
@@ -38,8 +38,8 @@ static void osc_error_handler(int num, const char *msg, const char *path) {
 }
 
 static int osc_command_handler(const char *path, const char *types,
-                        lo_arg **argv, int argc,
-                        void *data, void *user_data) {
+                               lo_arg **argv, int argc,
+                               void *data, void *user_data) {
 
     OscController *osc = (OscController*)user_data;
     OscCommand *cmd;
@@ -111,7 +111,7 @@ static int osc_command_handler(const char *path, const char *types,
 
 // Implementation for JS
 
-class OscControllerJS: public OscController {
+class OscControllerJS : public OscController {
 public:
     virtual int dispatch();
 };
@@ -172,12 +172,12 @@ JS(js_osc_ctrl_constructor) {
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)osc)) {
+    if(!JS_SetPrivate(cx, obj, (void*)osc)) {
         sprintf(excp_msg, "failed assigning OSC controller to javascript");
         goto error;
     }
     // initialize with javascript context
-    if(! osc->init(global_environment)) {
+    if(!osc->init(global_environment)) {
         sprintf(excp_msg, "failed initializing OSC controller");
         goto error;
     }

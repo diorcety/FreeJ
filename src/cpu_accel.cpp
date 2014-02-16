@@ -24,7 +24,7 @@
    License along with this library; if not, write to the
    Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
-*/
+ */
 
 /*
  * cpu_accel.c
@@ -66,31 +66,31 @@ static __u32 arch_accel(void) {
 
 #ifndef HAVE_64BIT // XXX HACK!
 #define cpuid(op,eax,ebx,ecx,edx)  \
-     asm ("pushl %%ebx\n\t"        \
-          "cpuid\n\t"              \
-          "movl %%ebx,%1\n\t"      \
-          "popl %%ebx"             \
-          : "=a" (eax),            \
-            "=r" (ebx),            \
-            "=c" (ecx),            \
-            "=d" (edx)             \
-          : "a" (op)               \
-          : "cc")
+    asm ("pushl %%ebx\n\t"        \
+         "cpuid\n\t"              \
+         "movl %%ebx,%1\n\t"      \
+         "popl %%ebx"             \
+         : "=a" (eax),            \
+         "=r" (ebx),            \
+         "=c" (ecx),            \
+         "=d" (edx)             \
+         : "a" (op)               \
+         : "cc")
 
-    asm("pushfl\n\t"
-        "pushfl\n\t"
-        "popl %0\n\t"
-        "movl %0,%1\n\t"
-        "xorl $0x200000,%0\n\t"
-        "pushl %0\n\t"
-        "popfl\n\t"
-        "pushfl\n\t"
-        "popl %0\n\t"
-        "popfl"
-        : "=r"(eax),
-        "=r"(ebx)
-        :
-        : "cc");
+    asm ("pushfl\n\t"
+         "pushfl\n\t"
+         "popl %0\n\t"
+         "movl %0,%1\n\t"
+         "xorl $0x200000,%0\n\t"
+         "pushl %0\n\t"
+         "popfl\n\t"
+         "pushfl\n\t"
+         "popl %0\n\t"
+         "popfl"
+         : "=r" (eax),
+         "=r" (ebx)
+         :
+         : "cc");
 
     if(eax == ebx)              /* no cpuid */
         return 0;
@@ -139,6 +139,7 @@ static jmp_buf sigill_return;
 static void sigill_handler(int n) {
     longjmp(sigill_return, 1);
 }
+
 #endif /* ARCH_X86 */
 
 #if defined (ARCH_PPC) && defined (ENABLE_ALTIVEC)
@@ -164,14 +165,15 @@ static __u32 arch_accel(void) {
 
     canjump = 1;
 
-    asm volatile("mtspr 256, %0\n\t"
-                 "vand %%v0, %%v0, %%v0"
-                 :
-                 : "r"(-1));
+    asm volatile ("mtspr 256, %0\n\t"
+                  "vand %%v0, %%v0, %%v0"
+                  :
+                  : "r" (-1));
 
     signal(SIGILL, SIG_DFL);
     return MM_ACCEL_PPC_ALTIVEC;
 }
+
 #endif /* ARCH_PPC */
 
 __u32 detect_mm_accel() {

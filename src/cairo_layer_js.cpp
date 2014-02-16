@@ -26,7 +26,7 @@
 #ifdef WITH_CAIRO
 #include <cairo_layer.h>
 
-class CairoLayerJS: public CairoLayer {
+class CairoLayerJS : public CairoLayer {
 public:
     CairoLayerJS();
 
@@ -235,7 +235,7 @@ JS(vector_layer_lineto) {
     x = js_get_int(argv[0]);
     y = js_get_int(argv[1]);
 
-    func("%s x[%i] y[%i]", __FUNCTION__ , x, y);
+    func("%s x[%i] y[%i]", __FUNCTION__, x, y);
 
     lay->line_to(x, y);
 
@@ -284,7 +284,7 @@ JS(vector_layer_quadcurveto) {
     y2 = js_get_int(argv[3]);
 
 
-    lay->quad_curve_to(x1, y1, x2, y2) ;
+    lay->quad_curve_to(x1, y1, x2, y2);
 
     return JS_TRUE;
 }
@@ -487,10 +487,10 @@ JSP(vector_layer_linecap_s)     {
     }
 
     func("Vector linecap set :: %s", cap);
-    if(!cap) return JS_TRUE; // we don't stop the flow
+    if(!cap) return JS_TRUE;  // we don't stop the flow
 
     switch(cap[0]) { // we parse fast, using only first letter
-        // [b]utt, [r]ound, [s]quare
+    // [b]utt, [r]ound, [s]quare
     case 'b':
         cairo_set_line_cap(lay->cairo, CAIRO_LINE_CAP_BUTT);
         break;

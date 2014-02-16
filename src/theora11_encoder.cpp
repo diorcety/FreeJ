@@ -68,7 +68,6 @@ Theora11Encoder::~Theora11Encoder() {
 
 }
 
-
 Theora11Encoder::init(Context *_env) {
 
     if(initialized) return true;
@@ -116,7 +115,7 @@ Theora11Encoder::init(Context *_env) {
     ti.aspect_denominator = video_par_d;
     ti.colorspace = TH_CS_UNSPECIFIED;
     /*Account for the Ogg page overhead.
-      This is 1 byte per 255 for lacing values, plus 26 bytes per 4096 bytes for
+       This is 1 byte per 255 for lacing values, plus 26 bytes per 4096 bytes for
        the page header, plus approximately 1/2 byte per packet (not accounted for
        here).*/
     ti.target_bitrate = (int)(64870 * (ogg_int64_t)video_r >> 16);
@@ -189,7 +188,7 @@ Theora11Encoder::init(Context *_env) {
     ogg_pipe_write("write theora body", ringbuffer, (char*)og.body, og.body_len);
 
     /* create the remaining theora headers */
-    for(;;) {
+    for(;; ) {
         ret = th_encode_flushheader(td, &tc, &op);
         if(ret < 0) {
             error("Internal Theora library error");
@@ -206,7 +205,7 @@ Theora11Encoder::init(Context *_env) {
 
         vorbis_analysis_headerout(&vd, &vc, &header, &header_comm, &header_code);
         ogg_stream_packetin(&vo, &header); /* automatically  placed  in its
-                                         own page */
+                                              own page */
         if(ogg_stream_pageout(&vo, &og) != 1) {
             error("Internal Ogg library error");
             return(false);
@@ -223,7 +222,7 @@ Theora11Encoder::init(Context *_env) {
     /* Flush the rest of our headers. This ensures
        the actual data in each stream will start
        on a new page, as per spec. */
-    for(;;) {
+    for(;; ) {
         int result = ogg_stream_flush(&to, &og);
         if(result < 0) {
             /* can't get here */
@@ -235,14 +234,14 @@ Theora11Encoder::init(Context *_env) {
         ogg_pipe_write("write vorbis body", ringbuffer, (char*)og.body, og.body_len);
     }
     if(audio) {
-        for(;;) {
+        for(;; ) {
             int result = ogg_stream_flush(&vo, &og);
             if(result < 0) {
                 /* can't get here */
                 error("Internal Ogg library error");
                 return(false);
             }
-            if(result == 0)break;
+            if(result == 0) break;
             ogg_pipe_write("write vorbis header", ringbuffer, (char*)og.header, og.header_len);
             ogg_pipe_write("write vorbis body", ringbuffer, (char*)og.body, og.body_len);
         }

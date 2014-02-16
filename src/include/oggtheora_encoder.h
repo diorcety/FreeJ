@@ -33,31 +33,31 @@
 #include <theorautils.h>
 
 /*
-extern "C" {
-#ifdef HAVE_LIBAVCODEC_AVCODEC_H
-#   include <libavcodec/avcodec.h>
-#elif defined(HAVE_FFMPEG_AVCODEC_H)
-#   include <ffmpeg/avcodec.h>
-#else
-#   include <avcodec.h>
-#endif
+   extern "C" {
+   #ifdef HAVE_LIBAVCODEC_AVCODEC_H
+ #   include <libavcodec/avcodec.h>
+ ##elif defined(HAVE_FFMPEG_AVCODEC_H)
+ #   include <ffmpeg/avcodec.h>
+ ##else
+ #   include <avcodec.h>
+ ##endif
 
-#ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
-#   include <libavformat/avformat.h>
-#elif defined(HAVE_FFMPEG_AVFORMAT_H)
-#   include <ffmpeg/avformat.h>
-#else
-#   include <avformat.h>
-#endif
-}
-*/
+ ##ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
+ #   include <libavformat/avformat.h>
+ ##elif defined(HAVE_FFMPEG_AVFORMAT_H)
+ #   include <ffmpeg/avformat.h>
+ ##else
+ #   include <avformat.h>
+ ##endif
+   }
+ */
 
 
 // #define AUDIO_BUFFER_SIZE 3528 // sample_rate * channel / fps / bytes of sample format
 
 class Context;
 
-class OggTheoraEncoder: public VideoEncoder {
+class OggTheoraEncoder : public VideoEncoder {
 
 public:
 
@@ -93,8 +93,8 @@ private:
 
     float *m_buffStream;
 
-    float	*m_MixBuffer;
-    float	*m_MixBufferOperation;
+    float       *m_MixBuffer;
+    float       *m_MixBufferOperation;
     ringbuffer_t *m_MixedRing;
 };
 

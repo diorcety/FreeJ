@@ -149,6 +149,7 @@ bool ViewPort::add_audio(JackClient *jcl) {
     m_SampleRate = &jcl->m_SampleRate;
     return (true);
 }
+
 #endif
 
 void ViewPort::rem_layer(Layer *lay) {
@@ -217,6 +218,7 @@ void ViewPort::save_frame(char *file) {
     gdImagePng(im, fp);
     fclose(fp);
 }
+
 #endif
 
 
@@ -248,7 +250,6 @@ void ViewPort::blit_layers() {
 
 }
 
-
 void ViewPort::handle_resize() {
     lock();
     if(resizing) {
@@ -260,10 +261,10 @@ void ViewPort::handle_resize() {
     /* crop all layers to new screen size */
     Layer *lay = layers.begin();
     while(lay) {
-        lay -> lock();
-        lay -> blitter->crop(lay, this);
-        lay -> unlock();
-        lay = (Layer*) lay -> next;
+        lay->lock();
+        lay->blitter->crop(lay, this);
+        lay->unlock();
+        lay = (Layer*) lay->next;
     }
 }
 
@@ -272,8 +273,11 @@ void ViewPort::resize(int resize_w, int resize_h) {  // nop
     resize_h = 0;
 };
 
-void ViewPort::show() { };
+void ViewPort::show() {
+};
 
-void ViewPort::clear() { };
+void ViewPort::clear() {
+};
 
-void ViewPort::fullscreen() { };
+void ViewPort::fullscreen() {
+};

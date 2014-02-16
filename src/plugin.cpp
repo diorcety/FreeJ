@@ -96,3 +96,4 @@ void Plugin::_delete() {
 Plugin::~Plugin(void) {
     _delete();
 }
+

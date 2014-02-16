@@ -25,7 +25,7 @@
 #include <SDL_image.h>
 #include <layer.h>
 
-class ImageLayer: public Layer {
+class ImageLayer : public Layer {
 
 public:
     ImageLayer();

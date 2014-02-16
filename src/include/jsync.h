@@ -51,9 +51,12 @@ public:
 
     int start();
     void stop();
-    virtual void thread_setup() {};
-    virtual void thread_loop() {};
-    virtual void thread_teardown() {};
+    virtual void thread_setup() {
+    };
+    virtual void thread_loop() {
+    };
+    virtual void thread_teardown() {
+    };
 
     FPS fps;
 

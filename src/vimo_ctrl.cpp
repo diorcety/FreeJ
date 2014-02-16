@@ -39,45 +39,45 @@
 #include <vimo_ctrl.h>
 
 /* buttons:
-btn_rev, 1,
-btn_rec, 2,
-btn_fwd, 4,
-btn_pause, 8,
-btn_stop, 16,
-btn_play, 32,
-btn_esc,  64,
-btn_player,   1|16,
-btn_recorder, 4|16
-*/
+   btn_rev, 1,
+   btn_rec, 2,
+   btn_fwd, 4,
+   btn_pause, 8,
+   btn_stop, 16,
+   btn_play, 32,
+   btn_esc,  64,
+   btn_player,   1|16,
+   btn_recorder, 4|16
+ */
 // data packet: ... 0xaa (0x07 0x03 ww kk cc) 0xaa ...
 union ViMoData {
 #ifdef WORDS_BIGENDIAN
     struct {
         unsigned
-        h : 8,	// header 0x03
+            h : 8, // header 0x03
 
-        i : 2,	// inner wheel
-        o : 4,	// outer whell
-        : 2,	// pad
+            i : 2, // inner wheel
+            o : 4, // outer whell
+        : 2,    // pad
 
-        k : 7,	// button key
-        : 1,	// pad
+            k : 7, // button key
+        : 1,    // pad
 
-        c : 8; 	// crc (?)
+            c : 8; // crc (?)
     } bits;
 #else
     struct {
         unsigned
-        h : 8,
+            h : 8,
 
         : 2,
-        o : 4,
-        i : 2,
+            o : 4,
+            i : 2,
 
         : 1,
-        k : 7,
+            k : 7,
 
-        c : 8;
+            c : 8;
     } bits;
 #endif
     unsigned char data[4];
@@ -152,15 +152,15 @@ bool ViMoController::open() {
     if(tcgetattr(fd, &options) == -1)
         goto error_close;
 
-    cfmakeraw(&options);		// sets some defaults
-    options.c_cc[VMIN] = 5;		// min chars/read complete
-    options.c_cc[VTIME] = 10;	// read timeout
-    options.c_cc[VSTART] = 0;	//
-    options.c_cc[VSTOP] = 0; 	//
+    cfmakeraw(&options);                // sets some defaults
+    options.c_cc[VMIN] = 5;             // min chars/read complete
+    options.c_cc[VTIME] = 10;   // read timeout
+    options.c_cc[VSTART] = 0;   //
+    options.c_cc[VSTOP] = 0;    //
 
-    cfsetspeed(&options, B19200);	// Set 19200 baud
-    options.c_cflag |= CS8;			// set 8bit
-    options.c_cflag &= ~CRTSCTS;	// no flow
+    cfsetspeed(&options, B19200);       // Set 19200 baud
+    options.c_cflag |= CS8;                     // set 8bit
+    options.c_cflag &= ~CRTSCTS;        // no flow
 //	options.c_cflag |= CRTSCTS;	// flow
     if(tcsetattr(fd, TCSANOW, &options) == -1)
         goto error_close;
@@ -219,7 +219,7 @@ int ViMoController::dispatch() {
     // button.(button, state, mask, mask_old)
     unsigned char key_diff = vmd->bits.k ^ vmd_old->bits.k;
     if(key_diff) {
-        for(unsigned char k = 1 << 7 ; k != 0; k = k >> 1) {
+        for(unsigned char k = 1 << 7; k != 0; k = k >> 1) {
             if(k & key_diff) {
                 button(k, (k & vmd->bits.k), vmd->bits.k, vmd_old->bits.k);
             }
@@ -294,7 +294,7 @@ int ViMoController::poll() {
                 } else {
                     func("%s invalid data packet (%s): %08x",
                          __PRETTY_FUNCTION__, filename, vmd->w
-                        );
+                         );
                 }
             } else {
                 read_pos++;
@@ -314,7 +314,6 @@ int ViMoController::poll() {
     return 0;
 }
 
-
 // activate is removed from controller
 // bool active is operated directly
 // this solves a problem with swig and virtual inheritance...
@@ -322,9 +321,9 @@ int ViMoController::poll() {
 // (jrml & shammash)
 
 // bool ViMoController::activate(bool state) {
-// 	// also called on register_controller
-// 	// flush data
-// 	if (fd)
-// 		tcflush(fd, TCIOFLUSH);
-// 	return Controller::activate(state);
+//      // also called on register_controller
+//      // flush data
+//      if (fd)
+//              tcflush(fd, TCIOFLUSH);
+//      return Controller::activate(state);
 // }

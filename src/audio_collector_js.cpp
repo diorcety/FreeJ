@@ -64,7 +64,7 @@ JS(js_audio_jack_constructor) {
 
     AudioCollector *audio = new AudioCollector(port, sample, rate);
 
-    if(! JS_SetPrivate(cx, obj, (void*)audio)) {
+    if(!JS_SetPrivate(cx, obj, (void*)audio)) {
         sprintf(excp_msg, "failed assigning audio jack to javascript");
         goto error;
     }

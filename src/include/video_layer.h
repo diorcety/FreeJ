@@ -63,7 +63,7 @@ extern "C" {
 
 //void av_log_null_callback(void* ptr, int level, const char* fmt, va_list vl);
 
-class VideoLayer: public Layer {
+class VideoLayer : public Layer {
 
 public:
     VideoLayer();
@@ -86,6 +86,7 @@ public:
     bool add_eos_call(DumbCall *c) {
         return eos->add_call(c);
     }
+
     bool rem_eos_call(DumbCall *c) {
         return eos->rem_call(c);
     }
@@ -169,8 +170,8 @@ private:
 
     char *full_filename;
 
-    int video_index;	//contains the stream place number
-    int audio_index;	//contains the stream place number
+    int video_index;    //contains the stream place number
+    int audio_index;    //contains the stream place number
 
     FILE *fp;
 

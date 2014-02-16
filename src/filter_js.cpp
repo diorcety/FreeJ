@@ -18,7 +18,7 @@
  * Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
 
-$Id: $
+   $Id: $
 
  */
 
@@ -33,7 +33,7 @@ DECLARE_CLASS("Filter", filter_class, filter_constructor);
 JSFunctionSpec filter_methods[] = {
     {"set_parameter",           filter_set_parameter,             4},
     {"activate",                filter_activate,                  1},
-    ENTRY_METHODS   ,
+    ENTRY_METHODS,
     {0}
 };
 

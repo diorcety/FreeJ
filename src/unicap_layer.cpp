@@ -55,7 +55,6 @@ UnicapLayer::~UnicapLayer() {
 
 }
 
-
 static void new_frame_bgr24_cb(unicap_event_t event, unicap_handle_t handle,
                                unicap_data_buffer_t * buffer, void *usr_data) {
     UnicapLayer *lay = (UnicapLayer*)usr_data;
@@ -68,7 +67,6 @@ static void new_frame_bgr24_cb(unicap_event_t event, unicap_handle_t handle,
 
     //  lay->swap = (lay->swap+1)%2;
 }
-
 
 static void new_frame_yuyv_cb(unicap_event_t event, unicap_handle_t handle,
                               unicap_data_buffer_t * buffer, void *usr_data) {
@@ -97,7 +95,7 @@ bool UnicapLayer::open(const char *devfile) {
     }
 
     while(unicap_enumerate_devices(&m_device_spec, &m_device, i++)
-            == STATUS_SUCCESS) {
+          == STATUS_SUCCESS) {
 
         func("checking device match \"%s\" == \"%s\"", m_device.device, devfile);
 
@@ -143,15 +141,15 @@ bool UnicapLayer::open(const char *devfile) {
             }
             break;
 
-            /*
-            case 0x34424752: // RGB32
-            fourcc = format.fourcc;
-            unicap_register_callback (m_handle,
-            		UNICAP_EVENT_NEW_FRAME,
-            		(unicap_callback_t) new_frame_rgb32_cb,
-            		(void*)this);
-            break;
-            */
+        /*
+           case 0x34424752: // RGB32
+           fourcc = format.fourcc;
+           unicap_register_callback (m_handle,
+                    UNICAP_EVENT_NEW_FRAME,
+                    (unicap_callback_t) new_frame_rgb32_cb,
+                    (void*)this);
+           break;
+         */
 
         case 0x56595559: // YUYV and equivalents
         case 0x32595559:
@@ -188,7 +186,7 @@ bool UnicapLayer::open(const char *devfile) {
         fourcc = 0x56595559;
     }
 
-    if(! SUCCESS(unicap_get_format(m_handle, &m_format)))
+    if(!SUCCESS(unicap_get_format(m_handle, &m_format)))
         error("format get failed on capture device");
 
     // list sizes
@@ -219,7 +217,7 @@ bool UnicapLayer::open(const char *devfile) {
         m_format.size.width, m_format.size.height,
         m_format.bpp, m_format.fourcc);
 
-    if(! SUCCESS(unicap_set_format(m_handle, &m_format))) {
+    if(!SUCCESS(unicap_set_format(m_handle, &m_format))) {
         error("format setting failed on capture device");
         error("maybe the size is not supported by this camera");
         error("else report your model and format strings");
@@ -295,12 +293,12 @@ bool UnicapLayer::open(const char *devfile) {
     }
     act("%u capture device properties found", i - 1);
 
-    if(! SUCCESS(unicap_start_capture(m_handle)))
+    if(!SUCCESS(unicap_start_capture(m_handle)))
         error("start capture failed on capture device");
     else func("capture started for CAM layer");
 
     if(capture_type == UNICAP_USER_CAPTURE) {
-        unicap_queue_buffer(m_handle, & m_buffer);
+        unicap_queue_buffer(m_handle, &m_buffer);
     }
 
     //  setName(m_device.device);
@@ -325,7 +323,6 @@ bool UnicapLayer::_init() {
 
     return true;
 }
-
 
 void *UnicapLayer::feed() {
     Parameter *p;
@@ -355,7 +352,6 @@ void *UnicapLayer::feed() {
     return rgba[0];
 }
 
-
 void UnicapLayer::close() {
     if(!opened) return;
 
@@ -366,7 +362,7 @@ void UnicapLayer::close() {
 
     if(m_handle) {
         status = unicap_stop_capture(m_handle);
-        if(! SUCCESS(status)) {
+        if(!SUCCESS(status)) {
             error("unicap reports error in stop_capture: 0x%x", status);
             unicap_stop_capture(m_handle);
         }
@@ -380,6 +376,5 @@ void UnicapLayer::close() {
 
     opened = false;
 }
-
 
 #endif

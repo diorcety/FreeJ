@@ -51,22 +51,22 @@
 /*
  * Obsolete memory-aligned implementation
  * void *jalloc(size_t size) {
- * 	void *buf;
+ *      void *buf;
  * #ifndef HAVE_DARWIN
- * 	int res;
- * 	res = posix_memalign(&buf, 32, size);
- * 	if(res!=0) {
- * 		if(res==ENOMEM)
- * 			error("insufficient memory to allocate buffer");
- * 		if(res==EINVAL)
- * 			error("invalid memory alignement to 32 bytes in buffer allocation");
- * 		return NULL;
- * 	}
+ *      int res;
+ *      res = posix_memalign(&buf, 32, size);
+ *      if(res!=0) {
+ *              if(res==ENOMEM)
+ *                      error("insufficient memory to allocate buffer");
+ *              if(res==EINVAL)
+ *                      error("invalid memory alignement to 32 bytes in buffer allocation");
+ *              return NULL;
+ *      }
  * #else
- * 	buf = malloc(size);
+ *      buf = malloc(size);
  * #endif
- * 	func("allocated %u bytes of memory at %p",size,buf);
- * 	return(buf);
+ *      func("allocated %u bytes of memory at %p",size,buf);
+ *      return(buf);
  * }
  */
 
@@ -139,6 +139,7 @@ bool set_rtpriority(bool max) {
     else
         return true;
 }
+
 #endif
 
 /* handle signals.
@@ -157,9 +158,8 @@ void jsleep(int sec, long nsec) {
     timespec timelap;
     timelap.tv_sec = sec;
     timelap.tv_nsec = nsec;
-    while(nanosleep(&timelap, rem) == -1 && (errno == EINTR));
+    while(nanosleep(&timelap, rem) == -1 && (errno == EINTR)) ;
 }
-
 
 /* small RTC interface by jaromil
    all comes from the Linux Kernel Documentation */
@@ -185,16 +185,18 @@ int rtc_open() {
     notice("realtime clock successfully initialized");
     return 1;
 }
+
 /* tick returns 0 if 1 second didn't passed since last tick,
    positive number if 1 second passed */
 unsigned long rtc_tick() {
     FD_ZERO(&readfds);
     FD_SET(rtcfd, &readfds);
-    if(! select(rtcfd + 1, &readfds, NULL, NULL, &rtctv))
-        return 0; /* a second didn't passed yet */
+    if(!select(rtcfd + 1, &readfds, NULL, NULL, &rtctv))
+        return 0;  /* a second didn't passed yet */
     read(rtcfd, &rtctime, sizeof(unsigned long));
     return rtctime;
 }
+
 void rtc_freq_set(unsigned long freq) {
     int res;
 
@@ -217,6 +219,7 @@ void rtc_freq_set(unsigned long freq) {
     }
 
 }
+
 void rtc_freq_wait() {
     int res;
     res = read(rtcfd, &rtctime, sizeof(unsigned long));
@@ -225,15 +228,17 @@ void rtc_freq_wait() {
         return;
     }
 }
+
 void rtc_close() {
     if(rtcfd <= 0) return;
     ioctl(rtcfd, RTC_UIE_OFF, 0);
     //  ioctl(rtcfd,RTC_PIE_OFF,0);
     close(rtcfd);
 }
+
 #endif
 
-void *(* jmemcpy)(void *to, const void *from, size_t len);
+void *(*jmemcpy)(void *to, const void *from, size_t len);
 
 
 bool filecheck(const char *file) {
@@ -251,3 +256,4 @@ bool dircheck(const char *dir) {
     else closedir(d);
     return(res);
 }
+

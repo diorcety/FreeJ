@@ -27,7 +27,7 @@
 
 #define PRIMES 11
 
-class GenLayer: public Layer {
+class GenLayer : public Layer {
 private:
 
     /* blossom vars */

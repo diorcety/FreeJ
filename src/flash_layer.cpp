@@ -41,6 +41,7 @@
 static void showUrl(char *url, char *target, void *client_data) {
     act("Flash showURL : %s", url);
 }
+
 static int readfile(const char *filename, char **buffer, long *size) {
     FILE *in;
     char *buf;
@@ -64,6 +65,7 @@ static int readfile(const char *filename, char **buffer, long *size) {
 
     return length;
 }
+
 static void getSwf(char *url, int level, void *client_data) {
     FlashHandle flashHandle;
     char *buffer;
@@ -99,8 +101,6 @@ FlashLayer::FlashLayer()
 FlashLayer::~FlashLayer() {
     close();
 }
-
-
 
 bool FlashLayer::open(const char *file) {
     char *tmpbuffer;
@@ -185,25 +185,25 @@ void FlashLayer::close() {
 // TODO parse SDL event here and fill in flash
 //    if (flag & FLASH_EVENT) {
 /* X to Flash event structure conversion
-  switch (event->type) {
-  case ButtonPress:
+   switch (event->type) {
+   case ButtonPress:
       fe.type = FeButtonPress;
       break;
-  case ButtonRelease:
+   case ButtonRelease:
       fe.type = FeButtonRelease;
       break;
-  case MotionNotify:
+   case MotionNotify:
       fe.type = FeMouseMove;
       fe.x = event->xmotion.x;
       fe.y = event->xmotion.y;
       break;
-  case Expose:
+   case Expose:
       fe.type = FeRefresh;
       break;
-  default:
+   default:
       fe.type = FeNone;
       break;
-  }*/
+   }*/
 //      fe.type = FeNone;
 //??      fe.type = FeRefresh;
 //    }

@@ -27,7 +27,7 @@
 
 #ifdef WITH_XGRAB
 
-class XGrabLayerJS: public XGrabLayer {
+class XGrabLayerJS : public XGrabLayer {
     XGrabLayerJS();
 };
 
@@ -39,7 +39,7 @@ DECLARE_CLASS_GC("XGrabLayer", js_xgrab_class, js_xgrab_constructor, js_layer_gc
 JS_CONSTRUCTOR("XGrabLayer", js_xgrab_constructor, XGrabLayerJS);
 
 JSFunctionSpec js_xgrab_methods[] = {
-    ENTRY_METHODS  ,
+    ENTRY_METHODS,
     {"open",      js_xgrab_open,  1},
     {"close",     js_xgrab_close, 1},
     {0}
@@ -52,7 +52,7 @@ JS(js_xgrab_constructor) {
     XGrabLayer *xg = new XGrabLayer();
 
     // initialize with javascript context
-    if(! xg->init(cx, obj)) {
+    if(!xg->init(cx, obj)) {
         error("failed initializing xgrab");
         delete xg;
         return JS_FALSE;
@@ -66,7 +66,7 @@ JS(js_xgrab_constructor) {
         }
     }
     // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)xg)) {
+    if(!JS_SetPrivate(cx, obj, (void*)xg)) {
         error("failed assigning xgrab controller to javascript");
         delete xg;
         return JS_FALSE;

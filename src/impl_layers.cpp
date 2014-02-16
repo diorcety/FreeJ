@@ -45,9 +45,9 @@ Layer *create_layer(Context *env, char *file) {
 
     /* check that file exists */
     if(strncasecmp(file, "/dev/", 5) != 0
-            && strncasecmp(file, "http://", 7) != 0
-            && strncasecmp(file, "ftp://", 6) != 0
-            && strncasecmp(file, "layer_", 6) != 0) {
+       && strncasecmp(file, "http://", 7) != 0
+       && strncasecmp(file, "ftp://", 6) != 0
+       && strncasecmp(file, "layer_", 6) != 0) {
         tmp = fopen(file, "r");
         if(!tmp) {
             error("can't open %s to create a Layer: %s",
@@ -95,153 +95,153 @@ Layer *create_layer(Context *env, char *file) {
 
     } else /* VIDEO LAYER */
 
-        if(((IS_VIDEO_EXTENSION(end_file_ptr)) | (IS_FIREWIRE_DEVICE(file_ptr)))) {
-            func("is a movie layer");
+    if(((IS_VIDEO_EXTENSION(end_file_ptr)) | (IS_FIREWIRE_DEVICE(file_ptr)))) {
+        func("is a movie layer");
 
-            // // MLT experiments
-            //       nlayer = new MovieLayer();
-            //       func("MovieLayer instantiated");
-            //       if(!nlayer->init(env)) {
-            //  	error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-            //  	delete nlayer; return NULL;
-            //       }
-            //       func("MovieLayer initialized");
-            //       if(!nlayer->open(file_ptr)) {
-            //  	error("create_layer : VIDEO open failed");
-            //  	delete nlayer; nlayer = NULL;
-            //       }
+        // // MLT experiments
+        //       nlayer = new MovieLayer();
+        //       func("MovieLayer instantiated");
+        //       if(!nlayer->init(env)) {
+        //      error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+        //      delete nlayer; return NULL;
+        //       }
+        //       func("MovieLayer initialized");
+        //       if(!nlayer->open(file_ptr)) {
+        //      error("create_layer : VIDEO open failed");
+        //      delete nlayer; nlayer = NULL;
+        //       }
 
 
 #ifdef WITH_FFMPEG
-            nlayer = new VideoLayer();
-            if(!nlayer->init()) {
-                error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-                delete nlayer;
-                return NULL;
-            }
-            if(!nlayer->open(file_ptr)) {
-                error("create_layer : VIDEO open failed");
-                delete nlayer;
-                nlayer = NULL;
-            }
+        nlayer = new VideoLayer();
+        if(!nlayer->init()) {
+            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+            delete nlayer;
+            return NULL;
+        }
+        if(!nlayer->open(file_ptr)) {
+            error("create_layer : VIDEO open failed");
+            delete nlayer;
+            nlayer = NULL;
+        }
 // #elif WITH_AVIFILE
 //       if( strncasecmp(file_ptr,"/dev/ieee1394/",14)==0)
-// 	  nlayer=NULL;
+//        nlayer=NULL;
 //       nlayer = new AviLayer();
 //       if(!nlayer->init( env )) {
-// 	error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-// 	delete nlayer; return NULL;
+//      error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+//      delete nlayer; return NULL;
 //       }
 //       if(!nlayer->open(file_ptr)) {
-// 	error("create_layer : AVI open failed");
-// 	delete nlayer; nlayer = NULL;
+//      error("create_layer : AVI open failed");
+//      delete nlayer; nlayer = NULL;
 //       }
 #else
-            error("VIDEO and AVI layer support not compiled");
-            act("can't load %s", file_ptr);
+        error("VIDEO and AVI layer support not compiled");
+        act("can't load %s", file_ptr);
 #endif
 // } else /* Audio LAYER */
 //     if(strncasecmp(file_ptr,"/tmp/test",9)==0) {
 //       nlayer = new AudioLayer();
 //       if(!nlayer->init( env )) {
-// 	error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-// 	delete nlayer; return NULL;
+//      error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+//      delete nlayer; return NULL;
 //       }
 //       if(!nlayer->open(file_ptr)) {
-// 	  error("create_layer : Audio open failed");
-// 	  delete nlayer; nlayer = NULL;
+//        error("create_layer : Audio open failed");
+//        delete nlayer; nlayer = NULL;
 //       }
-        } else /* IMAGE LAYER */
-            if((IS_IMAGE_EXTENSION(end_file_ptr))) {
+    } else     /* IMAGE LAYER */
+    if((IS_IMAGE_EXTENSION(end_file_ptr))) {
 //		strncasecmp((end_file_ptr-4),".png",4)==0)
-                nlayer = new ImageLayer();
-                if(!nlayer->init()) {
-                    error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-                    delete nlayer;
-                    return NULL;
-                }
-                if(!nlayer->open(file_ptr)) {
-                    error("create_layer : IMG open failed");
-                    delete nlayer;
-                    nlayer = NULL;
-                }
-            } else /* TXT LAYER */
-                if(strncasecmp((end_file_ptr - 4), ".txt", 4) == 0) {
+        nlayer = new ImageLayer();
+        if(!nlayer->init()) {
+            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+            delete nlayer;
+            return NULL;
+        }
+        if(!nlayer->open(file_ptr)) {
+            error("create_layer : IMG open failed");
+            delete nlayer;
+            nlayer = NULL;
+        }
+    } else         /* TXT LAYER */
+    if(strncasecmp((end_file_ptr - 4), ".txt", 4) == 0) {
 #if defined WITH_TEXTLAYER
-                    nlayer = new TextLayer();
+        nlayer = new TextLayer();
 
-                    if(!nlayer->init(env)) {
-                        error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-                        delete nlayer;
-                        return NULL;
-                    }
+        if(!nlayer->init(env)) {
+            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+            delete nlayer;
+            return NULL;
+        }
 
-                    if(!nlayer->open(file_ptr)) {
-                        error("create_layer : TXT open failed");
-                        delete nlayer;
-                        nlayer = NULL;
-                    }
+        if(!nlayer->open(file_ptr)) {
+            error("create_layer : TXT open failed");
+            delete nlayer;
+            nlayer = NULL;
+        }
 #else
-                    error("TXT layer support not compiled");
-                    act("can't load %s", file_ptr);
-                    return(NULL);
+        error("TXT layer support not compiled");
+        act("can't load %s", file_ptr);
+        return(NULL);
 #endif
 
-                } else /* XSCREENSAVER LAYER */
-                    if(strstr(file_ptr, "xscreensaver")) {
+    } else             /* XSCREENSAVER LAYER */
+    if(strstr(file_ptr, "xscreensaver")) {
 #ifdef WITH_XSCREENSAVER
-                        nlayer = new XScreenSaverLayer();
+        nlayer = new XScreenSaverLayer();
 
-                        if(!nlayer->init(env)) {
-                            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-                            delete nlayer;
-                            return NULL;
-                        }
+        if(!nlayer->init(env)) {
+            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+            delete nlayer;
+            return NULL;
+        }
 
-                        if(!nlayer->open(file_ptr)) {
-                            error("create_layer : XScreenSaver open failed");
-                            delete nlayer;
-                            nlayer = NULL;
-                        }
+        if(!nlayer->open(file_ptr)) {
+            error("create_layer : XScreenSaver open failed");
+            delete nlayer;
+            nlayer = NULL;
+        }
 #else
-                        error("no xscreensaver layer support");
-                        act("can't load %s", file_ptr);
-                        return(NULL);
+        error("no xscreensaver layer support");
+        act("can't load %s", file_ptr);
+        return(NULL);
 #endif
-                    }  else if(strncasecmp(file_ptr, "layer_goom", 10) == 0) {
+    }  else if(strncasecmp(file_ptr, "layer_goom", 10) == 0) {
 
 #ifdef WITH_GOOM
-                        nlayer = new GoomLayer();
+        nlayer = new GoomLayer();
 
-                        if(!nlayer->init(env)) {
-                            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-                            delete nlayer;
-                            return NULL;
-                        }
+        if(!nlayer->init(env)) {
+            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+            delete nlayer;
+            return NULL;
+        }
 #else
-                        error("goom layer not supported");
-                        return(NULL);
+        error("goom layer not supported");
+        return(NULL);
 #endif
 
 
-                    }
+    }
 #ifdef WITH_FLASH
-                    else if(strncasecmp(end_file_ptr - 4, ".swf", 4) == 0) {
+    else if(strncasecmp(end_file_ptr - 4, ".swf", 4) == 0) {
 
-                        nlayer = new FlashLayer();
-                        if(!nlayer->init(env)) {
-                            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
-                            delete nlayer;
-                            return NULL;
-                        }
+        nlayer = new FlashLayer();
+        if(!nlayer->init(env)) {
+            error("failed initialization of layer %s for %s", nlayer->name, file_ptr);
+            delete nlayer;
+            return NULL;
+        }
 
-                        if(!nlayer->open(file_ptr)) {
-                            error("create_layer : SWF open failed");
-                            delete nlayer;
-                            nlayer = NULL;
-                        }
+        if(!nlayer->open(file_ptr)) {
+            error("create_layer : SWF open failed");
+            delete nlayer;
+            nlayer = NULL;
+        }
 
-                    }
+    }
 #endif
 //   else { /* FALLBACK TO SCROLL LAYER */
 
@@ -254,8 +254,8 @@ Layer *create_layer(Context *env, char *file) {
 //     }
 
 //        if(!nlayer->open(file_ptr)) {
-// 	 error("create_layer : SCROLL open failed");
-// 	 delete nlayer; nlayer = NULL;
+//       error("create_layer : SCROLL open failed");
+//       delete nlayer; nlayer = NULL;
 //        }
 
 //   }

@@ -44,7 +44,7 @@ private:
     struct v4l2_format m_format;
 };
 
-class V4L2CamLayer: public Layer {
+class V4L2CamLayer : public Layer {
 public:
     V4L2CamLayer();
     ~V4L2CamLayer();
@@ -67,8 +67,8 @@ private:
     int framenum;
     void *frame;
 
-    int	nb_sizes;
-    Res	*m_res;
+    int nb_sizes;
+    Res *m_res;
     struct v4l2_frmsizeenum framesize;
     struct v4l2_capability capability;
     struct v4l2_fmtdesc fmtdesc;

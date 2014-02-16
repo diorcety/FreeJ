@@ -27,7 +27,7 @@
 
 #include <context.h>
 
-class OpenCVCamLayer: public Layer {
+class OpenCVCamLayer : public Layer {
 
 public:
     OpenCVCamLayer();

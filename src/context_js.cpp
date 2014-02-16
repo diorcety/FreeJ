@@ -41,8 +41,8 @@ JSFunctionSpec global_functions[] = {
     {"cafudda",         cafudda,                1},
     {"run",             cafudda,                1},
     {"quit",            quit,                   0},
-    {"add_screen",	add_screen,		1},
-    {"rem_screen",	rem_screen,		1},
+    {"add_screen",      add_screen,             1},
+    {"rem_screen",      rem_screen,             1},
     {"add_layer",       ctx_add_layer,          1},
     //    {"selected_layer",  selected_screen,        0},
     {"debug",           debug,                  1},
@@ -69,11 +69,11 @@ JSFunctionSpec global_functions[] = {
     {"rem_controller",  rem_controller, 1},
     {"register_encoder", register_encoder, 1},
     {"include",         include_javascript_file, 1},
-    {"use",		execute_javascript_command, 1},
+    {"use",             execute_javascript_command, 1},
     {"exec",            system_exec,            1},
     {"list_filters",    list_filters,           0},
-    {"gc",		js_gc,			0},
-    {"reset",		reset_js,		0},
+    {"gc",              js_gc,                  0},
+    {"reset",           reset_js,               0},
     {0}
 };
 
@@ -346,30 +346,31 @@ JS(set_resolution) {
 }
 
 /*
-JS(stream_start) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  notice ("Streaming to %s:%u",global_environment->shouter->host(), global_environment->shouter->port());
-  act ("Saving to %s", env -> video_encoder -> get_filename());
-  global_environment->save_to_file = true;
-  return JS_TRUE;
-}
-JS(stream_stop) {
-  func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
-  ::notice ("Stopped stream to %s:%u", global_environment->shouter->host(), global_environment->shouter->port());
-  ::act ("Video saved in file %s",env -> video_encoder -> get_filename());
-  global_environment->save_to_file = false;
-  return JS_TRUE;
-}
-*/
+   JS(stream_start) {
+   func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+   notice ("Streaming to %s:%u",global_environment->shouter->host(), global_environment->shouter->port());
+   act ("Saving to %s", env -> video_encoder -> get_filename());
+   global_environment->save_to_file = true;
+   return JS_TRUE;
+   }
+   JS(stream_stop) {
+   func("%u:%s:%s",__LINE__,__FILE__,__FUNCTION__);
+   ::notice ("Stopped stream to %s:%u", global_environment->shouter->host(), global_environment->shouter->port());
+   ::act ("Video saved in file %s",env -> video_encoder -> get_filename());
+   global_environment->save_to_file = false;
+   return JS_TRUE;
+   }
+ */
 #if defined (HAVE_DARWIN) || defined (HAVE_FREEBSD)
 static int dir_selector(struct dirent *dir)
 #else
 static int dir_selector(const struct dirent *dir)
 #endif
 {
-    if(dir->d_name[0] == '.') return(0); // remove hidden files
+    if(dir->d_name[0] == '.') return(0);  // remove hidden files
     return(1);
 }
+
 JS(freej_scandir) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     JSObject *arr;
@@ -531,11 +532,11 @@ JS(file_to_strings) {
         // word found, now reach its end
         pword = punt;
         while(isgraph(*punt)
-                && *punt != ' '
-                && *punt != '\0'
-                && *punt != '\n'
-                && *punt != '\r'
-                && *punt != '\t') {
+              && *punt != ' '
+              && *punt != '\0'
+              && *punt != '\n'
+              && *punt != '\r'
+              && *punt != '\t') {
             if(punt - buf >= len) // end of chunk reached
                 break;
             else punt++;
@@ -573,17 +574,17 @@ JS(rand) {
 
     return JS_NewNumberValue(cx, randval, rval);
     /*
-    r = rand();
+       r = rand();
 
-    if(argc<1) *rval = 1+(int)(r/(RAND_MAX+1.0));
-    else {
-    jsdouble max = js_get_double(argv[0]);
-      JS_ARG_NUMBER(max, 0);
-      func("randomizing with max %f",max);
-      r = 1+(int)(max*r/(RAND_MAX+1.0));
-      *rval = INT_TO_JSVAL(r);
-    }
-    */
+       if(argc<1) *rval = 1+(int)(r/(RAND_MAX+1.0));
+       else {
+       jsdouble max = js_get_double(argv[0]);
+       JS_ARG_NUMBER(max, 0);
+       func("randomizing with max %f",max);
+       r = 1+(int)(max*r/(RAND_MAX+1.0));
+       *rval = INT_TO_JSVAL(r);
+       }
+     */
 }
 
 JS(srand) {
@@ -613,7 +614,7 @@ JS(entry_down) {
 
     GET_LAYER(Layer);
 
-    if(! lay->down())
+    if(!lay->down())
         warning("cannot move %s down", lay->getName().c_str());
 
     return JS_TRUE;
@@ -623,7 +624,7 @@ JS(entry_up) {
 
     GET_LAYER(Layer);
 
-    if(! lay->up())
+    if(!lay->up())
         warning("cannot move %s up", lay->getName().c_str());
 
     return JS_TRUE;
@@ -635,7 +636,7 @@ JS(entry_move) {
     GET_LAYER(Layer);
 
     int pos = JSVAL_TO_INT(argv[0]);
-    if(! lay->move(pos))
+    if(!lay->move(pos))
         warning("cannot move %s to position %u", lay->getName().c_str(), pos);
 
     return JS_TRUE;
@@ -717,7 +718,7 @@ JS(include_javascript_file) {
 
     JsParser *js = (JsParser *)JS_GetContextPrivate(cx);
 
-    if(! js->include(cx, jscript))
+    if(!js->include(cx, jscript))
         error("javascript include not found: \"%s\"", jscript);
 
     // if its the first script loaded, save it as main one
@@ -807,15 +808,15 @@ JS(reset_js) {
     //	func("garbage collection of jsparser");
     //	js->reset();
 
-// 	if(argc == 1) {
+//      if(argc == 1) {
 //	char *jscript = js_get_string(argv[0]);
-// 		if (js->open(jscript) == 0) {
-// 			error("JS reset('%s') failed", jscript);
-// 			*rval = JSVAL_FALSE;
-// 			return JS_FALSE;
-// 		}
-// 	}
-// 	JS_GC(cx);
+//              if (js->open(jscript) == 0) {
+//                      error("JS reset('%s') failed", jscript);
+//                      *rval = JSVAL_FALSE;
+//                      return JS_FALSE;
+//              }
+//      }
+//      JS_GC(cx);
     // if called by a controller, it must then return true
     // otherwise rehandling it's event can be endless loop
     return JS_TRUE;

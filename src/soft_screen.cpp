@@ -82,12 +82,12 @@ void SoftScreen::blit(Layer *src) {
     play = (uint32_t*) src->buffer   + b->lay_offset;
 
     // iterates the blit on each horizontal line
-    for(c = b->lay_height ; c > 0 ; c--) {
+    for(c = b->lay_height; c > 0; c--) {
 
         (*b->fun)
-        ((void*)play, (void*)pscr,
-         b->lay_bytepitch,// * src->geo.bpp>>3,
-         &b->parameters);
+            ((void*)play, (void*)pscr,
+            b->lay_bytepitch, // * src->geo.bpp>>3,
+            &b->parameters);
 
         // strides down to the next line
         pscr += b->scr_stride + b->lay_pitch;

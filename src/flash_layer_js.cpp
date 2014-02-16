@@ -32,7 +32,7 @@ DECLARE_CLASS_GC("FlashLayer", flash_layer_class, flash_layer_constructor, js_la
 /////////////////////////////////
 // Flash Layer methods
 JSFunctionSpec flash_layer_methods[] = {
-    ENTRY_METHODS ,
+    ENTRY_METHODS,
     {     "open",          flash_layer_open,             1},
     {0}
 };
@@ -57,7 +57,7 @@ JS(flash_layer_open) {
         return JS_FALSE;
     }
 
-    if(! lay->open(file)) {
+    if(!lay->open(file)) {
         error("can't open %s in layer %s", file, lay->name);
         return JS_FALSE;
     }

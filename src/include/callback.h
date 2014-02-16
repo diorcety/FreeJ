@@ -56,8 +56,12 @@ namespace callbacks {
 
 class CbackData {
 public:
-    CbackData(std::string name) : name_(name) {}
-    virtual ~CbackData() { }
+    CbackData(std::string name) : name_(name) {
+    }
+
+    virtual ~CbackData() {
+    }
+
     const std::string& name() const {
         return name_;
     }
@@ -71,7 +75,9 @@ public:
     typedef void (*FunctionType)();
 
     CbackDataFun0(std::string name, FunctionType function)
-        : CbackData(name), function_(function) {}
+        : CbackData(name), function_(function) {
+    }
+
     ~CbackDataFun0() {
         calls_.clear();
     }
@@ -104,7 +110,7 @@ public:
 
     void notify(ThreadedClosureQueue *dispatcher) {
         std::list<FunctionType>::iterator i;
-        for(i = calls_.begin() ; i != calls_.end() ; i++)
+        for(i = calls_.begin(); i != calls_.end(); i++)
             dispatcher->add_job(NewClosure(*i));
     }
 
@@ -112,7 +118,7 @@ private:
     FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
         std::list<FunctionType>::iterator i;
-        for(i = calls_.begin() ; i != calls_.end() ; i++)
+        for(i = calls_.begin(); i != calls_.end(); i++)
             if(*i == call) fun = call;
         return fun;
     }
@@ -127,7 +133,9 @@ public:
     typedef void (*FunctionType)(Arg1);
 
     CbackDataFun1(std::string name, FunctionType function)
-        : CbackData(name), function_(function) {}
+        : CbackData(name), function_(function) {
+    }
+
     ~CbackDataFun1() {
         calls_.clear();
     }
@@ -160,7 +168,7 @@ public:
 
     void notify(ThreadedClosureQueue *dispatcher, Arg1 arg1) {
         typename std::list<FunctionType>::iterator i;
-        for(i = calls_.begin() ; i != calls_.end() ; i++)
+        for(i = calls_.begin(); i != calls_.end(); i++)
             dispatcher->add_job(NewClosure(*i, arg1));
     }
 
@@ -168,7 +176,7 @@ private:
     FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
         typename std::list<FunctionType>::iterator i;
-        for(i = calls_.begin() ; i != calls_.end() ; i++)
+        for(i = calls_.begin(); i != calls_.end(); i++)
             if(*i == call) fun = call;
         return fun;
     }
@@ -185,6 +193,7 @@ public:
     CallbackHandler() {
         dispatcher_ = new ThreadedClosureQueue();
     }
+
     ~CallbackHandler() {
         cbacks_.clear();
         delete dispatcher_;
@@ -290,12 +299,11 @@ public:
         return true;
     }
 
-
 private:
     callbacks::CbackData *get_data_(const std::string& name) {
         callbacks::CbackData *c = NULL;
         std::list<callbacks::CbackData*>::iterator i;
-        for(i = cbacks_.begin() ; i != cbacks_.end() ; i++)
+        for(i = cbacks_.begin(); i != cbacks_.end(); i++)
             if((*i)->name() == name) c = *i;
         return c;
     }
@@ -315,7 +323,8 @@ public:
     void enqueue();
     void dequeue();
 
-    virtual void callback() {};
+    virtual void callback() {
+    };
 
 private:
     pthread_mutex_t pending_; // used as a flag to block destructor if a call

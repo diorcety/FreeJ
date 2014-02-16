@@ -27,7 +27,7 @@
 
 #ifdef WITH_MIDI
 
-class MidiControllerJS: public MidiController {
+class MidiControllerJS : public MidiController {
 public:
     virtual int event_ctrl(int channel, int param, int value);
     virtual int event_pitch(int channel, int param, int value);
@@ -110,12 +110,12 @@ JS(js_midi_ctrl_constructor) {
     MidiController *midi = new MidiControllerJS();
     // assign instance into javascript object
     // initialize with javascript context
-    if(! midi->init(global_environment)) {
+    if(!midi->init(global_environment)) {
         error("failed initializing midi controller");
         delete midi;
         return JS_FALSE;
     }
-    if(! JS_SetPrivate(cx, obj, (void*)midi)) {
+    if(!JS_SetPrivate(cx, obj, (void*)midi)) {
         error("failed assigning midi controller to javascript");
         delete midi;
         return JS_FALSE;

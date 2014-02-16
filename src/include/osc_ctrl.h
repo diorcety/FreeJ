@@ -29,14 +29,14 @@
 
 class Context;
 
-class OscCommand: public Entry {
+class OscCommand : public Entry {
 public:
     // osc_cmd is Entry::name
     char proto_cmd[128];
     char js_cmd[512];
 };
 
-class OscController: public Controller {
+class OscController : public Controller {
 
 public:
     OscController();

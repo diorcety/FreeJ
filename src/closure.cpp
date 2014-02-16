@@ -68,8 +68,6 @@ void ClosureQueue::do_jobs() {
     }
 }
 
-
-
 ThreadedClosureQueue::ThreadedClosureQueue() {
     int r;
     running_ = true;

@@ -67,7 +67,6 @@ TextLayer::TextLayer()
     }
 }
 
-
 TextLayer::~TextLayer() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
 //   close();
@@ -87,7 +86,7 @@ bool TextLayer::_init() {
     // in fact the size is changing at every new print
     // so we'll call the Layer::_init(wdt,hgt) many times
 
-    if(! TTF_WasInit())
+    if(!TTF_WasInit())
         TTF_Init();
 
     set_font("sans"); // just try one..

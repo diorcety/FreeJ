@@ -20,7 +20,7 @@
 /**
    @file layer.h
    @brief FreeJ generic Layer interface
-*/
+ */
 
 #ifndef __LAYER_H__
 #define __LAYER_H__
@@ -77,8 +77,8 @@ class JSContext;
    - Layer::geo
 
    @brief Provides input to the Context
-*/
-class Layer: public Entry, public JSyncThread {
+ */
+class Layer : public Entry, public JSyncThread {
     friend class Blitter;
     friend class Context;
     friend class JSyncThread;
@@ -104,7 +104,7 @@ public:
 
     /**
        Start the layer thread
-    */
+     */
     virtual int start() {
         return JSyncThread::start();
     }
@@ -116,7 +116,7 @@ public:
     /**
        Open a file or resource for the layer
        @param file string describing the path to the file, can be also an url
-    */
+     */
     virtual bool open(const char *file); ///< open the file - called BEFORE Layer::_init (not all layers 'open' files - xnt)
 
 
@@ -137,7 +137,7 @@ public:
        coordinates refer to the upper left corner
        @param x horizontal coordinate
        @param y vertical coordinate
-    */
+     */
     virtual void set_position(int x, int y);
     virtual int get_x_position() const;
     virtual void set_x_position(int x);
@@ -150,7 +150,7 @@ public:
        the coordinates are floats, original size is 1.0
        @param x horizontal zoom float coefficient (default 1.0)
        @param y vertical zoom float coefficient (default 1.0)
-    */
+     */
     virtual void set_zoom(double x, double y); ///< Zoom (resize) a Layer
     /**
        Degrees of rotation
@@ -219,8 +219,8 @@ public:
     void *js_constructor(Context *env, JSContext *cx,
                          JSObject *obj, int argc, void *aargv, char *err_msg);
 #endif //WITH_JAVASCRIPT
-    ///< javascript layer constructor
-    //  void layer_gc(JSContext *cx, JSObject *obj);
+       ///< javascript layer constructor
+       //  void layer_gc(JSContext *cx, JSObject *obj);
 
     unsigned int textureID; ///< opengl texture id
 

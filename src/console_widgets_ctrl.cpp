@@ -40,7 +40,8 @@ SlwTitle::SlwTitle()
     env = NULL;
 }
 
-SlwTitle::~SlwTitle() { }
+SlwTitle::~SlwTitle() {
+}
 
 bool SlwTitle::init() {
 
@@ -69,7 +70,6 @@ bool SlwTitle::refresh() {
 
     return(true);
 }
-
 
 ////////////////////////////////////////////////
 
@@ -116,11 +116,11 @@ bool SlwSelector::feed(int key) {
 
         case SL_KEY_UP:
 
-            if(!fe) break; // no filter
+            if(!fe) break;  // no filter
 
             fe = fe->prev; // take the upper one
             ((Layer*)le)->filters.sel(0); // deselect all filters
-            if(fe) fe->sel(true); // select only the current
+            if(fe) fe->sel(true);  // select only the current
 
             break;
 
@@ -128,7 +128,7 @@ bool SlwSelector::feed(int key) {
 
             if(!fe) {
                 fe = ((Layer*)le)->filters.begin();
-                if(!fe) break; // no filters
+                if(!fe) break;  // no filters
                 else fe->sel(true);
             } else if(fe->next) {
                 fe = fe->next;
@@ -182,13 +182,13 @@ bool SlwSelector::feed(int key) {
         case SL_KEY_PPAGE:
         case KEY_PLUS:
             if(fe) fe->up();
-            else   le->up();
+            else le->up();
             break;
 
         case SL_KEY_NPAGE:
         case KEY_MINUS:
             if(fe) fe->down();
-            else   le->down();
+            else le->down();
             break;
 
         case SL_KEY_DELETE:
@@ -204,9 +204,9 @@ bool SlwSelector::feed(int key) {
             break;
 
         case KEY_SPACE:
-            if(fe)((FilterInstance*)fe)->active =
+            if(fe) ((FilterInstance*)fe)->active =
                     !((FilterInstance*)fe)->active;
-            else((Layer*)le)->active =
+            else ((Layer*)le)->active =
                     !((Layer*)le)->active;
             break;
 

@@ -87,7 +87,7 @@ bool DumbCallback::rem_call(DumbCall *call) {
 
 void DumbCallback::notify() {
     std::list<DumbCall *>::iterator i;
-    for(i = calls_.begin() ; i != calls_.end() ; i++) {
+    for(i = calls_.begin(); i != calls_.end(); i++) {
         (*i)->enqueue();
         dispatcher_->add_job(NewClosure(*i, &DumbCall::notify));
     }
@@ -96,7 +96,7 @@ void DumbCallback::notify() {
 DumbCall *DumbCallback::get_call_(DumbCall *call) {
     DumbCall *fun = NULL;
     std::list<DumbCall *>::iterator i;
-    for(i = calls_.begin() ; i != calls_.end() ; i++)
+    for(i = calls_.begin(); i != calls_.end(); i++)
         if(*i == call) fun = call;
     return fun;
 }

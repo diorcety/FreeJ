@@ -51,3 +51,4 @@ void setup_past_blits(Blitter *blitter) {
     b->past_fun = past_absdiff;
     blitlist.prepend(b);
 }
+

@@ -51,9 +51,9 @@ bool SdlXvScreen::init(int width, int height) {
         return false;
 
     scr = SDL_SetVideoMode
-          (width, height, 0,
-           SDL_HWSURFACE |                // SDL_ASYNCBLIT |
-           SDL_DOUBLEBUF | SDL_HWACCEL);
+              (width, height, 0,
+              SDL_HWSURFACE |             // SDL_ASYNCBLIT |
+              SDL_DOUBLEBUF | SDL_HWACCEL);
     //SDL_RESIZABLE );
     if(!scr) {
         error("%s", SDL_GetError());
@@ -77,12 +77,12 @@ bool SdlXvScreen::init(int width, int height) {
     }
 
     /*
-    if (yuv_overlay->pitches[0] != yuv_overlay->pitches[1] * 2
-        || yuv_overlay->pitches[0] != yuv_overlay->pitches[2] * 2) {
-      error("SDL returned non YUV 420 overlay");
-      return false;
-    }
-    */
+       if (yuv_overlay->pitches[0] != yuv_overlay->pitches[1] * 2
+     || yuv_overlay->pitches[0] != yuv_overlay->pitches[2] * 2) {
+       error("SDL returned non YUV 420 overlay");
+       return false;
+       }
+     */
 
     anal = malloc(w * h * 4);
 
@@ -165,21 +165,22 @@ void *SdlXvScreen::coords(int x, int y) {
 }
 
 /*
-bool SdlXvScreen::update(void *buf) {
-  if(!yuv_lock()) return false;
+   bool SdlXvScreen::update(void *buf) {
+   if(!yuv_lock()) return false;
 
-  ccvt_rgb32_bgr24(w, h, buf, anal);
-  ccvt_bgr24_420p(w, h, anal,
-		  yuv_overlay->pixels[0], // y
-		  yuv_overlay->pixels[2], // v
-		  yuv_overlay->pixels[1]);// u
-  yuv_unlock();
-  SDL_DisplayYUVOverlay(yuv_overlay, &rect);
-  //memcpy(scr->pixels,buf,size);
-  return(true);
-}
-*/
+   ccvt_rgb32_bgr24(w, h, buf, anal);
+   ccvt_bgr24_420p(w, h, anal,
+                  yuv_overlay->pixels[0], // y
+                  yuv_overlay->pixels[2], // v
+                  yuv_overlay->pixels[1]);// u
+   yuv_unlock();
+   SDL_DisplayYUVOverlay(yuv_overlay, &rect);
+   //memcpy(scr->pixels,buf,size);
+   return(true);
+   }
+ */
 
 void SdlXvScreen::clear() {
     /* TODO */
 }
+

@@ -25,7 +25,7 @@
 
 #include <mouse_ctrl.h>
 
-class MouseControllerJS: public MouseController {
+class MouseControllerJS : public MouseController {
     virtual int motion(int state, int x, int y, int xrel, int yrel);
     virtual int button(int button, int state, int x, int y);
 };
@@ -57,7 +57,6 @@ int MouseControllerJS::button(int button, int state, int x, int y) {
     return(1);
 }
 
-
 JS(js_mouse_ctrl_constructor);
 
 DECLARE_CLASS("MouseController", js_mouse_ctrl_class, js_mouse_ctrl_constructor);
@@ -66,26 +65,27 @@ JSBool js_add_p(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     func("add prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
     return JS_TRUE;
 }
+
 JSBool js_del_p(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     func("del prop: %s %s", JS_GetStringBytes(JS_ValueToString(cx, id)), JS_GetStringBytes(JS_ValueToString(cx, *vp)));
     return JS_TRUE;
 }
 
 // JSClass js_mouse_ctrl_class = {
-// 	"MouseController", JSCLASS_HAS_PRIVATE,
-// 	//	js_add_p,  js_del_p, // add, del
-// 	JS_PropertyStub,  JS_PropertyStub,
+//      "MouseController", JSCLASS_HAS_PRIVATE,
+//      //	js_add_p,  js_del_p, // add, del
+//      JS_PropertyStub,  JS_PropertyStub,
 
-// 	JS_PropertyStub,  JS_PropertyStub,
-// 	JS_EnumerateStub, JS_ResolveStub,
-// 	JS_ConvertStub,   js_ctrl_gc,
-// 	NULL,   NULL,
-// 	js_mouse_ctrl_constructor
+//      JS_PropertyStub,  JS_PropertyStub,
+//      JS_EnumerateStub, JS_ResolveStub,
+//      JS_ConvertStub,   js_ctrl_gc,
+//      NULL,   NULL,
+//      js_mouse_ctrl_constructor
 // };
 //static JSClass *jsclass_s = &js_mouse_ctrl_class;
 
 JSFunctionSpec js_mouse_ctrl_methods[] = {
-    {"grab",	js_mouse_grab,	1},
+    {"grab",    js_mouse_grab,  1},
     {0}
 };
 
@@ -112,14 +112,14 @@ JS(js_mouse_ctrl_constructor) {
     MouseController *mouse = new MouseControllerJS();
 
     // initialize with javascript context
-    if(! mouse->init(global_environment)) {
+    if(!mouse->init(global_environment)) {
         error("failed initializing mouse controller");
         delete mouse;
         return JS_FALSE;
     }
 
     // assign instance into javascript object
-    if(! JS_SetPrivate(cx, obj, (void*)mouse)) {
+    if(!JS_SetPrivate(cx, obj, (void*)mouse)) {
         error("failed assigning mouse controller to javascript");
         delete mouse;
         return JS_FALSE;

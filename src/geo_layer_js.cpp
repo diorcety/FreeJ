@@ -25,7 +25,7 @@
 #include <config.h>
 #include <geo_layer.h>
 
-class GeoLayerJS: public GeoLayer {
+class GeoLayerJS : public GeoLayer {
     GeoLayerJS();
 };
 
@@ -39,7 +39,7 @@ DECLARE_CLASS_GC("GeometryLayer", geometry_layer_class, geometry_layer_construct
 // Geometry Layer methods
 
 JSFunctionSpec geometry_layer_methods[] = {
-    ENTRY_METHODS  ,
+    ENTRY_METHODS,
     { "clear",          geometry_layer_clear,          0 },
     { "color",          geometry_layer_color,          4 },
     { "pixel",          geometry_layer_pixel,          2 },
@@ -72,14 +72,14 @@ JS_CONSTRUCTOR("GeometryLayer", geometry_layer_constructor, GeoLayerJS);
 
 /// color handling, a macro and some overloading tricks
 #define OPTIONAL_COLOR_ARG(num) \
-  uint32_t color; \
-  if( argc>=(num+1) ) { \
-    if(JSVAL_IS_DOUBLE(argv[num])) \
-      color = (uint32_t) *(JSVAL_TO_DOUBLE(argv[num])); \
-    else \
-      color = (uint32_t) (JSVAL_TO_INT(argv[num])); \
-  } else \
-    color = lay->get_color();
+    uint32_t color; \
+    if( argc>=(num+1) ) { \
+        if(JSVAL_IS_DOUBLE(argv[num])) \
+            color = (uint32_t) *(JSVAL_TO_DOUBLE(argv[num])); \
+        else \
+            color = (uint32_t) (JSVAL_TO_INT(argv[num])); \
+    } else \
+        color = lay->get_color();
 
 JS(geometry_layer_clear) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);

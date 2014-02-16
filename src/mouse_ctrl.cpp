@@ -42,20 +42,19 @@ MouseController::~MouseController() {
     active = false; // ungrab ... ;)
 }
 
-
 // activate is removed from controller
 // bool active is operated directly
 // this solves a problem with swig and virtual inheritance...
 // hopefully removing the flush data here won't hurt!
 
 // bool MouseController::activate(bool state) {
-// 	bool old = active;
-// 	active = state;
-// 	if (state == false) {
-// 		SDL_ShowCursor(1);
-// 		SDL_WM_GrabInput(SDL_GRAB_OFF);
-// 	}
-// 	return old;
+//      bool old = active;
+//      active = state;
+//      if (state == false) {
+//              SDL_ShowCursor(1);
+//              SDL_WM_GrabInput(SDL_GRAB_OFF);
+//      }
+//      return old;
 // }
 
 int MouseController::poll() {
@@ -64,20 +63,20 @@ int MouseController::poll() {
 }
 
 /*
-typedef struct{
-  Uint8 type;  SDL_MOUSEMOTION
-  Uint8 state; SDL_PRESSED or SDL_RELEASED
-  Uint16 x, y;
-  Sint16 xrel, yrel;
-} SDL_MouseMotionEvent;
+   typedef struct{
+   Uint8 type;  SDL_MOUSEMOTION
+   Uint8 state; SDL_PRESSED or SDL_RELEASED
+   Uint16 x, y;
+   Sint16 xrel, yrel;
+   } SDL_MouseMotionEvent;
 
-typedef struct{
-  Uint8 type;  SDL_MOUSEBUTTONDOWN or SDL_MOUSEBUTTONUP
-  Uint8 button; 1 - ...
-  Uint8 state; SDL_PRESSED or SDL_RELEASED
-  Uint16 x, y;
-} SDL_MouseButtonEvent;
-*/
+   typedef struct{
+   Uint8 type;  SDL_MOUSEBUTTONDOWN or SDL_MOUSEBUTTONUP
+   Uint8 button; 1 - ...
+   Uint8 state; SDL_PRESSED or SDL_RELEASED
+   Uint16 x, y;
+   } SDL_MouseButtonEvent;
+ */
 
 int MouseController::motion(int state, int x, int y, int xrel, int yrel) {
     return 0;
@@ -106,3 +105,4 @@ void MouseController::grab(bool state) {
         SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 }
+

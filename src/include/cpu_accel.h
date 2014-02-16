@@ -24,7 +24,7 @@
    License along with this library; if not, write to the
    Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
-*/
+ */
 
 /*
  * cpu_accel.c
@@ -74,7 +74,7 @@
 #define MM_MMXEXT               MM_ACCEL_X86_MMXEXT
 #define MM_SSE                  MM_ACCEL_X86_SSE
 #define MM_SSE2                 MM_ACCEL_X86_SSE2
-#define __u32			uint32
+#define __u32                   uint32
 
 typedef uint32_t __u32;
 

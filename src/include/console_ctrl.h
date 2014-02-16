@@ -25,11 +25,13 @@
 #include <linklist.h>
 
 
-class ConsoleController: public Controller {
+class ConsoleController : public Controller {
 public:
 
-    ConsoleController() : Controller() {};
-    virtual ~ConsoleController() {};
+    ConsoleController() : Controller() {
+    };
+    virtual ~ConsoleController() {
+    };
     virtual bool console_init() = 0;
 
     virtual int poll() = 0;

@@ -33,7 +33,7 @@
 
 class Context;
 
-class Theora11Encoder: public Videoencoder {
+class Theora11Encoder : public Videoencoder {
 
 
 public:
@@ -54,24 +54,24 @@ private:
     int encode_audio(int end_of_stream);
 
     /* ogg_stream_state takes physical pages, weld into a logical stream
-      of packets, used for skeleton stream */
+       of packets, used for skeleton stream */
 
     ogg_stream_state vo; ///< logical stream
     ogg_stream_state to; ///< logical stream
     ogg_stream_state so; ///< logical stream
 
-    ogg_page         og; ///< one Ogg bitstream page.  Vorbis packets are inside
-    ogg_packet       op; ///< one raw packet of data for decode
+    ogg_page og;         ///< one Ogg bitstream page.  Vorbis packets are inside
+    ogg_packet op;       ///< one raw packet of data for decode
 
     th_enc_ctx      *td; ///< Theora encoder context
-    th_info          ti; ///< Theora info (video bitstream settings)
-    th_comment       tc; ///< Theora comment
+    th_info ti;          ///< Theora info (video bitstream settings)
+    th_comment tc;       ///< Theora comment
 
-    vorbis_info      vi; ///< Vorbis info (audio bitstream settings)
-    vorbis_comment   vc; ///< comments
+    vorbis_info vi;      ///< Vorbis info (audio bitstream settings)
+    vorbis_comment vc;   ///< comments
 
     vorbis_dsp_state vd; ///< central working state for the packet->PCM decoder
-    vorbis_block     vb; ///< local working space for packet->PCM decode
+    vorbis_block vb;     ///< local working space for packet->PCM decode
 
     int rand_serial; ///< serial number for logical bitstreams
 

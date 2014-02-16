@@ -29,7 +29,7 @@ extern "C" {
 
 #include <layer.h>
 
-class GoomLayer: public Layer {
+class GoomLayer : public Layer {
 
 public:
     GoomLayer();
