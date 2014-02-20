@@ -112,7 +112,7 @@ static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
 
 void GeneratorLayer::register_generators(Linklist<Filter> *gens) {
     generators = gens;
-    act("%u generators available", gens->len());
+    act("%u generators available", gens->size());
 }
 
 bool GeneratorLayer::open(const char *file) {

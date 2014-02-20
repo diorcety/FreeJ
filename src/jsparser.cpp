@@ -457,7 +457,7 @@ int JsParser::open(const char* script_file) {
     JS_ClearContextThread(new_script->cx);
     if(ret) {
         new_script->setName(script_file);
-        runtimes.append(new_script);
+        runtimes.push_back(new_script);
     } else {
         delete new_script;
     }
@@ -608,7 +608,7 @@ int JsParser::parse(const char *command) {
     JS_EndRequest(new_script->cx);
     JS_ClearContextThread(new_script->cx);
     if(eval_res)
-        runtimes.append(new_script);
+        runtimes.push_back(new_script);
     else
         delete new_script;
 

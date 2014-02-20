@@ -195,7 +195,7 @@ bool SLangConsole::place(SLangWidget *wid, int hx, int hy, int lx, int ly) {
 
 
 	// append the new widget in our linklist
-	widgets.append( wid );
+    widgets.push_back( wid );
 
 	func("s-lang widget %s sized %ux%u placed at %u,%u",
 			wid->getName().c_str(), wid->w, wid->h,

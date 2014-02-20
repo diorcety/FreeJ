@@ -104,7 +104,7 @@ static int osc_command_handler(const char *path, const char *types,
         }
     }
 
-    osc->commands_pending.append(jscmd);
+    osc->commands_pending.push_back(jscmd);
 
     return 1;
 }
@@ -133,7 +133,7 @@ int OscControllerJS::dispatch() {
 
 
         free(jscmd->argv); // must free previous callod on argv
-        commands_pending.rem(1);
+        commands_pending.remove(1);
         delete jscmd;
         jscmd = (JsCommand*)commands_pending.begin();
         c++;
@@ -271,7 +271,7 @@ JS(js_osc_ctrl_add_method) {
     cmd->setName(osc_cmd);
     strncpy(cmd->proto_cmd, proto_cmd, 128);
     strncpy(cmd->js_cmd, js_cmd, 512);
-    osc->commands_handled.append(cmd);
+    osc->commands_handled.push_back(cmd);
 
     act("OSC method \"%s\" with args \"%s\" binded to %s",
         osc_cmd, proto_cmd, js_cmd);

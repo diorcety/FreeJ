@@ -194,7 +194,7 @@ bool SlwReadline::parser_default(int key) {
         return 0;
     }
 
-    if(screen->layers.len() > 0) { // there are layers
+    if(screen->layers.size() > 0) { // there are layers
 
         // get the one selected
         le = screen->mSelectedLayer;
@@ -502,8 +502,8 @@ bool SlwReadline::parser_commandline(int key) {
         // save in commandline history
         entr = new Entry();
         entr->data = strdup(command);
-        history.append(entr);
-        if(history.len() > 32) // histsize
+        history.push_back(entr);
+        if(history.size() > 32) // histsize
             delete history.begin();
         // cleanup the command
         memset(command, EOL, MAX_CMDLINE);

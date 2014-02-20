@@ -104,7 +104,7 @@ bool SlwSelector::feed(int key) {
         return false;
     }
 
-    if(screen->layers.len() > 0) { // there are layers
+    if(screen->layers.size() > 0) { // there are layers
 
         res = true;
 
@@ -259,7 +259,7 @@ bool SlwSelector::refresh() {
     putnch(tmp, 1, 1, 0);
 
 
-    if(screen->layers.len()) {
+    if(screen->layers.size()) {
         Layer *l = screen->layers.begin();
         //    int color;
         int tmpsize = 0;

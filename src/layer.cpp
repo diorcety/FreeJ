@@ -249,7 +249,7 @@ bool Layer::cafudda() {
 }
 
 void *Layer::do_filters(void *tmp_buf) {
-    if(filters.len()) {
+    if(filters.size()) {
         FilterInstance *filt;
         filters.lock();
         filt = (FilterInstance *)filters.begin();
@@ -266,7 +266,7 @@ void *Layer::do_filters(void *tmp_buf) {
 int Layer::do_iterators() {
 
     /* process thru iterators */
-    if(iterators.len()) {
+    if(iterators.size()) {
         iterators.lock();
         iter = (Iterator*)iterators.begin();
         while(iter) {

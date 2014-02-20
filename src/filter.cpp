@@ -76,7 +76,7 @@ bool Filter::apply(Layer *lay, FilterInstance *instance) {
 
     bytesize = lay->geo.bytesize;
 
-    lay->filters.append(instance);
+    lay->filters.push_back(instance);
 
     act("initialized filter %s on layer %s", name.c_str(), lay->getName().c_str());
 

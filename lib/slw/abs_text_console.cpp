@@ -35,7 +35,7 @@ TextConsole::TextConsole() {
 	
 	// create the first row
 	cur_row = new Row();
-	rows.append(cur_row);
+    rows.push_back(cur_row);
 	
 	vis_row_in = cur_row;
 

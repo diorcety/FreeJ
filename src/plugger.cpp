@@ -144,13 +144,13 @@ int Plugger::refresh(Context *env) {
                     } else { // freior effect found
                         // check what kind of plugin is and place it
                         if(fr->info.plugin_type == F0R_PLUGIN_TYPE_FILTER) {
-                            env->filters.append(fr);
+                            env->filters.push_back(fr);
 
                             func("found frei0r filter: %s (%p)", fr->getName().c_str(), fr);
                             continue;
 
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_SOURCE) {
-                            env->generators.append(fr);
+                            env->generators.push_back(fr);
                             func("found frei0r generator: %s (%p)", fr->getName().c_str(), fr);
                             continue;
 
@@ -177,7 +177,7 @@ int Plugger::refresh(Context *env) {
                         // check what kind of plugin is and place it
                         if(fr->info->pluginType == FF_EFFECT) {
 
-                            env->filters.append(fr);
+                            env->filters.push_back(fr);
 
                             func("found freeframe filter: %s (%p)",
                                  fr->info->pluginName, fr);
@@ -185,7 +185,7 @@ int Plugger::refresh(Context *env) {
 
                         } else if(fr->info->pluginType == FF_SOURCE) {
 
-                            env->generators.append(fr);
+                            env->generators.push_back(fr);
 
                             func("found freeframe generator: %s (%p)",
                                  fr->info->pluginName, fr);
@@ -205,8 +205,8 @@ int Plugger::refresh(Context *env) {
         warning("can't find any valid plugger directory");
         return(-1);
     }
-    act("filters found: %u", env->filters.len());
-    act("generators found: %u", env->generators.len());
+    act("filters found: %u", env->filters.size());
+    act("generators found: %u", env->generators.size());
 
     return 0;
 }

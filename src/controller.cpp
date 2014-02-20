@@ -59,7 +59,7 @@ bool Controller::init(Context *freej) {
 }
 
 bool Controller::add_listener(ControllerListener *listener) {
-    listeners.append(listener);
+    listeners.push_back(listener);
     return true;
 }
 

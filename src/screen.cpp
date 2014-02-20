@@ -56,7 +56,7 @@ ViewPort::ViewPort()
 
 ViewPort::~ViewPort() {
 
-    func("screen %s deleting %u layers", name.c_str(), layers.len());
+    func("screen %s deleting %u layers", name.c_str(), layers.size());
     Layer *lay;
     lay = layers.begin();
     while(lay) {
@@ -74,7 +74,7 @@ ViewPort::~ViewPort() {
 
     if(audio) ringbuffer_free(audio);
 
-    func("screen %s deleting %u encoders", name.c_str(), encoders.len());
+    func("screen %s deleting %u encoders", name.c_str(), encoders.size());
     VideoEncoder *enc;
     enc = encoders.begin();
     while(enc) {
@@ -129,7 +129,7 @@ bool ViewPort::add_layer(Layer *lay) {
     //lay->geo.x = (screen->w - lay->geo.w)/2;
     //lay->geo.y = (screen->h - lay->geo.h)/2;
     //  screen->blitter->crop( lay, screen );
-    layers.prepend(lay);
+    layers.push_front(lay);
     mSelectedLayer = lay;
     lay->active = true;
     func("layer %s added to screen %s", lay->getName().c_str(), name.c_str());
@@ -138,7 +138,7 @@ bool ViewPort::add_layer(Layer *lay) {
 
 #ifdef WITH_AUDIO
 bool ViewPort::add_audio(JackClient *jcl) {
-    if(layers.len() == 0) return false;
+    if(layers.size() == 0) return false;
 
     jcl->SetRingbufferPtr(audio, (int)((VideoLayer*) layers.begin())->audio_samplerate, (int)((VideoLayer*) layers.begin())->audio_channels);
     std::cerr << "------ audio_samplerate :" << ((VideoLayer*) layers.begin())->audio_samplerate \
@@ -185,7 +185,7 @@ bool ViewPort::add_encoder(VideoEncoder *enc) {
 
     enc->active = true;
 
-    encoders.append(enc);
+    encoders.push_back(enc);
 
     mSelectedEncoder = enc;
 

@@ -73,7 +73,7 @@ OscController::~OscController() {
 
 int OscController::poll() {
     // check if there are pending commands
-    if(commands_pending.len() > 0)
+    if(commands_pending.size() > 0)
         return dispatch();
     else
         return 0;

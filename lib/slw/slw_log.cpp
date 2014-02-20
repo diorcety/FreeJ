@@ -140,7 +140,7 @@ void SLW_Log::append(const char *text) {
 	
 	r->insert_string((char*)text, len);
 
-	textconsole->rows.append( r );
+    textconsole->rows.push_back( r );
 
 	if(!scrolling) textconsole->cur_row = r;
 

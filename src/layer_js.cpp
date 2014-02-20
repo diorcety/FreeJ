@@ -127,7 +127,7 @@ JS(selected_layer) {
     JSObject *objtmp;
     jsval val;
 
-    if(global_environment->mSelectedScreen->layers.len() == 0) {
+    if(global_environment->mSelectedScreen->layers.size() == 0) {
         error("can't return selected layer: no layers are present");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -516,7 +516,7 @@ JSP(layer_list_filters) {
     GET_LAYER(Layer);
 
     // no effects
-    if(lay->filters.len() == 0) {
+    if(lay->filters.size() == 0) {
         *vp = JSVAL_FALSE;
         return JS_TRUE;
     }

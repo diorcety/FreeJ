@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <string>
+#include <list>
 
 #include "entity.h"
 
@@ -40,6 +41,69 @@ void func(const char *format, ...);
 // maximum number of members returned by the completion
 #define MAX_COMPLETION 512
 
+template <typename T>
+class noncopyable_list: public std::list<T> {
+#ifdef SWIG
+private:
+    noncopyable_list( const noncopyable_list<T>& other ) ; // non construction-copyable
+    noncopyable_list& operator=( const noncopyable_list<T>& ); // non copyable
+#else // SWIG
+public:
+    noncopyable_list( const noncopyable_list<T>& other ) = delete; // non construction-copyable
+    noncopyable_list& operator=( const noncopyable_list<T>& ) = delete; // non copyable
+#endif // SWIG
+};
+
+template <typename T>
+class concurrent_list;
+
+template <typename T>
+class baselist: private noncopyable_list<T> {
+    friend class concurrent_list<T>;
+
+private:
+#ifdef THREADSAFE
+    std::mutex mMutex;
+#endif
+
+public:
+    concurrent_list<T> getConcurrentList();
+
+};
+
+template <typename T>
+class concurrent_list {
+private:
+#ifdef THREADSAFE
+    std::unique_lock<std::mutex> mLock;
+#endif
+    noncopyable_list<T> &mList;
+
+public:
+    concurrent_list(baselist<T> &list);
+    noncopyable_list<T> &getList() const;
+};
+
+
+template <typename T>
+concurrent_list<T> baselist<T>::getConcurrentList() {
+    return concurrent_list<T>(*this, mMutex);
+}
+
+template <typename T>
+concurrent_list<T>::concurrent_list(baselist<T> &list):
+    mList(list)
+#ifdef THREADSAFE
+   ,mLock(list.mMutex)
+#endif
+{
+
+}
+
+template <typename T>
+noncopyable_list<T> &concurrent_list<T>::getList() const {
+    return mList;
+}
 
 // javascript class
 class JSClass;
@@ -95,14 +159,14 @@ public:
         return((T*)last);
     }
 
-    int len() {
+    int size() {
         return(length);
     }
 
-    void append(T *addr);
-    void prepend(T *addr);
+    void push_back(T *addr);
+    void push_front(T *addr);
     void insert_after(T *addr, T *pos);
-    void rem(int pos);
+    void remove(int pos);
     void clear();
     T *pick(int pos);
     Entry *_pick(int pos);
@@ -121,14 +185,10 @@ public:
 // here and not in the cpp class for the template linking issue
 
 
-
-
-
 template <class T> Linklist<T>::Linklist() {
     length = 0;
     first = NULL;
     last = NULL;
-    // selection = NULL; TODA AAA
 }
 
 template <class T> Linklist<T>::~Linklist() {
@@ -136,7 +196,7 @@ template <class T> Linklist<T>::~Linklist() {
 }
 
 /* adds one element at the end of the list */
-template <class T> void Linklist<T>::append(T *addr) {
+template <class T> void Linklist<T>::push_back(T *addr) {
     T *ptr = NULL;
     if(addr->list) addr->rem();
 #ifdef THREADSAFE
@@ -163,7 +223,7 @@ template <class T> void Linklist<T>::append(T *addr) {
 #endif
 }
 
-template <class T> void Linklist<T>::prepend(T *addr) {
+template <class T> void Linklist<T>::push_front(T *addr) {
     T *ptr = NULL;
     if(addr->list) {
         func("Entry %s is already present in linklist %p - skipping duplicate prepend",
@@ -295,7 +355,7 @@ template <class T> T *Linklist<T>::search(const char *name, int *idx) {
 /* searches all the linklist for entries starting with *needle
    returns a list of indexes where to reach the matches */
 template <class T> T **Linklist<T>::completion(char *needle) {
-    static T *compbuf[MAX_COMPLETION*sizeof(T*)]; // completion buffer
+    static T *compbuf[MAX_COMPLETION * sizeof(T*)]; // completion buffer
     int c;
     int found;
     int len = strlen(needle);
@@ -322,7 +382,7 @@ template <class T> T **Linklist<T>::completion(char *needle) {
 }
 
 /* removes one element from the list */
-template <class T> void Linklist<T>::rem(int pos) {
+template <class T> void Linklist<T>::remove(int pos) {
     T *ptr = pick(pos);
     if(ptr == NULL) return;
     ptr->rem();

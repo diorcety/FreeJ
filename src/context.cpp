@@ -188,7 +188,7 @@ bool Context::add_screen(ViewPort *scr) {
         error("use init( width, height, bits_per_pixel )");
         return false;
     }
-    screens.prepend(scr);
+    screens.push_front(scr);
     mSelectedScreen = scr;
     screen = screens.begin();
     func("screen %s successfully added", scr->getName().c_str());
@@ -363,7 +363,7 @@ bool Context::register_controller(Controller *ctrl) {
 
     ctrl->active = true;
 
-    controllers.append(ctrl);
+    controllers.push_back(ctrl);
 
     act("registered %s controller", ctrl->getName().c_str());
     return true;
@@ -455,7 +455,7 @@ int Context::reset() {
 
     notice("FreeJ engine reset");
 
-    func("deleting %u controllers", controllers.len());
+    func("deleting %u controllers", controllers.size());
     controllers.lock();
     Controller *ctrl = controllers.begin();
     while(ctrl) {
@@ -469,7 +469,7 @@ int Context::reset() {
         }
     }
     controllers.unlock();
-    func("deleting %u screens", screens.len());
+    func("deleting %u screens", screens.size());
     ViewPort *scr = screens.begin();
     while(scr) {
         scr->lock();

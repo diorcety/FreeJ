@@ -554,7 +554,7 @@ int console_open_layer(Context *env, char *cmd) {
             ::error("no screen currently selected");
             return 0;
         }
-        len = screen->layers.len();
+        len = screen->layers.size();
         notice("layer successfully created, now you have %i layers", len);
         return len;
     }
@@ -576,7 +576,7 @@ int console_print_text_layer(Context *env, char *cmd) {
         return 0;
     }
     ((TextLayer*)lay)->write(cmd);
-    return screen->layers.len();
+    return screen->layers.size();
 }
 
 int console_open_text_layer(Context *env, char *cmd) {
@@ -600,7 +600,7 @@ int console_open_text_layer(Context *env, char *cmd) {
         ::error("no screen currently selected");
         return 0;
     }
-    return screen->layers.len();
+    return screen->layers.size();
 }
 
 #endif
@@ -684,7 +684,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     for(c = found - 1; c > 0; c--) { // insert each entry found in a linklist
         e = new Entry();
         e->setName(filelist[c]->d_name);
-        files.append(e);
+        files.push_back(e);
     }
 
     c = 0; // counter for entries found
@@ -727,7 +727,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     // free entries allocated in memory
     e = files.begin();
     while(e) {
-        files.rem(1);
+        files.remove(1);
         delete e;
         e = files.begin();
     }

@@ -253,7 +253,7 @@ void Freior::init_parameters(Linklist<Parameter> &parameters) {
         param->setDescription(param_infos[i].explanation);
         param->filter_set_f = set_frei0r_parameter;
         param->filter_get_f = get_frei0r_parameter;
-        parameters.append(param);
+        parameters.push_back(param);
     }
 }
 
