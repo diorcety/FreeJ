@@ -15,36 +15,35 @@ SLW_Log log;
 SLW_Prompt prompt;
 
 int main(int argc, char **argv) {
-  int key;
-  bool quit;
+    int key;
+    bool quit;
 
-  assert( con.init() );
+    assert( con.init() );
 
-  SLtt_set_cursor_visibility(0);
+    SLtt_set_cursor_visibility(0);
 
-  assert( con.place(&log, 1, 0, con.w, con.h-2) );
-  assert( log.init() );
+    assert( con.place(&log, 1, 0, con.w, con.h-2) );
+    assert( log.init() );
 
-  assert( con.place(&prompt, 0, con.h-1, con.w, con.h) );
-  assert( prompt.init() );
+    assert( con.place(&prompt, 0, con.h-1, con.w, con.h) );
+    assert( prompt.init() );
 
-  con.focused = &prompt;
+    con.focused = &prompt;
 
-  quit = false;
+    quit = false;
 
-  while(!quit) {
+    while(!quit) {
 
-    key = con.getkey();
+        key = con.getkey();
 
-    prompt.feed(key);
-    log.feed(key);
+        prompt.feed(key);
+        log.feed(key);
 
-    if( ! con.refresh() ) quit = true;
-  }
+        if( !con.refresh() ) quit = true;
+    }
 
-  con.close();
+    con.close();
 
-  exit(1);
+    exit(1);
 }
-
 

@@ -3,7 +3,7 @@
  *  (C) Copyright 2004-2006 Denis Rojo <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -25,23 +25,23 @@
 
 class SLW_Popup : public SLangWidget {
 
-	public:
-		SLW_Popup();
-		~SLW_Popup();
+public:
+    SLW_Popup();
+    ~SLW_Popup();
 
-		// pure virtual functions from parent class
-		bool init();
+    // pure virtual functions from parent class
+    bool init();
 
-		bool feed(int key);
+    bool feed(int key);
 
-		bool refresh();
-		////////////////////////
+    bool refresh();
+    ////////////////////////
 
-		bool set_text(const char *text);
+    bool set_text(const char *text);
 
-	private:
-		char *txt;
-		int len;
+private:
+    char *txt;
+    int len;
 
 };
 

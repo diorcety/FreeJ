@@ -3,7 +3,7 @@
  *  (C) Copyright 2004-2008 Denis Rojo <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -28,19 +28,19 @@
 
 class SLW_Prompt : public SLangWidget {
 
-	public:
-		SLW_Prompt();
-		~SLW_Prompt();
+public:
+    SLW_Prompt();
+    ~SLW_Prompt();
 
-		// pure virtual functions from parent class
-		bool init();
-		bool feed(int key);
-		bool refresh();
-		////////////////////////
+    // pure virtual functions from parent class
+    bool init();
+    bool feed(int key);
+    bool refresh();
+    ////////////////////////
 
-	private:
-  		SLW_TextConsole *textconsole;
-		void append(const char *text);
+private:
+    SLW_TextConsole *textconsole;
+    void append(const char *text);
 
 };
 

@@ -3,7 +3,7 @@
  *  (C) Copyright 2004-2006 Denis Rojo <jaromil@dyne.org>
  *
  * This source code is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Public License as published 
+ * modify it under the terms of the GNU Public License as published
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  *
@@ -25,108 +25,108 @@
 #include <slw_popup.h>
 
 SLW_Popup::SLW_Popup()
-	: SLangWidget() {
+    : SLangWidget() {
 
-	setName("popup");
-	txt = NULL;
-	len = 0;
+    setName("popup");
+    txt = NULL;
+    len = 0;
 
 }
 
-SLW_Popup::~SLW_Popup() { 
+SLW_Popup::~SLW_Popup() {
 
-	if(txt) free(txt);
+    if(txt) free(txt);
 
 }
 
 bool SLW_Popup::init() {
 
-	if(!console) {
-		fprintf(stderr, "can't initialize widget '%s': not places on console", name.c_str());
-		return false;
-	}
+    if(!console) {
+        fprintf(stderr, "can't initialize widget '%s': not places on console", name.c_str());
+        return false;
+    }
 
-	// default widget settings
-	initialized = true;
-	visible = true;
-	cursor = false;
-	can_focus = true;
-	border = true;
+    // default widget settings
+    initialized = true;
+    visible = true;
+    cursor = false;
+    can_focus = true;
+    border = true;
 
-	refresh();
+    refresh();
 
-	return true;
+    return true;
 }
 
 bool SLW_Popup::feed(int key) {
-	// interprets a keycode and perform the action (or write a letter)
+    // interprets a keycode and perform the action (or write a letter)
 
-	return true;
+    return true;
 }
 
 bool SLW_Popup::refresh() {
-	int tc, hc, lc;
-	char *start, *end;
+    int tc, hc, lc;
+    char *start, *end;
 
-	if(!txt) return false;
+    if(!txt) return false;
 
-	start = end = txt; // char pointers
+    start = end = txt;     // char pointers
 
-	tc = 0; // whole text counter
+    tc = 0;     // whole text counter
 
-	for(hc=0; hc < h; hc++ ) {
-		
-		blank_row(hc);
+    for(hc=0; hc < h; hc++ ) {
 
-		for( lc=0; tc < len-2; tc++, lc++, end++ ) {
+        blank_row(hc);
 
-			if( *end == '\n' ) // there is a newline
-				break;
-			
-			if( lc >= w ) // line is longer than width
-				break;
+        for( lc=0; tc < len-2; tc++, lc++, end++ ) {
 
-		}
+            if( *end == '\n' )             // there is a newline
+                break;
 
-		func("popup printing line %i long %i chars (%i of %i)",
-				hc, lc, tc, len);
+            if( lc >= w )             // line is longer than width
+                break;
 
-		putnch(start, 1, hc, lc);
+        }
 
-		if(tc >= len) // text is really over
-			break;
+        func("popup printing line %i long %i chars (%i of %i)",
+             hc, lc, tc, len);
 
-		end++;
-		start = end;
-	}
+        putnch(start, 1, hc, lc);
 
-	return true;
+        if(tc >= len)         // text is really over
+            break;
+
+        end++;
+        start = end;
+    }
+
+    return true;
 }
 
 bool SLW_Popup::set_text(const char *text) {
-	// set a NULL terminated text for the dialog
-	int c, num;
+    // set a NULL terminated text for the dialog
+    int c, num;
 
-	// count the chars until the NULL
+    // count the chars until the NULL
 //	for( p = text , c = 0 ; *p != '\0'; p++ , c++     );
-	c = strlen(text);
-	func("popup text long %i",c);
-	
-	num = c * sizeof(char);
+    c = strlen(text);
+    func("popup text long %i",c);
 
-	if(txt) free(txt);
+    num = c * sizeof(char);
 
-	txt = (char*) malloc( num );
+    if(txt) free(txt);
 
-	memcpy(txt, text, num);
+    txt = (char*) malloc( num );
 
-	len = c;
+    memcpy(txt, text, num);
 
-	// safety bound
-	//	txt[len+1] = '\0';
-	//	txt[len+2] = '\0';
+    len = c;
+
+    // safety bound
+    //	txt[len+1] = '\0';
+    //	txt[len+2] = '\0';
 
 
-	return true;
+    return true;
 }
 
