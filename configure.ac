@@ -568,6 +568,12 @@ if test x$enable_opengl = xyes; then
    fi
 fi
 
+AC_ARG_ENABLE(console,
+    AS_HELP_STRING([--enable-console],[enable console]),
+    [enable_console=$enableval],
+    [enable_console=yes])
+
+AM_CONDITIONAL([BUILD_CONSOLE], [test x$enable_console = xyes])
 
 dnl ==============================================================
 dnl Audio
@@ -975,9 +981,11 @@ FREEJ_CFLAGS="$FREEJ_CFLAGS -Wall -Wno-unused-function -Wno-deprecated-declarati
 AC_SUBST(FREEJ_CFLAGS)
 
 FREEJ_STATIC_LIBS="\$(top_builddir)/lib/ccvt/libccvt.la \
-    \$(top_builddir)/lib/slw/libslw.la \
     \$(FLASH_LIBS)"
 AC_SUBST(FREEJ_STATIC_LIBS)
+
+FREEJ_CONSOLE_STATIC_LIBS="\$(top_builddir)/lib/slw/libslw.la"
+AC_SUBST(FREEJ_CONSOLE_STATIC_LIBS)
 
 FREEJ_LIBS="-lpthread -lm -lrt $DL_LIBS \
     \$(AA_LIBS)         \

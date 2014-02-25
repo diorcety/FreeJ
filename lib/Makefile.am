@@ -18,8 +18,12 @@ if BUILD_SDLIMAGE
 SDLIMAGEDIR = sdl_image
 endif
 
+if BUILD_CONSOLE
+SLW = slw
+endif
+
 SUBDIRS = ccvt \
-	slw              \
+	$(SLW)           \
 	$(SDLIMAGEDIR)   \
 	$(SDLTTFDIR)     \
 	$(SDLGFXDIR)     \

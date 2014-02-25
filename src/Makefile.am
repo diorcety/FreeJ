@@ -34,9 +34,7 @@ SOURCES = \
 	gl_screen.cpp		soft_screen.cpp    \
 	aa_screen.cpp \
 \
-	controller.cpp  	console_ctrl.cpp  \
-	console_calls_ctrl.cpp 	console_readline_ctrl.cpp \
-	console_widgets_ctrl.cpp 	kbd_ctrl.cpp	\
+	controller.cpp  	kbd_ctrl.cpp	\
 	mouse_ctrl.cpp		vimo_ctrl.cpp	\
 	joy_ctrl.cpp		midi_ctrl.cpp   \
 	trigger_ctrl.cpp 	osc_ctrl.cpp \
@@ -48,6 +46,10 @@ SOURCES = \
 	video_encoder.cpp 	ffmpeg_encoder.cpp \
 	theorautils.cpp 	oggtheora_encoder.cpp \
 	impl_video_encoders.cpp 
+
+CONSOLE_SOURCES =	console_ctrl.cpp  \
+	console_calls_ctrl.cpp 	console_readline_ctrl.cpp \
+	console_widgets_ctrl.cpp
 
 JS_SOURCES = 	context_js.cpp  \
 		parameter_js.cpp \
@@ -85,6 +87,9 @@ endif
 libfreej_la_LIBADD  = $(FREEJ_STATIC_LIBS)
 libfreej_la_LDFLAGS = $(FREEJ_LIBS) -version-info $(FREEJ_VERSION_INFO)
 
+if BUILD_CONSOLE
 bin_PROGRAMS = freej
 freej_SOURCES = freej.cpp
-freej_LDADD = libfreej.la $(X11_LIBS)
+freej_SOURCES += $(CONSOLE_SOURCES)
+freej_LDADD = libfreej.la $(X11_LIBS) $(FREEJ_CONSOLE_STATIC_LIBS)
+endif
