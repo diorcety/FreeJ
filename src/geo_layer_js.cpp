@@ -39,7 +39,7 @@ DECLARE_CLASS_GC("GeometryLayer", geometry_layer_class, geometry_layer_construct
 // Geometry Layer methods
 
 JSFunctionSpec geometry_layer_methods[] = {
-    ENTRY_METHODS,
+    //ENTRY_METHODS,
     { "clear",          geometry_layer_clear,          0 },
     { "color",          geometry_layer_color,          4 },
     { "pixel",          geometry_layer_pixel,          2 },

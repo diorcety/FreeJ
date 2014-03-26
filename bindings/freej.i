@@ -71,6 +71,8 @@
 %immutable Parameter::description;
 
 %ignore Linklist::operator[];
+%ignore Linklist::getLock;
+%ignore Layer::parameters;
 %ignore Controller::listeners;
 %ignore ViewPort::encoders;
 %ignore ViewPort::layers;

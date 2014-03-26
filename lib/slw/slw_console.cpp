@@ -24,6 +24,8 @@
 
 #include <slang.h>
 
+#include <algorithm>
+
 #include <slw_console.h>
 
 
@@ -196,7 +198,7 @@ bool SLangConsole::place(SLangWidget *wid, int hx, int hy, int lx, int ly) {
 
 
     // append the new widget in our linklist
-    widgets.push_back( wid );
+    widgets.getLock().push_back( wid );
 
     func("s-lang widget %s sized %ux%u placed at %u,%u",
          wid->getName().c_str(), wid->w, wid->h,
@@ -244,14 +246,10 @@ bool SLangConsole::refresh() {
         screen_size_changed = false;
 
         // refresh all widgets
-        SLangWidget *wid;
-        wid = (SLangWidget*) widgets.begin();
-        while(wid) {
-
-            wid->refresh();
-            wid = (SLangWidget*) wid->next;
-
-        }
+        LockedLinkList<SLangWidget> list = widgets.getLock();
+        std::for_each(list.begin(), list.end(), [&](SLangWidget* wid) {
+                          wid->refresh();
+                      });
     }
 
 //   if(focused && !keyboard_quit)

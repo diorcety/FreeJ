@@ -50,9 +50,11 @@ public:
     Parameter(Type param_type);
     ~Parameter();
 
-    bool set(void *val);
+    virtual bool set(void *val);
 
-    void *get();
+    virtual void update();
+
+    virtual void *get();
     ///< calling  function should  do correct type-casting
     ///< according to the parameter type
 
@@ -64,12 +66,6 @@ public:
     void *min_value;
     void *max_value;
     size_t value_size;
-
-    layer_param_f *layer_get_f;
-    layer_param_f *layer_set_f;
-
-    filter_param_f *filter_get_f;
-    filter_param_f *filter_set_f;
 
     bool changed; ///< can be used externally by application caller
     float multiplier; ///< multiplier to adjust the value on set (none if 1.0)

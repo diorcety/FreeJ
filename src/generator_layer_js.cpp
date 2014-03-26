@@ -31,7 +31,7 @@ DECLARE_CLASS_GC("GeneratorLayer",
 
 
 JSFunctionSpec generator_layer_methods[] = {
-    ENTRY_METHODS,
+    //ENTRY_METHODS,
     {0}
 };
 

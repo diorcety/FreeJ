@@ -20,10 +20,6 @@
 #ifndef __entity_h__
 #define __entity_h__
 
-class BaseLinklist;
-
-template <class T> class Linklist;
-
 // javascript context
 class JSContext;
 // , class
@@ -32,9 +28,6 @@ class JSClass;
 class JSObject;
 
 class Entry {
-    template<typename U>
-    friend class Linklist;
-
 public:
     Entry();
     virtual ~Entry();
@@ -46,12 +39,6 @@ public:
     bool up();
     bool down();
     bool move(int pos);
-    void rem();
-
-    Entry *next;
-    Entry *prev;
-
-    BaseLinklist *list;
 
 protected:
     std::string name;

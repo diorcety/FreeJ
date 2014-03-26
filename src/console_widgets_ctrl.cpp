@@ -27,6 +27,8 @@
 #include <slang_console_ctrl.h>
 #include <console_widgets_ctrl.h>
 
+#include <algorithm>
+
 #include <context.h>
 #include <layer.h>
 #include <blitter.h>
@@ -94,8 +96,6 @@ bool SlwSelector::init() {
 }
 
 bool SlwSelector::feed(int key) {
-    Entry *le, *fe;
-
     bool res = false;
 
     ViewPort *screen = env->mSelectedScreen;
@@ -104,59 +104,50 @@ bool SlwSelector::feed(int key) {
         return false;
     }
 
-    if(screen->layers.size() > 0) { // there are layers
+    LockedLinkList<Layer> layerList = screen->layers.getLock();
+    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), screen->mSelectedLayer);
+    if(!layerList.empty()) { // there are layers
 
         res = true;
 
         // get the one selected
-        le = screen->mSelectedLayer;
-        if(!le) {
-            screen->mSelectedLayer = screen->layers.begin();
+        if(!screen->mSelectedLayer) {
+            screen->mSelectedLayer = layerList.front();
         }
+        Layer *le = screen->mSelectedLayer;
 
-        fe = ((Layer*)le)->mSelectedFilter;
-        if(!screen) {
-            ::error("no filter currently selected");
-            return false;
-        }
+
+        LockedLinkList<FilterInstance> filterList = le->filters.getLock();
+        LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), le->mSelectedFilter);
 
         // switch over operations and perform
         switch(key) {
 
         case SL_KEY_UP:
-
-            if(!fe) break;  // no filter
-
-            fe = fe->prev; // take the upper one
-            ((Layer*)le)->mSelectedFilter = (FilterInstance*)fe;
-
+            if(filterIt == filterList.begin()) {
+                break;  // no filter
+            }
+            le->mSelectedFilter = *(--filterIt);
             break;
 
         case SL_KEY_DOWN:
-
-            if(!fe) {
-                fe = ((Layer*)le)->filters.begin();
-                if(!fe) break;  // no filters
-                else ((Layer*)le)->mSelectedFilter = (FilterInstance*)fe;
-            } else if(fe->next) {
-                fe = fe->next;
-                ((Layer*)le)->mSelectedFilter = (FilterInstance*)fe;
+            if(filterIt == filterList.end()) {
+                break;
             }
+            ++filterIt;
+            if(filterIt == filterList.end()) {
+                break;
+            }
+            le->mSelectedFilter = *filterIt;
             break;
 
         case SL_KEY_LEFT:
 
-            if(!fe) { // no filter selected, move across layers
-
-                // move to the previous or the other end
-                if(!le->prev)
-                    le = screen->layers.end();
-                else
-                    le = le->prev;
-
-                // select only this layer
-                screen->mSelectedLayer = ((Layer*)le);
-
+            if(filterIt == filterList.end()) { // no filter selected, move across layers
+                if(layerIt == layerList.begin()) {
+                    break;  // no filter
+                }
+                screen->mSelectedLayer = *(--layerIt);
             } else { // a filter is selected: move across filter parameters
 
                 // TODO
@@ -167,15 +158,15 @@ bool SlwSelector::feed(int key) {
 
         case SL_KEY_RIGHT:
 
-            if(!fe) { // no filter selected, move across layers
-
-                // move to the next layer or the other end
-                if(!le->next)
-                    le = screen->layers.begin();
-                else le = le->next;
-
-                // select only the current
-                screen->mSelectedLayer = ((Layer*)le);
+            if(filterIt == filterList.end()) { // no filter selected, move across layers
+                if(layerIt == layerList.end()) {
+                    break;
+                }
+                ++layerIt;
+                if(layerIt == layerList.end()) {
+                    break;
+                }
+                screen->mSelectedLayer = *layerIt;
 
             } else { // move across filter parameters
 
@@ -186,21 +177,33 @@ bool SlwSelector::feed(int key) {
 
         case SL_KEY_PPAGE:
         case KEY_PLUS:
-            if(fe) fe->up();
-            else le->up();
+            if(filterIt != filterList.end()) {
+                (*filterIt)->up();
+            } else {
+                (*layerIt)->up();
+            }
             break;
 
         case SL_KEY_NPAGE:
         case KEY_MINUS:
-            if(fe) fe->down();
-            else le->down();
+            if(filterIt != filterList.end()) {
+                (*filterIt)->down();
+            } else {
+                (*layerIt)->down();
+            }
             break;
 
         case SL_KEY_DELETE:
         case KEY_CTRL_D:
-            if(fe) {
-                fe->rem(); // WARN: instances are not freed
-//	delete fe; // XXX this crashes
+            if(filterIt != filterList.end()) {
+                filterIt = filterList.erase(filterIt);
+                if(filterIt != filterList.end()) {
+                    le->mSelectedFilter = *filterIt;
+                } else {
+                    le->mSelectedFilter = NULL;
+                }
+                //fe->rem(); // WARN: instances are not freed
+                //	delete fe; // XXX this crashes
             } else {
                 //	le->rem();
                 //	((Layer*)le)->close();
@@ -209,10 +212,11 @@ bool SlwSelector::feed(int key) {
             break;
 
         case KEY_SPACE:
-            if(fe) ((FilterInstance*)fe)->active =
-                    !((FilterInstance*)fe)->active;
-            else ((Layer*)le)->active =
-                    !((Layer*)le)->active;
+            if(filterIt != filterList.end()){
+                (*filterIt)->active = !(*filterIt)->active;
+            } else {
+                (*layerIt)->active = !(*layerIt)->active;
+            }
             break;
 
         default:
@@ -237,8 +241,10 @@ bool SlwSelector::refresh() {
 
     // also put info from encoders, if active
     // so far supported only one encoder
-    VideoEncoder *enc = screen->encoders.begin();
-    if(enc) {
+    LockedLinkList<VideoEncoder> encoderList = screen->encoders.getLock();
+    LockedLinkList<VideoEncoder>::iterator it = encoderList.begin();
+    if(it != encoderList.end()) {
+        VideoEncoder *enc = *it;
         snprintf(tmp, w, "Stream: video %u kb/s : audio %u kb/s : encoded %u kb",
                  enc->video_kbps, enc->audio_kbps, enc->bytes_encoded / 1024);
         putnch(tmp, 1, 0, 0);
@@ -259,8 +265,8 @@ bool SlwSelector::refresh() {
     putnch(tmp, 1, 1, 0);
 
 
-    if(screen->layers.size()) {
-        Layer *l = screen->layers.begin();
+    LockedLinkList<Layer> layerList = screen->layers.getLock();
+    if(!layerList.empty()) {
         //    int color;
         int tmpsize = 0;
         layercol = 0;
@@ -272,8 +278,7 @@ bool SlwSelector::refresh() {
         /* take layer selected and first */
         if(layer)
             filter = layer->mSelectedFilter;
-
-        while(l) { /* draw the layer's list */
+        std::for_each(layerList.begin(), layerList.end(), [&](Layer *l) {
             layercol += tmpsize + 4;
             //      SLsmg_set_color(LAYERS_COLOR);
             //      SLsmg_write_string((char *)" -> ");
@@ -288,17 +293,11 @@ bool SlwSelector::refresh() {
             putnch((char*)l->getName().c_str(), layercol + 4, 2, tmpsize);
             // save position of selected layer
             if(l == layer) sellayercol = layercol;
-
-            l = (Layer *)l->next;
-        }
-
-
+        });
     }
 
 
     if(layer) {
-        FilterInstance *f;
-
         filter = layer->mSelectedFilter;
 
 //     SLsmg_gotorc(3,1);
@@ -317,23 +316,22 @@ bool SlwSelector::refresh() {
             //      SLsmg_erase_eol();
         }
 
-        f = layer->filters.begin();
+
+        LockedLinkList<FilterInstance> filterList = layer->filters.getLock();
         pos = 4;
-        while(f) {
+        std::for_each(filterList.begin(), filterList.end(), [&] (FilterInstance *f) {
+            //       SLsmg_set_color(PLAIN_COLOR);
+            //       SLsmg_gotorc(pos,0);
+            //       SLsmg_erase_eol();
 
-//       SLsmg_set_color(PLAIN_COLOR);
-//       SLsmg_gotorc(pos,0);
-//       SLsmg_erase_eol();
-
-            color = FILTERS_COLOR;
-//       SLsmg_gotorc(pos,layercol);
-            if(f == filter) color += 20;
-            if(f->active) color += 10;
-//       SLsmg_set_color (color);
-            putnch((char*)f->getName().c_str(), sellayercol + 4, pos, 0);
-            pos++;
-            f = (FilterInstance*)f->next;
-        }
+                        color = FILTERS_COLOR;
+            //       SLsmg_gotorc(pos,layercol);
+                        if(f == filter) color += 20;
+                        if(f->active) color += 10;
+            //       SLsmg_set_color (color);
+                        putnch((char*)f->getName().c_str(), sellayercol + 4, pos, 0);
+                        pos++;
+        });
 
 //     SLsmg_set_color(PLAIN_COLOR);
 //     for(;pos<5;pos++) {

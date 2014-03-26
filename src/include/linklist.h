@@ -23,6 +23,7 @@
 #include <string.h>
 #include <string>
 #include <list>
+#include <utility>
 
 #include "entity.h"
 
@@ -42,56 +43,86 @@ void func(const char *format, ...);
 #define MAX_COMPLETION 512
 
 template <typename T>
-class noncopyable_list: public std::list<T> {
-#ifdef SWIG
-private:
-    noncopyable_list( const noncopyable_list<T>& other ) ; // non construction-copyable
-    noncopyable_list& operator=( const noncopyable_list<T>& ); // non copyable
-#else // SWIG
-public:
-    noncopyable_list( const noncopyable_list<T>& other ) = delete; // non construction-copyable
-    noncopyable_list& operator=( const noncopyable_list<T>& ) = delete; // non copyable
-#endif // SWIG
-};
+class LockedLinkList;
 
 template <typename T>
-class concurrent_list;
-
-template <typename T>
-class baselist: private noncopyable_list<T> {
-    friend class concurrent_list<T>;
+class Linklist: private std::list<T*> {
+    friend class LockedLinkList<T>;
 
 private:
 #ifdef THREADSAFE
-    std::mutex mMutex;
+    std::recursive_mutex mMutex;
 #endif
 
 public:
-    concurrent_list<T> getConcurrentList();
+    Linklist();
+    LockedLinkList<T> getLock();
 
 };
 
 template <typename T>
-class concurrent_list {
+class LockedLinkList {
 private:
+    std::list<T*> &mList;
 #ifdef THREADSAFE
-    std::unique_lock<std::mutex> mLock;
+    std::unique_lock<std::recursive_mutex> mLock;
 #endif
-    noncopyable_list<T> &mList;
 
 public:
-    concurrent_list(baselist<T> &list);
-    noncopyable_list<T> &getList() const;
+    typedef typename std::list<T*>::value_type               value_type;
+    typedef typename std::list<T*>::pointer                  pointer;
+    typedef typename std::list<T*>::iterator                 iterator;
+    typedef typename std::list<T*>::const_iterator           const_iterator;
+    typedef typename std::list<T*>::reference                reference;
+    typedef typename std::list<T*>::const_reference          const_reference;
+    typedef typename std::list<T*>::size_type                size_type;
+    typedef typename std::list<T*>::const_reverse_iterator   const_reverse_iterator;
+    typedef typename std::list<T*>::reverse_iterator         reverse_iterator;
+
+public:
+    LockedLinkList(Linklist<T> &list);
+    void push_front(const value_type& val);
+#if __cplusplus >= 201103L
+    void push_front(value_type&& val);
+#endif
+    bool empty() const;
+    iterator begin();
+    const_iterator begin() const;
+    iterator end();
+    const_iterator end() const;
+    reference front();
+    const_reference front() const;
+    reverse_iterator rbegin();
+    const_reverse_iterator rbegin() const;
+    reverse_iterator rend();
+    const_reverse_iterator rend() const;
+
+    void push_back(const value_type& val);
+#if __cplusplus >= 201103L
+    void push_back(value_type&& val);
+#endif
+    size_type size() const;
+    void pop_front();
+    void pop_back();
+    iterator erase(iterator position);
+    void remove(const value_type& val);
+    iterator insert(iterator position, const value_type& val);
+    void insert(iterator position, size_type n, const value_type& val);
+    template <class InputIterator>
+    void insert(iterator position, InputIterator first, InputIterator last);
 };
 
-
 template <typename T>
-concurrent_list<T> baselist<T>::getConcurrentList() {
-    return concurrent_list<T>(*this, mMutex);
+Linklist<T>::Linklist() {
 }
 
 template <typename T>
-concurrent_list<T>::concurrent_list(baselist<T> &list):
+LockedLinkList<T> Linklist<T>::getLock() {
+    return LockedLinkList<T>(*this);
+}
+
+template <typename T>
+LockedLinkList<T>::LockedLinkList(Linklist<T> &list):
     mList(list)
 #ifdef THREADSAFE
    ,mLock(list.mMutex)
@@ -101,291 +132,125 @@ concurrent_list<T>::concurrent_list(baselist<T> &list):
 }
 
 template <typename T>
-noncopyable_list<T> &concurrent_list<T>::getList() const {
-    return mList;
+bool LockedLinkList<T>::empty() const {
+    return mList.empty();
 }
 
-// javascript class
-class JSClass;
-// and object
-class JSObject;
+template <typename T>
+void LockedLinkList<T>::push_front(const typename LockedLinkList<T>::value_type& val) {
+    mList.push_front(val);
+}
 
-class BaseLinklist {
-    friend class Entry;
-
-public:
-    BaseLinklist() {
-    }
-
-    virtual ~BaseLinklist() {
-    }
-
-#ifdef THREADSAFE
-    void lock() {
-        mtx.lock();
-    }
-
-    void unlock() {
-        mtx.unlock();
-    }
+#if __cplusplus >= 201103L
+template <typename T>
+void LockedLinkList<T>::push_front(typename LockedLinkList<T>::value_type&& val) {
+    mList.push_front(std::forward<typename LockedLinkList<T>::value_type>(val));
+}
 #endif
 
-    virtual Entry *_pick(int pos) = 0;
+template <typename T>
+typename LockedLinkList<T>::iterator LockedLinkList<T>::begin() {
+    return mList.begin();
+}
 
-private:
-#ifdef THREADSAFE
-    std::mutex mtx;
+template <typename T>
+typename LockedLinkList<T>::const_iterator LockedLinkList<T>::begin() const {
+    return mList.begin();
+}
+
+template <typename T>
+typename LockedLinkList<T>::iterator LockedLinkList<T>::end() {
+    return mList.end();
+}
+
+template <typename T>
+typename LockedLinkList<T>::const_iterator LockedLinkList<T>::end() const{
+    return mList.end();
+}
+
+template <typename T>
+typename LockedLinkList<T>::reference LockedLinkList<T>::front() {
+    return mList.front();
+}
+
+template <typename T>
+typename LockedLinkList<T>::const_reference LockedLinkList<T>::front() const {
+    return mList.front();
+}
+
+template <typename T>
+typename LockedLinkList<T>::reverse_iterator LockedLinkList<T>::rbegin() {
+    return mList.rbegin();
+}
+
+template <typename T>
+typename LockedLinkList<T>::const_reverse_iterator LockedLinkList<T>::rbegin() const {
+    return mList.rbegin();
+}
+
+template <typename T>
+typename LockedLinkList<T>::reverse_iterator LockedLinkList<T>::rend() {
+    return mList.rend();
+}
+
+template <typename T>
+typename LockedLinkList<T>::const_reverse_iterator LockedLinkList<T>::rend() const {
+    return mList.rend();
+}
+
+template <typename T>
+void LockedLinkList<T>::push_back(const typename LockedLinkList<T>::value_type& val) {
+    mList.push_back(val);
+}
+
+#if __cplusplus >= 201103L
+template <typename T>
+void LockedLinkList<T>::push_back(typename LockedLinkList<T>::value_type&& val) {
+     mList.push_back(std::forward<typename LockedLinkList<T>::value_type>(val));
+}
 #endif
 
-protected:
-    /* don't touch these from outside
-       use begin() and end() and len() methods */
-    Entry *first;
-    Entry *last;
-    int length;
-};
-
-template <class T>
-class Linklist : public BaseLinklist {
-public:
-    Linklist();
-    virtual ~Linklist();
-
-    T *begin() {
-        return((T*)first);
-    }
-
-    T *end() {
-        return((T*)last);
-    }
-
-    int size() {
-        return(length);
-    }
-
-    void push_back(T *addr);
-    void push_front(T *addr);
-    void insert_after(T *addr, T *pos);
-    void remove(int pos);
-    void clear();
-    T *pick(int pos);
-    Entry *_pick(int pos);
-
-    T *search(const char *name, int *idx = NULL);
-    T **completion(char *needle);
-
-    T *operator[](int pos) {
-        return pick(pos);
-    }
-};
-
-
-///////////////////////////////////////////////////////////////
-/////////////// IMPLEMENTATIONS
-// here and not in the cpp class for the template linking issue
-
-
-template <class T> Linklist<T>::Linklist() {
-    length = 0;
-    first = NULL;
-    last = NULL;
+template <typename T>
+typename LockedLinkList<T>::size_type LockedLinkList<T>::size() const {
+    return mList.size();
 }
 
-template <class T> Linklist<T>::~Linklist() {
-    clear();
+template <typename T>
+void LockedLinkList<T>::pop_front() {
+    mList.pop_front();
 }
 
-/* adds one element at the end of the list */
-template <class T> void Linklist<T>::push_back(T *addr) {
-    T *ptr = NULL;
-    if(addr->list) addr->rem();
-#ifdef THREADSAFE
-    lock();
-#endif
-
-    if(!last) { /* that's the first entry */
-        last = addr;
-        last->next = NULL;
-        last->prev = NULL;
-        first = last;
-    } else { /* add the entry to the end */
-        ptr = (T*)last;
-        ptr->next = addr;
-        addr->next = NULL;
-        addr->prev = ptr;
-        last = addr;
-    }
-    /* save the pointer to this list */
-    addr->list = this;
-    length++;
-#ifdef THREADSAFE
-    unlock();
-#endif
+template <typename T>
+void LockedLinkList<T>::pop_back() {
+    mList.pop_back();
 }
 
-template <class T> void Linklist<T>::push_front(T *addr) {
-    T *ptr = NULL;
-    if(addr->list) {
-        func("Entry %s is already present in linklist %p - skipping duplicate prepend",
-             addr->getName().c_str(), this);
-        return;
-    }
-#ifdef THREADSAFE
-    lock();
-#endif
-
-    if(!first) { /* that's the first entry */
-        first = addr;
-        first->next = NULL;
-        first->prev = NULL;
-        last = first;
-    } else { /* add an entry to the beginning */
-        ptr = (T*)first;
-        ptr->prev = addr;
-        addr->next = ptr;
-        addr->prev = NULL;
-        first = addr;
-    }
-    addr->list = this;
-    length++;
-#ifdef THREADSAFE
-    unlock();
-#endif
+template <typename T>
+typename LockedLinkList<T>::iterator LockedLinkList<T>::erase(typename LockedLinkList<T>::iterator position) {
+    return mList.erase(position);
 }
 
-// inserts an element after the given one
-template <class T> void Linklist<T>::insert_after(T *addr, T *pos) {
-
-    // take it out from other lists
-    if(addr->list) addr->rem();
-
-#ifdef THREADSAFE
-    lock();
-#endif
-    if(pos->next) {
-        pos->next->prev = addr;
-        addr->next = pos->next;
-    } else last = addr;  // it's the last
-
-    addr->prev = pos;
-    pos->next = addr;
-
-    length++;
-    addr->list = this;
-
-#ifdef THREADSAFE
-    unlock();
-#endif
+template <typename T>
+void LockedLinkList<T>::remove(const value_type& val) {
+    mList.remove(val);
 }
 
-/* clears the list
-   i don't delete filters here because they have to be deleted
-   from the procedure creating them. so this call simply discards
-   the pointers stored into the linked list. OBJECTS ARE NOT FREED */
-template <class T> void Linklist<T>::clear() {
-#ifdef THREADSAFE
-    lock();
-#endif
-    length = 0;
-    first = NULL;
-    last = NULL;
-#ifdef THREADSAFE
-    unlock();
-#endif
+template <typename T>
+typename LockedLinkList<T>::iterator LockedLinkList<T>::insert(typename LockedLinkList<T>::iterator position, const value_type& val) {
+    return mList.insert(position, val);
 }
 
-/* takes one element from the list
-   === STARTING FROM 1 ===
-   returns NULL if called with pos=0 or pos>length
-   returns Entry pointer otherwise
-   this function is then overloading the operator[]
- */
-template <class T> T *Linklist<T>::pick(int pos) {
-    if(pos < 1) {
-        //	  warning("linklist access at element 0 while first element is 1");
-        return(NULL);
-    }
-    if(length < pos) {
-        //	  warning("linklist access out of boundary");
-        return(NULL);
-    }
-    // shortcuts
-    if(pos == 1) return((T*)first);
-    if(pos == length) return((T*)last);
 
-    T *ptr;
-    int c;
-    // start from beginning
-    if(pos < length / 2) {
-        ptr = (T*)first;
-        for(c = 1; c < pos; c++)
-            ptr = (T*)ptr->next;
-    } else { /// | | | p | | |
-        ptr = (T*)last;
-        for(c = length; c > pos; c--)
-            ptr = (T*)ptr->prev;  // to be checked
-    }
-    return(ptr);
+template <typename T>
+void LockedLinkList<T>::insert(typename LockedLinkList<T>::iterator position, size_type n, const value_type& val) {
+    mList.insert(position, n, val);
 }
 
-// virtual implementation for typecasting workaround
-// internal use only by the Entry
-template <class T> Entry *Linklist<T>::_pick(int pos) {
-    return((Entry*)pick(pos));
+template <typename T>
+template <class InputIterator>
+void LockedLinkList<T>::insert(typename LockedLinkList<T>::iterator position, InputIterator first, InputIterator last) {
+    mList.insert(position, first, last);
 }
 
-/* search the linklist for the entry matching *name
-   returns the Entry* on success, NULL on failure */
-template <class T> T *Linklist<T>::search(const char *name, int *idx) {
-    if(!first) return NULL;
-    int c = 1;
-    T *ptr = (T*)first;
-    while(ptr) {
-        if(strcasecmp(ptr->getName().c_str(), name) == 0) {
-            if(idx) *idx = c;
-            return(ptr);
-        }
-        ptr = (T*)ptr->next;
-        c++;
-    }
-    if(idx) *idx = 0;
-    return(NULL);
-}
-
-/* searches all the linklist for entries starting with *needle
-   returns a list of indexes where to reach the matches */
-template <class T> T **Linklist<T>::completion(char *needle) {
-    static T *compbuf[MAX_COMPLETION * sizeof(T*)]; // completion buffer
-    int c;
-    int found;
-    int len = strlen(needle);
-
-    /* cleanup */
-    memset(compbuf, 0, MAX_COMPLETION * sizeof(T*));
-
-    /* check it */
-    T *ptr = (T*)last;
-    if(!ptr) return compbuf;
-
-    for(found = 0, c = 1; ptr; c++, ptr = (T*)ptr->prev) {
-        if(!len) { // 0 lenght needle: return the full list
-            compbuf[found] = ptr;
-            found++;
-        } else if(strncasecmp(needle, ptr->getName().c_str(), len) == 0) {
-            compbuf[found] = ptr;
-            found++;
-        }
-    }
-
-    func("completion found %i hits", found);
-    return compbuf;
-}
-
-/* removes one element from the list */
-template <class T> void Linklist<T>::remove(int pos) {
-    T *ptr = pick(pos);
-    if(ptr == NULL) return;
-    ptr->rem();
-}
 
 #endif

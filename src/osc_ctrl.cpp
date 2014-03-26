@@ -72,8 +72,9 @@ OscController::~OscController() {
 }
 
 int OscController::poll() {
+    LockedLinkList<Entry> list = commands_pending.getLock();
     // check if there are pending commands
-    if(commands_pending.size() > 0)
+    if(list.size() > 0)
         return dispatch();
     else
         return 0;

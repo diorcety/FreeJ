@@ -64,8 +64,6 @@ SLangWidget::SLangWidget()
 SLangWidget::~SLangWidget() {
     func("de-allocating widget");
     free(blankrow);
-
-    rem();
 }
 
 int SLangWidget::feed_string(char *str) {

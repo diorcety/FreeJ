@@ -107,7 +107,7 @@ DECLARE_CLASS_GC("VectorLayer", vector_layer_class, vector_layer_constructor, js
 // basically exposing Cairo's API
 
 JSFunctionSpec vector_layer_methods[] = {
-    ENTRY_METHODS,
+    //ENTRY_METHODS,
     { "set_color",        vector_layer_color,            4 },
     { "translate",        vector_layer_translate,        2 },
     { "scale",            vector_layer_scale,            2 },

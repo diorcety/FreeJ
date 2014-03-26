@@ -26,6 +26,7 @@
 #include <callbacks_js.h>
 #include <jsparser_data.h>
 #include <filter.h>
+#include <algorithm>
 
 
 DECLARE_CLASS("Filter", filter_class, filter_constructor)
@@ -33,7 +34,7 @@ DECLARE_CLASS("Filter", filter_class, filter_constructor)
 JSFunctionSpec filter_methods[] = {
     {"set_parameter",           filter_set_parameter,             4},
     {"activate",                filter_activate,                  1},
-    ENTRY_METHODS,
+    //ENTRY_METHODS,
     {0}
 };
 
@@ -48,9 +49,8 @@ JSPropertySpec filter_properties[] = {
 JS(filter_constructor) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    int idx;
     char *name;
-    FilterInstance *filter_instance = NULL;
+
     if(argc < 1)
         JS_ERROR("missing argument");
 
@@ -58,17 +58,21 @@ JS(filter_constructor) {
     JS_BeginRequest(cx);
     name = js_get_string(argv[0]);
 
-    Filter *filter = (Filter*) global_environment->filters.search(name, &idx);
+    LockedLinkList<Filter> list = global_environment->filters.getLock();
+    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](Filter *filter) {
+        return filter->getName() == name;
+    });
 
-    if(!filter) {
+    if(it == list.end()) {
         error("filter not found: %s", name);
         *rval = JSVAL_FALSE;
         return JS_TRUE;
-    } else {
-        filter_instance = filter->new_instance();
-        // fill with class description
-        filter_instance->jsclass = &filter_class;
     }
+
+    Filter *filter = *it;
+    FilterInstance *filter_instance = filter->new_instance();
+    // fill with class description
+    filter_instance->jsclass = &filter_class;
 
     if(!JS_SetPrivate(cx, obj, (void*)filter_instance))
         JS_ERROR("internal error setting private value");
@@ -109,7 +113,6 @@ JS(filter_set_parameter) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     int idx = 0;
     char *name = NULL;
-    Parameter *param;
     jsdouble val[3];
 
     //JS_SetContextThread(cx);
@@ -126,25 +129,35 @@ JS(filter_set_parameter) {
         return JS_FALSE;
     }
 
-    if(JSVAL_IS_DOUBLE(argv[0])) {
+    LockedLinkList<Parameter> list = filter_instance->parameters.getLock();
+    LockedLinkList<Parameter>::iterator it;
 
+    if(JSVAL_IS_DOUBLE(argv[0])) {
         double *argidx = JSVAL_TO_DOUBLE(argv[0]);
         idx = *argidx;
-        param = (Parameter*) filter_instance->parameters.pick(idx);
-
+        int c = 0;
+        it = std::find_if(list.begin(), list.end(), [&] (Parameter* param) {
+            if(c == idx) {
+                return true;
+            }
+            c++;
+            return false;
+        });
     } else { // get it by the param name
-
         name = js_get_string(argv[0]);
-        param = (Parameter*) filter_instance->parameters.search(name, &idx);
-
+        it = std::find_if(list.begin(), list.end(), [&] (Parameter* param) {
+            return param->getName() == name;
+        });
     }
 
-    if(!param) {
+    if(it != list.end()) {
         JS_EndRequest(cx);
         //JS_ClearContextThread(cx);
         error("parameter %s not found in filter %s", name, filter_instance->proto->getName().c_str());
         return JS_TRUE;
     }
+
+    Parameter *param = *it;
 
     switch(param->type) {
 
@@ -160,7 +173,6 @@ JS(filter_set_parameter) {
         //  filter_instance->proto->set_parameter_value( filter_instance->instance, &val, it->second );
 
         param->set(&val);
-        filter_instance->set_parameter(idx);
         break;
     }
     case Parameter::POSITION:
@@ -179,7 +191,6 @@ JS(filter_set_parameter) {
         //  filter_instance->proto->set_parameter_value( filter_instance->instance, &val, it->second );
 
         param->set(&val[0]);
-        filter_instance->set_parameter(idx);
         break;
 
     default:
@@ -216,9 +227,9 @@ JSP(filter_list_parameters) {
     }
 
     // take the prototype (descriptive) and create an array
-    Parameter *parm = (Parameter *)filter_instance->parameters.begin();
+    LockedLinkList<Parameter> list = filter_instance->parameters.getLock();
     int c = 0;
-    while(parm) {
+    std::for_each(list.begin(), list.end(), [&](Parameter *parm) {
         otmp = JS_NewObject(cx, &parameter_class, NULL, obj);
         JS_SetPrivate(cx, otmp, (void*)parm);
         parm->jsclass = &parameter_class;
@@ -226,8 +237,7 @@ JSP(filter_list_parameters) {
         val = OBJECT_TO_JSVAL(otmp);
         JS_SetElement(cx, arr, c, &val);
         c++;
-        parm = (Parameter*)parm->next;
-    }
+    });
 
     *vp = OBJECT_TO_JSVAL(arr);
     JS_EndRequest(cx);

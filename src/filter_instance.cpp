@@ -78,47 +78,6 @@ uint32_t *FilterInstance::process(float fps, uint32_t *inframe) {
     return outframe;
 }
 
-bool FilterInstance::set_parameter(int idx) {
-    Parameter *param;
-    param = (Parameter*)parameters[idx];
-
-    if(!param) {
-        error("parameter [%u] not found in filter %s", idx, proto->getName().c_str());
-        return false;
-    } else {
-        func("parameter %s found in filter %s at position %u", param->getName().c_str(), proto->getName().c_str(), idx);
-    }
-
-    if(!param->filter_set_f) {
-        error("no filter callback function registered in this parameter");
-        return false;
-    }
-
-    (*param->filter_set_f)(this, param, idx);
-
-    return true;
-}
-
-bool FilterInstance::get_parameter(int idx) {
-    Parameter *param;
-    param = (Parameter*)parameters[idx];
-
-    if(!param) {
-        error("parameter %s not found in filter %s", param->getName().c_str(), proto->getName().c_str());
-        return false;
-    } else {
-        func("parameter %s found in filter %s at position %u", param->getName().c_str(), proto->getName().c_str(), idx);
-    }
-
-    if(!param->filter_get_f) {
-        error("no filter callback function registered in this parameter");
-        return false;
-    }
-
-    (*param->filter_get_f)(this, param, idx);
-
-    return true;
-}
 
 bool FilterInstance::apply(Layer *lay) {
     bool ret = false;

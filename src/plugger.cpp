@@ -108,6 +108,9 @@ int Plugger::refresh(Context *env) {
     int found;
     char *path = _getsearchpath();
 
+    LockedLinkList<Filter> filterList = env->filters.getLock();
+    LockedLinkList<Filter> generatorList = env->generators.getLock();
+
 #ifdef WITH_COCOA
     CVFilter::listFilters(env->filters);
 #endif
@@ -144,24 +147,19 @@ int Plugger::refresh(Context *env) {
                     } else { // freior effect found
                         // check what kind of plugin is and place it
                         if(fr->info.plugin_type == F0R_PLUGIN_TYPE_FILTER) {
-                            env->filters.push_back(fr);
-
+                            filterList.push_back(fr);
                             func("found frei0r filter: %s (%p)", fr->getName().c_str(), fr);
                             continue;
-
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_SOURCE) {
-                            env->generators.push_back(fr);
+                            generatorList.push_back(fr);
                             func("found frei0r generator: %s (%p)", fr->getName().c_str(), fr);
                             continue;
-
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_MIXER2) {
-                            func("frei0r plugin of type MIXER2 not supported (yet)",
-                                 fr->info.plugin_type);
+                            func("frei0r plugin of type MIXER2 not supported (yet)", fr->info.plugin_type);
                             delete fr;
                             continue;
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_MIXER3) {
-                            func("frei0r plugin of type MIXER3 not supported (yet)",
-                                 fr->info.plugin_type);
+                            func("frei0r plugin of type MIXER3 not supported (yet)", fr->info.plugin_type);
                             delete fr;
                             continue;
                         }
@@ -176,19 +174,13 @@ int Plugger::refresh(Context *env) {
                     } else { // freeframe effect found
                         // check what kind of plugin is and place it
                         if(fr->info->pluginType == FF_EFFECT) {
-
-                            env->filters.push_back(fr);
-
-                            func("found freeframe filter: %s (%p)",
-                                 fr->info->pluginName, fr);
+                            filterList.push_back(fr);
+                            func("found freeframe filter: %s (%p)", fr->info->pluginName, fr);
                             continue;
 
                         } else if(fr->info->pluginType == FF_SOURCE) {
-
-                            env->generators.push_back(fr);
-
-                            func("found freeframe generator: %s (%p)",
-                                 fr->info->pluginName, fr);
+                            generatorList.push_back(fr);
+                            func("found freeframe generator: %s (%p)", fr->info->pluginName, fr);
                             continue;
 
                         }
@@ -205,8 +197,8 @@ int Plugger::refresh(Context *env) {
         warning("can't find any valid plugger directory");
         return(-1);
     }
-    act("filters found: %u", env->filters.size());
-    act("generators found: %u", env->generators.size());
+    act("filters found: %u", filterList.size());
+    act("generators found: %u", generatorList.size());
 
     return 0;
 }

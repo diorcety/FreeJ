@@ -27,6 +27,9 @@
 #include <frei0r_freej.h>
 #include <freeframe_freej.h>
 
+
+#include <algorithm>
+
 #include <jutils.h>
 
 Filter::Filter()
@@ -76,7 +79,7 @@ bool Filter::apply(Layer *lay, FilterInstance *instance) {
 
     bytesize = lay->geo.bytesize;
 
-    lay->filters.push_back(instance);
+    lay->filters.getLock().push_back(instance);
 
     act("initialized filter %s on layer %s", name.c_str(), lay->getName().c_str());
 
@@ -120,17 +123,13 @@ void Filter::update(FilterInstance *inst, double time, uint32_t *inframe, uint32
 }
 
 void Filter::apply_parameters(FilterInstance *inst) {
-    int idx = 1; // linklist starts from 1
-    inst->parameters.lock();
-    Parameter *param = inst->parameters.begin();
-    while(param) {
+    LockedLinkList<Parameter> list = inst->parameters.getLock();
+
+    std::for_each(list.begin(), list.end(), [&] (Parameter *param) {
         if(param->changed) {
-            inst->set_parameter(idx);
+            param->update();
             param->changed = false; // XXX
         }
-        param = (Parameter *)param->next;
-        idx++;
-    }
-    inst->parameters.unlock();
+    });
 }
 

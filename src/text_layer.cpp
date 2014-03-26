@@ -55,15 +55,15 @@ TextLayer::TextLayer()
     setName("TXT");
     surf = NULL;
 
+    LockedLinkList<Parameter> list = parameters.getLock();
     {
         // setup specific layer parameters
-        parameters = new Linklist<Parameter>();
         Parameter *param;
 
         param = new Parameter(Parameter::NUMBER);
         param->setName("size");
         param->setDescription("set the size of the font");
-        parameters->push_back(param);
+        list.push_back(param);
     }
 }
 

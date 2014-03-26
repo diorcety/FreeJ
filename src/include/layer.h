@@ -127,8 +127,6 @@ public:
 
     virtual void close(); ///< close the layer (ready to open a new one)
 
-    virtual bool set_parameter(int idx); ///< activate the setting on parameter pointed by idx index number
-
     char *get_filename() {
         return filename;
     }
@@ -170,7 +168,7 @@ public:
     virtual void fit(bool maintain_aspect_ratio = true);
 
 
-    Linklist<Parameter> *parameters;
+    Linklist<Parameter> parameters;
     ///< Parameter list for the layer
 
     Linklist<FilterInstance> filters;
@@ -261,11 +259,6 @@ private:
     virtual void *feed() = 0; ///< feeds in the image source
 
     bool cafudda(); ///< cafudda is called by the Context
-
-    // working variables
-    int res;
-    Iterator *iter;
-    Iterator *itertmp;
 
     // colorkey point
     uint8_t colorkey_r;

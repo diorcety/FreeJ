@@ -42,14 +42,18 @@ BLIT sdl_rgb(void *src, SDL_Rect *src_rect,
     //SDL_UpdateRects(sdl_surf, 1, dst_rect);
 
     SDL_FreeSurface(sdl_surf);
-};
+}
 
 BLIT sdl_alpha(void *src, SDL_Rect *src_rect,
                SDL_Surface *dst, SDL_Rect *dst_rect,
                Geometry *geo, Linklist<Parameter> *params) {
 
-    float alpha = *(float*)(params->begin()->value); // only one value
-    unsigned int int_alpha = (unsigned int) alpha;
+    unsigned int int_alpha;
+    {
+        LockedLinkList<Parameter> list = params->getLock();
+        float alpha = *(float*)(list.front()->value); // only one value
+        int_alpha = (unsigned int) alpha;
+    }
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
                    (src, geo->w, geo->h, geo->bpp,
@@ -61,14 +65,18 @@ BLIT sdl_alpha(void *src, SDL_Rect *src_rect,
 
     SDL_FreeSurface(sdl_surf);
 
-};
+}
 
 BLIT sdl_srcalpha(void *src, SDL_Rect *src_rect,
                   SDL_Surface *dst, SDL_Rect *dst_rect,
                   Geometry *geo, Linklist<Parameter> *params) {
 
-    float alpha = *(float*)(params->begin()->value); // only one value
-    unsigned int int_alpha = (unsigned int) alpha;
+    unsigned int int_alpha;
+    {
+        LockedLinkList<Parameter> list = params->getLock();
+        float alpha = *(float*)(list.front()->value); // only one value
+        int_alpha = (unsigned int) alpha;
+    }
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
                    (src, geo->w, geo->h, geo->bpp,
@@ -80,7 +88,7 @@ BLIT sdl_srcalpha(void *src, SDL_Rect *src_rect,
 
     SDL_FreeSurface(sdl_surf);
 
-};
+}
 
 BLIT sdl_chromakey(void *src, SDL_Rect *src_rect,
                    SDL_Surface *dst, SDL_Rect *dst_rect,
@@ -111,45 +119,54 @@ void setup_sdl_blits(Blitter *blitter) {
     Parameter *p;
     Blit *b;
 
+    LockedLinkList<Blit> list = blitter->blitlist.getLock();
     // SDL blits
     b = new Blit();
     b->setName("SDL");
     b->setDescription("RGB blit (SDL)");
     b->type = Blit::SDL;
     b->sdl_fun = sdl_rgb;
-    blitter->blitlist.push_front(b);
+    list.push_front(b);
 
     blitter->default_blit = b; // SDL is default
 
     /////////////
 
-    b = new Blit();
-    b->setName("ALPHA");
-    b->setDescription("alpha blit (SDL)");
-    b->type = Blit::SDL;
-    b->sdl_fun = sdl_alpha;
-    blitter->blitlist.push_front(b);
+    {
+        b = new Blit();
+        b->setName("ALPHA");
+        b->setDescription("alpha blit (SDL)");
+        b->type = Blit::SDL;
+        b->sdl_fun = sdl_alpha;
+        list.push_front(b);
 
-    p = new Parameter(Parameter::NUMBER);
-    p->setName("alpha");
-    p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
-    p->multiplier = 255.0;
-    b->parameters.push_back(p);
+        LockedLinkList<Parameter> listP = b->parameters.getLock();
+
+        p = new Parameter(Parameter::NUMBER);
+        p->setName("alpha");
+        p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
+        p->multiplier = 255.0;
+        listP.push_back(p);
+    }
 
     /////////////
 
-    b = new Blit();
-    b->setName("SRCALPHA");
-    b->setDescription("source alpha blit (SDL)");
-    b->type = Blit::SDL;
-    b->sdl_fun = sdl_srcalpha;
-    blitter->blitlist.push_front(b);
+    {
+        b = new Blit();
+        b->setName("SRCALPHA");
+        b->setDescription("source alpha blit (SDL)");
+        b->type = Blit::SDL;
+        b->sdl_fun = sdl_srcalpha;
+        list.push_front(b);
 
-    p = new Parameter(Parameter::NUMBER);
-    p->setName("alpha");
-    p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
-    p->multiplier = 255.0;
-    b->parameters.push_back(p);
+        LockedLinkList<Parameter> listP = b->parameters.getLock();
+
+        p = new Parameter(Parameter::NUMBER);
+        p->setName("alpha");
+        p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
+        p->multiplier = 255.0;
+        listP.push_back(p);
+    }
 
 //   b = new Blit(); b->setName("CHROMAKEY");
 //   sprintf(b->desc,"chromakey blit (SDL)");

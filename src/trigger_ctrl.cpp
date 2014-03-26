@@ -26,7 +26,7 @@
 #include <trigger_ctrl.h>
 
 #include <config.h>
-
+#include <algorithm>
 #include <context.h>
 #include <jutils.h>
 
@@ -45,11 +45,10 @@ TriggerController::~TriggerController() {
 int TriggerController::poll() {
 
     if(javascript) {
-        ControllerListener *listener = listeners.begin();
-        while(listener) {
+        LockedLinkList<ControllerListener> list = listeners.getLock();
+        std::for_each(list.begin(), list.end(), [&](ControllerListener *listener){
             listener->frame();
-            listener = (ControllerListener *)listener->next;
-        }
+        });
     }
     return dispatch();
 }

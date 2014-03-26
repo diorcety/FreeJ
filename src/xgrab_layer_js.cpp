@@ -39,7 +39,7 @@ DECLARE_CLASS_GC("XGrabLayer", js_xgrab_class, js_xgrab_constructor, js_layer_gc
 JS_CONSTRUCTOR("XGrabLayer", js_xgrab_constructor, XGrabLayerJS);
 
 JSFunctionSpec js_xgrab_methods[] = {
-    ENTRY_METHODS,
+    //ENTRY_METHODS,
     {"open",      js_xgrab_open,  1},
     {"close",     js_xgrab_close, 1},
     {0}

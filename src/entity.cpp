@@ -28,9 +28,6 @@
 #include <linklist.h>
 
 Entry::Entry() {
-    next = NULL;
-    prev = NULL;
-    list = NULL;
     data = NULL;
 #ifdef WITH_JAVASCRIPT
     jsclass = NULL;
@@ -40,7 +37,6 @@ Entry::Entry() {
 }
 
 Entry::~Entry() {
-    rem();
 }
 
 void Entry::setName(const std::string &name) {
@@ -60,6 +56,8 @@ const std::string &Entry::getDescription() const {
 }
 
 bool Entry::up() {
+    /*
+     *TODO
     if(!list) return(false);
     if(!prev) return(false);
 
@@ -91,10 +89,13 @@ bool Entry::up() {
 #ifdef THREADSAFE
     list->unlock();
 #endif
+*/
     return(true);
 }
 
 bool Entry::down() {
+    /*
+     *TODO
     if(!list) return(false);
     if(!next) return(false);
 
@@ -125,10 +126,14 @@ bool Entry::down() {
 #ifdef THREADSAFE
     list->unlock();
 #endif
+    */
     return(true);
+
 }
 
 bool Entry::move(int pos) {
+    /*
+     *TODO
     func("Entry::move(%i)", pos);
     if(!list)
         return(false);
@@ -207,31 +212,7 @@ bool Entry::move(int pos) {
 #ifdef THREADSAFE
     list->unlock();
 #endif
+    */
     return(true);
-}
 
-void Entry::rem() {
-    if(!list) return;
-#ifdef THREADSAFE
-    list->lock();
-#endif
-
-    if(next) { // if there is a next
-        next->prev = prev; // link it to the previous
-    } else {
-        list->last = prev; // else just make it the last
-    }
-
-
-    if(prev) { // if there is a previous
-        prev->next = next; // link it to the next
-    } else list->first = next;  // else just make it a first
-
-    list->length--;
-    prev = NULL;
-    next = NULL;
-#ifdef THREADSAFE
-    list->unlock();
-#endif
-    list = NULL;
 }

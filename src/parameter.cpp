@@ -59,11 +59,6 @@ Parameter::Parameter(Parameter::Type param_type)
 
     type = param_type;
 
-    layer_set_f = NULL;
-    layer_get_f = NULL;
-    filter_set_f = NULL;
-    filter_get_f = NULL;
-
     setName("unnamed");
     setDescription(" ");
 }
@@ -203,3 +198,6 @@ bool Parameter::parse(char *p) {
 
 }
 
+void Parameter::update() {
+
+}

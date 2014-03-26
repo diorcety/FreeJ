@@ -35,6 +35,8 @@
 #include <jutils.h>
 #include <errno.h>
 
+#include <algorithm>
+
 #include <callbacks_js.h>
 #include <jsparser.h>
 #include <jsparser_data.h> // private data header
@@ -361,11 +363,11 @@ JsParser::~JsParser() {
 }
 
 void JsParser::gc() {
-    JsExecutionContext *ecx = runtimes.begin();
-    while(ecx) {
+    LockedLinkList<JsExecutionContext> list = runtimes.getLock();
+
+    std::for_each(list.begin(), list.end(), [&] (JsExecutionContext *ecx) {
         ecx->gc();
-        ecx = (JsExecutionContext *)ecx->next;
-    }
+    });
 }
 
 void JsParser::init() {
@@ -457,7 +459,7 @@ int JsParser::open(const char* script_file) {
     JS_ClearContextThread(new_script->cx);
     if(ret) {
         new_script->setName(script_file);
-        runtimes.push_back(new_script);
+        runtimes.getLock().push_back(new_script);
     } else {
         delete new_script;
     }
@@ -608,7 +610,7 @@ int JsParser::parse(const char *command) {
     JS_EndRequest(new_script->cx);
     JS_ClearContextThread(new_script->cx);
     if(eval_res)
-        runtimes.push_back(new_script);
+        runtimes.getLock().push_back(new_script);
     else
         delete new_script;
 
@@ -651,10 +653,11 @@ char* JsParser::readFile(FILE *file, int *len) {
 int JsParser::reset() {
     int i = 0;
 
-    JsExecutionContext *ecx = runtimes.begin();
-    while(ecx) {
+    LockedLinkList<JsExecutionContext> list = runtimes.getLock();
+    while(!list.empty()) {
+        JsExecutionContext *ecx = list.front();
+        list.pop_front();
         delete ecx;
-        ecx = runtimes.begin();
         i++;
     }
     return i;

@@ -39,7 +39,7 @@ DECLARE_CLASS_GC("ImageLayer", image_layer_class, image_layer_constructor, js_la
 ////////////////////////////////
 // Image Layer methods
 JSFunctionSpec image_layer_methods[] = {
-    ENTRY_METHODS,
+//    ENTRY_METHODS,
     {     "open",         image_layer_open,               1},
     {0}
 };

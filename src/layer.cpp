@@ -32,6 +32,8 @@
 #include <context.h>
 #include <config.h>
 
+#include <algorithm>
+
 #include <jutils.h>
 #ifdef WITH_JAVASCRIPT
 #include <jsparser_data.h>
@@ -73,34 +75,33 @@ Layer::Layer()
     null_feeds = 0;
     max_null_feeds = 10;
 
-    parameters = NULL;
-
     priv_data = NULL;
 
     fps.set(25);
-
 }
 
 Layer::~Layer() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
 
     active = false;
-    FilterInstance *f = (FilterInstance*)filters.begin();
-    while(f) {
-        f->rem(); // rem is contained in delete for Entry
-        delete f;
-        f = (FilterInstance*)filters.begin();
+
+    {
+         LockedLinkList<FilterInstance> list = filters.getLock();
+         while(list.size()) {
+            FilterInstance *f = list.front();
+            list.pop_front();
+            delete f;
+         }
     }
 
     // free all parameters
-    if(parameters) {
-        Parameter *par;
-        par = parameters->begin();
-        while(par) {
-            par->rem();
+    {
+         LockedLinkList<Parameter> list = parameters.getLock();
+         while(list.size()) {
+            Parameter *par = list.front();
+            list.pop_front();
             delete par;
-            par = parameters->begin();
-        }
+         }
     }
 
     if(blitter) delete blitter;
@@ -185,16 +186,18 @@ char *Layer::get_blit() {
 }
 
 bool Layer::set_blit(const char *bname) {
-    Blit *b;
-    int idx;
 
     if(screen && blitter) {
-        b = (Blit*)blitter->blitlist.search(bname, &idx);
+        LockedLinkList<Blit> list = blitter->blitlist.getLock();
+        LockedLinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (Blit * &b) {
+            return b->getName() == bname;
+        });
 
-        if(!b) {
-            error("blit %s not found in screen %s", bname, screen->name.c_str());
+        if(it == list.end()) {
+            error("blit %s not found in screen %s", bname, screen->getName().c_str());
             return(false);
         }
+        Blit *b = *it;
 
         func("blit for layer %s set to %s", name.c_str(), b->getName().c_str());
 
@@ -249,65 +252,35 @@ bool Layer::cafudda() {
 }
 
 void *Layer::do_filters(void *tmp_buf) {
-    if(filters.size()) {
-        FilterInstance *filt;
-        filters.lock();
-        filt = (FilterInstance *)filters.begin();
-        while(filt) {
-            if(filt->active)
-                tmp_buf = (void*) filt->process(fps.fps, (uint32_t*)tmp_buf);
-            filt = (FilterInstance *)filt->next;
-        }
-        filters.unlock();
-    }
+    LockedLinkList<FilterInstance> list = filters.getLock();
+    std::for_each(list.begin(), list.end(), [&](FilterInstance *filt) {
+        if(filt->active)
+            tmp_buf = (void*) filt->process(fps.fps, (uint32_t*)tmp_buf);
+    });
     return tmp_buf;
 }
 
 int Layer::do_iterators() {
 
     /* process thru iterators */
-    if(iterators.size()) {
-        iterators.lock();
-        iter = (Iterator*)iterators.begin();
-        while(iter) {
-            res = iter->cafudda(); // if cafudda returns -1...
-            itertmp = iter;
-            iter = (Iterator*)((Entry*)iter)->next;
-            if(res < 0) {
-                iterators.unlock();
-                delete itertmp; // ...iteration ended
-                iterators.lock();
-                if(!iter)
-                    if(fade) { // no more iterations, fade out deactivates layer
-                        fade = false;
-                        active = false;
-                    }
+    LockedLinkList<Iterator> list = iterators.getLock();
+    LockedLinkList<Iterator>::iterator it = list.begin();
+    while(it != list.end()) {
+        Iterator *iter = *it;
+        int res = iter->cafudda(); // if cafudda returns -1...
+        if(res < 0) {
+            it = list.erase(it);
+            if(it == list.end()) {
+                if(fade) { // no more iterations, fade out deactivates layer
+                    fade = false;
+                    active = false;
+                }
             }
+        } else {
+            ++it;
         }
-        iterators.unlock();
     }
     return(1);
-}
-
-bool Layer::set_parameter(int idx) {
-
-    Parameter *param;
-    param = (Parameter*)parameters->pick(idx);
-    if(!param) {
-        error("parameter %s not found in layer %s", param->getName().c_str(), name.c_str());
-        return false;
-    } else {
-        func("parameter %s found in layer %s at position %u", param->getName().c_str(), name.c_str(), idx);
-    }
-
-    if(!param->layer_set_f) {
-        error("no layer callback function registered in this parameter");
-        return false;
-    }
-
-    (*param->layer_set_f)(this, param, idx);
-
-    return true;
 }
 
 void Layer::set_filename(const char *f) {

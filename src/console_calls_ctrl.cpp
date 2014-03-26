@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
+#include <algorithm>
 
 #include <console_calls_ctrl.h>
 #include <console_readline_ctrl.h>
@@ -39,9 +40,6 @@
 #include <jutils.h>
 
 int console_param_selection(Context *env, char *cmd) {
-    Parameter *param;
-    int idx;
-
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
@@ -72,50 +70,42 @@ int console_param_selection(Context *env, char *cmd) {
     if(*p == '\0') return 0;  // no value was given
 
     if(filt) { ///////////////////////// parameters for filter
+        LockedLinkList<Parameter> list = filt->parameters.getLock();
+        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (Parameter *&param) {
+            return param->getName() == cmd;
 
-        // find the parameter
-        param = (Parameter*)filt->parameters.search(cmd, &idx);
-        if(!param) {
+        });
+
+        if(it == list.end()) {
             error("parameter %s not found in filter %s", cmd, filt->proto->getName().c_str());
             return 0;
-        } else
-            func("parameter %s found in filter %s at position %u",
-                 param->getName().c_str(), filt->proto->getName().c_str(), idx);
+        } else {
+            Parameter *param = *it;
+            func("parameter %s found in filter %s",
+                 param->getName().c_str(), filt->proto->getName().c_str());
 
-    } else if(lay->parameters) { /////// parameters for layer
-        param = (Parameter*)lay->parameters->search(cmd, &idx);
-        if(!param) {
+            // parse from the string to the value
+            param->parse(p);
+        }
+    } else { /////// parameters for layer
+        LockedLinkList<Parameter> list = lay->parameters.getLock();
+        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (Parameter *&param) {
+            return param->getName() == cmd;
+
+        });
+
+        if(it == list.end()) {
             error("parameter %s not found in layers %s", cmd, lay->getName().c_str());
             return 0;
-        } else
+        } else {
+            Parameter *param = *it;
             func("parameter %s found in layer %s at position %u",
-                 param->getName().c_str(), lay->getName().c_str(), idx);
-    } else {
-        warning("no parameters found in layer %s", lay->getName().c_str());
-        return 0;
-    }
+                 param->getName().c_str(), lay->getName().c_str());
 
-    // parse from the string to the value
-    param->parse(p);
-
-    if(filt) {
-
-        if(!filt->set_parameter(idx)) {
-            error("error setting value %s for parameter %s on filter %s",
-                  p, param->getName().c_str(), filt->proto->getName().c_str());
-            return 0;
+            // parse from the string to the value
+            param->parse(p);
         }
-
-    } else {
-
-        if(!lay->set_parameter(idx)) {
-            error("error setting value %s for parameter %s on layer %s",
-                  p, param->getName().c_str(), lay->getName().c_str());
-            return 0;
-        }
-
     }
-
 
     return 1;
 }
@@ -135,29 +125,38 @@ int console_param_completion(Context *env, char *cmd) {
 
     Linklist<Parameter> *parameters;
     if(filt) parameters = &filt->parameters;
-    else parameters = lay->parameters;
+    else parameters = &lay->parameters;
 
-    if(!parameters) return 0;
+    // Find completions
+    Parameter* exactParam = NULL;
+    std::list<Parameter*> retList;
+    LockedLinkList<Parameter> list = parameters->getLock();
+    std::string cmdString(cmd);
+    std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Parameter *param) {
+        std::string name = param->getName();
+        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+        if(name == cmdString) {
+            exactParam = param;
+        }
+        return name.compare(cmdString) == 0;
+    });
 
-    Parameter **params = parameters->completion(cmd);
-    if(!params[0]) return 0;
+    if(retList.empty()) return 0;
 
-    Parameter *p;
-
-    if(!params[1]) { // exact match, then fill in command
-        p = (Parameter*)params[0];
-        //    ::notice("%s :: %s",p->getName().c_str(),p->getDescription().c_str());
-        snprintf(cmd, MAX_CMDLINE, "%s = ", p->getName().c_str());
-        //    return 1;
-    } else {
-
-        notice("List available parameters starting with \"%s\"", cmd);
-
+    if(exactParam != NULL) {
+        snprintf(cmd, MAX_CMDLINE, "%s = ", exactParam->getName().c_str());
+        return 1;
     }
 
-    int c;
-    for(c = 0; params[c]; c++) {
-        p = (Parameter*)params[c];
+    if(cmdString.empty()) {
+        notice("List available parameters");
+    } else {
+        notice("List available parameters starting with \"%s\"", cmd);
+    }
+
+    int c = 0;
+    std::for_each(retList.begin(), retList.end(), [&] (Parameter *p) {
         switch(p->type) {
         case Parameter::BOOL:
             ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
@@ -186,7 +185,8 @@ int console_param_completion(Context *env, char *cmd) {
             ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
             break;
         }
-    }
+        ++c;
+    });
     return c;
 }
 
@@ -210,10 +210,6 @@ int console_blit_selection(Context *env, char *cmd) {
 }
 
 int console_blit_completion(Context *env, char *cmd) {
-    int c;
-    Entry **blits;
-    Blit *b;
-
     if(!cmd) return 0;
 
     ViewPort *screen = env->mSelectedScreen;
@@ -227,62 +223,52 @@ int console_blit_completion(Context *env, char *cmd) {
         return 0;
     }
 
-    blits = (Entry**)lay->blitter->blitlist.completion(cmd);
+    // Find completions
+    Blit* exactBlit = NULL;
+    std::list<Blit*> retList;
+    LockedLinkList<Blit> list = lay->blitter->blitlist.getLock();
+    std::string cmdString(cmd);
+    std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Blit *blit) {
+        std::string name = blit->getName();
+        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+        if(name == cmdString) {
+            exactBlit = blit;
+        }
+        return name.compare(cmdString) == 0;
+    });
 
-    if(!blits[0]) return 0;  // none found
+    if(retList.empty()) return 0;
 
-    if(!blits[1]) { // exact match, then fill in command
-        b = (Blit*) blits[0];
-        ::notice("%s :: %s", b->getName().c_str(), b->getDescription().c_str());
-        snprintf(cmd, MAX_CMDLINE, "%s", b->getName().c_str());
+    if(exactBlit != NULL) {
+        snprintf(cmd, MAX_CMDLINE, "%s = ", exactBlit->getName().c_str());
         return 1;
     }
 
-    if(cmd[0] == 0x0)
+    if(cmdString.empty()) {
         notice("List available blits");
-    else
+    } else {
         notice("List available blits starting with \"%s\"", cmd);
-
-
-    for(c = 0; blits[c]; c += 4) {
-        char tmp[256];
-
-        b = (Blit*)blits[c];
-        if(!b) break;
-        snprintf(tmp, 255, "%s", b->getName().c_str());
-
-        b = (Blit*)blits[c + 1];
-        if(b) {
-            strncat(tmp, "\t", 255);
-            strncat(tmp, b->getName().c_str(), 255);
-        }
-
-        b = (Blit*)blits[c + 2];
-        if(b) {
-            strncat(tmp, "\t", 255);
-            strncat(tmp, b->getName().c_str(), 255);
-        }
-
-        b = (Blit*)blits[c + 3];
-        if(b) {
-            strncat(tmp, "\t", 255);
-            strncat(tmp, b->getName().c_str(), 255);
-        }
-
-        ::act("%s", tmp);
-
     }
+
+    int c = 0;
+    char tmp[256];
+    std::for_each(retList.begin(), retList.end(), [&] (Blit *b) {
+        if(c % 4 == 0) {
+            if(c != 0) {
+                ::act("%s", tmp);
+            }
+            tmp[0] = '\0';
+        }
+        strncat(tmp, "\t", sizeof(tmp) - 1);
+        strncat(tmp, b->getName().c_str(), sizeof(tmp) - 1);
+        ++c;
+    });
     return c;
 }
 
 int console_blit_param_selection(Context *env, char *cmd) {
-    Parameter *param;
-    Blit *b;
-    int idx;
-
     if(!cmd) return 0;
-    if(!strlen(cmd)) return 0;
-
 
     ViewPort *screen = env->mSelectedScreen;
     if(!screen) {
@@ -295,7 +281,7 @@ int console_blit_param_selection(Context *env, char *cmd) {
         return 0;
     }
 
-    b = lay->current_blit;
+    Blit *b = lay->current_blit;
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
@@ -313,23 +299,25 @@ int console_blit_param_selection(Context *env, char *cmd) {
 
     while(*p == ' ') p++;  // jump all spaces
     if(*p == '\0') return 0;  // no value was given
-    param = (Parameter*)b->parameters.search(cmd, &idx);
-    if(!param) {
+
+    LockedLinkList<Parameter> list = b->parameters.getLock();
+    LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&](Parameter *p) {
+            return p->getName() == cmd;
+    });
+    if(it == list.end()) {
         error("parameter %s not found in blit %s", cmd, b->getName().c_str());
         return 0;
-    } else
-        func("parameter %s found in blit %s at position %u",
-             param->getName().c_str(), b->getName().c_str(), idx);
+    }
+
+    Parameter *param = *it;
+
+    func("parameter %s found in blit %s",  param->getName().c_str(), b->getName().c_str());
 
     param->parse(p);
     return 1;
-
 }
 
 int console_blit_param_completion(Context *env, char *cmd) {
-    Parameter *p, **params;
-    Blit *b;
-
     ViewPort *screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
@@ -341,31 +329,43 @@ int console_blit_param_completion(Context *env, char *cmd) {
         return 0;
     }
 
-    b = lay->current_blit;
+    Blit *b = lay->current_blit;
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
     }
-    params = b->parameters.completion(cmd);
-    if(!params[0]) return 0;
 
-    if(!params[1]) { // exact match, then fill in command
-        p = (Parameter*)params[0];
-        //    ::notice("%s :: %s",p->getName().c_str(),p->getDescription().c_str());
-        snprintf(cmd, MAX_CMDLINE, "%s = ", p->getName().c_str());
-        //    return 1;
-    } else {
+    // Find completions
+    // Find completions
+    Parameter* exactParam = NULL;
+    std::list<Parameter*> retList;
+    LockedLinkList<Parameter> list = b->parameters.getLock();
+    std::string cmdString(cmd);
+    std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Parameter *param) {
+        std::string name = param->getName();
+        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+        if(name == cmdString) {
+            exactParam = param;
+        }
+        return name.compare(cmdString) == 0;
+    });
 
-        if(cmd[0] == 0x0)
-            notice("List available blit parameters", cmd);
-        else
-            notice("List available blit parameters starting with \"%s\"", cmd);
+    if(retList.empty()) return 0;
 
+    if(exactParam != NULL) {
+        snprintf(cmd, MAX_CMDLINE, "%s = ", exactParam->getName().c_str());
+        return 1;
     }
 
-    int c;
-    for(c = 0; params[c]; c++) {
-        p = (Parameter*)params[c];
+    if(cmdString.empty()) {
+        notice("List available blit parameters");
+    } else {
+        notice("List available blit parameters starting with \"%s\"", cmd);
+    }
+
+    int c = 0;
+    std::for_each(retList.begin(), retList.end(), [&] (Parameter *p) {
         switch(p->type) {
         case Parameter::BOOL:
             ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
@@ -394,21 +394,23 @@ int console_blit_param_completion(Context *env, char *cmd) {
             ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
             break;
         }
-    }
+        ++c;
+    });
     return c;
 }
 
 int console_filter_selection(Context *env, char *cmd) {
-    Filter *filt;
-    int idx;
-
     if(!cmd) return 0;
 
-    filt = (Filter*)env->filters.search(cmd, &idx);
-    if(!filt) {
+    LockedLinkList<Filter> list = env->filters.getLock();
+    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](Filter *filter) {
+            return filter->getName() == cmd;
+    });
+    if(it == list.end()) {
         ::error("filter not found: %s", cmd);
         return 0;
     }
+    Filter *filt = *it;
 
     ViewPort *screen = env->mSelectedScreen;
     if(!screen) {
@@ -433,52 +435,50 @@ int console_filter_selection(Context *env, char *cmd) {
 }
 
 int console_filter_completion(Context *env, char *cmd) {
-    int c;
-    Filter **res;
-    Filter *filt;
     if(!cmd) return 0;
-    // QUAAA
-    res = env->filters.completion(cmd);
 
-    if(!res[0]) return 0;  // no hit
-
-    if(!res[1]) { // exact match: fill in the command
-        filt = res[0];
-        if(!filt) return 0;  // doublecheck safety fix
-        ::notice("%s :: %s", filt->getName().c_str(), filt->getDescription().c_str());
-        snprintf(cmd, 511, "%s", res[0]->getName().c_str());
-        c = 1;
-    } else { // list all matches
-        for(c = 0; res[c]; c += 4) {
-            char tmp[256];
-
-            filt = res[c];
-            if(!filt) break;
-            snprintf(tmp, 255, "%s", filt->getName().c_str());
-
-            filt = res[c + 1];
-            if(filt) {
-                strncat(tmp, "\t", 255);
-                strncat(tmp, filt->getName().c_str(), 255);
-            }
-
-            filt = res[c + 2];
-            if(filt) {
-                strncat(tmp, "\t", 255);
-                strncat(tmp, filt->getName().c_str(), 255);
-            }
-
-            filt = res[c + 3];
-            if(filt) {
-                strncat(tmp, "\t", 255);
-                strncat(tmp, filt->getName().c_str(), 255);
-            }
-
-            //      ::act("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str()());
-
-            ::act("%s", tmp);
+    // Find completions
+    Filter* exactFilter = NULL;
+    std::list<Filter*> retList;
+    LockedLinkList<Filter> list = env->filters.getLock();
+    std::string cmdString(cmd);
+    std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Filter *filter) {
+        std::string name = filter->getName();
+        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+        if(name == cmdString) {
+            exactFilter = filter;
         }
+        return name.compare(cmdString) == 0;
+    });
+
+    if(retList.empty()) return 0;
+
+    if(exactFilter != NULL) {
+        ::notice("%s :: %s", exactFilter->getName().c_str(), exactFilter->getDescription().c_str());
+        snprintf(cmd, MAX_CMDLINE, "%s", exactFilter->getName().c_str());
+        return 1;
     }
+
+    if(cmdString.empty()) {
+        notice("List available filters");
+    } else {
+        notice("List available filters with \"%s\"", cmd);
+    }
+
+    int c = 0;
+    char tmp[256];
+    std::for_each(retList.begin(), retList.end(), [&] (Filter *f) {
+        if(c % 4 == 0) {
+            if(c != 0) {
+                ::act("%s", tmp);
+            }
+            tmp[0] = '\0';
+        }
+        strncat(tmp, "\t", sizeof(tmp) - 1);
+        strncat(tmp, f->getName().c_str(), sizeof(tmp) - 1);
+        ++c;
+    });
     return c;
 }
 
@@ -516,7 +516,6 @@ int console_exec_script_command(Context *env, char *cmd) {
 
 int console_open_layer(Context *env, char *cmd) {
     struct stat filestatus;
-    int len;
 
     func("open_layer(%s)", cmd);
 
@@ -545,7 +544,7 @@ int console_open_layer(Context *env, char *cmd) {
          */
         //	  l->set_fps(env->fps_speed);
         l->start();
-        env->screen->add_layer(l);
+        env->mSelectedScreen->add_layer(l);
         l->active = true;
         //    l->fps=env->fps_speed;
 
@@ -554,7 +553,7 @@ int console_open_layer(Context *env, char *cmd) {
             ::error("no screen currently selected");
             return 0;
         }
-        len = screen->layers.size();
+        int len = screen->layers.getLock().size();
         notice("layer successfully created, now you have %i layers", len);
         return len;
     }
@@ -576,7 +575,7 @@ int console_print_text_layer(Context *env, char *cmd) {
         return 0;
     }
     ((TextLayer*)lay)->write(cmd);
-    return screen->layers.size();
+    return screen->layers.getLock().size();
 }
 
 int console_open_text_layer(Context *env, char *cmd) {
@@ -591,7 +590,7 @@ int console_open_text_layer(Context *env, char *cmd) {
     txt->write(cmd);
     txt->start();
     //  txt->set_fps(0);
-    env->screen->add_layer(txt);
+    env->mSelectedScreen->add_layer(txt);
     txt->active = true;
 
     notice("layer successfully created with text: %s", cmd);
@@ -600,7 +599,7 @@ int console_open_text_layer(Context *env, char *cmd) {
         ::error("no screen currently selected");
         return 0;
     }
-    return screen->layers.size();
+    return screen->layers.getLock().size();
 }
 
 #endif
@@ -618,8 +617,7 @@ int filebrowse_completion_selector(const struct dirent *dir)
 }
 
 int console_filebrowse_completion(Context *env, char *cmd) {
-    Linklist<Entry> files;
-    Entry *e;
+    std::list<Entry *> files;
 
     struct stat filestatus;
 #if defined (HAVE_DARWIN) || defined (HAVE_FREEBSD)
@@ -630,9 +628,6 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     char path[MAX_CMDLINE];
     char needle[MAX_CMDLINE];
     bool incomplete = false;
-    Entry **comps;
-    int found;
-    int c;
 
     if(cmd[0] != '/') // path is relative: prefix our location
         snprintf(path, MAX_CMDLINE, "%s/%s", getenv("PWD"), cmd);
@@ -640,7 +635,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
         strncpy(path, cmd, MAX_CMDLINE);
 
     if(stat(path, &filestatus) < 0) {  // no file there?
-
+        int c = 0;
         // parse backwards to the first '/' and zero it,
         // store the word of the right part in needle
         for(c = strlen(path); path[c] != '/' && c > 0; c--) ;
@@ -660,7 +655,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
 
         // is it a directory? then append the trailing slash
         if(S_ISDIR(filestatus.st_mode)) {
-            c = strlen(path);
+            int c = strlen(path);
             if(path[c - 1] != '/') {
                 path[c] = '/';
                 path[c + 1] = '\0';
@@ -672,7 +667,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     }
     func("file completion: %s", cmd);
     // at this point in path there should be something valid
-    found = scandir
+    int found = scandir
                 (path, &filelist,
                 filebrowse_completion_selector, alphasort);
 
@@ -681,55 +676,52 @@ int console_filebrowse_completion(Context *env, char *cmd) {
         return 0;
     }
 
-    for(c = found - 1; c > 0; c--) { // insert each entry found in a linklist
-        e = new Entry();
+    for(int c = found - 1; c > 0; c--) { // insert each entry found in a linklist
+        Entry *e = new Entry();
         e->setName(filelist[c]->d_name);
         files.push_back(e);
     }
 
-    c = 0; // counter for entries found
+    int c = 0; // counter for entries found
 
     if(incomplete) {
-
         // list all files in directory *path starting with *needle
-
-        comps = files.completion(needle);
-        if(comps[0]) { // something found
-
-            if(!comps[1]) { // exact match
-
-                e = comps[0];
-                snprintf(cmd, MAX_CMDLINE, "%s%s", path, e->getName().c_str());
-
-                c = 1;
-
-            } else { // multiple matches
-
-                notice("list of %s* files in %s:", needle, path);
-                for(c = 0; comps[c]; c++) {
-                    ::act(" %s", comps[c]->getName().c_str());
-                }
-
+        // Find completions
+        Entry* exactEntry = NULL;
+        std::list<Entry*> retList;
+        std::string cmdString(needle);
+        std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
+        std::copy_if(files.begin(), files.end(), retList.begin(), [&] (Entry *entry) {
+            std::string name = entry->getName();
+            std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+            if(name == cmdString) {
+                exactEntry = entry;
             }
+            return name.compare(cmdString) == 0;
+        });
 
-        } else c = 0;
-
+        c = retList.size();
+        if(exactEntry != NULL) {
+            snprintf(cmd, MAX_CMDLINE, "%s%s", path, exactEntry->getName().c_str());
+        } else {
+            notice("list of %s* files in %s:", needle, path);
+            std::for_each(retList.begin(), retList.end(), [&] (Entry *entry) {
+                ::act(" %s", entry->getName().c_str());
+            });
+        }
     } else {
-
         // list all entries
         notice("list of all files in %s:", path);
-        e = files.begin();
-        for(c = 0, e = files.begin();
-            e; e = e->next, c++)
+        std::for_each(files.begin(), files.end(), [&] (Entry *e) {
             ::act("%s", e->getName().c_str());
-
+        });
     }
+
     // free entries allocated in memory
-    e = files.begin();
-    while(e) {
-        files.remove(1);
+    while(!files.empty()) {
+        Entry *e = files.front();
         delete e;
-        e = files.begin();
+        files.pop_front();
     }
 
     return(c);
@@ -756,56 +748,43 @@ int console_filebrowse_completion(Context *env, char *cmd) {
 // }
 
 int console_generator_completion(Context *env, char *cmd) {
-    Filter **res;
-    Filter *filt;
-    int c;
-
     if(!cmd) return 0;
-    func("generator completion for %s", cmd);
-    res = env->generators.completion(cmd);
-    if(!res[0]) {
-        func("nothing found");
-        return 0;
-    }
 
-    if(!res[1]) { // exact match: fill in the command
-        filt = res[0];
-        ::notice("%s :: %s", filt->getName().c_str(), filt->getDescription().c_str());
-        snprintf(cmd, 511, "%s", filt->getName().c_str());
-        c = 1;
-    } else { // list all matches
-        for(c = 0; res[c]; c += 4) {
-
-            char tmp[260];
-
-            filt = res[c];
-            if(!filt) break;
-            snprintf(tmp, 255, "%s", filt->getName().c_str());
-
-            filt = res[c + 1];
-            if(filt) {
-                strncat(tmp, "\t", 255);
-                strncat(tmp, filt->getName().c_str(), 255);
-            }
-
-            filt = res[c + 2];
-            if(filt) {
-                strncat(tmp, "\t", 255);
-                strncat(tmp, filt->getName().c_str(), 255);
-            }
-
-            filt = res[c + 3];
-            if(filt) {
-                strncat(tmp, "\t", 255);
-                strncat(tmp, filt->getName().c_str(), 255);
-            }
-
-            //      ::act("%s :: %s",filt->getName().c_str(),filt->getDescription().c_str()());
-
-            ::act("%s", tmp);
+    LockedLinkList<Filter> list = env->generators.getLock();
+    Filter* exactGenerator = NULL;
+    std::list<Filter*> retList;
+    std::string cmdString(cmd);
+    std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Filter *generator) {
+        std::string name = generator->getName();
+        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+        if(name == cmdString) {
+            exactGenerator = generator;
         }
+        return name.compare(cmdString) == 0;
+    });
 
+    if(retList.empty()) return 0;
+
+    if(exactGenerator != NULL) {
+        ::notice("%s :: %s", exactGenerator->getName().c_str(), exactGenerator->getDescription().c_str());
+        snprintf(cmd, MAX_CMDLINE, "%s", exactGenerator->getName().c_str());
+        return 1;
     }
+
+    int c = 0;
+    char tmp[256];
+    std::for_each(retList.begin(), retList.end(), [&] (Filter *f) {
+        if(c % 4 == 0) {
+            if(c != 0) {
+                ::act("%s", tmp);
+            }
+            tmp[0] = '\0';
+        }
+        strncat(tmp, "\t", sizeof(tmp) - 1);
+        strncat(tmp, f->getName().c_str(), sizeof(tmp) - 1);
+        ++c;
+    });
     return c;
 }
 
@@ -818,9 +797,9 @@ int console_generator_selection(Context *env, char *cmd) {
         ::error("no screen currently selected");
         return 0;
     }
-    if(!tmp->init(env->screen->geo.w,
-                  env->screen->geo.h,
-                  env->screen->geo.bpp)) {
+    if(!tmp->init(env->mSelectedScreen->geo.w,
+                  env->mSelectedScreen->geo.h,
+                  env->mSelectedScreen->geo.bpp)) {
         error("can't initialize generator layer");
         delete tmp;
         return 0;
@@ -837,7 +816,7 @@ int console_generator_selection(Context *env, char *cmd) {
 
     tmp->start();
     //  tmp->set_fps(env->fps_speed);
-    env->screen->add_layer(tmp);
+    env->mSelectedScreen->add_layer(tmp);
     tmp->active = true;
 
     notice("generator %s successfully created", tmp->getName().c_str());

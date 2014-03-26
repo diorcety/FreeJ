@@ -34,6 +34,8 @@
 #include <gd.h>
 #endif
 
+#include <algorithm>
+
 ViewPort::ViewPort()
     : Entry() {
 
@@ -55,33 +57,35 @@ ViewPort::ViewPort()
 }
 
 ViewPort::~ViewPort() {
+    {
+        LockedLinkList<Layer> list = layers.getLock();
 
-    func("screen %s deleting %u layers", name.c_str(), layers.size());
-    Layer *lay;
-    lay = layers.begin();
-    while(lay) {
-        lay->stop();
-        lay->lock();
-        lay->rem();
-        // deleting layers crashes
-        //    delete(lay);
-        // XXX - you don't create layers... so you don't have to delete them as well!!!
-        //       symmetry is of primary importance and we should care about that.
-        //       layers should be freed by who created them. Perhaps we could extend
-        //       the Layer api to allow notifications when a layer is removed from a screen
-        lay = layers.begin();
+        func("screen %s deleting %u layers", name.c_str(), list.size());
+        while(list.size()) {
+            Layer *lay = list.front();
+            list.pop_front();
+            lay->stop();
+            lay->lock();
+            // deleting layers crashes
+            //    delete(lay);
+            // XXX - you don't create layers... so you don't have to delete them as well!!!
+            //       symmetry is of primary importance and we should care about that.
+            //       layers should be freed by who created them. Perhaps we could extend
+            //       the Layer api to allow notifications when a layer is removed from a screen
+        }
     }
 
     if(audio) ringbuffer_free(audio);
 
-    func("screen %s deleting %u encoders", name.c_str(), encoders.size());
-    VideoEncoder *enc;
-    enc = encoders.begin();
-    while(enc) {
-        enc->stop();
-        enc->rem();
-        delete(enc);
-        enc = encoders.begin();
+    {
+        LockedLinkList<VideoEncoder> list = encoders.getLock();
+
+        func("screen %s deleting %u encoders", name.c_str(), list.size());
+        while(list.size()) {
+            VideoEncoder *enc = list.front();
+            list.pop_front();
+            delete(enc);
+        }
     }
 
 }
@@ -106,13 +110,10 @@ bool ViewPort::init(int w, int h, int bpp) {
 bool ViewPort::add_layer(Layer *lay) {
     func("%s", __PRETTY_FUNCTION__);
 
-    if(lay->list) {
-        warning("passing a layer from a screen to another is not (yet) supported");
-        return(false);
-    }
+    LockedLinkList<Layer> list = layers.getLock();
 
     if(!lay->opened) {
-        error("layer %s is not yet opened, can't add it");
+        error("layer %s is not yet opened, can't add it", lay->getName().c_str());
         return(false);
     }
 
@@ -129,7 +130,7 @@ bool ViewPort::add_layer(Layer *lay) {
     //lay->geo.x = (screen->w - lay->geo.w)/2;
     //lay->geo.y = (screen->h - lay->geo.h)/2;
     //  screen->blitter->crop( lay, screen );
-    layers.push_front(lay);
+    list.push_front(lay);
     mSelectedLayer = lay;
     lay->active = true;
     func("layer %s added to screen %s", lay->getName().c_str(), name.c_str());
@@ -138,11 +139,15 @@ bool ViewPort::add_layer(Layer *lay) {
 
 #ifdef WITH_AUDIO
 bool ViewPort::add_audio(JackClient *jcl) {
-    if(layers.size() == 0) return false;
+    LockedLinkList<Layer> list = layers.getLock();
+    LockedLinkList<Layer>::iterator it = list.begin();
+    if(it == list.end()) return false;
 
-    jcl->SetRingbufferPtr(audio, (int)((VideoLayer*) layers.begin())->audio_samplerate, (int)((VideoLayer*) layers.begin())->audio_channels);
-    std::cerr << "------ audio_samplerate :" << ((VideoLayer*) layers.begin())->audio_samplerate \
-              << " audio_channels :" << ((VideoLayer*) layers.begin())->audio_channels << std::endl;
+    VideoLayer * lay = (VideoLayer *)*it;
+
+    jcl->SetRingbufferPtr(audio, (int)lay->audio_samplerate, (int)lay->audio_channels);
+    std::cerr << "------ audio_samplerate :" << lay->audio_samplerate \
+              << " audio_channels :" << lay->audio_channels << std::endl;
     m_SampleRate = &jcl->m_SampleRate;
     return (true);
 }
@@ -150,29 +155,31 @@ bool ViewPort::add_audio(JackClient *jcl) {
 #endif
 
 void ViewPort::rem_layer(Layer *lay) {
+    LockedLinkList<Layer> list = layers.getLock();
+    LockedLinkList<Layer>::iterator it = std::find(list.begin(), list.end(), lay);
+    if(it == list.end()) {
+        error("layer %s is not inside this screen", lay->getName().c_str());
+        return;
+    }
+
     lay->screen = NULL; // symmetry
-    lay->rem();
+    list.erase(it);
     notice("removed layer %s (but still present as an instance)", lay->getName().c_str());
 }
 
 void ViewPort::reset() {
-    Layer *lay;
-    lay = layers.begin();
-    while(lay) {
+    LockedLinkList<Layer> list = layers.getLock();
+    while(list.size()) {
+        //Layer *lay = list.front();
+        list.pop_front();
         // TODO - notify the layer that it has been removed from the screen
-        lay->rem();
-        lay = layers.begin();
     }
-
 }
 
 bool ViewPort::add_encoder(VideoEncoder *enc) {
     func("%s", __PRETTY_FUNCTION__);
 
-    if(enc->list) {
-        error("moving an encoder from one screen to another is not supported");
-        return(false);
-    }
+    LockedLinkList<VideoEncoder> list = encoders.getLock();
 
     func("initializing encoder %s", enc->getName().c_str());
     if(!enc->init(this)) {
@@ -185,7 +192,7 @@ bool ViewPort::add_encoder(VideoEncoder *enc) {
 
     enc->active = true;
 
-    encoders.push_back(enc);
+    list.push_back(enc);
 
     mSelectedEncoder = enc;
 
@@ -218,29 +225,22 @@ void ViewPort::save_frame(char *file) {
 
 
 void ViewPort::blit_layers() {
-    Layer *lay;
 
-    lay = layers.end();
-    if(lay) {
-        layers.lock();
-        while(lay) {
+    LockedLinkList<Layer> list = layers.getLock();
+    LockedLinkList<Layer>::reverse_iterator it = list.rbegin();
+    std::for_each(list.rbegin(), list.rend(), [&](Layer *&lay) {
+        if(lay->buffer) {
+            if(lay->active & lay->opened) {
 
-            if(lay->buffer) {
+                lay->lock();
+                lock();
+                blit(lay);
+                unlock();
+                lay->unlock();
 
-                if(lay->active & lay->opened) {
-
-                    lay->lock();
-                    lock();
-                    blit(lay);
-                    unlock();
-                    lay->unlock();
-
-                }
             }
-            lay = (Layer *)lay->prev;
         }
-        layers.unlock();
-    }
+    });
     /////////// finish processing layers
 
 }
@@ -254,25 +254,24 @@ void ViewPort::handle_resize() {
     unlock();
 
     /* crop all layers to new screen size */
-    Layer *lay = layers.begin();
-    while(lay) {
+    LockedLinkList<Layer> list = layers.getLock();
+    std::for_each(list.begin(), list.end(), [&](Layer *&lay) {
         lay->lock();
         lay->blitter->crop(lay, this);
         lay->unlock();
-        lay = (Layer*) lay->next;
-    }
+    });
 }
 
 void ViewPort::resize(int resize_w, int resize_h) {  // nop
     resize_w = 0;
     resize_h = 0;
-};
+}
 
 void ViewPort::show() {
-};
+}
 
 void ViewPort::clear() {
-};
+}
 
 void ViewPort::fullscreen() {
-};
+}

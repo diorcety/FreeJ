@@ -24,6 +24,7 @@
 #include <context.h>
 #include <layer.h>
 #include <jutils.h>
+#include <algorithm>
 
 #include <slang_console_ctrl.h>
 #include <console_calls_ctrl.h>
@@ -46,16 +47,13 @@ SlwReadline::SlwReadline()
 }
 
 SlwReadline::~SlwReadline() {
-
-    Entry *e;
-    e = history.begin();
-    while(e) {
+    LockedLinkList<Entry>  list = history.getLock();
+    while(!list.empty()) {
+        Entry *e = list.front();
+        list.pop_front();
         free(e->data);
-        e->rem();
         delete(e);
-        e = history.begin();
     }
-
 }
 
 bool SlwReadline::init() {
@@ -194,12 +192,13 @@ bool SlwReadline::parser_default(int key) {
         return 0;
     }
 
-    if(screen->layers.size() > 0) { // there are layers
+    LockedLinkList<Layer> list = screen->layers.getLock();
+    if(!list.empty()) { // there are layers
 
         // get the one selected
         le = screen->mSelectedLayer;
         if(!le) {
-             screen->mSelectedLayer = screen->layers.begin();
+             screen->mSelectedLayer = list.front();
         }
 
         // switch over operations and perform
@@ -369,100 +368,103 @@ bool SlwReadline::parser_movelayer(int key) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *layer = screen->mSelectedLayer;
-    if(!layer) {
-        screen->mSelectedLayer = screen->layers.begin();
-    }
+    LockedLinkList<Layer> list = screen->layers.getLock();
+    if(!list.empty()) { // there are layers
+        Layer *layer = screen->mSelectedLayer;
+        if(!layer) {
+            screen->mSelectedLayer = list.front();
+        }
 
-    switch(key) {
-    // XXX(shammash): set zoom/rotate/position are closures so they don't get
-    // executed immediately. zoom_x, zoom_y, rotate and so on might not contain a
-    // value up-to-date
+        switch(key) {
+        // XXX(shammash): set zoom/rotate/position are closures so they don't get
+        // executed immediately. zoom_x, zoom_y, rotate and so on might not contain a
+        // value up-to-date
 
-    // zoom
-    case KEY_PLUS:
-        layer->set_zoom(layer->zoom_x + 0.01,
-                        layer->zoom_y + 0.01);
-        break;
-    case KEY_MINUS:
-        layer->set_zoom(layer->zoom_x - 0.01,
-                        layer->zoom_y - 0.01);
-        break;
-    case '.':
-        layer->set_zoom(1, 1);
-        break;
+        // zoom
+        case KEY_PLUS:
+            layer->set_zoom(layer->zoom_x + 0.01,
+                            layer->zoom_y + 0.01);
+            break;
+        case KEY_MINUS:
+            layer->set_zoom(layer->zoom_x - 0.01,
+                            layer->zoom_y - 0.01);
+            break;
+        case '.':
+            layer->set_zoom(1, 1);
+            break;
 
-    // rotation
-    case '<':
-        layer->set_rotate(layer->rotate + 0.5);
-        break;
-    case '>':
-        layer->set_rotate(layer->rotate - 0.5);
-        break;
-    case ',':
-        layer->set_rotate(0);
-        break;
-    case 'z':
-        layer->antialias =
-            !layer->antialias;
-        break;
+        // rotation
+        case '<':
+            layer->set_rotate(layer->rotate + 0.5);
+            break;
+        case '>':
+            layer->set_rotate(layer->rotate - 0.5);
+            break;
+        case ',':
+            layer->set_rotate(0);
+            break;
+        case 'z':
+            layer->antialias =
+                !layer->antialias;
+            break;
 
 
-    case '8':
-    case 'k':
-    case SL_KEY_UP:
-        layer->set_position(layer->geo.x, layer->geo.y - movestep);
-        break;
-    case '2':
-    case 'j':
-    case SL_KEY_DOWN:
-        layer->set_position(layer->geo.x, layer->geo.y + movestep);
-        break;
-    case '4':
-    case 'h':
-    case SL_KEY_LEFT:
-        layer->set_position(layer->geo.x - movestep, layer->geo.y);
-        break;
-    case '6':
-    case 'l':
-    case SL_KEY_RIGHT:
-        layer->set_position(layer->geo.x + movestep, layer->geo.y);
-        break;
-    case '7':
-    case 'y': // up+left
-        layer->set_position(layer->geo.x - movestep, layer->geo.y - movestep);
-        break;
-    case '9':
-    case 'u': // up+right
-        layer->set_position(layer->geo.x + movestep, layer->geo.y - movestep);
-        break;
-    case '1':
-    case 'b': // down+left
-        layer->set_position(layer->geo.x - movestep, layer->geo.y + movestep);
-        break;
-    case '3':
-    case 'n': // down+right
-        layer->set_position(layer->geo.x + movestep, layer->geo.y + movestep);
-        break;
+        case '8':
+        case 'k':
+        case SL_KEY_UP:
+            layer->set_position(layer->geo.x, layer->geo.y - movestep);
+            break;
+        case '2':
+        case 'j':
+        case SL_KEY_DOWN:
+            layer->set_position(layer->geo.x, layer->geo.y + movestep);
+            break;
+        case '4':
+        case 'h':
+        case SL_KEY_LEFT:
+            layer->set_position(layer->geo.x - movestep, layer->geo.y);
+            break;
+        case '6':
+        case 'l':
+        case SL_KEY_RIGHT:
+            layer->set_position(layer->geo.x + movestep, layer->geo.y);
+            break;
+        case '7':
+        case 'y': // up+left
+            layer->set_position(layer->geo.x - movestep, layer->geo.y - movestep);
+            break;
+        case '9':
+        case 'u': // up+right
+            layer->set_position(layer->geo.x + movestep, layer->geo.y - movestep);
+            break;
+        case '1':
+        case 'b': // down+left
+            layer->set_position(layer->geo.x - movestep, layer->geo.y + movestep);
+            break;
+        case '3':
+        case 'n': // down+right
+            layer->set_position(layer->geo.x + movestep, layer->geo.y + movestep);
+            break;
 
-    case '5':
-    case KEY_SPACE:
-        // place at the center
-        layer->set_position
-            ((screen->geo.w - layer->geo.w) / 2,
-            (screen->geo.h - layer->geo.h) / 2);
-        break;
+        case '5':
+        case KEY_SPACE:
+            // place at the center
+            layer->set_position
+                ((screen->geo.w - layer->geo.w) / 2,
+                (screen->geo.h - layer->geo.h) / 2);
+            break;
 
-    case SL_KEY_ENTER:
-    case KEY_ENTER:
-    case KEY_CTRL_I:
-        ::act("layer repositioned");
-        set_parser(DEFAULT);
-        break;
+        case SL_KEY_ENTER:
+        case KEY_ENTER:
+        case KEY_CTRL_I:
+            ::act("layer repositioned");
+            set_parser(DEFAULT);
+            break;
 
-    default:
-        res = false;
-        break;
+        default:
+            res = false;
+            break;
+        }
     }
     return(res);
 }
@@ -473,7 +475,8 @@ bool SlwReadline::parser_commandline(int key) {
     int res, c;
     bool parsres = true;
     Entry *entr = NULL;
-
+    LockedLinkList<Entry> list = history.getLock();
+    LockedLinkList<Entry>::iterator it = std::find(list.begin(), list.end(), mSelectedHistory);
     commandline = true; // don't print statusline
 
     /* =============== console command input */
@@ -502,26 +505,22 @@ bool SlwReadline::parser_commandline(int key) {
         // save in commandline history
         entr = new Entry();
         entr->data = strdup(command);
-        history.push_back(entr);
-        if(history.size() > 32) // histsize
-            delete history.begin();
+        list.push_back(entr);
+        if(list.size() > 32) {// histsize
+            delete list.front();
+            list.pop_front();
+        }
         // cleanup the command
         memset(command, EOL, MAX_CMDLINE);
         break;
 
     case SL_KEY_UP:
         // pick from history
-        entr = mSelectedHistory;
-        if(!entr) { // select the latest
-            entr = history.end();
-            if(entr) mSelectedHistory = entr;
-        } else {
-            entr = entr->prev;
-            if(entr) {
-                mSelectedHistory = entr;
-            }
+        if(it == list.begin()) {
+             break;  // no hist
         }
-        if(!entr) break;  // no hist
+        mSelectedHistory = *(--it);
+        entr = mSelectedHistory;
         strncpy(command, (char*)entr->data, MAX_CMDLINE);
         // type the command on the consol
         cursor = strlen(command);
@@ -529,10 +528,18 @@ bool SlwReadline::parser_commandline(int key) {
         break;
 
     case SL_KEY_DOWN:
-        // pick from history
-        if(!entr) break;
-        if(!entr->next) break;
-        entr = entr->next;
+        if(it == list.end()) {
+            break;
+        }
+        ++it;
+        if(it == list.end()) {
+            break;
+        }
+
+        // pick from history;
+        mSelectedHistory = *it;
+        entr = mSelectedHistory;
+
         strncpy(command, (char*)entr->data, MAX_CMDLINE);
         // type the command on the console
         cursor = strlen(command);

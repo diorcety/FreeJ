@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-
+#include <algorithm>
 #include <slw_log.h>
 
 
@@ -73,20 +73,27 @@ bool SLW_Log::feed(int key) {
     // interprets a keycode and perform the action (or write a letter)
     if(!key) return(false);
 
+    LockedLinkList<Row> list = textconsole->rows.getLock();
+    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), textconsole->vis_row_in);
+
     switch(key) {
     case KEY_PAGE_UP:
-        if(textconsole->vis_row_in->prev) {
-            textconsole->cur_row = (Row*) textconsole->cur_row->prev;
-            textconsole->vis_row_in = (Row*) textconsole->vis_row_in->prev;
+        if(it != list.begin()) {
+            textconsole->vis_row_in = *(--it);
+            it = std::find(list.begin(), list.end(), textconsole->cur_row);
+            textconsole->cur_row = *(--it);
+
             scrolling = true;
             refresh();
         }
         break;
     case KEY_PAGE_DOWN:
-        if(textconsole->cur_row->next) {
-            textconsole->cur_row = (Row*) textconsole->cur_row->next;
-            textconsole->vis_row_in = (Row*) textconsole->vis_row_in->next;
-            if(!textconsole->cur_row->next) scrolling = false;
+        if(it != list.end() && (++it) != list.end()) {
+            textconsole->vis_row_in = *(++it);
+            it = std::find(list.begin(), list.end(), textconsole->cur_row);
+            textconsole->cur_row = *(++it);
+
+            if((++it) != list.end()) scrolling = false;
             refresh();
         }
         break;
@@ -107,6 +114,9 @@ bool SLW_Log::refresh() {
     if(!textconsole->vis_row_in) return false;
     else r = textconsole->vis_row_in;
 
+    LockedLinkList<Row> list = textconsole->rows.getLock();
+    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), textconsole->vis_row_in);
+
     // tell the renderer to blank the surface for a refresh
     // this is a pure virtual function here
     blank();
@@ -121,8 +131,8 @@ bool SLW_Log::refresh() {
             putnch(r->text, 0, c, r->len);
         }
 
-        if(!r->next) break;
-        else r = (Row*) r->next;
+        if(it == list.end() || (++it) == list.end()) break;
+        else r = *it;
 
     }
 
@@ -134,12 +144,14 @@ bool SLW_Log::refresh() {
 }
 
 void SLW_Log::append(const char *text) {
+    LockedLinkList<Row> list = textconsole->rows.getLock();
+    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), textconsole->vis_row_in);
     Row *r = new Row();
     int len = strlen(text);
 
     r->insert_string((char*)text, len);
 
-    textconsole->rows.push_back( r );
+    list.push_back( r );
 
     if(!scrolling) textconsole->cur_row = r;
 
@@ -147,7 +159,7 @@ void SLW_Log::append(const char *text) {
         textconsole->cur_y++;
 
     if(!scrolling & (textconsole->cur_y >= textconsole->h) )
-        textconsole->vis_row_in = (Row*) textconsole->vis_row_in->next;
+        textconsole->vis_row_in = *(++it);
 }
 
 void SLW_Log::notice(const char *text, ...) {

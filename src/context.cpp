@@ -34,6 +34,8 @@
 #include <signal.h>
 #include <errno.h>
 
+#include <algorithm>
+
 #include <fastmemcpy.h>
 
 #include <jutils.h>
@@ -188,9 +190,10 @@ bool Context::add_screen(ViewPort *scr) {
         error("use init( width, height, bits_per_pixel )");
         return false;
     }
-    screens.push_front(scr);
+    LockedLinkList<ViewPort> list = screens.getLock();
+    list.push_front(scr);
     mSelectedScreen = scr;
-    screen = screens.begin();
+    ViewPort *screen = list.front();
     func("screen %s successfully added", scr->getName().c_str());
     act("screen %s now on top", screen->getName().c_str());
 
@@ -262,11 +265,9 @@ void Context::cafudda(double secs) {
     ///////////////////////////////
 
     /////////////////////////////
+    LockedLinkList<ViewPort> list = screens.getLock();
     // blit layers on screens
-    ViewPort *scr;
-    scr = screens.begin();
-    while(scr) {
-
+    std::for_each(list.begin(), list.end(), [&](ViewPort *scr) {
         if(clear_all) scr->clear();
 
         // Change resolution if needed
@@ -276,18 +277,16 @@ void Context::cafudda(double secs) {
 
         // show the new painted screen
         scr->show();
-
-        scr = (ViewPort*)scr->next;
-
-    }
+    });
 #ifdef WITH_JAVASCRIPT
     /////////////////////////////
     // TODO - try to garbage collect only if we have been faster
     //        than fps
     // XXX - temporarily disabling explicit garbage-collection
     //       because it still triggers deadlocks somewhere
-    if(js)
+    if(js) {
         js->gc();
+    }
 #endif //WITH_JAVASCRIPT
        /// FPS calculation
     fps.calc();
@@ -298,7 +297,6 @@ void Context::cafudda(double secs) {
 
 void Context::handle_controllers() {
     int res;
-    Controller *ctrl;
 
     event.type = SDL_NOEVENT;
 
@@ -325,16 +323,11 @@ void Context::handle_controllers() {
                     if(res < 0) warning("SDL_PeepEvents error");
                 }
 
-    ctrl = (Controller *)controllers.begin();
-    if(ctrl) {
-        controllers.lock();
-        while(ctrl) {
+    LockedLinkList<Controller> list = controllers.getLock();
+    std::for_each(list.begin(), list.end(), [] (Controller *ctrl) {
             if(ctrl->active)
                 ctrl->poll();
-            ctrl = (Controller*)ctrl->next;
-        }
-        controllers.unlock();
-    }
+    });
 
     // flushes all events that are leftover
     while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS) > 0)
@@ -363,7 +356,7 @@ bool Context::register_controller(Controller *ctrl) {
 
     ctrl->active = true;
 
-    controllers.push_back(ctrl);
+    controllers.getLock().push_back(ctrl);
 
     act("registered %s controller", ctrl->getName().c_str());
     return true;
@@ -379,7 +372,7 @@ bool Context::rem_controller(Controller *ctrl) {
     //  if(js) js->gc(); // ?!
 
     ctrl->active = false;
-    ctrl->rem();
+    controllers.getLock().remove(ctrl);
     act("removed controller %s", ctrl->getName().c_str());
     delete ctrl;
 
@@ -455,32 +448,37 @@ int Context::reset() {
 
     notice("FreeJ engine reset");
 
-    func("deleting %u controllers", controllers.size());
-    controllers.lock();
-    Controller *ctrl = controllers.begin();
-    while(ctrl) {
-        if(ctrl->indestructible) {
-            ctrl->reset();
-            ctrl = (Controller *)ctrl->next;
-        } else {
-            ctrl->rem();
-            delete(ctrl);
-            ctrl = controllers.begin();
+
+    {
+        LockedLinkList<Controller> list = controllers.getLock();
+        LockedLinkList<Controller>::iterator it = list.begin();
+        func("deleting %u controllers", list.size());
+        while(it != list.end()) {
+            Controller *ctrl = list.front();
+            if(ctrl->indestructible) {
+                ctrl->reset();
+                ++it;
+            } else {
+                it = list.erase(it);
+                delete(ctrl);
+            }
         }
     }
-    controllers.unlock();
-    func("deleting %u screens", screens.size());
-    ViewPort *scr = screens.begin();
-    while(scr) {
-        scr->lock();
-        if(scr->indestructible) {
-            scr->reset();
-            scr->unlock();
-            scr = (ViewPort *)scr->next;
-        } else {
-            scr->rem();
-            delete(scr);
-            scr = screens.begin();
+
+    {
+        LockedLinkList<ViewPort> list = screens.getLock();
+        LockedLinkList<ViewPort>::iterator it = list.begin();
+        func("deleting %u screens", list.size());
+        while(it != list.end()) {
+            ViewPort *scr = list.front();
+            list.pop_front();
+            if(scr->indestructible) {
+                scr->reset();
+                ++it;
+            } else {
+                it = list.erase(it);
+                delete(scr);
+            }
         }
     }
 

@@ -25,6 +25,7 @@
 #include <jsparser.h>
 #include <video_encoder.h>
 #include <controller.h>
+#include <algorithm>
 //#include <fps.h>
 
 // global environment class
@@ -201,20 +202,19 @@ JS(list_filters) {
     JSObject *arr;
     JSString *str;
     jsval val;
-    Entry *f;
-    int c = 0;
+
 
     arr = JS_NewArrayObject(cx, 0, NULL); // create void array
     if(!arr) return JS_FALSE;
 
-    f = global_environment->filters.begin();
-    while(f) {
+    int c = 0;
+    LockedLinkList<Filter> list = global_environment->filters.getLock();
+    std::for_each(list.begin(), list.end(), [&](Filter *&f) {
         str = JS_NewStringCopyZ(cx, f->getName().c_str());
         val = STRING_TO_JSVAL(str);
         JS_SetElement(cx, arr, c, &val);
         c++;
-        f = f->next;
-    }
+    });
     *rval = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
 }
@@ -327,13 +327,13 @@ JS(js_set_debug) {
 
 JS(get_width) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-    *rval = INT_TO_JSVAL(global_environment->screens.begin()->geo.w);
+    *rval = INT_TO_JSVAL(global_environment->screens.getLock().front()->geo.w);
     return JS_TRUE;
 }
 
 JS(get_height) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-    *rval = INT_TO_JSVAL(global_environment->screens.begin()->geo.h);
+    *rval = INT_TO_JSVAL(global_environment->screens.getLock().front()->geo.h);
     return JS_TRUE;
 }
 
@@ -643,6 +643,8 @@ JS(entry_move) {
     return JS_TRUE;
 }
 
+/*
+ *TODO
 JS(entry_next) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
@@ -682,6 +684,7 @@ JS(entry_prev) {
 
     return JS_TRUE;
 }
+*/
 
 JS(include_javascript_file) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);

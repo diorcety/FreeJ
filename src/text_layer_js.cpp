@@ -42,7 +42,7 @@ DECLARE_CLASS_GC("TextLayer", txt_layer_class, txt_layer_constructor, js_layer_g
 ////////////////////////////////
 // Txt Layer methods
 JSFunctionSpec txt_layer_methods[] = {
-    ENTRY_METHODS,
+//    ENTRY_METHODS,
     //   name            native                  nargs
     {    "print",        txt_layer_print,        1},
     {    "color",        txt_layer_color,        3},

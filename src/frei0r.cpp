@@ -240,20 +240,22 @@ int Freior::open(char *file) {
 }
 
 void Freior::init_parameters(Linklist<Parameter> &parameters) {
+
+    LockedLinkList<Parameter> list = parameters.getLock();
+
     // Get the list of params.
     param_infos.resize(info.num_params);
     for(int i = 0; i < info.num_params; ++i) {
 
         (f0r_get_param_info)(&param_infos[i], i);
 
+        //TODO EXTENDED PARAMETER
         Parameter *param = new Parameter((Parameter::Type)param_infos[i].type);
         param->setName(param_infos[i].name);
         func("registering parameter %s for filter %s\n", param->getName().c_str(), info.name);
 
         param->setDescription(param_infos[i].explanation);
-        param->filter_set_f = set_frei0r_parameter;
-        param->filter_get_f = get_frei0r_parameter;
-        parameters.push_back(param);
+        list.push_back(param);
     }
 }
 

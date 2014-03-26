@@ -22,6 +22,8 @@
 #include <jsparser_data.h>
 #include <callbacks_js.h>
 
+#include <algorithm>
+
 #include <controller.h>
 
 // other functions are pure virtual
@@ -53,13 +55,12 @@ JS(controller_activate) {
 
 int Controller::JSCall(const char *funcname, int argc, jsval *argv) {
     int res = 0;
-    ControllerListener *listener = listeners.begin();
-    while(listener) {
+    LockedLinkList<ControllerListener> list = listeners.getLock();
+    std::for_each(list.begin(), list.end(), [&] (ControllerListener *listener) {
         // TODO - unregister listener if returns false
         if(listener->call(funcname, argc, argv))
             res++;
-        listener = (ControllerListener *)listener->next;
-    }
+    });
     return res;
 }
 
@@ -67,10 +68,10 @@ int Controller::JSCall(const char *funcname, int argc, const char *format, ...) 
     int res = 0;
     jsval *argv;
     va_list args;
-    ControllerListener *listener = listeners.begin();
+    LockedLinkList<ControllerListener> list = listeners.getLock();
     va_start(args, format);
     va_end(args);
-    while(listener) {
+    std::for_each(list.begin(), list.end(), [&] (ControllerListener *listener) {
         void *markp = NULL;
         JS_SetContextThread(listener->context());
         JS_BeginRequest(listener->context());
@@ -80,8 +81,7 @@ int Controller::JSCall(const char *funcname, int argc, const char *format, ...) 
         // TODO - unregister listener if returns false
         if(listener->call(funcname, argc, argv))
             res++;
-        listener = (ControllerListener *)listener->next;
-    }
+    });
     return res;
 }
 

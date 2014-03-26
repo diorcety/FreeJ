@@ -24,11 +24,12 @@
 #include <screen.h>
 #include <blitter.h>
 #include <factory.h>
+#include <algorithm>
 
 DECLARE_CLASS("Screen", screen_class, screen_constructor)
 
 JSFunctionSpec screen_methods[] = {
-    ENTRY_METHODS,
+//    ENTRY_METHODS,
     {"init",              screen_init,            2},
     {"add_layer",         screen_add_layer,       1},
     {"rem_layer",         screen_rem_layer,       1},
@@ -243,10 +244,7 @@ JSP(screen_list_layers) {
     JSObject *arr;
     JSObject *objtmp;
 
-    Layer *lay;
-
     jsval val;
-    int c = 0;
     //JS_SetContextThread(cx);
     JS_BeginRequest(cx);
     ViewPort *screen = (ViewPort*)JS_GetPrivate(cx, obj);
@@ -267,8 +265,9 @@ JSP(screen_list_layers) {
     // XXX check this carefully
     // caedes reports some weird problems after calling list_layers
     // looks like here might be the hairy point
-    lay = screen->layers.begin();
-    while(lay) {
+    int c = 0;
+    LockedLinkList<Layer> list = screen->layers.getLock();
+    std::for_each(list.begin(), list.end(), [&] (Layer *lay) {
         if(lay->jsobj) {
             func("TESTING: reusing layer jsobj %p", lay->jsobj);
             objtmp = lay->jsobj;
@@ -283,8 +282,7 @@ JSP(screen_list_layers) {
         JS_SetElement(cx, arr, c, &val);
 
         c++;
-        lay = (Layer*)lay->next;
-    }
+    });
 
     *vp = OBJECT_TO_JSVAL(arr);
     JS_EndRequest(cx);

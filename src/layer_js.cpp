@@ -25,13 +25,14 @@
 #include <layer.h>
 //#include <fps.h>
 #include <blitter.h>
+#include <algorithm>
 
 void js_layer_gc(JSContext *cx, JSObject *obj);
 
 DECLARE_CLASS("Layer", layer_class, layer_constructor)
 
 JSFunctionSpec layer_methods[] = {
-    ENTRY_METHODS,
+    //ENTRY_METHODS,
     {"activate",        layer_activate,         0},
     {"deactivate",      layer_deactivate,       0},
     {"start",           layer_start,            0},
@@ -127,7 +128,7 @@ JS(selected_layer) {
     JSObject *objtmp;
     jsval val;
 
-    if(global_environment->mSelectedScreen->layers.size() == 0) {
+    if(global_environment->mSelectedScreen->layers.getLock().size() == 0) {
         error("can't return selected layer: no layers are present");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -161,8 +162,6 @@ JS(layer_list_blits) {
     JSObject *arr;
     JSString *str;
     jsval val;
-    int c = 0;
-    Entry *b;
 
     GET_LAYER(Layer);
     if(!lay) {
@@ -173,15 +172,14 @@ JS(layer_list_blits) {
     arr = JS_NewArrayObject(cx, 0, NULL); //create void array
     if(!arr) return JS_FALSE;
 
-    b = lay->blitter->blitlist.begin();
-    while(b) {
-
+    int c = 0;
+    LockedLinkList<Blit> list = lay->blitter->blitlist.getLock();
+    std::for_each(list.begin(), list.end(), [&] (Blit *b) {
         str = JS_NewStringCopyZ(cx, b->getName().c_str());
         val = STRING_TO_JSVAL(str);
         JS_SetElement(cx, arr, c, &val);
         c++;
-        b = b->next;
-    }
+    });
 
     *rval = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
@@ -252,7 +250,7 @@ JS(layer_set_blit_value) {
     if(!lay->current_blit)
         error("layer %s has no blit selected (not added yet?)", lay->getName().c_str());
     else
-        p = lay->current_blit->parameters.begin();
+        p = lay->current_blit->parameters.getLock().front();
 
     if(!p)
         warning("no blit parameter found on layer %s", lay->getName().c_str());
@@ -261,6 +259,7 @@ JS(layer_set_blit_value) {
 
     return JS_TRUE;
 }
+
 JS(layer_fade_blit_value) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
@@ -289,6 +288,7 @@ JS(layer_get_blit_value) {
 
     return JS_NewNumberValue(cx, lay->current_blit->value, rval);
 }
+
 JS(layer_activate) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
@@ -298,6 +298,7 @@ JS(layer_activate) {
 
     return JS_TRUE;
 }
+
 JS(layer_deactivate) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
@@ -307,6 +308,7 @@ JS(layer_deactivate) {
 
     return JS_TRUE;
 }
+
 JS(layer_add_filter) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
@@ -365,7 +367,6 @@ JS(layer_rem_filter) {
     if(!filter_instance)
         JS_ERROR("Effect data is NULL");
 
-    filter_instance->rem();
     //delete filter_instance;
     //duo->instance = NULL;
 
@@ -390,6 +391,7 @@ JS(layer_rotate) {
 
     return JS_TRUE;
 }
+
 JS(layer_zoom) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
@@ -442,11 +444,13 @@ JSP(layer_set_x) {
     return JS_TRUE;
     //    return JS_NewNumberValue(cx, (double)lay->geo.x, rval);
 }
+
 JSP(layer_get_x) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.x, vp);
 }
+
 JSP(layer_set_y) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
@@ -454,21 +458,25 @@ JSP(layer_set_y) {
     lay->set_position(lay->geo.x, ny);
     return JS_TRUE;
 }
+
 JSP(layer_get_y) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.y, vp);
 }
+
 JSP(layer_get_width) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.w, vp);
 }
+
 JSP(layer_get_height) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
     return JS_NewNumberValue(cx, (jsint)lay->geo.h, vp);
 }
+
 JSP(layer_get_filename) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
@@ -476,6 +484,7 @@ JSP(layer_get_filename) {
     *vp = STRING_TO_JSVAL(str);
     return JS_TRUE;
 }
+
 JSP(layer_set_name) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
@@ -483,6 +492,7 @@ JSP(layer_set_name) {
     lay->setName(nn);
     return JS_TRUE;
 }
+
 JSP(layer_get_name) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
@@ -490,6 +500,7 @@ JSP(layer_get_name) {
     *vp = STRING_TO_JSVAL(nn);
     return JS_TRUE;
 }
+
 JSP(layer_set_fps) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
@@ -497,6 +508,7 @@ JSP(layer_set_fps) {
     lay->fps.set(nf);
     return JS_TRUE;
 }
+
 JSP(layer_get_fps) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
     GET_LAYER(Layer);
@@ -508,15 +520,14 @@ JSP(layer_list_filters) {
     JSObject *arr;
     JSObject *objtmp;
 
-    FilterInstance *filter_instance;
-
     jsval val;
-    int c = 0;
 
     GET_LAYER(Layer);
 
+    LockedLinkList<FilterInstance> list = lay->filters.getLock();
+
     // no effects
-    if(lay->filters.size() == 0) {
+    if(list.empty()) {
         *vp = JSVAL_FALSE;
         return JS_TRUE;
     }
@@ -525,11 +536,8 @@ JSP(layer_list_filters) {
     if(!arr)
         return JS_FALSE;
 
-
-    filter_instance = (FilterInstance*)lay->filters.begin();
-
-    while(filter_instance) {
-
+    int c = 0;
+    std::for_each(list.begin(), list.end(), [&] (FilterInstance *filter_instance) {
         objtmp = JS_NewObject(cx, &filter_class, NULL, obj);
 
         JS_SetPrivate(cx, objtmp, (void*) filter_instance);
@@ -539,9 +547,7 @@ JSP(layer_list_filters) {
         JS_SetElement(cx, arr, c, &val);
 
         c++;
-
-        filter_instance = (FilterInstance*)filter_instance->next;
-    }
+    });
 
     *vp = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
@@ -554,7 +560,9 @@ JSP(layer_list_parameters) {
     jsval val;
 
     GET_LAYER(Layer);
-    if(!lay->parameters) {
+
+    LockedLinkList<Parameter> list = lay->parameters.getLock();
+    if(list.empty()) {
         *vp = JSVAL_FALSE;
         return JS_TRUE;
     }
@@ -562,15 +570,13 @@ JSP(layer_list_parameters) {
     arr = JS_NewArrayObject(cx, 0, NULL); //create void array
     if(!arr) return JS_FALSE;
 
-    Parameter *parm = (Parameter*)lay->parameters->begin();
     int c = 0;
-    while(parm) {
+    std::for_each(list.begin(), list.end(), [&] (Parameter *parm) {
         str = JS_NewStringCopyZ(cx, parm->getName().c_str());
         val = STRING_TO_JSVAL(str);
         JS_SetElement(cx, arr, c, &val);
         c++;
-        parm = (Parameter*)parm->next;
-    }
+    });
 
     *vp = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;

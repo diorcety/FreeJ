@@ -28,6 +28,8 @@
 #include <keycodes.h>
 #include <abs_text_console.h>
 
+#include <algorithm>
+
 #define ROWCHUNK 128 // chunk to add/sub when modifying the text line
 
 
@@ -35,7 +37,7 @@ TextConsole::TextConsole() {
 
     // create the first row
     cur_row = new Row();
-    rows.push_back(cur_row);
+    rows.getLock().push_back(cur_row);
 
     vis_row_in = cur_row;
 
@@ -45,12 +47,11 @@ TextConsole::~TextConsole() {
     func("~TextConsole destroy");
 
     // delete all rows (if any)
-    Row *l;
-    l = (Row*) rows.begin();
-
-    while(l) {
+    LockedLinkList<Row> list = rows.getLock();
+    while(list.size()) {
+        Row *l = list.front();
+        list.pop_front();
         delete l;
-        l = (Row*) rows.begin();
     }
 
 }
@@ -59,21 +60,21 @@ bool TextConsole::feed(int key) {
     // interprets a keycode and perform the action (or write a letter)
 
     Row *r;
-
+    LockedLinkList<Row> list = rows.getLock();
+    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), cur_row);
     switch(key) {
 
     case KEY_NEWLINE:
     case KEY_ENTER:
 
         r = new Row();
-
-        rows.insert_after(r, cur_row);
+        if(it != list.end()) ++it;
+        list.insert(it, r);
 
         if(cur_row->pos < cur_row->len) {
             // if cursor is not at the end of the row
 
-            move_string(r, cur_row,
-                        cur_row->len - cur_row->pos);
+            move_string(r, cur_row, cur_row->len - cur_row->pos);
 
         }
 
@@ -81,8 +82,12 @@ bool TextConsole::feed(int key) {
 
         // scrolling
         if(cur_y>h) {
-
-            vis_row_in = (Row*) vis_row_in->next;
+            it = std::find(list.begin(), list.end(), vis_row_in);
+            if(it != list.end() && (++it) != list.end()) {
+                vis_row_in = *it;
+            } else {
+                vis_row_in = NULL;
+            }
             cur_y = h;
 
         } // else  refresh_below();
@@ -102,7 +107,6 @@ bool TextConsole::feed(int key) {
     case KEY_BACKSPACE:
     case KEY_BACKSPACE_APPLE:
     case KEY_BACKSPACE_SOMETIMES:
-
         cur_row->backspace();
 
         if(cur_x > 0) {
@@ -111,24 +115,21 @@ bool TextConsole::feed(int key) {
             refresh_current();
 
         } else // backspace at the beginning of a row
-        if(cur_row->prev) { // there is an upper row
-
-            r = (Row*) cur_row->prev;
+        if(it != list.begin()) { // there is an upper row
+            r = *(--it);
 
             // upper row is empty, just delete it
             if(r->len <1) {
-
-                r->rem();
+                list.erase(it);
                 delete r;
                 cur_y--;
 
                 // upper row is not empty, append to end
             } else {
-
                 r->pos = r->len;
                 move_string(r, cur_row, cur_row->len);
                 // delete current row (now empty)
-                cur_row->rem();
+                list.erase(++it);
                 delete cur_row;
                 cur_y--;
 
@@ -181,15 +182,15 @@ bool TextConsole::feed(int key) {
         if(cur_y>0) {
 
             cur_y--;
-            cur_row = (Row*) cur_row->prev;
+            cur_row = *(--it);
             if(cur_x > cur_row->len)
                 cur_x = cur_row->len;
             cur_row->pos = cur_x;
 
         } else { // scroll
 
-            if(!cur_row->prev) break;
-            vis_row_in = cur_row = (Row*) cur_row->prev;
+            if(it == list.begin()) break;
+            vis_row_in = cur_row = *(--it);
             refresh();
 
         }
@@ -198,10 +199,9 @@ bool TextConsole::feed(int key) {
     case KEY_DOWN:
         if(cur_y<h) {
 
-            if(cur_row->next) {
-
+            if(it != list.end() && (++it) != list.end()) {
                 cur_y++;
-                cur_row = (Row*) cur_row->next;
+                cur_row = *it;
                 // cursor positioning
                 if(cur_x > cur_row->len)
                     cur_x = cur_row->len;
@@ -211,10 +211,11 @@ bool TextConsole::feed(int key) {
 
         } else { // scrolling
 
-            if(!cur_row->next) break;
-            cur_row = (Row*) cur_row->next;
+            if(it == list.end() || (++it) == list.end()) break;
+            cur_row = *it;
             // scroll down the pointer to upper row
-            vis_row_in = (Row*) vis_row_in->next;
+            it = std::find(list.begin(), list.end(), vis_row_in);
+            vis_row_in = *(++it);
             refresh();
 
         }
@@ -247,6 +248,9 @@ bool TextConsole::refresh() {
     if(!vis_row_in) return false;
     else r = vis_row_in;
 
+    LockedLinkList<Row> list = rows.getLock();
+    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
+
     // tell the renderer to blank the surface for a refresh
     // this is a pure virtual function here
     blank();
@@ -256,8 +260,8 @@ bool TextConsole::refresh() {
         if(r->text)
             putnch(r->text, 0, c, r->len);
 
-        if(!r->next) break;
-        else r = (Row*) r->next;
+        if(it == list.end() || (++it) == list.end()) break;
+        else r = *it;
 
     }
 
@@ -270,6 +274,9 @@ void TextConsole::refresh_current() {
 
     if(!vis_row_in) return;
     else r = vis_row_in;
+
+    LockedLinkList<Row> list = rows.getLock();
+    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
 
     for( c = 0; c < h; c++ ) {
 
@@ -284,8 +291,8 @@ void TextConsole::refresh_current() {
             break;
         }
 
-        if(!r->next) break;
-        else r = (Row*) r->next;
+        if(it == list.end() || (++it) == list.end()) break;
+        else r = *it;
     }
 
 }

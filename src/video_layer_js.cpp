@@ -41,7 +41,7 @@ DECLARE_CLASS_GC("MovieLayer", video_layer_class, video_layer_constructor, js_la
 // Video Layer methods
 JSFunctionSpec video_layer_methods[] = {
 //  LAYER_METHODS  ,
-    ENTRY_METHODS,
+//    ENTRY_METHODS,
     {   "seek",         video_layer_seek,               1},
     {   "mark-in",      video_layer_mark_in,            1},
     {   "mark-out",     video_layer_mark_out,           1},

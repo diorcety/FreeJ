@@ -47,12 +47,11 @@ Blit::Blit() : Entry() {
 
 Blit::~Blit() {
     // clean up all parameters
-    Parameter *par;
-    par = parameters.begin();
-    while(par) {
-        par->rem();
+    LockedLinkList<Parameter> list = parameters.getLock();
+    while(list.size()) {
+        Parameter *par = list.front();
+        list.pop_front();
         delete par;
-        par = parameters.begin();
     }
 }
 
@@ -69,14 +68,13 @@ Blitter::Blitter() {
 }
 
 Blitter::~Blitter() {
-
-    Blit *b = blitlist.begin();
-    while(b) {
-        b->rem();
-        delete(b);
-        b = blitlist.begin();
+    // clean up all blits
+    LockedLinkList<Blit> list = blitlist.getLock();
+    while(list.size()) {
+        Blit *b = list.front();
+        list.pop_front();
+        delete b;
     }
-
 }
 
 // char *Blitter::getName().c_str() {

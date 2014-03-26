@@ -113,7 +113,6 @@ ViMoController::ViMoController()
 
 ViMoController::~ViMoController() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
-    rem();
     close();
     if(filename)
         free(filename);

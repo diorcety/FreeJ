@@ -23,6 +23,8 @@
 
 #include <osc_ctrl.h>
 
+#include <algorithm>
+
 class JsCommand : public Entry {
 public:
     // name is function
@@ -42,18 +44,23 @@ static int osc_command_handler(const char *path, const char *types,
                                void *data, void *user_data) {
 
     OscController *osc = (OscController*)user_data;
-    OscCommand *cmd;
 
     func("OSC call path %s type %s", path, types);
 
-    cmd = (OscCommand*) osc->commands_handled.search((char*)path, NULL);
+    LockedLinkList<Entry> list = osc->commands_handled.getLock();
+
+    LockedLinkList<Entry>::iterator it = std::find_if(list.begin(), list.end(), [&] (Entry*cmd) {
+        return cmd->getName() == path;
+    });
 
     // check that path is handled
-    if(cmd) func("OSC path handled by %s", cmd->js_cmd);
-    else {
+    if(it == list.end()) {
         warning("OSC path %s called, but no method is handling it", path);
         return -1;
     }
+
+    OscCommand *cmd = (OscCommand *)*it;
+    func("OSC path handled by %s", cmd->js_cmd);
 
     // check that types are matching
     if(strcmp(types, cmd->proto_cmd) != 0) {
@@ -104,7 +111,7 @@ static int osc_command_handler(const char *path, const char *types,
         }
     }
 
-    osc->commands_pending.push_back(jscmd);
+    osc->commands_pending.getLock().push_back(jscmd);
 
     return 1;
 }
@@ -120,9 +127,9 @@ int OscControllerJS::dispatch() {
     int c = 0;
     int res;
     // execute pending comamnds (javascript calls)
-    JsCommand *jscmd = (JsCommand*) commands_pending.begin();
-    while(jscmd) {
-
+    LockedLinkList<Entry> list = commands_pending.getLock();
+    while(list.size()) {
+        JsCommand *jscmd = (JsCommand *)list.front();
         //    int res = JS_CallFunctionValue
         //      (jsenv, jsobj, jscmd->function, jscmd->argc, jscmd->argv, &ret);
 
@@ -133,9 +140,8 @@ int OscControllerJS::dispatch() {
 
 
         free(jscmd->argv); // must free previous callod on argv
-        commands_pending.remove(1);
         delete jscmd;
-        jscmd = (JsCommand*)commands_pending.begin();
+        list.pop_front();
         c++;
     }
     return c;
@@ -271,7 +277,7 @@ JS(js_osc_ctrl_add_method) {
     cmd->setName(osc_cmd);
     strncpy(cmd->proto_cmd, proto_cmd, 128);
     strncpy(cmd->js_cmd, js_cmd, 512);
-    osc->commands_handled.push_back(cmd);
+    osc->commands_handled.getLock().push_back(cmd);
 
     act("OSC method \"%s\" with args \"%s\" binded to %s",
         osc_cmd, proto_cmd, js_cmd);

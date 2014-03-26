@@ -28,6 +28,7 @@
 
 #include <jutils.h>
 #include <context.h>
+#include <algorithm>
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Layer, GeneratorLayer, GeneratorLayer, ff_f0r);
@@ -47,8 +48,9 @@ GeneratorLayer::GeneratorLayer()
 
 GeneratorLayer::~GeneratorLayer() {
     close();
-    if(swap_buffer)
+    if(swap_buffer) {
         free(swap_buffer);
+    }
 }
 
 /// set_parameter callback for generator layers
@@ -112,24 +114,25 @@ static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
 
 void GeneratorLayer::register_generators(Linklist<Filter> *gens) {
     generators = gens;
-    act("%u generators available", gens->size());
+    act("%u generators available", gens->getLock().size());
 }
 
 bool GeneratorLayer::open(const char *file) {
-    func("%s - %s", __PRETTY_FUNCTION__, file);
-    int idx;
-    Filter *proto;
-
+    func("%s - %s", __PRETTY_FUNCTION__, file); 
     if(!generators) {
         error("No generators registered");
         return false;
     }
 
-    proto = (Filter*) generators->search(file, &idx);
-    if(!proto) {
+    LockedLinkList<Filter> list = generators->getLock();
+    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&] (Filter *&filter) {
+            return filter->getName() == file;
+    });
+    if(it != list.end()) {
         error("generator not found: %s", file);
         return(false);
     }
+    Filter *proto = *it;
 
     close();
 
@@ -146,14 +149,16 @@ bool GeneratorLayer::open(const char *file) {
             generator = NULL;
             return false;
         }
-        parameters = &generator->parameters;
 
-        Parameter *p = (Parameter*)parameters->begin();
-        while(p) {
-            p->layer_set_f = set_frei0r_layer_parameter;
-            p->layer_get_f = get_frei0r_layer_parameter;
-            p = (Parameter*)p->next;
-        }
+        LockedLinkList<Parameter> list1 = parameters.getLock();
+        LockedLinkList<Parameter> list2 = generator->parameters.getLock();
+
+        std::for_each(list2.begin(), list2.end(), [&](Parameter *&p) {
+            // TODO ?
+            //p->layer_set_f = set_frei0r_layer_parameter;
+            //p->layer_get_f = get_frei0r_layer_parameter;
+            list1.push_back(p);
+        });
     }
 #endif
 
@@ -171,13 +176,14 @@ bool GeneratorLayer::open(const char *file) {
             return false;
         }
         // todo: parameters in freeframe
-        parameters = &generator->parameters;
-        Parameter *p = (Parameter*)parameters->begin();
-        while(p) {
-            p->layer_set_f = set_freeframe_layer_parameter;
-            p->layer_get_f = get_freeframe_layer_parameter;
-            p = (Parameter*)p->next;
-        }
+        LockedLinkList<Parameter> list1 = parameters.getLock();
+        LockedLinkList<Parameter> list2 = generator->parameters.getLock();
+        std::for_each(list2.begin(), list2.end(), [&](Parameter *&p) {
+            // TODO ?
+            //p->layer_set_f = set_freeframe_layer_parameter;
+            //p->layer_get_f = get_freeframe_layer_parameter;
+            list1.push_back(p);
+        });
     }
 
     // XXX - are we allocating memory for someone else? ... this is crap !!!
