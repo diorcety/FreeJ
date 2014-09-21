@@ -42,6 +42,13 @@
 #include <jutils.h>
 
 #include <factory.h>
+
+extern "C" {
+#include "libavutil/time.h"
+}
+#ifndef AVCODEC_MAX_AUDIO_FRAME_SIZE
+#define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000
+#endif
 //#define DEBUG 1
 
 // our objects are allowed to be created trough the factory engine
@@ -212,8 +219,8 @@ bool VideoLayer::open(const char *file) {
             } else { // correctly opened
 
 #if LIBAVCODEC_BUILD  >=     4754
-                if(avformat_stream->r_frame_rate.den && avformat_stream->r_frame_rate.num)
-                    frame_rate = av_q2d(avformat_stream->r_frame_rate);
+                if(avformat_stream->avg_frame_rate.den && avformat_stream->avg_frame_rate.num)
+                    frame_rate = av_q2d(avformat_stream->avg_frame_rate);
                 else
                     frame_rate = enc->time_base.den / enc->time_base.num;
 
@@ -568,9 +575,53 @@ int VideoLayer::decode_audio_packet(int *data_size) {
 #if LIBAVCODEC_VERSION_MAJOR < 53
     res = avcodec_decode_audio2(audio_codec_ctx, (int16_t *)audio_buf,
                                 &datasize, pkt.data, pkt.size);
-#else
+#elif LIBAVCODEC_VERSION_MAJOR < 55
     res = avcodec_decode_audio3(audio_codec_ctx, (int16_t *)audio_buf,
                                 &datasize, &pkt);
+#else
+    AVFrame *frame = av_frame_alloc();
+    int got_frame = 0;
+    res = -1;
+    if (!frame) {
+        if (audio_codec_ctx->get_buffer != avcodec_default_get_buffer) {
+            av_log(audio_codec_ctx, AV_LOG_ERROR, "Custom get_buffer() for use with"
+            "avcodec_decode_audio3() detected. Overriding with avcodec_default_get_buffer\n");
+            av_log(audio_codec_ctx, AV_LOG_ERROR, "Please port your application to "
+            "avcodec_decode_audio4()\n");
+            audio_codec_ctx->get_buffer = avcodec_default_get_buffer;
+            audio_codec_ctx->release_buffer = avcodec_default_release_buffer;
+        }
+        
+        res = avcodec_decode_audio4(audio_codec_ctx, frame, &got_frame, &pkt);
+        
+        if (res >= 0 && got_frame) {
+            int ch, plane_size;
+            int planar = av_sample_fmt_is_planar(audio_codec_ctx->sample_fmt);
+            int data_size = av_samples_get_buffer_size(&plane_size, audio_codec_ctx->channels,
+            frame->nb_samples,
+            audio_codec_ctx->sample_fmt, 1);
+            if (datasize < data_size) {
+                av_log(audio_codec_ctx, AV_LOG_ERROR, "output buffer size is too small for "
+                "the current frame (%d < %d)\n", datasize, data_size);
+                res = -2;
+            }
+            if (res >= 0) {
+                memcpy(audio_buf, frame->extended_data[0], plane_size);
+                
+                if (planar && audio_codec_ctx->channels > 1) {
+                    uint8_t *out = ((uint8_t *)audio_buf) + plane_size;
+                    for (ch = 1; ch < audio_codec_ctx->channels; ch++) {
+                        memcpy(out, frame->extended_data[ch], plane_size);
+                        out += plane_size;
+                    }
+                }
+                datasize = data_size;
+            }
+        } else {
+            datasize = 0;
+        }
+        av_frame_free(&frame);
+    }
 #endif
 
     if(data_size) *data_size = datasize;
