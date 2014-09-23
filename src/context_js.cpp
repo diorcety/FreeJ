@@ -19,6 +19,7 @@
  */
 
 #include <dirent.h>
+#include <assert.h>
 
 #include <callbacks_js.h>
 #include <jsparser_data.h>
@@ -643,19 +644,22 @@ JS(entry_move) {
     return JS_TRUE;
 }
 
-/*
- *TODO
 JS(entry_next) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    Layer *res;
+    Layer *res = NULL;
     JSObject *objtmp;
 
     GET_LAYER(Layer);
 
-    res = (Layer*)lay->next;
-    if(!res) // if last entry the cycle to the first
-        res = ((Linklist<Layer>*)lay->list)->begin();
+    if(lay->screen != NULL) {
+        LockedLinkList<Layer> list = lay->screen->layers.getLock();
+        LockedLinkList<Layer>::iterator layerIt = std::find(list.begin(), list.end(), lay);
+        assert(layerIt != list.end());
+        if((++layerIt) != list.end()) {
+            res = *layerIt;
+        }
+    }
 
     objtmp = JS_NewObject(cx, res->jsclass, NULL, obj);
     JS_SetPrivate(cx, objtmp, (void*) res);
@@ -668,14 +672,19 @@ JS(entry_next) {
 JS(entry_prev) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    Layer *res;
+    Layer *res = NULL;
     JSObject *objtmp;
 
     GET_LAYER(Layer);
 
-    res = (Layer*)lay->prev;
-    if(!res) // if first entry the cycle to the end
-        res = ((Linklist<Layer>*)lay->list)->end();
+    if(lay->screen != NULL) {
+        LockedLinkList<Layer> list = lay->screen->layers.getLock();
+        LockedLinkList<Layer>::iterator layerIt = std::find(list.begin(), list.end(), lay);
+        assert(layerIt != list.end());
+        if(layerIt != list.begin()) {
+            res = *(--layerIt);
+        }
+    }
 
     objtmp = JS_NewObject(cx, res->jsclass, NULL, obj);
     JS_SetPrivate(cx, objtmp, (void*) res);
@@ -684,7 +693,6 @@ JS(entry_prev) {
 
     return JS_TRUE;
 }
-*/
 
 JS(include_javascript_file) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);

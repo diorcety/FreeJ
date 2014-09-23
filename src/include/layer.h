@@ -167,7 +167,6 @@ public:
 
     virtual void fit(bool maintain_aspect_ratio = true);
 
-
     Linklist<Parameter> parameters;
     ///< Parameter list for the layer
 

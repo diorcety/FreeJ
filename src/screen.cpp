@@ -110,6 +110,11 @@ bool ViewPort::init(int w, int h, int bpp) {
 bool ViewPort::add_layer(Layer *lay) {
     func("%s", __PRETTY_FUNCTION__);
 
+    if(lay->screen) {
+        warning("passing a layer from a screen to another is not (yet) supported");
+        return(false);
+    }
+
     LockedLinkList<Layer> list = layers.getLock();
 
     if(!lay->opened) {
