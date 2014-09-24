@@ -30,6 +30,8 @@
 #include <filter.h>
 #include <factory.h>
 
+
+FREEJ_FORWARD_PTR(Freior)
 class Freior : public Filter {
     friend class GenF0rLayer;
 #ifdef WITH_COCOA
@@ -42,7 +44,7 @@ public:
 
     int type();
     int open(char *file);
-    bool apply(Layer *lay, FilterInstance *instance);
+    bool apply(LayerPtr lay, FilterInstancePtr instance);
     const char *description();
     const char *author();
     void print_info();
@@ -61,8 +63,8 @@ public:
     f0r_instance_t (*f0r_construct)(unsigned int width, unsigned int height);
 
 protected:
-    void destruct(FilterInstance *inst);
-    void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
+    void destruct(FilterInstancePtr inst);
+    void update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe);
     // Interface function pointers.
     int (*f0r_init)();
     void (*f0r_get_plugin_info)(f0r_plugin_info_t* pluginInfo);

@@ -26,7 +26,8 @@
 #include <slw_text.h>
 
 
-class SLW_Log : public SLangWidget {
+FREEJ_FORWARD_PTR(SLW_Log)
+class SLW_Log : public EnableSharedFromThis<SLW_Log>, public SLangWidget {
 
 public:
     SLW_Log();
@@ -45,7 +46,7 @@ public:
     void func(const char *text, ...);
 
     void append(const char *text);
-    SLW_TextConsole *textconsole;
+    SLW_TextConsolePtr textconsole;
     bool scrolling;
 
 };

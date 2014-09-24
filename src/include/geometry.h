@@ -20,6 +20,7 @@
 #define __GEOMETRY_H__
 
 #include <inttypes.h>
+#include "sharedptr.h"
 
 /**
    This class is made to hold informations about the geometry of
@@ -28,6 +29,7 @@
 
    @brief Collects geometrical information about Layer, Screen and other components
  */
+FREEJ_FORWARD_PTR(Geometry)
 class Geometry {
 
 public:

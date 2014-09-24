@@ -23,6 +23,7 @@
 #include <layer.h>
 #include <factory.h>
 
+FREEJ_FORWARD_PTR(GeneratorLayer)
 class GeneratorLayer : public Layer {
 public:
     GeneratorLayer();
@@ -35,7 +36,7 @@ public:
     void register_generators(Linklist<Filter> *gens);
 
     void *swap_buffer;
-    FilterInstance *generator;
+    FilterInstancePtr generator;
 
 protected:
     bool _init();

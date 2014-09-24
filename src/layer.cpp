@@ -55,7 +55,6 @@ Layer::Layer()
     setName("???");
     filename[0] = 0;
     buffer = NULL;
-    screen = NULL;
     is_native_sdl_surface = false;
 #ifdef WITH_JAVASCRIPT
     jsclass = &layer_class;
@@ -84,27 +83,6 @@ Layer::~Layer() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
 
     active = false;
-
-    {
-         LockedLinkList<FilterInstance> list = filters.getLock();
-         while(list.size()) {
-            FilterInstance *f = list.front();
-            list.pop_front();
-            delete f;
-         }
-    }
-
-    // free all parameters
-    {
-         LockedLinkList<Parameter> list = parameters.getLock();
-         while(list.size()) {
-            Parameter *par = list.front();
-            list.pop_front();
-            delete par;
-         }
-    }
-
-    if(blitter) delete blitter;
 }
 
 void *Layer::get_data() {
@@ -119,8 +97,7 @@ bool Layer::init(int wdt, int hgt, int bpp) {
 
     geo.init(wdt, hgt, bpp);
 
-    func("initialized %s layer %ix%i",
-         getName().c_str(), geo.w, geo.h);
+    func("initialized %s layer %ix%i", getName().c_str(), geo.w, geo.h);
 
     if(!geo.bytesize) {
         // if  the   size  is  still  unknown   at  init  then   it  is  the
@@ -186,10 +163,10 @@ char *Layer::get_blit() {
 }
 
 bool Layer::set_blit(const char *bname) {
-
+    auto screen = this->screen.lock();
     if(screen && blitter) {
         LockedLinkList<Blit> list = blitter->blitlist.getLock();
-        LockedLinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (Blit * &b) {
+        LockedLinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (BlitPtr &b) {
             return b->getName() == bname;
         });
 
@@ -197,13 +174,13 @@ bool Layer::set_blit(const char *bname) {
             error("blit %s not found in screen %s", bname, screen->getName().c_str());
             return(false);
         }
-        Blit *b = *it;
+        BlitPtr b = *it;
 
         func("blit for layer %s set to %s", name.c_str(), b->getName().c_str());
 
         current_blit = b; // start using
         need_crop = true;
-        blitter->crop(this, screen);
+        blitter->crop(SharedFromThis(), screen);
         blitter->mSelectedBlit = b;
         act("blit %s set for layer %s", current_blit->getName().c_str(), name.c_str());
     } else {
@@ -231,7 +208,9 @@ void Layer::blit() {
         null_feeds = 0;
 
         lock();
-        screen->blit(this);
+        if(auto screen = this->screen.lock()) {
+            screen->blit(SharedFromThis());
+        }
         unlock();
     }
 }
@@ -253,7 +232,7 @@ bool Layer::cafudda() {
 
 void *Layer::do_filters(void *tmp_buf) {
     LockedLinkList<FilterInstance> list = filters.getLock();
-    std::for_each(list.begin(), list.end(), [&](FilterInstance *filt) {
+    std::for_each(list.begin(), list.end(), [&](FilterInstancePtr filt) {
         if(filt->active)
             tmp_buf = (void*) filt->process(fps.fps, (uint32_t*)tmp_buf);
     });
@@ -266,7 +245,7 @@ int Layer::do_iterators() {
     LockedLinkList<Iterator> list = iterators.getLock();
     LockedLinkList<Iterator>::iterator it = list.begin();
     while(it != list.end()) {
-        Iterator *iter = *it;
+        IteratorPtr iter = *it;
         int res = iter->cafudda(); // if cafudda returns -1...
         if(res < 0) {
             it = list.erase(it);
@@ -360,10 +339,13 @@ void Layer::_fit(bool maintain_aspect_ratio) {
     double width_zoom, height_zoom;
     int new_x = 0;
     int new_y = 0;
-    if(this->screen == NULL) {
+    auto screen = this->screen.lock();
+
+    if(!screen) {
         error("Cannot fit layer without a screen, add layer to a screen first");
         return;
     }
+
     width_zoom = (double)screen->geo.w / geo.w;
     height_zoom = (double)screen->geo.h / geo.h;
     if(maintain_aspect_ratio) {

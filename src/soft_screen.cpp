@@ -45,9 +45,9 @@ SoftScreen::~SoftScreen() {
     if(screen_buffer) free(screen_buffer);
 }
 
-void SoftScreen::setup_blits(Layer *lay) {
+void SoftScreen::setup_blits(LayerPtr lay) {
 
-    Blitter *b = new Blitter();
+    BlitterPtr b = MakeShared<Blitter>();
 
     setup_linear_blits(b);
 
@@ -63,20 +63,19 @@ bool SoftScreen::_init() {
     return(true);
 }
 
-void SoftScreen::blit(Layer *src) {
+void SoftScreen::blit(LayerPtr src) {
     int16_t c;
-    Blit *b;
 
-    if(src->screen != this) {
+    if(src->screen.lock() != SharedFromThis()) {
         error("%s: blit called on a layer not belonging to screen",
               __PRETTY_FUNCTION__);
         return;
     }
 
     if(src->need_crop)
-        src->blitter->crop(src, this);
+        src->blitter->crop(src, SharedFromThis());
 
-    b = src->current_blit;
+    BlitPtr b = src->current_blit;
 
     pscr = (uint32_t*) get_surface() + b->scr_offset;
     play = (uint32_t*) src->buffer   + b->lay_offset;

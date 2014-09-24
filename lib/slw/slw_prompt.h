@@ -25,8 +25,8 @@
 
 #include <slw_text.h>
 
-
-class SLW_Prompt : public SLangWidget {
+FREEJ_FORWARD_PTR(SLW_Prompt)
+class SLW_Prompt : public EnableSharedFromThis<SLW_Prompt>, public SLangWidget {
 
 public:
     SLW_Prompt();
@@ -39,7 +39,7 @@ public:
     ////////////////////////
 
 private:
-    SLW_TextConsole *textconsole;
+    SLW_TextConsolePtr textconsole;
     void append(const char *text);
 
 };

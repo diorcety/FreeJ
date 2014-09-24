@@ -37,9 +37,9 @@
 
 
 
+FREEJ_FORWARD_PTR(Row)
 
-class Row;
-
+FREEJ_FORWARD_PTR(TextConsole)
 class TextConsole {
 
 public:
@@ -63,7 +63,7 @@ public:
     ////////////////////////
 
 
-    int move_string(Row *dest, Row *src, int len);
+    int move_string(RowPtr dest, RowPtr src, int len);
     ///< move a string from a row to another
 
     bool scroll; ///< if true we have vertical scrolling
@@ -73,8 +73,8 @@ public:
     int cur_x, cur_y; ///< cursor positioning
 
     Linklist<Row> rows;
-    Row *cur_row;
-    Row *vis_row_in;
+    RowPtr cur_row;
+    RowPtr vis_row_in;
 
 
     // void refresh_row(int y);

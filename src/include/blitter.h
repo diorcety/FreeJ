@@ -42,19 +42,20 @@ typedef void (blit_past_f)(void *src, void *past, void *dst, int len);
 
 ///////////////////////////////////////////////////////////////////////
 
-class Layer;
+FREEJ_FORWARD_PTR(Layer)
 
 
 template <class T> class Linklist;
 
-class Blitter;
-class ViewPort;
+FREEJ_FORWARD_PTR(Blitter)
+FREEJ_FORWARD_PTR(ViewPort)
 
 ////// blit setup functions to be used by the screen
-void setup_sdl_blits(Blitter *blitter);
-void setup_linear_blits(Blitter *blitter);
+void setup_sdl_blits(BlitterPtr blitter);
+void setup_linear_blits(BlitterPtr blitter);
 
 
+FREEJ_FORWARD_PTR(Blit)
 class Blit : public Entry {
     friend class Blitter;
     friend class ViewPort;
@@ -119,27 +120,22 @@ private:
 };
 
 
-
+FREEJ_FORWARD_PTR(Blitter)
 class Blitter {
 public:
     Blitter();
     ~Blitter();
 
-
     Linklist<Blit> blitlist; ///< list of available blits
-    Blit *mSelectedBlit;
+    BlitPtr mSelectedBlit;
+    BlitPtr default_blit;
 
     /* ==== CROP */
     /** @param force crop even if nothing changed */
-    void crop(Layer *lay, ViewPort *scr);
+    void crop(LayerPtr lay, ViewPortPtr scr);
     ///< crop to fit in the ViewPort
 
-    ViewPort *screen; ///< the layer on which is applied the blitter
-
-    Blit *default_blit;
-
-    Geometry *geo;
-
+    LayerPtr layer; ///< the layer on which is applied the blitter
 private:
     int16_t old_lay_x;
     int16_t old_lay_y;

@@ -25,6 +25,7 @@
 #include <list>
 #include <utility>
 
+#include "sharedptr.h"
 #include "entity.h"
 
 /* void warning(const char *format, ...); */
@@ -46,7 +47,7 @@ template <typename T>
 class LockedLinkList;
 
 template <typename T>
-class Linklist: private std::list<T*> {
+class Linklist: private std::list<SharedPtr<T>> {
     friend class LockedLinkList<T>;
 
 private:
@@ -63,21 +64,21 @@ public:
 template <typename T>
 class LockedLinkList {
 private:
-    std::list<T*> &mList;
+    std::list<SharedPtr<T>> &mList;
 #ifdef THREADSAFE
     std::unique_lock<std::recursive_mutex> mLock;
 #endif
 
 public:
-    typedef typename std::list<T*>::value_type               value_type;
-    typedef typename std::list<T*>::pointer                  pointer;
-    typedef typename std::list<T*>::iterator                 iterator;
-    typedef typename std::list<T*>::const_iterator           const_iterator;
-    typedef typename std::list<T*>::reference                reference;
-    typedef typename std::list<T*>::const_reference          const_reference;
-    typedef typename std::list<T*>::size_type                size_type;
-    typedef typename std::list<T*>::const_reverse_iterator   const_reverse_iterator;
-    typedef typename std::list<T*>::reverse_iterator         reverse_iterator;
+    typedef typename std::list<SharedPtr<T>>::value_type               value_type;
+    typedef typename std::list<SharedPtr<T>>::pointer                  pointer;
+    typedef typename std::list<SharedPtr<T>>::iterator                 iterator;
+    typedef typename std::list<SharedPtr<T>>::const_iterator           const_iterator;
+    typedef typename std::list<SharedPtr<T>>::reference                reference;
+    typedef typename std::list<SharedPtr<T>>::const_reference          const_reference;
+    typedef typename std::list<SharedPtr<T>>::size_type                size_type;
+    typedef typename std::list<SharedPtr<T>>::const_reverse_iterator   const_reverse_iterator;
+    typedef typename std::list<SharedPtr<T>>::reverse_iterator         reverse_iterator;
 
 public:
     LockedLinkList(Linklist<T> &list);
@@ -86,6 +87,7 @@ public:
     void push_front(value_type&& val);
 #endif
     bool empty() const;
+    void clear();
     iterator begin();
     const_iterator begin() const;
     iterator end();
@@ -134,6 +136,11 @@ LockedLinkList<T>::LockedLinkList(Linklist<T> &list):
 template <typename T>
 bool LockedLinkList<T>::empty() const {
     return mList.empty();
+}
+
+template <typename T>
+void LockedLinkList<T>::clear() {
+    return mList.clear();
 }
 
 template <typename T>

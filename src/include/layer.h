@@ -32,14 +32,13 @@
 #include <jsync.h>
 
 
-class Context;
-class AudioCollector;
-class Iterator;
-class Blitter;
-class Blit;
-class ViewPort;
-
-class JSContext;
+FREEJ_FORWARD_PTR(Context)
+FREEJ_FORWARD_PTR(AudioCollector)
+FREEJ_FORWARD_PTR(Iterator)
+FREEJ_FORWARD_PTR(Blitter)
+FREEJ_FORWARD_PTR(Blit)
+FREEJ_FORWARD_PTR(ViewPort)
+FREEJ_FORWARD_PTR(JSContext)
 
 
 /**
@@ -77,16 +76,15 @@ class JSContext;
 
    @brief Provides input to the Context
  */
-class Layer : public Entry, public JSyncThread {
+FREEJ_FORWARD_PTR(Layer)
+class Layer : public EnableSharedFromThis<Layer>, public Entry, public JSyncThread {
     friend class Blitter;
     friend class Context;
     friend class JSyncThread;
     friend class ViewPort;
 
 public:
-    SHARED_PTR(Layer)
-
-    FilterInstance * mSelectedFilter;
+    FilterInstancePtr mSelectedFilter;
 
     enum Type {
         UNKNOWN,
@@ -197,8 +195,8 @@ public:
     int max_null_feeds; // maximum null feeds tolerated
 
     //////////////////////// BLIT operations
-    Blitter *blitter; ///< Blitter interface for this Layer
-    Blit *current_blit; ///< currently set Blit on this Layer
+    BlitterPtr blitter; ///< Blitter interface for this Layer
+    BlitPtr current_blit; ///< currently set Blit on this Layer
     virtual char *get_blit(); ///< return the name of the currently seleted Blit
     virtual bool set_blit(const char *bname); ///< select a Blit by name
 
@@ -207,7 +205,7 @@ public:
     void *get_data(); // returns private data associated to this layer
     void set_data(void *data);
 
-    ViewPort *screen;  ///< ViewPort on which the Layer is blitted
+    ViewPortWeakPtr screen;  ///< ViewPort on which the Layer is blitted
 
 
     AudioCollector *audio; //< registered audio collector

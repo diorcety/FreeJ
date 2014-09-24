@@ -28,27 +28,28 @@
 #include <stdint.h>
 #include <factory.h>
 
-class Filter;
+FREEJ_FORWARD_PTR(Filter)
 
-class FilterInstance : public Entry {
+FREEJ_FORWARD_PTR(FilterInstance)
+class FilterInstance : public EnableSharedFromThis<FilterInstance>, public Entry {
     friend class Filter;
 
 public:
     FilterInstance();
-    FilterInstance(Filter *fr);
+    FilterInstance(FilterPtr fr);
     virtual ~FilterInstance();
 
-    virtual void init(Filter *fr);
+    virtual void init(FilterPtr fr);
     virtual uint32_t *process(float fps, uint32_t *inframe);
 
-    virtual bool apply(Layer *lay);
+    virtual bool apply();
 
     virtual bool inuse();
 
-    Layer *get_layer();
+    LayerPtr get_layer();
 
     // XXX - most of this stuff should be private or protected
-    Filter *proto;
+    FilterPtr proto;
 
     bool active;
 
@@ -60,10 +61,10 @@ public:
     Linklist<Parameter> parameters;
 
 protected:
-    void set_layer(Layer *lay);
+    void set_layer(LayerPtr lay);
 
 private:
-    Layer *layer;
+    LayerWeakPtr layer;
 
     FACTORY_ALLOWED
 };

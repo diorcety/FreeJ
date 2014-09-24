@@ -183,7 +183,7 @@ Context::~Context() {
 // End of Factory-related methods
 //
 
-bool Context::add_screen(ViewPort *scr) {
+bool Context::add_screen(ViewPortPtr scr) {
 
     if(!scr->initialized) {
         error("can't add screen %s - not initialized yet", scr->getName().c_str());
@@ -193,9 +193,8 @@ bool Context::add_screen(ViewPort *scr) {
     LockedLinkList<ViewPort> list = screens.getLock();
     list.push_front(scr);
     mSelectedScreen = scr;
-    ViewPort *screen = list.front();
     func("screen %s successfully added", scr->getName().c_str());
-    act("screen %s now on top", screen->getName().c_str());
+    act("screen %s now on top", scr->getName().c_str());
 
     return(true);
 }
@@ -267,7 +266,7 @@ void Context::cafudda(double secs) {
     /////////////////////////////
     LockedLinkList<ViewPort> list = screens.getLock();
     // blit layers on screens
-    std::for_each(list.begin(), list.end(), [&](ViewPort *scr) {
+    std::for_each(list.begin(), list.end(), [&](ViewPortPtr scr) {
         if(clear_all) scr->clear();
 
         // Change resolution if needed
@@ -317,14 +316,14 @@ void Context::handle_controllers() {
         if(event.key.state == SDL_PRESSED)
             if(event.key.keysym.mod & KMOD_CTRL)
                 if(event.key.keysym.sym == SDLK_f) {
-                    ViewPort *scr = mSelectedScreen;
+                    ViewPortPtr scr = mSelectedScreen;
                     scr->fullscreen();
                     res = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYEVENTMASK | SDL_QUITMASK);
                     if(res < 0) warning("SDL_PeepEvents error");
                 }
 
     LockedLinkList<Controller> list = controllers.getLock();
-    std::for_each(list.begin(), list.end(), [] (Controller *ctrl) {
+    std::for_each(list.begin(), list.end(), [] (ControllerPtr ctrl) {
             if(ctrl->active)
                 ctrl->poll();
     });
@@ -336,7 +335,7 @@ void Context::handle_controllers() {
 
 }
 
-bool Context::register_controller(Controller *ctrl) {
+bool Context::register_controller(ControllerPtr ctrl) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     if(!ctrl) {
@@ -345,9 +344,9 @@ bool Context::register_controller(Controller *ctrl) {
     }
 
     if(!ctrl->initialized) {
-        func("initialising controller %s (%p)", ctrl->getName().c_str(), ctrl);
+        func("initialising controller %s (%p)", ctrl->getName().c_str(), ctrl.get());
 
-        ctrl->init(this);
+        ctrl->init(SharedFromThis());
 
     } else
         warning("controller was already initialised on this context");
@@ -362,7 +361,7 @@ bool Context::register_controller(Controller *ctrl) {
     return true;
 }
 
-bool Context::rem_controller(Controller *ctrl) {
+bool Context::rem_controller(ControllerPtr ctrl) {
     func("%s", __PRETTY_FUNCTION__);
     if(!ctrl) {
         error("%s called on a NULL object", __PRETTY_FUNCTION__);
@@ -374,16 +373,14 @@ bool Context::rem_controller(Controller *ctrl) {
     ctrl->active = false;
     controllers.getLock().remove(ctrl);
     act("removed controller %s", ctrl->getName().c_str());
-    delete ctrl;
 
     return true;
 }
 
-bool Context::add_encoder(VideoEncoder *enc) {
+bool Context::add_encoder(VideoEncoderPtr enc) {
     func("%s", __PRETTY_FUNCTION__);
 
-    ViewPort *scr;
-    scr = mSelectedScreen;
+    ViewPortPtr scr = mSelectedScreen;
     if(!scr) {
         error("no screen initialized, can't add encoder %s", enc->getName().c_str());
         return(false);
@@ -391,7 +388,7 @@ bool Context::add_encoder(VideoEncoder *enc) {
     return(scr->add_encoder(enc));
 }
 
-bool Context::add_layer(Layer *lay) {
+bool Context::add_layer(LayerPtr lay) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
     warning("use of Context::add_layer is DEPRECATED");
@@ -399,7 +396,7 @@ bool Context::add_layer(Layer *lay) {
     warning("a list of screens (view ports) is available");
     warning("kijk in Context::screens Linklist");
 
-    ViewPort *scr = mSelectedScreen;
+    ViewPortPtr scr = mSelectedScreen;
     if(!scr) {
         error("no screen initialized, can't add layer %s", lay->getName().c_str());
         return(false);
@@ -408,10 +405,10 @@ bool Context::add_layer(Layer *lay) {
 
 }
 
-void Context::rem_layer(Layer *lay) {
+void Context::rem_layer(LayerPtr lay) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
 
-    ViewPort *scr = mSelectedScreen;
+    ViewPortPtr scr = mSelectedScreen;
     if(scr)
         scr->rem_layer(lay);
 }
@@ -454,13 +451,12 @@ int Context::reset() {
         LockedLinkList<Controller>::iterator it = list.begin();
         func("deleting %u controllers", list.size());
         while(it != list.end()) {
-            Controller *ctrl = list.front();
+            ControllerPtr ctrl = list.front();
             if(ctrl->indestructible) {
                 ctrl->reset();
                 ++it;
             } else {
                 it = list.erase(it);
-                delete(ctrl);
             }
         }
     }
@@ -470,14 +466,13 @@ int Context::reset() {
         LockedLinkList<ViewPort>::iterator it = list.begin();
         func("deleting %u screens", list.size());
         while(it != list.end()) {
-            ViewPort *scr = list.front();
+            ViewPortPtr scr = list.front();
             list.pop_front();
             if(scr->indestructible) {
                 scr->reset();
                 ++it;
             } else {
                 it = list.erase(it);
-                delete(scr);
             }
         }
     }
@@ -548,7 +543,7 @@ bool Context::config_check(const char *filename) {
 }
 
 void Context::resize(int w, int h) {
-    ViewPort *scr = mSelectedScreen;
+    ViewPortPtr scr = mSelectedScreen;
     scr->resize_w = w;
     scr->resize_h = h;
     scr->resizing = true;
@@ -556,7 +551,7 @@ void Context::resize(int w, int h) {
 }
 
 void *Context::coords(int x, int y) {
-    ViewPort *scr = mSelectedScreen;
+    ViewPortPtr scr = mSelectedScreen;
     return(scr->coords(x, y));
 }
 
@@ -571,11 +566,11 @@ void fsigpipe(int Sig) {
 
 // TODO - use factory to create instances for each class of layers
 //        (cam-input, videofile-input, whatever)
-Layer *Context::open(char *file, int w, int h) {
+LayerPtr Context::open(char *file, int w, int h) {
     func("%s", __PRETTY_FUNCTION__);
     char *end_file_ptr, *file_ptr;
     FILE *tmp;
-    Layer *nlayer = NULL;
+    LayerPtr nlayer;
 
     /* check that file exists */
     if(strncasecmp(file, "/dev/", 5) != 0
@@ -595,7 +590,7 @@ Layer *Context::open(char *file, int w, int h) {
 
     if(!w || !h) {
         // uses the size of currently selected screen
-        ViewPort *screen = mSelectedScreen;
+        ViewPortPtr screen = mSelectedScreen;
         w = screen->geo.w;
         h = screen->geo.h;
     }
@@ -628,7 +623,6 @@ Layer *Context::open(char *file, int w, int h) {
         }
         if(!nlayer->init(uw, uh, 32)) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
-            delete nlayer;
             return NULL;
         }
         if(nlayer->open(file_ptr)) {
@@ -637,7 +631,6 @@ Layer *Context::open(char *file, int w, int h) {
             //  ((V4lGrabber*)nlayer)->init_heigth = h;
         } else {
             error("create_layer : V4L open failed");
-            delete nlayer;
             nlayer = NULL;
         }
 
@@ -650,12 +643,10 @@ Layer *Context::open(char *file, int w, int h) {
         nlayer = Factory<Layer>::new_instance("MovieLayer");
         if(!nlayer->init()) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
-            delete nlayer;
             return NULL;
         }
         if(!nlayer->open(file_ptr)) {
             error("create_layer : VIDEO open failed");
-            delete nlayer;
             nlayer = NULL;
         }
 #else
@@ -665,31 +656,27 @@ Layer *Context::open(char *file, int w, int h) {
     } else     /* IMAGE LAYER */
     if((IS_IMAGE_EXTENSION(end_file_ptr))) {
 //		strncasecmp((end_file_ptr-4),".png",4)==0)
-        nlayer = new ImageLayer();
+        nlayer = MakeShared<ImageLayer>();
         if(!nlayer->init()) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
-            delete nlayer;
             return NULL;
         }
         if(!nlayer->open(file_ptr)) {
             error("create_layer : IMG open failed");
-            delete nlayer;
             nlayer = NULL;
         }
     } else         /* TXT LAYER */
     if(strncasecmp((end_file_ptr - 4), ".txt", 4) == 0) {
 #if defined WITH_TEXTLAYER
-        nlayer = new TextLayer();
+        nlayer = MakeShared<TextLayer>();
 
         if(!nlayer->init()) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
-            delete nlayer;
             return NULL;
         }
 
         if(!nlayer->open(file_ptr)) {
             error("create_layer : TXT open failed");
-            delete nlayer;
             nlayer = NULL;
         }
 #else
@@ -701,17 +688,15 @@ Layer *Context::open(char *file, int w, int h) {
     } else             /* XSCREENSAVER LAYER */
     if(strstr(file_ptr, "xscreensaver")) {
 #ifdef WITH_XSCREENSAVER
-        nlayer = new XScreenSaverLayer();
+        nlayer = MakeShared<XScreenSaverLayer>();
 
         if(!nlayer->init(w, h, 32)) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
-            delete nlayer;
             return NULL;
         }
 
         if(!nlayer->open(file_ptr)) {
             error("create_layer : XScreenSaver open failed");
-            delete nlayer;
             nlayer = NULL;
         }
 #else
@@ -722,11 +707,10 @@ Layer *Context::open(char *file, int w, int h) {
     }  else if(strncasecmp(file_ptr, "layer_goom", 10) == 0) {
 
 #ifdef WITH_GOOM
-        nlayer = new GoomLayer();
+        nlayer = MakeShared<GoomLayer>();
 
         if(!nlayer->init(this)) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
-            delete nlayer;
             return NULL;
         }
 #else
@@ -735,10 +719,9 @@ Layer *Context::open(char *file, int w, int h) {
 #endif
 
 
-    }
-#ifdef WITH_FLASH
-    else if(strncasecmp(end_file_ptr - 4, ".swf", 4) == 0) {
+    }  else if(strncasecmp(end_file_ptr - 4, ".swf", 4) == 0) {
 
+#ifdef WITH_FLASH
         nlayer = new FlashLayer();
         if(!nlayer->init()) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
@@ -751,12 +734,13 @@ Layer *Context::open(char *file, int w, int h) {
             delete nlayer;
             nlayer = NULL;
         }
-
-    }
+#else
+        error("flash layer not supported");
+        return(NULL);
 #endif
 
+    } else if(strcasecmp(file_ptr, "layer_opencv_cam") == 0) {
 #ifdef WITH_OPENCV
-    else if(strcasecmp(file_ptr, "layer_opencv_cam") == 0) {
         func("creating a cam layer using OpenCV");
         nlayer = new OpenCVCamLayer();
         if(!nlayer->init()) {
@@ -764,13 +748,16 @@ Layer *Context::open(char *file, int w, int h) {
             delete nlayer;
             return NULL;
         }
-    }
+#else
+        error("opencv layer not supported");
+        return(NULL);
 #endif
+    }
 
     if(!nlayer)
         error("can't create a layer with %s", file);
     else
-        func("create_layer successful, returns %p", nlayer);
+        func("create_layer successful, returns %p", nlayer.get());
     return nlayer;
 }
 

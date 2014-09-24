@@ -27,6 +27,7 @@
 
 #include <factory.h>
 
+FREEJ_FORWARD_PTR(SdlScreen)
 class SdlScreen : public ViewPort {
 public:
     SdlScreen();
@@ -34,8 +35,8 @@ public:
 
 
     void resize(int resize_w, int resize_h);
-    void setup_blits(Layer *lay);
-    void blit(Layer *src);
+    void setup_blits(LayerPtr lay);
+    void blit(LayerPtr src);
 
 
     void show();

@@ -25,9 +25,8 @@
 #include <abs_text_console.h>
 
 
-class SLW_Text;
-
-class SLW_TextConsole : public TextConsole {
+FREEJ_FORWARD_PTR(SLW_TextConsole)
+class SLW_TextConsole : public EnableSharedFromThis<SLW_TextConsole>, public TextConsole {
 
 public:
     SLW_TextConsole();
@@ -38,10 +37,11 @@ public:
     void blank();
     void blank_row(int r);
 
-    SLangWidget *widget;
+    SLangWidgetWeakPtr widget;
 };
 
-class SLW_Text : public SLangWidget {
+FREEJ_FORWARD_PTR(SLW_Text)
+class SLW_Text : public EnableSharedFromThis<SLW_Text>, public SLangWidget {
 
 public:
     SLW_Text();
@@ -56,7 +56,7 @@ public:
     ////////////////////////
 
 private:
-    SLW_TextConsole *textconsole;
+    SLW_TextConsolePtr textconsole;
 
 };
 

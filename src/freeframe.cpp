@@ -173,7 +173,7 @@ void Freeframe::print_info() {
     act("Parameters [%i total]", plugmain(FF_GETNUMPARAMETERS, NULL, 0).ivalue);
 }
 
-bool Freeframe::apply(Layer *lay, FilterInstance *instance) {
+bool Freeframe::apply(LayerPtr lay, FilterInstancePtr instance) {
     VideoInfoStruct vidinfo;
     vidinfo.frameWidth = lay->geo.w;
     vidinfo.frameHeight = lay->geo.h;
@@ -187,11 +187,11 @@ bool Freeframe::apply(Layer *lay, FilterInstance *instance) {
     return Filter::apply(lay, instance);
 }
 
-void Freeframe::destruct(FilterInstance *inst) {
+void Freeframe::destruct(FilterInstancePtr inst) {
     plugmain(FF_DEINSTANTIATE, NULL, inst->intcore);
 }
 
-void Freeframe::update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe) {
+void Freeframe::update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe) {
     Filter::update(inst, time, inframe, outframe);
     jmemcpy(outframe, inframe, bytesize);
     plugmain(FF_PROCESSFRAME, (void*)outframe, inst->intcore);

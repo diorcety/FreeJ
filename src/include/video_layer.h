@@ -63,6 +63,7 @@ extern "C" {
 
 //void av_log_null_callback(void* ptr, int level, const char* fmt, va_list vl);
 
+FREEJ_FORWARD_PTR(VideoLayer)
 class VideoLayer : public Layer {
 
 public:

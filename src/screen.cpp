@@ -57,37 +57,7 @@ ViewPort::ViewPort()
 }
 
 ViewPort::~ViewPort() {
-    {
-        LockedLinkList<Layer> list = layers.getLock();
-
-        func("screen %s deleting %u layers", name.c_str(), list.size());
-        while(list.size()) {
-            Layer *lay = list.front();
-            list.pop_front();
-            lay->stop();
-            lay->lock();
-            // deleting layers crashes
-            //    delete(lay);
-            // XXX - you don't create layers... so you don't have to delete them as well!!!
-            //       symmetry is of primary importance and we should care about that.
-            //       layers should be freed by who created them. Perhaps we could extend
-            //       the Layer api to allow notifications when a layer is removed from a screen
-        }
-    }
-
     if(audio) ringbuffer_free(audio);
-
-    {
-        LockedLinkList<VideoEncoder> list = encoders.getLock();
-
-        func("screen %s deleting %u encoders", name.c_str(), list.size());
-        while(list.size()) {
-            VideoEncoder *enc = list.front();
-            list.pop_front();
-            delete(enc);
-        }
-    }
-
 }
 
 bool ViewPort::init(int w, int h, int bpp) {
@@ -107,10 +77,10 @@ bool ViewPort::init(int w, int h, int bpp) {
 
 }
 
-bool ViewPort::add_layer(Layer *lay) {
+bool ViewPort::add_layer(LayerPtr lay) {
     func("%s", __PRETTY_FUNCTION__);
 
-    if(lay->screen) {
+    if(lay->screen.lock()) {
         warning("passing a layer from a screen to another is not (yet) supported");
         return(false);
     }
@@ -122,13 +92,13 @@ bool ViewPort::add_layer(Layer *lay) {
         return(false);
     }
 
-    lay->screen = this;
+    lay->screen = SharedFromThis();
 
     setup_blits(lay);
 
     // setup default blit (if any)
     if(lay->blitter) {
-        lay->current_blit = (Blit*)lay->blitter->default_blit;
+        lay->current_blit = lay->blitter->default_blit;
         lay->blitter->mSelectedBlit = lay->current_blit;
     }
     // center the position
@@ -143,12 +113,12 @@ bool ViewPort::add_layer(Layer *lay) {
 }
 
 #ifdef WITH_AUDIO
-bool ViewPort::add_audio(JackClient *jcl) {
+bool ViewPort::add_audio(JackClientPtr jcl) {
     LockedLinkList<Layer> list = layers.getLock();
     LockedLinkList<Layer>::iterator it = list.begin();
     if(it == list.end()) return false;
 
-    VideoLayer * lay = (VideoLayer *)*it;
+    VideoLayerPtr lay = DynamicPointerCast<VideoLayer>(*it);
 
     jcl->SetRingbufferPtr(audio, (int)lay->audio_samplerate, (int)lay->audio_channels);
     std::cerr << "------ audio_samplerate :" << lay->audio_samplerate \
@@ -159,7 +129,7 @@ bool ViewPort::add_audio(JackClient *jcl) {
 
 #endif
 
-void ViewPort::rem_layer(Layer *lay) {
+void ViewPort::rem_layer(LayerPtr lay) {
     LockedLinkList<Layer> list = layers.getLock();
     LockedLinkList<Layer>::iterator it = std::find(list.begin(), list.end(), lay);
     if(it == list.end()) {
@@ -167,7 +137,7 @@ void ViewPort::rem_layer(Layer *lay) {
         return;
     }
 
-    lay->screen = NULL; // symmetry
+    lay->screen.reset(); // symmetry
     list.erase(it);
     notice("removed layer %s (but still present as an instance)", lay->getName().c_str());
 }
@@ -181,7 +151,7 @@ void ViewPort::reset() {
     }
 }
 
-bool ViewPort::add_encoder(VideoEncoder *enc) {
+bool ViewPort::add_encoder(VideoEncoderPtr enc) {
     func("%s", __PRETTY_FUNCTION__);
 
     LockedLinkList<VideoEncoder> list = encoders.getLock();
@@ -233,7 +203,7 @@ void ViewPort::blit_layers() {
 
     LockedLinkList<Layer> list = layers.getLock();
     LockedLinkList<Layer>::reverse_iterator it = list.rbegin();
-    std::for_each(list.rbegin(), list.rend(), [&](Layer *&lay) {
+    std::for_each(list.rbegin(), list.rend(), [&](LayerPtr &lay) {
         if(lay->buffer) {
             if(lay->active & lay->opened) {
 
@@ -260,9 +230,9 @@ void ViewPort::handle_resize() {
 
     /* crop all layers to new screen size */
     LockedLinkList<Layer> list = layers.getLock();
-    std::for_each(list.begin(), list.end(), [&](Layer *&lay) {
+    std::for_each(list.begin(), list.end(), [&](LayerPtr &lay) {
         lay->lock();
-        lay->blitter->crop(lay, this);
+        lay->blitter->crop(lay, SharedFromThis());
         lay->unlock();
     });
 }

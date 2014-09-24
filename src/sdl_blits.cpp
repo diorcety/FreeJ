@@ -115,13 +115,13 @@ BLIT sdl_chromakey(void *src, SDL_Rect *src_rect,
 
 }
 
-void setup_sdl_blits(Blitter *blitter) {
-    Parameter *p;
-    Blit *b;
+void setup_sdl_blits(BlitterPtr blitter) {
+    ParameterPtr p;
+    BlitPtr b;
 
     LockedLinkList<Blit> list = blitter->blitlist.getLock();
     // SDL blits
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("SDL");
     b->setDescription("RGB blit (SDL)");
     b->type = Blit::SDL;
@@ -133,7 +133,7 @@ void setup_sdl_blits(Blitter *blitter) {
     /////////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("ALPHA");
         b->setDescription("alpha blit (SDL)");
         b->type = Blit::SDL;
@@ -142,7 +142,7 @@ void setup_sdl_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("alpha");
         p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
         p->multiplier = 255.0;
@@ -152,7 +152,7 @@ void setup_sdl_blits(Blitter *blitter) {
     /////////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("SRCALPHA");
         b->setDescription("source alpha blit (SDL)");
         b->type = Blit::SDL;
@@ -161,7 +161,7 @@ void setup_sdl_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("alpha");
         p->setDescription("level of transparency of alpha channel (0.0 - 1.0)");
         p->multiplier = 255.0;

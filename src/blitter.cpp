@@ -46,35 +46,16 @@ Blit::Blit() : Entry() {
 }
 
 Blit::~Blit() {
-    // clean up all parameters
-    LockedLinkList<Parameter> list = parameters.getLock();
-    while(list.size()) {
-        Parameter *par = list.front();
-        list.pop_front();
-        delete par;
-    }
 }
 
 Blitter::Blitter() {
-    mSelectedBlit = NULL;
-    screen = NULL;
-
     old_lay_x = 0;
     old_lay_y = 0;
     old_lay_w = 0;
     old_lay_h = 0;
-
-
 }
 
 Blitter::~Blitter() {
-    // clean up all blits
-    LockedLinkList<Blit> list = blitlist.getLock();
-    while(list.size()) {
-        Blit *b = list.front();
-        list.pop_front();
-        delete b;
-    }
 }
 
 // char *Blitter::getName().c_str() {
@@ -134,12 +115,10 @@ Blitter::~Blitter() {
  */
 
 
-void Blitter::crop(Layer *lay, ViewPort *scr) {
-
-    Blit *b;
+void Blitter::crop(LayerPtr lay, ViewPortPtr scr) {
 
     if(!lay || !scr) {
-        warning("crop called with lay[%p] scr[%p]", lay, scr);
+        warning("crop called with lay[%p] scr[%p]", lay.get(), scr.get());
         return;
     }
 
@@ -148,7 +127,7 @@ void Blitter::crop(Layer *lay, ViewPort *scr) {
         return;
     }
 
-    b = lay->current_blit;
+    BlitPtr b = lay->current_blit;
 
     func("crop on layer %s x%i y%i w%i h%i for blit %s",
          lay->getName().c_str(), lay->geo.x, lay->geo.y,
@@ -157,15 +136,17 @@ void Blitter::crop(Layer *lay, ViewPort *scr) {
     // assign the right pointer to the *geo used in crop
     // we use the normal geometry if not roto|zoom
     // otherwise the layer::geo_rotozoom
+    Geometry *geo;
     if(lay->rotating | lay->zooming) {
-
         geo = &lay->geo_rotozoom;
 
         // shift up/left to center rotation
         geo->x = lay->geo.x - (geo->w - lay->geo.w) / 2;
         geo->y = lay->geo.y - (geo->h - lay->geo.h) / 2;
 
-    } else geo = &lay->geo;
+    } else {
+        geo = &lay->geo;
+    }
 
     //////////////////////
 

@@ -27,7 +27,7 @@
 
 class Filter;
 
-
+FREEJ_FORWARD_PTR(Freeframe)
 class Freeframe : public Filter {
     friend class GeneratorLayer;
 #ifdef WITH_COCOA
@@ -49,7 +49,7 @@ public:
     int  get_parameter_type(int i);
     char *get_parameter_description(int i);
 
-    bool apply(Layer *lay, FilterInstance *instance);
+    bool apply(LayerPtr lay, FilterInstancePtr instance);
 
     PlugInfoStruct *info;
 
@@ -58,8 +58,8 @@ public:
     bool opened;
 
 protected:
-    void destruct(FilterInstance *inst);
-    void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
+    void destruct(FilterInstancePtr inst);
+    void update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe);
     void init_parameters(Linklist<Parameter> &parameters);
     // Interface function pointers.
     plugMainType *plugmain;

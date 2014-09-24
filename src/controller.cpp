@@ -36,15 +36,9 @@ Controller::Controller() {
 
 Controller::~Controller() {
     func("%s %s (%p)", __PRETTY_FUNCTION__, name.c_str(), this);
-    LockedLinkList<ControllerListener> list = listeners.getLock();
-    while(list.size()) {
-        ControllerListener *listener = list.front();
-        list.pop_front();
-        delete listener;
-    }
 }
 
-bool Controller::init(Context *freej) {
+bool Controller::init(ContextPtr freej) {
 #ifdef WITH_JAVASCRIPT
     if(freej->js) {
         // the object is set to global, but should be overwritten
@@ -59,7 +53,7 @@ bool Controller::init(Context *freej) {
     return(true);
 }
 
-bool Controller::add_listener(ControllerListener *listener) {
+bool Controller::add_listener(ControllerListenerPtr listener) {
     listeners.getLock().push_back(listener);
     return true;
 }
@@ -67,11 +61,7 @@ bool Controller::add_listener(ControllerListener *listener) {
 void Controller::reset() {
     active = false;
     LockedLinkList<ControllerListener> list = listeners.getLock();
-    while(list.size()) {
-        ControllerListener *listener = list.front();
-        list.pop_front();
-        delete listener;
-    }
+    list.clear();
 }
 
 ControllerListener::~ControllerListener() {

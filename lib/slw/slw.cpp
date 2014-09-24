@@ -45,8 +45,6 @@ SLangWidget::SLangWidget()
     initialized = false;
     can_focus = false;
 
-    console = 0x0;
-
     // maximum lenght for a row
     max_row = 512;
 
@@ -201,7 +199,7 @@ void SLangWidget::blank() {
 
 bool SLangWidget::check(int x, int y) {
 
-    if(!console) { // check if its placed
+    if(!console.lock()) { // check if its placed
         fprintf(stderr, "can't draw on unplaced widget '%s'", name.c_str());
         return false;
     }

@@ -141,26 +141,22 @@ int Plugger::refresh(Context *env) {
 
 #ifdef WITH_FREI0R
                 {
-                    Freior *fr = (Freior *)Factory<Filter>::new_instance("Frei0rFilter");
-                    if(!fr || !fr->open(temp)) {
-                        delete fr;
-                    } else { // freior effect found
+                    FreiorPtr fr = DynamicPointerCast<Freior>(Factory<Filter>::new_instance("Frei0rFilter"));
+                    if(fr && fr->open(temp)) {
                         // check what kind of plugin is and place it
                         if(fr->info.plugin_type == F0R_PLUGIN_TYPE_FILTER) {
                             filterList.push_back(fr);
-                            func("found frei0r filter: %s (%p)", fr->getName().c_str(), fr);
+                            func("found frei0r filter: %s (%p)", fr->getName().c_str(), fr.get());
                             continue;
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_SOURCE) {
                             generatorList.push_back(fr);
-                            func("found frei0r generator: %s (%p)", fr->getName().c_str(), fr);
+                            func("found frei0r generator: %s (%p)", fr->getName().c_str(), fr.get());
                             continue;
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_MIXER2) {
                             func("frei0r plugin of type MIXER2 not supported (yet)", fr->info.plugin_type);
-                            delete fr;
                             continue;
                         } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_MIXER3) {
                             func("frei0r plugin of type MIXER3 not supported (yet)", fr->info.plugin_type);
-                            delete fr;
                             continue;
                         }
                     }
@@ -168,21 +164,17 @@ int Plugger::refresh(Context *env) {
 #endif
 #ifdef WITH_FREEFRAME
                 {
-                    Freeframe *fr = (Freeframe *)Factory<Filter>::new_instance("FreeframeFilter");
-                    if(!fr->open(temp)) {
-                        delete fr;
-                    } else { // freeframe effect found
+                    FreeframePtr fr = DynamicPointerCast<Freeframe>(Factory<Filter>::new_instance("FreeframeFilter"));
+                    if(fr && fr->open(temp)) {
                         // check what kind of plugin is and place it
                         if(fr->info->pluginType == FF_EFFECT) {
                             filterList.push_back(fr);
-                            func("found freeframe filter: %s (%p)", fr->info->pluginName, fr);
+                            func("found freeframe filter: %s (%p)", fr->info->pluginName, fr.get());
                             continue;
-
                         } else if(fr->info->pluginType == FF_SOURCE) {
                             generatorList.push_back(fr);
-                            func("found freeframe generator: %s (%p)", fr->info->pluginName, fr);
+                            func("found freeframe generator: %s (%p)", fr->info->pluginName, fr.get());
                             continue;
-
                         }
                     }
                 }

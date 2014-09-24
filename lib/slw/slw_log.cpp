@@ -35,13 +35,11 @@ SLW_Log::SLW_Log()
 }
 
 SLW_Log::~SLW_Log() {
-    if(textconsole)
-        delete textconsole;
 }
 
 bool SLW_Log::init() {
 
-    if(!console) {
+    if(!console.lock()) {
         fprintf(stderr, "can't initialize widget '%s': not placed on console", name.c_str());
         return false;
     }
@@ -54,9 +52,8 @@ bool SLW_Log::init() {
 
 
     // create the private structure where to hold text
-    if(textconsole) delete textconsole;
-    textconsole = new SLW_TextConsole();
-    textconsole->widget = this;
+    textconsole = MakeShared<SLW_TextConsole>();
+    textconsole->widget = SharedFromThis();
     textconsole->w = w;
     textconsole->h = h;
     textconsole->cur_x = 0;
@@ -108,7 +105,7 @@ bool SLW_Log::feed(int key) {
 }
 
 bool SLW_Log::refresh() {
-    Row *r;
+    RowPtr r;
     register int c;
 
     if(!textconsole->vis_row_in) return false;
@@ -146,7 +143,7 @@ bool SLW_Log::refresh() {
 void SLW_Log::append(const char *text) {
     LockedLinkList<Row> list = textconsole->rows.getLock();
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), textconsole->vis_row_in);
-    Row *r = new Row();
+    RowPtr r = MakeShared<Row>();
     int len = strlen(text);
 
     r->insert_string((char*)text, len);

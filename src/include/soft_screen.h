@@ -24,6 +24,7 @@
 
 #include <factory.h>
 
+FREEJ_FORWARD_PTR(SoftScreen)
 class SoftScreen : public ViewPort {
 
 public:
@@ -38,9 +39,9 @@ public:
 
     void *get_surface();
 
-    void setup_blits(Layer *);
+    void setup_blits(LayerPtr);
 
-    void blit(Layer *src);
+    void blit(LayerPtr src);
 
     void set_buffer(void *buf);
     void *coords(int x, int y);
