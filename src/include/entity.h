@@ -27,7 +27,8 @@ class JSClass;
 // and object
 class JSObject;
 
-class Entry {
+FREEJ_FORWARD_PTR(Entry)
+class Entry: public EnableSharedFromThis<Entry> {
 public:
     Entry();
     virtual ~Entry();

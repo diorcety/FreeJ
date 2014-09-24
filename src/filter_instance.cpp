@@ -37,16 +37,14 @@ FilterInstance::FilterInstance()
     intcore = 0;
     outframe = NULL;
     active = false;
-    layer = NULL;
 }
 
-FilterInstance::FilterInstance(Filter *fr)
+FilterInstance::FilterInstance(FilterPtr fr)
     : Entry() {
     core = NULL;
     intcore = 0;
     outframe = NULL;
     active = false;
-    layer = NULL;
     init(fr);
 }
 
@@ -54,14 +52,14 @@ FilterInstance::~FilterInstance() {
     func("~FilterInstance");
 
     if(proto)
-        proto->destruct(this);
+        proto->destruct(SharedFromThis(FilterInstance));
 
     if(outframe)
         free(outframe);
 
 }
 
-void FilterInstance::init(Filter *fr) {
+void FilterInstance::init(FilterPtr fr) {
     func("initializing instance for filter %s", fr->getName().c_str());
     proto = fr;
     setName(proto->name);
@@ -74,29 +72,30 @@ uint32_t *FilterInstance::process(float fps, uint32_t *inframe) {
         error("void filter instance was called for process: %p", this);
         return inframe;
     }
-    proto->update(this, fps, inframe, outframe);
+    proto->update(SharedFromThis(FilterInstance), fps, inframe, outframe);
     return outframe;
 }
 
 
-bool FilterInstance::apply(Layer *lay) {
+bool FilterInstance::apply() {
     bool ret = false;
-    if(!layer && proto)
-        ret = proto->apply(lay, this);
+    if(proto) {
+        if(auto layer=this->layer.lock()) {
+             ret = proto->apply(layer, SharedFromThis(FilterInstance));
+        }
+    }
     return ret;
 }
 
-void FilterInstance::set_layer(Layer *lay) {
+void FilterInstance::set_layer(LayerPtr lay) {
     layer = lay;
 }
 
-Layer *FilterInstance::get_layer() {
-    return layer;
+LayerPtr FilterInstance::get_layer() {
+    return layer.lock();
 }
 
 bool FilterInstance::inuse() {
-    if(layer)
-        return true;
-    return false;
+    return layer.lock() != NULL;
 }
 

@@ -82,24 +82,24 @@
     static int isRegistered;
 
 #define FACTORY_REGISTER_INSTANTIATOR(__base_class, __class_name, __category, __id) \
-    static __class_name * get ## __class_name() \
+    static SharedPtr<__class_name> get ## __class_name() \
     { \
         func("Creating %s -- %s", # __base_class, # __class_name); \
-        return new __class_name(); \
+        return MakeShared<__class_name>(); \
     } \
     int __class_name::isRegistered = Factory<__base_class>::register_instantiator( \
         # __category, # __id, (Instantiator)get ## __class_name \
         );
 
-typedef void *(*Instantiator)();
+typedef SharedPtr<void>(*Instantiator)();
 typedef std::map<std::string, Instantiator> FInstantiatorsMap;
 typedef std::pair<std::string, Instantiator> FInstantiatorPair;
 typedef std::pair<std::string, const char *> FTagPair;
 typedef std::map<std::string, const char *> FTagMap;
 typedef std::map<std::string, FInstantiatorsMap *> FMapsMap;
 typedef std::pair<std::string, FInstantiatorsMap *> FMapPair;
-typedef std::map<std::string, void *> FInstancesMap;
-typedef std::pair<std::string, void *> FInstancePair;
+typedef std::map<std::string, SharedPtr<void>> FInstancesMap;
+typedef std::pair<std::string, SharedPtr<void>> FInstancePair;
 typedef std::map<std::string, const char *> FDefaultClassesMap;
 
 template <class T>
@@ -138,7 +138,7 @@ public:
     // regardless of the real class of the returned object.
     // The configured default for the current platform (if defined)
     // will be returned.
-    static inline T *new_instance(const char *category) {
+    static inline SharedPtr<T> new_instance(const char *category) {
         FTagMap::iterator pair = defaults_map->find(category);
         if(pair != defaults_map->end())
             return new_instance(category, pair->second);
@@ -146,7 +146,7 @@ public:
     }
 
     // Create (and return) a new instance of the class which matches 'id' within a certain category.
-    static inline T *new_instance(const char *category, const char *id) {
+    static inline SharedPtr<T> new_instance(const char *category, const char *id) {
         char tag[FACTORY_ID_MAXLEN];
         if(!category || !id)  // safety belts
             return NULL;
@@ -160,12 +160,12 @@ public:
             func("id %s found", id);
             Instantiator create_instance = instantiators_pair->second;
             if(create_instance)
-                return (T*)create_instance();
+                return StaticPointerCast<T>(create_instance());
         }
         return NULL;
     }
 
-    static inline T*get_instance(const char *category) {
+    static inline SharedPtr<T> get_instance(const char *category) {
         FTagMap::iterator pair = defaults_map->find(category);
         if(pair != defaults_map->end())
             return get_instance(category, pair->second);
@@ -174,7 +174,7 @@ public:
 
     // TODO - remove duplicated code across get_instance() and new_instance
     //        (move common code in a private method used by both (get|new)_instance()
-    static inline T *get_instance(const char *category, const char *id) {
+    static inline SharedPtr<T> get_instance(const char *category, const char *id) {
         char tag[FACTORY_ID_MAXLEN];
         if(!category || !id)  // safety belts
             return NULL;
@@ -188,17 +188,17 @@ public:
             func("Looking for %s in instantiators_map (%d)", tag, instances_map->size());
             FInstancesMap::iterator instance_pair = instances_map->find(tag);
             if(instance_pair != instances_map->end()) {
-                void *instance = instance_pair->second;
-                func("Returning instance of %s at address %p", tag, instance);
-                return (T *)instance;
+                SharedPtr<void> instance = instance_pair->second;
+                func("Returning instance of %s at address %p", tag, instance.get());
+                return StaticPointerCast<T>(instance);
             }
         } else {
             instances_map = new FInstancesMap();
         }
         // create on first use
-        T *instance = new_instance(category, id);
-        instances_map->insert(FInstancePair(tag, (void *)instance));
-        func("Created instance of %s at address %p", tag, (void *)instance);
+        SharedPtr<T> instance = new_instance(category, id);
+        instances_map->insert(FInstancePair(tag, instance));
+        func("Created instance of %s at address %p", tag, instance.get());
         return instance;
     }
 

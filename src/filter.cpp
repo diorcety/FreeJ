@@ -59,21 +59,20 @@ Filter::~Filter() {
 
 }
 
-FilterInstance *Filter::new_instance() {
-    FilterInstance *instance = Factory<FilterInstance>::new_instance("FilterInstance");
+FilterInstancePtr Filter::new_instance() {
+    FilterInstancePtr instance = Factory<FilterInstance>::new_instance("FilterInstance");
     if(instance)
-        instance->init(this);
+        instance->init(SharedFromThis(Filter));
     return instance;
 }
 
-bool Filter::apply(Layer *lay, FilterInstance *instance) {
+bool Filter::apply(LayerPtr lay, FilterInstancePtr instance) {
 
     errno = 0;
     instance->outframe = (uint32_t*) calloc(lay->geo.bytesize, 1);
     if(errno != 0) {
         error("calloc outframe failed (%i) applying filter %s", errno, name.c_str());
         error("Filter %s cannot be instantiated", name.c_str());
-        delete instance;
         return NULL;
     }
 
@@ -88,13 +87,12 @@ bool Filter::apply(Layer *lay, FilterInstance *instance) {
     return true;
 }
 
-FilterInstance *Filter::apply(Layer *lay) {
+FilterInstancePtr Filter::apply(LayerPtr lay) {
 
-    FilterInstance *instance = new_instance();
+    FilterInstancePtr instance = new_instance();
 
     if(apply(lay, instance))
         return instance;
-    delete instance;
     return NULL;
 }
 
@@ -114,18 +112,18 @@ char *Filter::get_parameter_description(int i) {
     return (char *)"Unknown";
 }
 
-void Filter::destruct(FilterInstance *inst) {
+void Filter::destruct(FilterInstancePtr inst) {
 
 }
 
-void Filter::update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe) {
+void Filter::update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe) {
     apply_parameters(inst);
 }
 
-void Filter::apply_parameters(FilterInstance *inst) {
+void Filter::apply_parameters(FilterInstancePtr inst) {
     LockedLinkList<Parameter> list = inst->parameters.getLock();
 
-    std::for_each(list.begin(), list.end(), [&] (Parameter *param) {
+    std::for_each(list.begin(), list.end(), [&] (ParameterPtr param) {
         if(param->changed) {
             param->update();
             param->changed = false; // XXX

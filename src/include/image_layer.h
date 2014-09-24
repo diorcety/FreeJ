@@ -25,6 +25,7 @@
 #include <SDL_image.h>
 #include <layer.h>
 
+FREEJ_FORWARD_PTR(ImageLayer)
 class ImageLayer : public Layer {
 
 public:

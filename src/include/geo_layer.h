@@ -27,6 +27,7 @@
 
 #include <factory.h>
 
+FREEJ_FORWARD_PTR(GeoLayer)
 class GeoLayer : public Layer {
 
 public:

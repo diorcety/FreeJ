@@ -28,9 +28,9 @@
 #include <jutils.h>
 #include <filter.h>
 
-template <class T> class Linklist;
+FREEJ_FORWARD_PTR(Context)
 
-class Context;
+template <class T> class Linklist;
 
 /**
    This class implements the object storing all available filter
@@ -43,9 +43,12 @@ class Context;
    @brief Collects DLO plugins that can be used as Effect or Layer
  */
 class Plugger {
+	friend Context;
 public:
     Plugger(); ///< Plugger onstructor
     ~Plugger(); ///< Plugger destructor
+
+private:
 
     /**
        Tell the Plugger to read again thru configured paths and updates
@@ -60,7 +63,7 @@ public:
 
 private:
 
-    bool open(Context *env, char *file);
+    bool open(ContextPtr env, char *file);
 
     /* checks if file/directory exist */
     void addsearchdir(const char *dir);

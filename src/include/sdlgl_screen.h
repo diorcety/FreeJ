@@ -38,6 +38,7 @@
 /* }; */
 
 
+FREEJ_FORWARD_PTR(SdlGlScreen)
 class SdlGlScreen : public ViewPort {
 public:
     SdlGlScreen();
@@ -46,7 +47,7 @@ public:
     void resize(int resize_w, int resize_h);
 
     void show();
-    void blit(Layer *lay);
+    void blit(LayerPtr lay);
     void clear();
 
     void fullscreen();
@@ -55,7 +56,7 @@ public:
         return BGRA32;
     };
 
-    void setup_blits(Layer *lay);
+    void setup_blits(LayerPtr lay);
 
     float x_translation;
     float y_translation;

@@ -25,17 +25,18 @@
 #include <parameter.h>
 #include <filter_instance.h>
 
-class Layer;
+FREEJ_FORWARD_PTR(Layer)
 #ifdef WITH_FREI0R
-class Freior;
+FREEJ_FORWARD_PTR(Freior)
 #endif
 #ifdef WITH_COCOA
-class CVFilter;
+FREEJ_FORWARD_PTR(CVFilter)
 #endif
-class Freeframe;
+FREEJ_FORWARD_PTR(Freeframe)
 
 template <class T> class Linklist;
 
+FREEJ_FORWARD_PTR(Filter)
 class Filter : public Entry {
     friend class FilterInstance;
 public:
@@ -52,10 +53,10 @@ public:
     Filter();
     virtual ~Filter();
 
-    virtual FilterInstance *new_instance();
+    virtual FilterInstancePtr new_instance();
 
-    virtual FilterInstance *apply(Layer *lay);
-    virtual bool apply(Layer *lay, FilterInstance *instance);
+    virtual FilterInstancePtr apply(LayerPtr lay);
+    virtual bool apply(LayerPtr lay, FilterInstancePtr instance);
 
     virtual const char *description();
     virtual const char *author();
@@ -71,9 +72,9 @@ public:
     bool inuse;
 
 protected:
-    virtual void destruct(FilterInstance *inst);
-    virtual void update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe);
-    virtual void apply_parameters(FilterInstance *inst);
+    virtual void destruct(FilterInstancePtr inst);
+    virtual void update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe);
+    virtual void apply_parameters(FilterInstancePtr inst);
     virtual void init_parameters(Linklist<Parameter> &parameters) = 0;
     int bytesize;
 

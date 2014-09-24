@@ -97,9 +97,9 @@ bool SdlScreen::_init() {
     return(true);
 }
 
-void SdlScreen::setup_blits(Layer *lay) {
+void SdlScreen::setup_blits(LayerPtr lay) {
 
-    Blitter *b = new Blitter();
+    BlitterPtr b = MakeShared<Blitter>();
 
     setup_linear_blits(b);
 
@@ -110,10 +110,9 @@ void SdlScreen::setup_blits(Layer *lay) {
     lay->set_blit("SDL"); // default
 }
 
-void SdlScreen::blit(Layer *src) {
+void SdlScreen::blit(LayerPtr src) {
     register int16_t c;
     void *offset;
-    Blit *b;
 
     if(src->rotating | src->zooming) {
 
@@ -146,9 +145,9 @@ void SdlScreen::blit(Layer *src) {
 
 
     if(src->need_crop)
-        src->blitter->crop(src, this);
+        src->blitter->crop(src, SharedFromThis(SdlScreen));
 
-    b = src->current_blit;
+    BlitPtr b = src->current_blit;
 
 //   if(!b) {
 //     error("%s: blit is NULL",__PRETTY_FUNCTION__);
@@ -176,12 +175,9 @@ void SdlScreen::blit(Layer *src) {
 
         // executes SDL blit
     } else if(b->type == Blit::SDL) {
-
-        if(src->blitter->geo)
-            (*b->sdl_fun)
-                (offset, &b->sdl_rect, sdl_screen,
-                NULL, src->blitter->geo, &b->parameters);
-
+        (*b->sdl_fun)
+            (offset, &b->sdl_rect, sdl_screen,
+            NULL, &src->geo, &b->parameters);
     }
 
 //  else if (b->type == Blit::PAST) {

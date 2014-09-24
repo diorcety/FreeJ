@@ -3,6 +3,7 @@
 import threading
 import time
 import freej
+freej.GlobalLogger.set_loglevel(freej.DEBUG)
 # initializes FreeJ creating a Context
 cx = freej.Context()
 # creates a screen (different to docs)
@@ -20,7 +21,7 @@ txt.write("Hello World!")
 # start the layer
 txt.start()
 # add the layer to the screen
-cx.add_layer(txt)
+scr.add_layer(txt)
 # starts freej in a separate thread
 th = threading.Thread(target = cx.start , name = "freej")
 th.start()

@@ -77,10 +77,10 @@ template <class T> class Linklist;
 #endif
 #endif
 
-class JackClient;
-class Layer;
-class Geometry;
-class VideoEncoder;
+FREEJ_FORWARD_PTR(JackClient)
+FREEJ_FORWARD_PTR(Layer)
+FREEJ_FORWARD_PTR(Geometry)
+FREEJ_FORWARD_PTR(VideoEncoder)
 
 /**
    This class provides a generic interface common to all different
@@ -90,12 +90,13 @@ class VideoEncoder;
    @brief Output screen where results are visualized
  */
 
+FREEJ_FORWARD_PTR(ViewPort)
 class ViewPort : public Entry {
 public:
-    SHARED_PTR(ViewPort);
     friend class Layer;
-    Layer * mSelectedLayer;
-    VideoEncoder *mSelectedEncoder;
+    LayerPtr mSelectedLayer;
+    VideoEncoderPtr mSelectedEncoder;
+
 public:
     ViewPort();
     virtual ~ViewPort();
@@ -112,21 +113,21 @@ public:
     virtual void *coords(int x, int y) = 0;
     ///< returns pointer to pixel (slow! use it once and then move around)
 
-    virtual void blit(Layer *src) = 0; ///< operate the blit
+    virtual void blit(LayerPtr src) = 0; ///< operate the blit
 
-    virtual void setup_blits(Layer *lay) = 0; ///< setup available blits on added layer
+    virtual void setup_blits(LayerPtr lay) = 0; ///< setup available blits on added layer
 
     void blit_layers();
 
-    virtual bool add_layer(Layer *lay); ///< add a new layer to the screen
+    virtual bool add_layer(LayerPtr lay); ///< add a new layer to the screen
 #ifdef WITH_AUDIO
-    virtual bool add_audio(JackClient *jcl); ///< connect layer to audio output
+    virtual bool add_audio(JackClientPtr jcl); ///< connect layer to audio output
 #endif
-    virtual void rem_layer(Layer *lay); ///< remove a layer from the screen
+    virtual void rem_layer(LayerPtr lay); ///< remove a layer from the screen
 
     Linklist<Layer> layers; ///< linked list of registered layers
 
-    bool add_encoder(VideoEncoder *enc); ///< add a new encoder for the screen
+    bool add_encoder(VideoEncoderPtr enc); ///< add a new encoder for the screen
 
     Linklist<VideoEncoder> encoders; ///< linked list of registered encoders
 

@@ -26,6 +26,7 @@
 
 #include <aalib.h>
 
+FREEJ_FORWARD_PTR(AaScreen)
 class AaScreen : public ViewPort {
 
 public:

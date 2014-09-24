@@ -34,13 +34,11 @@ SLW_Prompt::SLW_Prompt()
 }
 
 SLW_Prompt::~SLW_Prompt() {
-    if(textconsole)
-        delete textconsole;
 }
 
 bool SLW_Prompt::init() {
 
-    if(!console) {
+    if(!console.lock()) {
         fprintf(stderr, "can't initialize widget '%s': not placed on console", name.c_str());
         return false;
     }
@@ -53,9 +51,8 @@ bool SLW_Prompt::init() {
 
 
     // create the private structure where to hold text
-    if(textconsole) delete textconsole;
-    textconsole = new SLW_TextConsole();
-    textconsole->widget = this;
+    textconsole = MakeShared<SLW_TextConsole>();
+    textconsole->widget = SharedFromThis(SLW_Prompt);
     textconsole->w = w;
     textconsole->h = h;
     textconsole->cur_x = 0;
@@ -79,7 +76,7 @@ bool SLW_Prompt::feed(int key) {
 }
 
 bool SLW_Prompt::refresh() {
-    Row *r = textconsole->cur_row;
+    RowPtr r = textconsole->cur_row;
 
     blank_row(1);
 

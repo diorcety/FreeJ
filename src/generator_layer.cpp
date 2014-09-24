@@ -55,20 +55,19 @@ GeneratorLayer::~GeneratorLayer() {
 
 /// set_parameter callback for generator layers
 // TODO
-static void set_freeframe_layer_parameter(Layer *lay, Parameter *param, int idx) {
+static void set_freeframe_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
 }
 
-static void get_freeframe_layer_parameter(Layer *lay, Parameter *param, int idx) {
+static void get_freeframe_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
 }
 
 #ifdef WITH_FREI0R
-static void get_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
+static void get_frei0r_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
 }
 
-static void set_frei0r_layer_parameter(Layer *lay, Parameter *param, int idx) {
-    GeneratorLayer *layer = (GeneratorLayer*)lay;
-
-    Freior *f = (Freior *)layer->generator->proto;
+static void set_frei0r_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
+    GeneratorLayerPtr layer = DynamicPointerCast<GeneratorLayer>(lay);
+    FreiorPtr f = DynamicPointerCast<Freior>(layer->generator->proto);
     void *val = param->value;
 
     switch(f->param_infos[idx - 1].type) {
@@ -125,14 +124,14 @@ bool GeneratorLayer::open(const char *file) {
     }
 
     LockedLinkList<Filter> list = generators->getLock();
-    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&] (Filter *&filter) {
+    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&] (FilterPtr &filter) {
             return filter->getName() == file;
     });
     if(it != list.end()) {
         error("generator not found: %s", file);
         return(false);
     }
-    Filter *proto = *it;
+    FilterPtr proto = *it;
 
     close();
 
@@ -142,10 +141,9 @@ bool GeneratorLayer::open(const char *file) {
 
 #ifdef WITH_FREI0R
     if(proto->type() == Filter::FREIOR) {
-        generator->core = (void*)(*((Freior *)proto)->f0r_construct)(geo.w, geo.h);
+        generator->core = (void*)(*(DynamicPointerCast<Freior>(proto))->f0r_construct)(geo.w, geo.h);
         if(!generator->core) {
             error("freior constructor returned NULL instantiating generator %s", file);
-            delete generator;
             generator = NULL;
             return false;
         }
@@ -153,7 +151,7 @@ bool GeneratorLayer::open(const char *file) {
         LockedLinkList<Parameter> list1 = parameters.getLock();
         LockedLinkList<Parameter> list2 = generator->parameters.getLock();
 
-        std::for_each(list2.begin(), list2.end(), [&](Parameter *&p) {
+        std::for_each(list2.begin(), list2.end(), [&](ParameterPtr &p) {
             // TODO ?
             //p->layer_set_f = set_frei0r_layer_parameter;
             //p->layer_get_f = get_frei0r_layer_parameter;
@@ -168,17 +166,16 @@ bool GeneratorLayer::open(const char *file) {
         vidinfo.frameHeight = geo.h;
         vidinfo.orientation = 1;
         vidinfo.bitDepth = FF_CAP_32BITVIDEO;
-        generator->intcore = ((Freeframe *)proto)->plugmain(FF_INSTANTIATE, &vidinfo, 0).ivalue;
+        generator->intcore = (DynamicPointerCast<Freeframe>(proto))->plugmain(FF_INSTANTIATE, &vidinfo, 0).ivalue;
         if(generator->intcore == FF_FAIL) {
             error("Freeframe generator %s cannot be instantiated", name.c_str());
-            delete generator;
             generator = NULL;
             return false;
         }
         // todo: parameters in freeframe
         LockedLinkList<Parameter> list1 = parameters.getLock();
         LockedLinkList<Parameter> list2 = generator->parameters.getLock();
-        std::for_each(list2.begin(), list2.end(), [&](Parameter *&p) {
+        std::for_each(list2.begin(), list2.end(), [&](ParameterPtr &p) {
             // TODO ?
             //p->layer_set_f = set_freeframe_layer_parameter;
             //p->layer_get_f = get_freeframe_layer_parameter;
@@ -196,10 +193,7 @@ bool GeneratorLayer::open(const char *file) {
 }
 
 void GeneratorLayer::close() {
-    if(generator) {
-        delete generator;
-        generator = NULL;
-    }
+    generator = NULL;
     opened = false;
 }
 

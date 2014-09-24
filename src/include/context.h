@@ -48,14 +48,11 @@
 #include <config.h>
 #include <string>
 
-class Controller;
-
-class JsParser;
-class AudioCollector;
-class VideoEncoder;
-
-
-class FreejDaemon;
+FREEJ_FORWARD_PTR(Controller)
+FREEJ_FORWARD_PTR(JsParser)
+FREEJ_FORWARD_PTR(AudioCollector)
+FREEJ_FORWARD_PTR(VideoEncoder)
+FREEJ_FORWARD_PTR(FreejDaemon)
 
 template <class T> class Linklist;
 
@@ -63,9 +60,10 @@ template <class T> class Linklist;
 #define MAX_HEIGHT 1024
 #define MAX_WIDTH 768
 
-class Context {
+FREEJ_FORWARD_PTR(Context)
+class Context: public EnableSharedFromThis<Context> {
 public:
-    ViewPort * mSelectedScreen;
+    ViewPortPtr mSelectedScreen;
 
 private:
 
@@ -114,13 +112,13 @@ public:
     void start(); ///< start the engine and loop until quit is false
     void start_threaded(); ///< start the engine in a thread, looping until quit is false
 
-    bool register_controller(Controller *ctrl);
-    bool rem_controller(Controller *ctrl);
+    bool register_controller(ControllerPtr ctrl);
+    bool rem_controller(ControllerPtr ctrl);
 
-    bool add_layer(Layer *lay); ///< add a layer to the screen and engine
-    void rem_layer(Layer *lay);
+    bool add_layer(LayerPtr lay); ///< add a layer to the screen and engine
+    void rem_layer(LayerPtr lay);
 
-    bool add_encoder(VideoEncoder *enc); ///< add an encoder to the engine
+    bool add_encoder(VideoEncoderPtr enc); ///< add an encoder to the engine
 
     void *coords(int x, int y); ///< returns an offset to currently selected screen
 
@@ -147,7 +145,7 @@ public:
     SDL_Event event;
     bool poll_events;
 
-    bool add_screen(ViewPort *scr); ///< add a new screen
+    bool add_screen(ViewPortPtr scr); ///< add a new screen
     Linklist<ViewPort> screens; ///< linked list of registered screens
 
     Linklist<Controller> controllers; ///< linked list of registered interactive controllers
@@ -177,7 +175,7 @@ public:
     char *layers_description; ///< string describing available layer types
     char *screens_description; ///< string describing available screen types
 
-    Layer *open(char *file, int w = 0, int h = 0); ///< creates a layer from a filename, detecting its type
+    LayerPtr open(char *file, int w = 0, int h = 0); ///< creates a layer from a filename, detecting its type
 
 };
 

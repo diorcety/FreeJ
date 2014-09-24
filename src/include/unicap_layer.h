@@ -30,6 +30,7 @@
 #define UNICAP_USER_CAPTURE 2
 
 
+FREEJ_FORWARD_PTR(UnicapLayer)
 class UnicapLayer : public Layer {
 
 public:

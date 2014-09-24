@@ -24,7 +24,7 @@
 #include <controller.h>
 #include <linklist.h>
 
-
+FREEJ_FORWARD_PTR(ConsoleController)
 class ConsoleController : public Controller {
 public:
 

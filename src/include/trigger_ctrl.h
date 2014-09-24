@@ -25,6 +25,7 @@
 #include <linklist.h>
 #include <SDL.h>
 
+FREEJ_FORWARD_PTR(TriggerController)
 class TriggerController : public Controller {
 
 public:

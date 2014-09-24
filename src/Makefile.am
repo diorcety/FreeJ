@@ -43,7 +43,7 @@ SOURCES = \
 	audio_jack.cpp  \
 	audio_collector.cpp \
 \
-	video_encoder.cpp 	ffmpeg_encoder.cpp \
+	video_encoder.cpp \
 	theorautils.cpp 	oggtheora_encoder.cpp \
 	impl_video_encoders.cpp 
 

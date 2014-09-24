@@ -83,7 +83,7 @@ static int getkey_handler() {
 }
 
 // confirm quit
-int quit_proc(Context *env, char *cmd) {
+int quit_proc(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
     if(cmd[0] == 'y') {
         real_quit = true;
@@ -114,13 +114,6 @@ SlwConsole::SlwConsole() : ConsoleController() {
 SlwConsole::~SlwConsole() {
     set_console(NULL);
     SLtt_set_cursor_visibility(1);
-
-    if(sel) delete sel;
-    if(log) delete log;
-    if(tit) delete tit;
-    if(rdl) delete rdl;
-    if(slw) delete slw;
-
 }
 
 bool SlwConsole::console_init() {
@@ -131,7 +124,7 @@ bool SlwConsole::console_init() {
 bool SlwConsole::slw_init() {
     ::func("%s", __PRETTY_FUNCTION__);
 
-    slw = new SLangConsole();
+    slw = MakeShared<SLangConsole>();
     slw->init();
 
     /** register WINdow CHange signal handler (TODO) */
@@ -146,21 +139,21 @@ bool SlwConsole::slw_init() {
     SLtt_set_cursor_visibility(0);
 
     // title
-    tit = new SlwTitle();
+    tit = MakeShared<SlwTitle>();
     tit->setName("console title");
     slw->place(tit, 0, 0, slw->w, 2);
     tit->init();
     /////////////////////////////////
 
     // layer and filter selector
-    sel = new SlwSelector();
+    sel = MakeShared<SlwSelector>();
     sel->setName("layer & filter selector");
     slw->place(sel, 0, 2, slw->w, 8);
     sel->init();
     ////////////////////////////
 
     // log scroller
-    log = new SLW_Log();
+    log = MakeShared<SLW_Log>();
     log->setName("console log messages");
     slw->place(log, 0, 10, slw->w, slw->h - 3);
     log->init();
@@ -168,13 +161,13 @@ bool SlwConsole::slw_init() {
 
 
     // status line
-    rdl = new SlwReadline();
+    rdl = MakeShared<SlwReadline>();
     rdl->setName("console readline");
     slw->place(rdl, 0, slw->h - 1, slw->w, slw->h);
     rdl->init();
     ////////////////////////////
 
-    set_console(this);
+    set_console(SharedFromThis(SlwConsole));
 
     refresh();
 

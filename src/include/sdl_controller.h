@@ -4,6 +4,7 @@
 #include <controller.h>
 #include <SDL.h>
 
+FREEJ_FORWARD_PTR(SdlController)
 class SdlController : public Controller {
 public:
     SDL_Event event; ///< SDL event structure

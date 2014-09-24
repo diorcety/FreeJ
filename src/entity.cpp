@@ -37,6 +37,9 @@ Entry::Entry() {
 }
 
 Entry::~Entry() {
+    if(data != NULL) {
+        free(data);
+    }
 }
 
 void Entry::setName(const std::string &name) {

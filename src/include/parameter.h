@@ -22,13 +22,13 @@
 
 #include <linklist.h>
 
-class Layer;
-class FilterInstance;
-class Parameter;
+FREEJ_FORWARD_PTR(Layer)
+FREEJ_FORWARD_PTR(FilterInstance)
 
+FREEJ_FORWARD_PTR(Parameter)
 
-typedef void (layer_param_f)(Layer *lay, Parameter *param, int idx);
-typedef void (filter_param_f)(FilterInstance *filt, Parameter *param, int idx);
+typedef void (layer_param_f)(LayerPtr lay, ParameterPtr param, int idx);
+typedef void (filter_param_f)(FilterInstancePtr filt, ParameterPtr param, int idx);
 
 class Parameter : public Entry {
     friend class Iterator;

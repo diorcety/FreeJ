@@ -35,8 +35,9 @@
 
 #include <linklist.h>
 
-class Context;
+FREEJ_FORWARD_PTR(Context)
 
+FREEJ_FORWARD_PTR(ControllerListener)
 class ControllerListener : public Entry {
 public:
 #ifdef WITH_JAVASCRIPT
@@ -56,6 +57,7 @@ private:
 
 };
 
+FREEJ_FORWARD_PTR(Controller)
 class Controller : public Entry {
     friend class Context;
 
@@ -65,7 +67,7 @@ public:
 
     // we need a pointer to context because controllers aren't depending from javascript
     // those who need it will retreive JSContext/Object from freej->js->global_context/object
-    virtual bool init(Context *freej); ///< initialize the controller to be used on the Context
+    virtual bool init(ContextPtr freej); ///< initialize the controller to be used on the Context
 
     // function called in main loop,
     virtual int poll() = 0; ///< poll() is called internally at every frame processed,
@@ -81,7 +83,7 @@ public:
 
     bool javascript; ///< was this controller created by javascript?
 
-    bool add_listener(ControllerListener *listener);
+    bool add_listener(ControllerListenerPtr listener);
 
     void reset();
 

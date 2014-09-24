@@ -42,7 +42,7 @@ KbdController::KbdController()
 KbdController::~KbdController() {
 }
 
-bool KbdController::init(Context *freej) {
+bool KbdController::init(ContextPtr freej) {
     func("%s", __PRETTY_FUNCTION__);
     Controller::init(freej);
 

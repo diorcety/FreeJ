@@ -32,6 +32,7 @@ extern "C" {
 #include <cwiid.h>
 }
 
+FREEJ_FORWARD_PTR(WiiController)
 class WiiController : public Controller {
 
 public:

@@ -34,8 +34,6 @@
 #include <context.h>
 #include <jutils.h>
 
-#include <jsparser_data.h>
-
 
 // callbacks
 static void showUrl(char *url, char *target, void *client_data) {
@@ -94,8 +92,6 @@ FlashLayer::FlashLayer()
     }
 
     setName("SWF");
-
-    jsclass = &flash_layer_class;
 }
 
 FlashLayer::~FlashLayer() {
@@ -108,9 +104,6 @@ bool FlashLayer::open(const char *file) {
     long res;
 
     int status;
-
-    int width  = geo.w;
-    int height = geo.h;
 
     if(!readfile(file, &tmpbuffer, &size))
         return false;
@@ -158,11 +151,9 @@ bool FlashLayer::open(const char *file) {
 
 void *FlashLayer::feed() {
     struct timeval wd;
-    long cmd, wakeUp;
-    cmd = FLASH_WAKEUP;
     //  fe.type = FeRefresh;
 
-    wakeUp = FlashExec(fh, FLASH_WAKEUP, 0, &wd);
+    FlashExec(fh, FLASH_WAKEUP, 0, &wd);
     //  if(fd.flash_refresh) {
     //  jmemcpy(render,procbuf,fd.height*fd.bpl);
     //    fd.flash_refresh = 0;

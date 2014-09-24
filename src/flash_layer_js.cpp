@@ -27,6 +27,15 @@
 
 #include <flash_layer.h>
 
+class FlashLayerJS : public FlashLayer {
+public:
+    FlashLayerJS();
+};
+
+FlashLayerJS::FlashLayerJS() {
+    jsclass = &flash_layer_class;
+}
+
 DECLARE_CLASS_GC("FlashLayer", flash_layer_class, flash_layer_constructor, js_layer_gc)
 
 /////////////////////////////////
@@ -37,7 +46,7 @@ JSFunctionSpec flash_layer_methods[] = {
     {0}
 };
 
-JS_CONSTRUCTOR("FlashLayer", flash_layer_constructor, FlashLayer);
+JS_CONSTRUCTOR("FlashLayer", flash_layer_constructor, FlashLayerJS);
 
 JS(flash_layer_open) {
     func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);

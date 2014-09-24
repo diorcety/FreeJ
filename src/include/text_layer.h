@@ -29,7 +29,7 @@
 #include <SDL_ttf.h>
 #include <layer.h>
 
-
+FREEJ_FORWARD_PTR(TextLayer)
 class TextLayer : public Layer {
 
 public:

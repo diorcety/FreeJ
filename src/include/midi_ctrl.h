@@ -31,14 +31,13 @@
 
 // int _poll (pollfd * a, nfds_t b, int c) {return poll(a,b,c);};
 
-class Context;
-
+FREEJ_FORWARD_PTR(MidiController)
 class MidiController : public SdlController {
 public:
     MidiController();
     virtual ~MidiController();
 
-    bool init(Context*);
+    bool init(ContextPtr freej);
     int poll();
     virtual int dispatch();
     virtual int event_ctrl(int channel, int param, int value);

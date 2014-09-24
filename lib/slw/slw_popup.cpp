@@ -41,7 +41,7 @@ SLW_Popup::~SLW_Popup() {
 
 bool SLW_Popup::init() {
 
-    if(!console) {
+    if(!console.lock()) {
         fprintf(stderr, "can't initialize widget '%s': not places on console", name.c_str());
         return false;
     }

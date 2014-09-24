@@ -26,13 +26,9 @@
 #include <controller.h>
 #include <linklist.h>
 
-class Context;
-class JSContext;
-class JSObject;
-
-
 union ViMoData;
 
+FREEJ_FORWARD_PTR(ViMoController)
 class ViMoController : public Controller {
     friend class Context;
 

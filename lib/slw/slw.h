@@ -23,23 +23,18 @@
 #define __SLW_H__
 
 #include <slang.h>
-
+#include <sharedptr.h>
 #include <linklist.h>
 
 #include <keycodes.h>
 
 
+FREEJ_FORWARD_PTR(SLangConsole)
 
-
-
-
-class SLangConsole;
-
-
+FREEJ_FORWARD_PTR(SLangWidget)
 class SLangWidget : public Entry {
 
 public:
-
     SLangWidget();
     virtual ~SLangWidget();
 
@@ -114,7 +109,7 @@ public:
     bool initialized; ///< widget has been initialized
     bool can_focus; ///< widget can take focus
 
-    SLangConsole *console;
+    SLangConsoleWeakPtr console;
     ///< the console where this widget is placed
 
 private:

@@ -34,32 +34,22 @@
 
 
 TextConsole::TextConsole() {
-
     // create the first row
-    cur_row = new Row();
-    rows.getLock().push_back(cur_row);
+    RowPtr row = MakeShared<Row>();
+    rows.getLock().push_back(row);
 
-    vis_row_in = cur_row;
-
+    cur_row = row;
+    vis_row_in = row;
 }
 
 TextConsole::~TextConsole() {
     func("~TextConsole destroy");
-
-    // delete all rows (if any)
-    LockedLinkList<Row> list = rows.getLock();
-    while(list.size()) {
-        Row *l = list.front();
-        list.pop_front();
-        delete l;
-    }
-
 }
 
 bool TextConsole::feed(int key) {
     // interprets a keycode and perform the action (or write a letter)
 
-    Row *r;
+    RowPtr r;
     LockedLinkList<Row> list = rows.getLock();
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), cur_row);
     switch(key) {
@@ -67,7 +57,7 @@ bool TextConsole::feed(int key) {
     case KEY_NEWLINE:
     case KEY_ENTER:
 
-        r = new Row();
+        r = MakeShared<Row>();
         if(it != list.end()) ++it;
         list.insert(it, r);
 
@@ -121,7 +111,6 @@ bool TextConsole::feed(int key) {
             // upper row is empty, just delete it
             if(r->len <1) {
                 list.erase(it);
-                delete r;
                 cur_y--;
 
                 // upper row is not empty, append to end
@@ -130,7 +119,6 @@ bool TextConsole::feed(int key) {
                 move_string(r, cur_row, cur_row->len);
                 // delete current row (now empty)
                 list.erase(++it);
-                delete cur_row;
                 cur_y--;
 
                 cur_row = r;
@@ -242,7 +230,7 @@ bool TextConsole::feed(int key) {
 }
 
 bool TextConsole::refresh() {
-    Row *r;
+    RowPtr r;
     register int c;
 
     if(!vis_row_in) return false;
@@ -270,7 +258,7 @@ bool TextConsole::refresh() {
 
 void TextConsole::refresh_current() {
     register int c;
-    Row *r;
+    RowPtr r;
 
     if(!vis_row_in) return;
     else r = vis_row_in;
@@ -327,7 +315,7 @@ void TextConsole::refresh_current() {
 //      }
 // }
 
-int TextConsole::move_string(Row *dest, Row *src, int len) {
+int TextConsole::move_string(RowPtr dest, RowPtr src, int len) {
     int dlen = len; // const int arg
 
     //	func("move string");

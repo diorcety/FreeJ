@@ -502,6 +502,7 @@ void *VideoLayer::feed() {
             //  long unsigned int m_SampleRate = screen->m_SampleRate?*(screen->m_SampleRate):48000;
             //  ringbuffer_write(screen->audio, (const char*)audio_float_buf,  samples*sizeof(float));
             //  ... and so on ...
+            auto screen = this->screen.lock();
             if(use_audio && screen) {
                 int data_size;
                 len1 = decode_audio_packet(&data_size);

@@ -65,7 +65,6 @@ static int getkey_handler() {
 SLangConsole::SLangConsole() {
 
     w = h = 0;
-    focused = NULL;
 
 }
 
@@ -171,11 +170,11 @@ void SLangConsole::feed(int key) {
 
 ///	func("feeding '%c' to widget %s", key, focused->getName().c_str());
 
-    if(focused)
-        focused->feed(key);
+    if(auto f= focused.lock())
+        f->feed(key);
 }
 
-bool SLangConsole::place(SLangWidget *wid, int hx, int hy, int lx, int ly) {
+bool SLangConsole::place(SLangWidgetPtr wid, int hx, int hy, int lx, int ly) {
 
     wid->orig_x = hx;
     wid->orig_y = hy;
@@ -194,7 +193,7 @@ bool SLangConsole::place(SLangWidget *wid, int hx, int hy, int lx, int ly) {
 
 
     // save a reference of the console in the widget
-    wid->console = this;
+    wid->console = SharedFromThis(SLangConsole);
 
 
     // append the new widget in our linklist
@@ -220,7 +219,7 @@ bool SLangConsole::place(SLangWidget *wid, int hx, int hy, int lx, int ly) {
     // wid->refresh();
 
     // focus the first widget
-    if(!focused) {
+    if(!focused.lock()) {
         func("setting focus on widget %s",wid->getName().c_str());
         focused = wid;
     }
@@ -247,7 +246,7 @@ bool SLangConsole::refresh() {
 
         // refresh all widgets
         LockedLinkList<SLangWidget> list = widgets.getLock();
-        std::for_each(list.begin(), list.end(), [&](SLangWidget* wid) {
+        std::for_each(list.begin(), list.end(), [&](SLangWidgetPtr wid) {
                           wid->refresh();
                       });
     }

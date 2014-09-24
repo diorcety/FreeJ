@@ -23,6 +23,7 @@
 #include <sdl_controller.h>
 #include <factory.h>
 
+FREEJ_FORWARD_PTR(MouseController)
 class MouseController : public SdlController {
 
 public:

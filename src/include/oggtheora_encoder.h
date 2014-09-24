@@ -55,8 +55,7 @@
 
 // #define AUDIO_BUFFER_SIZE 3528 // sample_rate * channel / fps / bytes of sample format
 
-class Context;
-
+FREEJ_FORWARD_PTR(OggTheoraEncoder)
 class OggTheoraEncoder : public VideoEncoder {
 
 public:
@@ -64,7 +63,7 @@ public:
     OggTheoraEncoder();
     ~OggTheoraEncoder();
 
-    bool init(ViewPort *scr);
+    bool init(ViewPortPtr scr);
 
     int Mux(int nframes);
     void setMixCoef(float val);

@@ -16,8 +16,8 @@ pkgpyexec_LTLIBRARIES = _freej.la
 #pkgpython_inst_PYTHON = freej.pth
 
 nodist__freej_la_SOURCES = $(swig_source)
-_freej_la_CXXFLAGS = $(FREEJ_CFLAGS) -Wno-error $(SWIG_PYTHON_CPPFLAGS)
-_freej_la_LDFLAGS = -module -avoid-version
+_freej_la_CXXFLAGS = $(FREEJ_CFLAGS) $(SWIG_PYTHON_CPPFLAGS)
+_freej_la_LDFLAGS = -module -avoid-version -no-undefined
 _freej_la_LIBADD = $(top_builddir)/src/libfreej.la
 
 CLEANFILES = $(BUILT_SOURCES) $(python_module)

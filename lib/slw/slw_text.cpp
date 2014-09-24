@@ -21,6 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <assert.h>
 
 #include <slw_text.h>
 
@@ -34,13 +35,11 @@ SLW_Text::SLW_Text()
 }
 
 SLW_Text::~SLW_Text() {
-    if(textconsole)
-        delete textconsole;
 }
 
 bool SLW_Text::init() {
 
-    if(!console) {
+    if(!console.lock()) {
         fprintf(stderr, "can't initialize widget '%s': not placed on console", name.c_str());
         return false;
     }
@@ -53,9 +52,8 @@ bool SLW_Text::init() {
 
 
     // create the private structure where to hold text
-    if(textconsole) delete textconsole;
-    textconsole = new SLW_TextConsole();
-    textconsole->widget = this;
+    textconsole = MakeShared<SLW_TextConsole>();
+    textconsole->widget = SharedFromThis(SLW_Text);
     textconsole->w = w;
     textconsole->h = h;
     textconsole->cur_x = 0;
@@ -93,15 +91,21 @@ SLW_TextConsole::~SLW_TextConsole() {
 
 ////// overloaded functions
 int SLW_TextConsole::putnch(CHAR *str, int x, int y, int nchars) {
-    return widget->putnch(str, x, y, nchars);
+    auto w = widget.lock();
+    assert(w);
+    return w->putnch(str, x, y, nchars);
 }
 
 void SLW_TextConsole::blank() {
-    widget->blank();
+    auto w = widget.lock();
+    assert(w);
+    w->blank();
 }
 
 void SLW_TextConsole::blank_row(int r) {
-    widget->blank_row(r);
+    auto w = widget.lock();
+    assert(w);
+    w->blank_row(r);
 }
 
 ///////////////////////////////////////

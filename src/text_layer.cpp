@@ -58,9 +58,7 @@ TextLayer::TextLayer()
     LockedLinkList<Parameter> list = parameters.getLock();
     {
         // setup specific layer parameters
-        Parameter *param;
-
-        param = new Parameter(Parameter::NUMBER);
+        ParameterPtr param = MakeShared<Parameter>(Parameter::NUMBER);
         param->setName("size");
         param->setDescription("set the size of the font");
         list.push_back(param);

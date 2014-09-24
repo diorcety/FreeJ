@@ -234,13 +234,13 @@ BLIT schiffler_binarize(void *src, void *dst, int bytes, Linklist<Parameter> *pa
         ((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
-void setup_linear_blits(Blitter *blitter) {
-    Blit *b;
-    Parameter *p;
+void setup_linear_blits(BlitterPtr blitter) {
+    BlitPtr b;
+    ParameterPtr p;
 
     LockedLinkList<Blit> list = blitter->blitlist.getLock();
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("RGB");
     b->setDescription("RGB blit (jmemcpy)");
     b->type = Blit::LINEAR;
@@ -249,105 +249,105 @@ void setup_linear_blits(Blitter *blitter) {
 
     blitter->default_blit = b; // default is RGB
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("ADD");
     b->setDescription("bytewise addition");
     b->type = Blit::LINEAR;
     b->fun = schiffler_add;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("SUB");
     b->setDescription("bytewise subtraction");
     b->type = Blit::LINEAR;
     b->fun = schiffler_sub;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("MEAN");
     b->setDescription("bytewise mean");
     b->type = Blit::LINEAR;
     b->fun = schiffler_add;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("ABSDIFF");
     b->setDescription("absolute difference");
     b->type = Blit::LINEAR;
     b->fun = schiffler_absdiff;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("MULT");
     b->setDescription("multiplication");
     b->type = Blit::LINEAR;
     b->fun = schiffler_mult;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("MULTNOR");
     b->setDescription("normalized multiplication");
     b->type = Blit::LINEAR;
     b->fun = schiffler_multnor;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("DIV");
     b->setDescription("division");
     b->type = Blit::LINEAR;
     b->fun = schiffler_div;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("MULTDIV2");
     b->setDescription("multiplication and division by 2");
     b->type = Blit::LINEAR;
     b->fun = schiffler_multdiv2;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("MULTDIV4");
     b->setDescription("multiplication and division by 4");
     b->type = Blit::LINEAR;
     b->fun = schiffler_multdiv4;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("AND");
     b->setDescription("bitwise and");
     b->type = Blit::LINEAR;
     b->fun = schiffler_and;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("OR");
     b->setDescription("bitwise or");
     b->type = Blit::LINEAR;
     b->fun = schiffler_or;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("XOR");
     b->setDescription("bitwise xor");
     b->type = Blit::LINEAR;
     b->fun = blit_xor;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("RED");
     b->setDescription("red channel only blit");
     b->type = Blit::LINEAR;
     b->fun = red_channel;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("GREEN");
     b->setDescription("green channel only blit");
     b->type = Blit::LINEAR;
     b->fun = green_channel;
     list.push_front(b);
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("BLUE");
     b->setDescription("blue channel only blit");
     b->type = Blit::LINEAR;
@@ -355,7 +355,7 @@ void setup_linear_blits(Blitter *blitter) {
     list.push_front(b);
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("REDMASK");
         b->setDescription("red channel threshold mask");
         b->type = Blit::LINEAR;
@@ -364,7 +364,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("bit threshold");
         p->setDescription("bitmask threshold to apply to the red channel");
         p->multiplier = 255.0;
@@ -374,7 +374,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("GREENMASK");
         b->setDescription("green channel threshold mask");
         b->type = Blit::LINEAR;
@@ -383,7 +383,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("bit threshold");
         p->setDescription("bitmask threshold to apply to the green channel");
         p->multiplier = 255.0;
@@ -393,7 +393,7 @@ void setup_linear_blits(Blitter *blitter) {
     ////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("BLUEMASK");
         b->setDescription("blue channel threshold mask");
         b->type = Blit::LINEAR;
@@ -402,7 +402,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("bit threshold");
         p->setDescription("bitmask threshold to apply to the blue channel");
         p->multiplier = 255.0;
@@ -411,7 +411,7 @@ void setup_linear_blits(Blitter *blitter) {
 
     /////////
 
-    b = new Blit();
+    b = MakeShared<Blit>();
     b->setName("NEG");
     b->setDescription("bitwise negation");
     b->type = Blit::LINEAR;
@@ -421,7 +421,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("ADDB");
         b->setDescription("add byte to bytes");
         b->type = Blit::LINEAR;
@@ -430,7 +430,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("byte increment");
         p->setDescription("amount to sum to the byte");
         p->multiplier = 255.0;
@@ -440,7 +440,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("ADDBH");
         b->setDescription("add byte to half");
         b->type = Blit::LINEAR;
@@ -449,7 +449,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("half byte increment");
         p->setDescription("amount to sum to the half byte");
         p->multiplier = 127.0;
@@ -459,7 +459,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("SUBB");
         b->setDescription("subtract byte to bytes");
         b->type = Blit::LINEAR;
@@ -468,7 +468,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("byte decrement");
         p->setDescription("amount to substract to the pixel bytes");
         p->multiplier = 255.0;
@@ -478,7 +478,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("SHL");
         b->setDescription("shift left bits");
         b->type = Blit::LINEAR;
@@ -487,7 +487,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("byte decrement");
         p->setDescription("amount to substract to the pixel bytes");
         p->multiplier = 255.0;
@@ -497,7 +497,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("SHLB");
         b->setDescription("shift left byte");
         b->type = Blit::LINEAR;
@@ -506,7 +506,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("shift bits");
         p->setDescription("amount of left bit shifts to apply on each pixel's byte");
         p->multiplier = 8.0;
@@ -516,7 +516,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("SHR");
         b->setDescription("shift right bits");
         b->type = Blit::LINEAR;
@@ -525,7 +525,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("shift bits");
         p->setDescription("amount of right bit shifts to apply on each pixel's byte");
         p->multiplier = 8.0;
@@ -535,7 +535,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("MULB");
         b->setDescription("multiply by byte");
         b->type = Blit::LINEAR;
@@ -544,7 +544,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("byte multiplier");
         p->setDescription("amount to multiply on each pixel's byte");
         p->multiplier = 255.0;
@@ -554,7 +554,7 @@ void setup_linear_blits(Blitter *blitter) {
     /////////
 
     {
-        b = new Blit();
+        b = MakeShared<Blit>();
         b->setName("BIN");
         b->setDescription("binarize using threshold");
         b->type = Blit::LINEAR;
@@ -563,7 +563,7 @@ void setup_linear_blits(Blitter *blitter) {
 
         LockedLinkList<Parameter> listP = b->parameters.getLock();
 
-        p = new Parameter(Parameter::NUMBER);
+        p = MakeShared<Parameter>(Parameter::NUMBER);
         p->setName("threshold");
         p->setDescription("binary threshold value");
         p->multiplier = 255.0;

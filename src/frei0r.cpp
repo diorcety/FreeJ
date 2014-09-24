@@ -39,8 +39,8 @@
 FACTORY_REGISTER_INSTANTIATOR(Filter, Freior, Frei0rFilter, core);
 
 /// frei0r parameter callbacks
-static void get_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx) {
-    Freior *f = (Freior *)filt->proto;
+static void get_frei0r_parameter(FilterInstancePtr filt, Parameter *param, int idx) {
+    FreiorPtr f = DynamicPointerCast<Freior>(filt->proto);
 
     switch(f->param_infos[idx - 1].type) {
 
@@ -81,11 +81,11 @@ static void get_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx
     }
 }
 
-static void set_frei0r_parameter(FilterInstance *filt, Parameter *param, int idx) {
+static void set_frei0r_parameter(FilterInstancePtr filt, ParameterPtr param, int idx) {
 
     func("set_frei0r_param callback on %s for parameter %s at pos %u", filt->proto->getName().c_str(), param->getName().c_str(), idx);
 
-    Freior *f = (Freior *)filt->proto;
+    FreiorPtr f = DynamicPointerCast<Freior>(filt->proto);
     double *val = (double*)param->value;
 
     switch(f->param_infos[idx - 1].type) {
@@ -230,7 +230,7 @@ int Freior::open(char *file) {
 
     f0r_init();
 
-    setName((char*)info.name);
+    init();
 
     if(get_debug() > 2)
         print_info();
@@ -244,18 +244,24 @@ void Freior::init_parameters(Linklist<Parameter> &parameters) {
     LockedLinkList<Parameter> list = parameters.getLock();
 
     // Get the list of params.
-    param_infos.resize(info.num_params);
     for(int i = 0; i < info.num_params; ++i) {
-
-        (f0r_get_param_info)(&param_infos[i], i);
-
         //TODO EXTENDED PARAMETER
-        Parameter *param = new Parameter((Parameter::Type)param_infos[i].type);
+        ParameterPtr param = MakeShared<Parameter>((Parameter::Type)param_infos[i].type);
         param->setName(param_infos[i].name);
         func("registering parameter %s for filter %s\n", param->getName().c_str(), info.name);
 
         param->setDescription(param_infos[i].explanation);
         list.push_back(param);
+    }
+}
+
+void Freior::init() {
+    setName((char*)info.name);
+
+    // Get the list of params.
+    param_infos.resize(info.num_params);
+    for(int i = 0; i < info.num_params; ++i) {
+        (f0r_get_param_info)(&param_infos[i], i);
     }
 }
 
@@ -305,21 +311,21 @@ void Freior::print_info() {
     }
 }
 
-bool Freior::apply(Layer *lay, FilterInstance *instance) {
+bool Freior::apply(LayerPtr lay, FilterInstancePtr instance) {
     instance->core = (*f0r_construct)(lay->geo.w, lay->geo.h);
     if(!instance->core)
         return false;
     return Filter::apply(lay, instance);
 }
 
-void Freior::destruct(FilterInstance *inst) {
+void Freior::destruct(FilterInstancePtr inst) {
     if(inst->core) {
         f0r_destruct((f0r_instance_t*)inst->core);
         inst->core = NULL;
     }
 }
 
-void Freior::update(FilterInstance *inst, double time, uint32_t *inframe, uint32_t *outframe) {
+void Freior::update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe) {
     Filter::update(inst, time, inframe, outframe);
     f0r_update((f0r_instance_t*)inst->core, time, inframe, outframe);
 }

@@ -24,13 +24,14 @@
 
 #include <SDL.h>
 
+FREEJ_FORWARD_PTR(KbdController)
 class KbdController : public SdlController {
 
 public:
     KbdController();
     virtual ~KbdController();
 
-    bool init(Context *freej);
+    bool init(ContextPtr freej);
     int  poll();
     virtual int dispatch();
     virtual int key_event(const char *state, bool shift, bool ctrl, bool alt, bool num, const char *keyname);

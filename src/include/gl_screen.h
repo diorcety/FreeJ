@@ -33,6 +33,7 @@ struct Vertex {
     float x, y, z;
 };
 
+FREEJ_FORWARD_PTR(GlScreen)
 class GlScreen : public ViewPort {
 public:
     GlScreen();

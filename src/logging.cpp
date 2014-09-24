@@ -52,7 +52,7 @@ Loggable::~Loggable() {
                                __PRETTY_FUNCTION__, strerror(r));
 }
 
-bool Loggable::register_logger(Logger *l) {
+bool Loggable::register_logger(LoggerPtr l) {
     pthread_mutex_lock(&logger_mutex_);
     if(logger_) {
         log(ERROR, "%s: a logger has already been registered",
@@ -64,7 +64,7 @@ bool Loggable::register_logger(Logger *l) {
     return true;
 }
 
-bool Loggable::unregister_logger(Logger *l) {
+bool Loggable::unregister_logger(LoggerPtr l) {
     pthread_mutex_lock(&logger_mutex_);
     if(logger_ != l) {
         log(ERROR, "%s: trying to unregister a non-registered logger",
@@ -101,9 +101,9 @@ int Loggable::vlog(LogLevel level, const char *format, va_list arg) {
 }
 
 LogLevel GlobalLogger::loglevel_ = INFO;
-Logger *GlobalLogger::logger_ = NULL;
+LoggerPtr GlobalLogger::logger_;
 pthread_mutex_t GlobalLogger::logger_mutex_ = PTHREAD_MUTEX_INITIALIZER;
-ConsoleController *GlobalLogger::console_ = NULL;
+ConsoleControllerPtr GlobalLogger::console_;
 char GlobalLogger::logbuf_[MAX_LOG_MSG + 1] = {0};
 
 LogLevel GlobalLogger::get_loglevel() {
@@ -114,11 +114,11 @@ void GlobalLogger::set_loglevel(LogLevel level) {
     loglevel_ = level;
 }
 
-void GlobalLogger::set_console(ConsoleController *c) {
+void GlobalLogger::set_console(ConsoleControllerPtr c) {
     console_ = c;
 }
 
-bool GlobalLogger::register_logger(Logger *l) {
+bool GlobalLogger::register_logger(LoggerPtr l) {
     pthread_mutex_lock(&logger_mutex_);
     if(logger_) {
         printlog(ERROR, "%s: a logger has already been registered",
@@ -130,7 +130,7 @@ bool GlobalLogger::register_logger(Logger *l) {
     return true;
 }
 
-bool GlobalLogger::unregister_logger(Logger *l) {
+bool GlobalLogger::unregister_logger(LoggerPtr l) {
     pthread_mutex_lock(&logger_mutex_);
     if(logger_ != l) {
         printlog(ERROR, "%s: trying to unregister a non-registered logger",
@@ -252,7 +252,7 @@ int get_debug() {
     }
 }
 
-void set_console(ConsoleController *c) {
+void set_console(ConsoleControllerPtr c) {
     GlobalLogger::set_console(c);
 }
 

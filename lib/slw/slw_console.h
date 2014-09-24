@@ -28,9 +28,9 @@
 extern volatile int SLang_Error; // hack for old versions
 
 
-class SLangConsole {
+FREEJ_FORWARD_PTR(SLangConsole)
+class SLangConsole: public EnableSharedFromThis<SLangConsole> {
 public:
-
     SLangConsole();
     ~SLangConsole();
 
@@ -54,7 +54,7 @@ public:
 
 
 
-    bool place(SLangWidget *wid,
+    bool place(SLangWidgetPtr wid,
                int hx, int hy, int lx, int ly);
     ///< place a widget on this console
     //   box coords: hx,hy = upper left corner
@@ -62,7 +62,7 @@ public:
 
     Linklist<SLangWidget> widgets; ///< a console can hold multiple widgets
 
-    SLangWidget *focused; ///< only the focused widget receives the key
+    SLangWidgetWeakPtr focused; ///< only the focused widget receives the key
 
 
 };

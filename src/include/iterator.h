@@ -32,6 +32,7 @@
 enum iterator_envelope_t { LINEAR, SIN, RAND };
 enum iterator_mode_t { ONCE, LOOP, BOUNCE, PULSE };
 
+FREEJ_FORWARD_PTR(Iterator)
 class Iterator : public Entry {
 public:
     Iterator(float *val);

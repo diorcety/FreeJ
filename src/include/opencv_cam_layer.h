@@ -27,6 +27,7 @@
 
 #include <context.h>
 
+FREEJ_FORWARD_PTR(OpenCVCamLayer)
 class OpenCVCamLayer : public Layer {
 
 public:

@@ -39,21 +39,21 @@
 
 #include <jutils.h>
 
-int console_param_selection(Context *env, char *cmd) {
+int console_param_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstance* filt = lay->mSelectedFilter;
+    FilterInstancePtr filt = lay->mSelectedFilter;
 
     // find the values after the first blank space
     char *p;
@@ -71,7 +71,7 @@ int console_param_selection(Context *env, char *cmd) {
 
     if(filt) { ///////////////////////// parameters for filter
         LockedLinkList<Parameter> list = filt->parameters.getLock();
-        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (Parameter *&param) {
+        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
             return param->getName() == cmd;
 
         });
@@ -80,7 +80,7 @@ int console_param_selection(Context *env, char *cmd) {
             error("parameter %s not found in filter %s", cmd, filt->proto->getName().c_str());
             return 0;
         } else {
-            Parameter *param = *it;
+            ParameterPtr param = *it;
             func("parameter %s found in filter %s",
                  param->getName().c_str(), filt->proto->getName().c_str());
 
@@ -89,7 +89,7 @@ int console_param_selection(Context *env, char *cmd) {
         }
     } else { /////// parameters for layer
         LockedLinkList<Parameter> list = lay->parameters.getLock();
-        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (Parameter *&param) {
+        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
             return param->getName() == cmd;
 
         });
@@ -98,7 +98,7 @@ int console_param_selection(Context *env, char *cmd) {
             error("parameter %s not found in layers %s", cmd, lay->getName().c_str());
             return 0;
         } else {
-            Parameter *param = *it;
+            ParameterPtr param = *it;
             func("parameter %s found in layer %s at position %u",
                  param->getName().c_str(), lay->getName().c_str());
 
@@ -110,30 +110,30 @@ int console_param_selection(Context *env, char *cmd) {
     return 1;
 }
 
-int console_param_completion(Context *env, char *cmd) {
-    ViewPort *screen = env->mSelectedScreen;
+int console_param_completion(ContextPtr env, char *cmd) {
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstance* filt = lay->mSelectedFilter;
+    FilterInstancePtr filt = lay->mSelectedFilter;
 
     Linklist<Parameter> *parameters;
     if(filt) parameters = &filt->parameters;
     else parameters = &lay->parameters;
 
     // Find completions
-    Parameter* exactParam = NULL;
-    std::list<Parameter*> retList;
+    ParameterPtr exactParam = NULL;
+    std::list<ParameterPtr> retList;
     LockedLinkList<Parameter> list = parameters->getLock();
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Parameter *param) {
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
         std::string name = param->getName();
         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
         if(name == cmdString) {
@@ -156,7 +156,7 @@ int console_param_completion(Context *env, char *cmd) {
     }
 
     int c = 0;
-    std::for_each(retList.begin(), retList.end(), [&] (Parameter *p) {
+    std::for_each(retList.begin(), retList.end(), [&] (ParameterPtr p) {
         switch(p->type) {
         case Parameter::BOOL:
             ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
@@ -191,16 +191,16 @@ int console_param_completion(Context *env, char *cmd) {
 }
 
 // callbacks used by readline to handle input from console
-int console_blit_selection(Context *env, char *cmd) {
+int console_blit_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -209,27 +209,27 @@ int console_blit_selection(Context *env, char *cmd) {
     return 1;
 }
 
-int console_blit_completion(Context *env, char *cmd) {
+int console_blit_completion(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
 
     // Find completions
-    Blit* exactBlit = NULL;
-    std::list<Blit*> retList;
+    BlitPtr exactBlit;
+    std::list<BlitPtr> retList;
     LockedLinkList<Blit> list = lay->blitter->blitlist.getLock();
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Blit *blit) {
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (BlitPtr blit) {
         std::string name = blit->getName();
         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
         if(name == cmdString) {
@@ -253,7 +253,7 @@ int console_blit_completion(Context *env, char *cmd) {
 
     int c = 0;
     char tmp[256];
-    std::for_each(retList.begin(), retList.end(), [&] (Blit *b) {
+    std::for_each(retList.begin(), retList.end(), [&] (BlitPtr b) {
         if(c % 4 == 0) {
             if(c != 0) {
                 ::act("%s", tmp);
@@ -267,21 +267,21 @@ int console_blit_completion(Context *env, char *cmd) {
     return c;
 }
 
-int console_blit_param_selection(Context *env, char *cmd) {
+int console_blit_param_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
 
-    Blit *b = lay->current_blit;
+    BlitPtr b = lay->current_blit;
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
@@ -301,7 +301,7 @@ int console_blit_param_selection(Context *env, char *cmd) {
     if(*p == '\0') return 0;  // no value was given
 
     LockedLinkList<Parameter> list = b->parameters.getLock();
-    LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&](Parameter *p) {
+    LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&](ParameterPtr p) {
             return p->getName() == cmd;
     });
     if(it == list.end()) {
@@ -309,7 +309,7 @@ int console_blit_param_selection(Context *env, char *cmd) {
         return 0;
     }
 
-    Parameter *param = *it;
+    ParameterPtr param = *it;
 
     func("parameter %s found in blit %s",  param->getName().c_str(), b->getName().c_str());
 
@@ -317,19 +317,19 @@ int console_blit_param_selection(Context *env, char *cmd) {
     return 1;
 }
 
-int console_blit_param_completion(Context *env, char *cmd) {
-    ViewPort *screen = env->mSelectedScreen;
+int console_blit_param_completion(ContextPtr env, char *cmd) {
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
 
-    Blit *b = lay->current_blit;
+    BlitPtr b = lay->current_blit;
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
@@ -337,12 +337,12 @@ int console_blit_param_completion(Context *env, char *cmd) {
 
     // Find completions
     // Find completions
-    Parameter* exactParam = NULL;
-    std::list<Parameter*> retList;
+    ParameterPtr exactParam;
+    std::list<ParameterPtr> retList;
     LockedLinkList<Parameter> list = b->parameters.getLock();
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Parameter *param) {
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
         std::string name = param->getName();
         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
         if(name == cmdString) {
@@ -365,7 +365,7 @@ int console_blit_param_completion(Context *env, char *cmd) {
     }
 
     int c = 0;
-    std::for_each(retList.begin(), retList.end(), [&] (Parameter *p) {
+    std::for_each(retList.begin(), retList.end(), [&] (ParameterPtr p) {
         switch(p->type) {
         case Parameter::BOOL:
             ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
@@ -399,25 +399,25 @@ int console_blit_param_completion(Context *env, char *cmd) {
     return c;
 }
 
-int console_filter_selection(Context *env, char *cmd) {
+int console_filter_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
     LockedLinkList<Filter> list = env->filters.getLock();
-    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](Filter *filter) {
+    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](FilterPtr filter) {
             return filter->getName() == cmd;
     });
     if(it == list.end()) {
         ::error("filter not found: %s", cmd);
         return 0;
     }
-    Filter *filt = *it;
+    FilterPtr filt = *it;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer selected for effect %s", filt->getName().c_str());
         return 0;
@@ -434,16 +434,16 @@ int console_filter_selection(Context *env, char *cmd) {
     return 1;
 }
 
-int console_filter_completion(Context *env, char *cmd) {
+int console_filter_completion(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
     // Find completions
-    Filter* exactFilter = NULL;
-    std::list<Filter*> retList;
+    FilterPtr exactFilter;
+    std::list<FilterPtr> retList;
     LockedLinkList<Filter> list = env->filters.getLock();
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Filter *filter) {
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (FilterPtr filter) {
         std::string name = filter->getName();
         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
         if(name == cmdString) {
@@ -468,7 +468,7 @@ int console_filter_completion(Context *env, char *cmd) {
 
     int c = 0;
     char tmp[256];
-    std::for_each(retList.begin(), retList.end(), [&] (Filter *f) {
+    std::for_each(retList.begin(), retList.end(), [&] (FilterPtr f) {
         if(c % 4 == 0) {
             if(c != 0) {
                 ::act("%s", tmp);
@@ -482,7 +482,7 @@ int console_filter_completion(Context *env, char *cmd) {
     return c;
 }
 
-int console_exec_script(Context *env, char *cmd) {
+int console_exec_script(ContextPtr env, char *cmd) {
     struct stat filestatus;
 
     func("exec_script(%s)", cmd);
@@ -503,7 +503,7 @@ int console_exec_script(Context *env, char *cmd) {
     return 0;
 }
 
-int console_exec_script_command(Context *env, char *cmd) {
+int console_exec_script_command(ContextPtr env, char *cmd) {
 
     act("> %s", cmd);
 
@@ -514,7 +514,7 @@ int console_exec_script_command(Context *env, char *cmd) {
     return 0;
 }
 
-int console_open_layer(Context *env, char *cmd) {
+int console_open_layer(ContextPtr env, char *cmd) {
     struct stat filestatus;
 
     func("open_layer(%s)", cmd);
@@ -534,7 +534,7 @@ int console_open_layer(Context *env, char *cmd) {
 
     // ok the path in cmd should be good here
 
-    Layer *l = env->open(cmd);
+    LayerPtr l = env->open(cmd);
     if(l) {
         /*
            if(!l->init(env)) {
@@ -548,7 +548,7 @@ int console_open_layer(Context *env, char *cmd) {
         l->active = true;
         //    l->fps=env->fps_speed;
 
-        ViewPort *screen = env->mSelectedScreen;
+        ViewPortPtr screen = env->mSelectedScreen;
         if(!screen) {
             ::error("no screen currently selected");
             return 0;
@@ -563,26 +563,25 @@ int console_open_layer(Context *env, char *cmd) {
 
 #if defined WITH_TEXTLAYER
 #include <text_layer.h>
-int console_print_text_layer(Context *env, char *cmd) {
-    ViewPort *screen = env->mSelectedScreen;
+int console_print_text_layer(ContextPtr env, char *cmd) {
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    Layer *lay = screen->mSelectedLayer;
+    LayerPtr lay = screen->mSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    ((TextLayer*)lay)->write(cmd);
+    DynamicPointerCast<TextLayer>(lay)->write(cmd);
     return screen->layers.getLock().size();
 }
 
-int console_open_text_layer(Context *env, char *cmd) {
-    TextLayer *txt = new TextLayer();
+int console_open_text_layer(ContextPtr env, char *cmd) {
+    TextLayerPtr txt = MakeShared<TextLayer>();
     if(!txt->init()) {
         error("can't initialize text layer");
-        delete txt;
         return 0;
     }
 
@@ -594,7 +593,7 @@ int console_open_text_layer(Context *env, char *cmd) {
     txt->active = true;
 
     notice("layer successfully created with text: %s", cmd);
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
@@ -616,8 +615,8 @@ int filebrowse_completion_selector(const struct dirent *dir)
     return(1);
 }
 
-int console_filebrowse_completion(Context *env, char *cmd) {
-    std::list<Entry *> files;
+int console_filebrowse_completion(ContextPtr env, char *cmd) {
+    std::list<EntryPtr> files;
 
     struct stat filestatus;
 #if defined (HAVE_DARWIN) || defined (HAVE_FREEBSD)
@@ -677,7 +676,7 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     }
 
     for(int c = found - 1; c > 0; c--) { // insert each entry found in a linklist
-        Entry *e = new Entry();
+        EntryPtr e = MakeShared<Entry>();
         e->setName(filelist[c]->d_name);
         files.push_back(e);
     }
@@ -687,11 +686,11 @@ int console_filebrowse_completion(Context *env, char *cmd) {
     if(incomplete) {
         // list all files in directory *path starting with *needle
         // Find completions
-        Entry* exactEntry = NULL;
-        std::list<Entry*> retList;
+        EntryPtr exactEntry;
+        std::list<EntryPtr> retList;
         std::string cmdString(needle);
         std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-        std::copy_if(files.begin(), files.end(), retList.begin(), [&] (Entry *entry) {
+        std::copy_if(files.begin(), files.end(), retList.begin(), [&] (EntryPtr entry) {
             std::string name = entry->getName();
             std::transform(name.begin(), name.end(), name.begin(), ::tolower);
             if(name == cmdString) {
@@ -705,29 +704,22 @@ int console_filebrowse_completion(Context *env, char *cmd) {
             snprintf(cmd, MAX_CMDLINE, "%s%s", path, exactEntry->getName().c_str());
         } else {
             notice("list of %s* files in %s:", needle, path);
-            std::for_each(retList.begin(), retList.end(), [&] (Entry *entry) {
+            std::for_each(retList.begin(), retList.end(), [&] (EntryPtr entry) {
                 ::act(" %s", entry->getName().c_str());
             });
         }
     } else {
         // list all entries
         notice("list of all files in %s:", path);
-        std::for_each(files.begin(), files.end(), [&] (Entry *e) {
+        std::for_each(files.begin(), files.end(), [&] (EntryPtr e) {
             ::act("%s", e->getName().c_str());
         });
-    }
-
-    // free entries allocated in memory
-    while(!files.empty()) {
-        Entry *e = files.front();
-        delete e;
-        files.pop_front();
     }
 
     return(c);
 }
 
-// static int set_blit_value(Context *env, char *cmd) {
+// static int set_blit_value(ContextPtr env, char *cmd) {
 //   int val;
 //   int c;
 //   if(!sscanf(cmd,"%u",&val)) {
@@ -747,15 +739,15 @@ int console_filebrowse_completion(Context *env, char *cmd) {
 //   return 1;
 // }
 
-int console_generator_completion(Context *env, char *cmd) {
+int console_generator_completion(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
     LockedLinkList<Filter> list = env->generators.getLock();
-    Filter* exactGenerator = NULL;
-    std::list<Filter*> retList;
+    FilterPtr exactGenerator;
+    std::list<FilterPtr> retList;
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (Filter *generator) {
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (FilterPtr generator) {
         std::string name = generator->getName();
         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
         if(name == cmdString) {
@@ -774,7 +766,7 @@ int console_generator_completion(Context *env, char *cmd) {
 
     int c = 0;
     char tmp[256];
-    std::for_each(retList.begin(), retList.end(), [&] (Filter *f) {
+    std::for_each(retList.begin(), retList.end(), [&] (FilterPtr f) {
         if(c % 4 == 0) {
             if(c != 0) {
                 ::act("%s", tmp);
@@ -788,11 +780,11 @@ int console_generator_completion(Context *env, char *cmd) {
     return c;
 }
 
-int console_generator_selection(Context *env, char *cmd) {
-    GeneratorLayer *tmp = new GeneratorLayer();
+int console_generator_selection(ContextPtr env, char *cmd) {
+    GeneratorLayerPtr tmp = MakeShared<GeneratorLayer>();
     if(!tmp) return 0;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
@@ -801,7 +793,6 @@ int console_generator_selection(Context *env, char *cmd) {
                   env->mSelectedScreen->geo.h,
                   env->mSelectedScreen->geo.bpp)) {
         error("can't initialize generator layer");
-        delete tmp;
         return 0;
     }
     // this is something specific to the generator layer
@@ -810,7 +801,6 @@ int console_generator_selection(Context *env, char *cmd) {
 
     if(!tmp->open(cmd)) {
         error("generator %s is not found", cmd);
-        delete tmp;
         return 0;
     }
 

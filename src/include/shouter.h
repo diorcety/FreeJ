@@ -64,6 +64,7 @@ template <class T> class Linklist;
     } \
     float func() { return var; };
 
+FREEJ_FORWARD_PTR(Shouter)
 class Shouter : public Entry {
 private:
     shout_t *ice;
