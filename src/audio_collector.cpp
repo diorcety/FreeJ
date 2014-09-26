@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 #include <config.h>
-#ifdef WITH_AUDIO
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
@@ -276,5 +275,3 @@ void AudioCollector::AudioCallback_i(unsigned int Size) {
 void AudioCollector::AudioCallback(void *Context, unsigned int Size) {
     ((AudioCollector*)Context)->AudioCallback_i(Size);
 }
-
-#endif

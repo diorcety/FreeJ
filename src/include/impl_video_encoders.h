@@ -27,7 +27,6 @@
 #ifdef WITH_AVCODEC
 #include <ffmpeg_encoder.h>
 #endif
-#include <oggtheora_encoder.h>
 
 
 VideoEncoder *get_encoder(char *enctype);

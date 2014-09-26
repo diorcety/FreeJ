@@ -27,7 +27,7 @@ SOURCES = \
 	geo_layer.cpp		flash_layer.cpp \
 	xscreensaver_layer.cpp   \
 	xgrab_layer.cpp		opencv_cam_layer.cpp \
-	audio_layer.cpp 	cairo_layer.cpp \
+	cairo_layer.cpp \
 \
 	screen.cpp		\
 	sdl_screen.cpp 		sdlgl_screen.cpp   \
@@ -39,12 +39,7 @@ SOURCES = \
 	joy_ctrl.cpp		midi_ctrl.cpp   \
 	trigger_ctrl.cpp 	osc_ctrl.cpp \
 	wiimote_ctrl.cpp 	sdl_controller.cpp \
-\
-	audio_jack.cpp  \
-	audio_collector.cpp \
-\
 	video_encoder.cpp 	ffmpeg_encoder.cpp \
-	theorautils.cpp 	oggtheora_encoder.cpp \
 	impl_video_encoders.cpp 
 
 CONSOLE_SOURCES =	console_ctrl.cpp  \
@@ -67,7 +62,6 @@ JS_SOURCES = 	context_js.cpp  \
 		flash_layer_js.cpp \
 		screen_js.cpp \
 		cairo_layer_js.cpp \
-		audio_collector_js.cpp \
 		kbd_ctrl_js.cpp \
 		joy_ctrl_js.cpp \
 		vimo_ctrl_js.cpp \
@@ -78,6 +72,15 @@ JS_SOURCES = 	context_js.cpp  \
 		wiimote_ctrl_js.cpp \
 		osc_ctrl_js.cpp \
 		midi_ctrl_js.cpp
+
+if BUILD_AUDIO
+SOURCES += audio_layer.cpp \
+	audio_jack \
+	audio_collector.cpp \
+	theorautils.cpp \
+	oggtheora_encoder.cpp \
+JS_SOURCES += audio_collector_js.cpp
+endif
 
 lib_LTLIBRARIES = libfreej.la
 libfreej_la_SOURCES = $(SOURCES)
