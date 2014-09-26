@@ -25,17 +25,18 @@
 
 #ifdef WITH_FFMPEG
 
-#include <samplerate.h>
-
 #include <math.h>
 
 #include <string.h>
 
 #include <screen.h>
 #include <context.h>
+
 #ifdef WITH_AUDIO
+#include <samplerate.h>
 #include <jack/jack.h>
 #endif
+
 #include <ringbuffer.h>
 #include <video_layer.h>
 
@@ -49,6 +50,18 @@ extern "C" {
 #ifndef AVCODEC_MAX_AUDIO_FRAME_SIZE
 #define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000
 #endif
+
+inline void
+src_short_to_float_array (const short *in, float *out, int len)
+{
+	while (len)
+	{	len -- ;
+		out [len] = (float) (in [len] / (1.0 * 0x8000)) ;
+		} ;
+
+	return ;
+} /* src_short_to_float_array */
+
 //#define DEBUG 1
 
 // our objects are allowed to be created trough the factory engine
@@ -69,20 +82,24 @@ VideoLayer::VideoLayer()
     seekable = true;
     to_seek = -1;
 
+#ifdef WITH_AUDIO
     audio_resampled_buf_len = 0;
     audio_float_buf = NULL;
     audio_resampled_buf = NULL;
+#endif
 
     video_codec_ctx = NULL;
     video_index = -1;
     video_codec = NULL;
 
+#ifdef WITH_AUDIO
     audio_codec_ctx = NULL;
     audio_index = -1;
     audio_codec = NULL;
     audio_buf = NULL;
 
     use_audio = true;
+#endif
 
     backward_control = false;
     deinterlace_buffer = NULL;
@@ -134,8 +151,10 @@ void VideoLayer::free_picture(AVPicture *picture) {
             avpicture_free(picture);
         free(picture);
     }
+#ifdef WITH_AUDIO
     if(audio_float_buf) free(audio_float_buf);
     if(audio_resampled_buf) free(audio_resampled_buf);
+#endif
 }
 
 bool VideoLayer::open(const char *file) {
@@ -243,8 +262,8 @@ bool VideoLayer::open(const char *file) {
             }
 
             break; // //////////////// end of video section
-
         case AVMEDIA_TYPE_AUDIO:
+#ifdef WITH_AUDIO
             audio_index = i;
             audio_codec_ctx = enc;
             func("VideoLayer :: audio id=%i", audio_index);
@@ -271,6 +290,9 @@ bool VideoLayer::open(const char *file) {
                     audio_codec->name, audio_channels, audio_samplerate);
 
             }
+#else
+            act("audio stream not supported");
+#endif
             break; // /////// end of audio section
 
 
@@ -414,7 +436,10 @@ void *VideoLayer::feed() {
                     }
                     continue;
                 } else if((pkt.stream_index == video_index)
-                          || (pkt.stream_index == audio_index))
+#ifdef WITH_AUDIO
+                          || (pkt.stream_index == audio_index)
+#endif
+                         )
                     break;  /* exit loop */
             }
         } // loop break after a known index is found
@@ -493,7 +518,7 @@ void *VideoLayer::feed() {
             }
         } // end video packet decoding
 
-
+#ifdef WITH_AUDIO
         ////////////////////////
         // audio packet decoding
         else if(pkt.stream_index == audio_index) {
@@ -557,6 +582,7 @@ void *VideoLayer::feed() {
                 }
             }
         }
+#endif
 
         av_free_packet(&pkt); /* sun's good. love's bad */
 
@@ -565,6 +591,7 @@ void *VideoLayer::feed() {
     return frame_fifo.picture[fifo_position - 1]->data[0];
 }
 
+#ifdef WITH_AUDIO
 int VideoLayer::decode_audio_packet() {
     return decode_audio_packet(NULL);
 }
@@ -635,6 +662,7 @@ int VideoLayer::decode_audio_packet(int *data_size) {
     /* We have data, return it and come back for more later */
     return res;
 }
+#endif
 
 int VideoLayer::decode_video_packet(int *got_picture) {
     /**
@@ -714,7 +742,8 @@ void VideoLayer::close() {
             avcodec_close(video_codec_ctx);
         }
 
-    if(audio_codec_ctx)
+#ifdef WITH_AUDIO
+    if(audio_codec_ctx) {
         if(audio_codec_ctx->codec) {
             func("close audio codec");
             avcodec_close(audio_codec_ctx);
@@ -723,6 +752,8 @@ void VideoLayer::close() {
                 free(audio_buf);
             }
         }
+    }
+#endif
 
 #ifdef HAVE_LIB_SWSCALE
     sws_freeContext(img_convert_ctx);
@@ -932,8 +963,10 @@ int VideoLayer::seek(int64_t timestamp) {
         // Flush buffers, should be called when seeking or when swicthing to a different stream.
         if(video_codec_ctx)
             avcodec_flush_buffers(video_codec_ctx);
+#ifdef WITH_AUDIO
         if(audio_codec_ctx)
             avcodec_flush_buffers(audio_codec_ctx);
+#endif
     }
     return 0;
 }

@@ -29,7 +29,7 @@
 VideoEncoderPtr get_encoder(char *enctype) {
     VideoEncoderPtr e;
 
-#ifdef WITH_OGGTHEORA
+#if defined(WITH_OGGTHEORA) && defined(WITH_AUDIO)
     if(strncasecmp(enctype, "theora", 3) == 0)
         e = MakeShared<OggTheoraEncoder>();
 #endif

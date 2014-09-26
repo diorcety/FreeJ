@@ -92,10 +92,12 @@ public:
         return eos->rem_call(c);
     }
 
+#ifdef WITH_AUDIO
     bool use_audio; ///< set true if audio should be decoded and fed to the scren->audio FIFO pipe
 
     int audio_channels;
     int audio_samplerate;
+#endif
 
 protected:
     bool _init();
@@ -115,10 +117,12 @@ private:
     AVCodecContext *video_codec_ctx;
     AVCodec *video_codec;
 
+#ifdef WITH_AUDIO
     AVCodecContext *audio_codec_ctx;
     AVCodec *audio_codec;
     uint8_t *audio_buf; // buffer used by decode_audio_packet
     double audio_size;
+#endif
 
     AVFrame av_frame;
 #ifdef WITH_SWSCALE
@@ -135,10 +139,12 @@ private:
     double video_current_pts;
     double video_current_pts_time;
 
+#ifdef WITH_AUDIO
     /* audio resample buffer */
     float *audio_float_buf;
     float *audio_resampled_buf;
     unsigned long audio_resampled_buf_len;
+#endif
 
     /**
      * Number of decoded frames. As for now together with picture_number
@@ -172,15 +178,20 @@ private:
     char *full_filename;
 
     int video_index;    //contains the stream place number
+#ifdef WITH_AUDIO
     int audio_index;    //contains the stream place number
+#endif
 
     FILE *fp;
 
     /** private methods */
     int seek(int64_t timestamp);
     int decode_video_packet(int *got_picture);
+
+#ifdef WITH_AUDIO
     int decode_audio_packet(int *data_size);
     int decode_audio_packet();
+#endif
 
     void set_speed(int speed);
     double get_master_clock();

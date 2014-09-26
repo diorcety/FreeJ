@@ -27,7 +27,9 @@
 #ifdef WITH_AVCODEC
 #include <ffmpeg_encoder.h>
 #endif
+#if defined(WITH_OGGTHEORA) && defined(WITH_AUDIO)
 #include <oggtheora_encoder.h>
+#endif
 
 
 VideoEncoderPtr get_encoder(char *enctype);
