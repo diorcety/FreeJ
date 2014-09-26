@@ -247,7 +247,9 @@ if test x$have_slang = xno; then
    AC_MSG_ERROR([*** SLANG development files not found!])
 fi
 
+dnl ==============================================================
 dnl Check for GD
+dnl ==============================================================
 GD_LIBS=""
 FREEJ_CHECK_LIB_HEADER([gd], [gdImageCreateTrueColor], [gd.h],
                        [have_gd=yes], [have_gd=no])
@@ -262,26 +264,6 @@ dnl Check for SDL
 dnl ==============================================================
 PKG_CHECK_MODULES(SDL, sdl > 1.2, :,
   AC_MSG_ERROR([*** SDL development files not found!]))
-
-
-dnl ==============================================================
-dnl Check OGG VORBIS THEORA
-dnl ==============================================================
-PKG_CHECK_MODULES(OGG, ogg >= 1.1, :,
-  AC_MSG_ERROR([*** Ogg >=1.1 development files not found!]))
-PKG_CHECK_MODULES(VORBIS, vorbis, :,
-  AC_MSG_ERROR([*** Vorbis development files not found!]))
-PKG_CHECK_MODULES(VORBISENC, vorbisenc, :,
-  AC_MSG_ERROR([*** Vorbisenc development files not found!]))
-PKG_CHECK_MODULES(THEORA, theora, :,
-  AC_MSG_ERROR([*** Theora development files not found!]))
-XIPH_CFLAGS="$OGG_CFLAGS $VORBIS_CFLAGS $VORBISENC_CFLAGS $THEORA_CFLAGS"
-XIPH_LIBS="$OGG_LIBS $VORBIS_LIBS $VORBISENC_LIBS $THEORA_LIBS"
-AC_SUBST([XIPH_CFLAGS])
-AC_SUBST([XIPH_LIBS])
-
-dnl TODO(shammash): heritage from conditional build, still used somewhere.
-AC_DEFINE(WITH_OGGTHEORA,1,[define if compiling with Ogg/Theora encoding])
 
 
 dnl ==============================================================
@@ -578,23 +560,120 @@ AM_CONDITIONAL([BUILD_CONSOLE], [test x$enable_console = xyes])
 dnl ==============================================================
 dnl Audio
 dnl ==============================================================
-PKG_CHECK_MODULES(ALSA, alsa,
-    AC_DEFINE(WITH_MIDI,1,[define if compiling midi controller])
-    have_midi=yes,
-    have_midi=no)
+AC_ARG_ENABLE(audio,
+   [AS_HELP_STRING([--enable-audio], [Enable audio support])],
+   [case "${enableval}" in
+      yes)  build_audio=true ;;
+      no)   build_audio=false ;;
+      *)    AC_MSG_ERROR(bad value ${enableval} for --enable-audio) ;;
+   esac],
+   [build_audio=auto]
+)
+if test $build_audio != false ; then
+   dnl ==============================================================
+   dnl Check OGG VORBIS THEORA
+   dnl ==============================================================
+   PKG_CHECK_MODULES(OGG, ogg >= 1.1, :,
+     AC_MSG_ERROR([*** Ogg >=1.1 development files not found!]))
+   PKG_CHECK_MODULES(VORBIS, vorbis, :,
+     AC_MSG_ERROR([*** Vorbis development files not found!]))
+   PKG_CHECK_MODULES(VORBISENC, vorbisenc, :,
+     AC_MSG_ERROR([*** Vorbisenc development files not found!]))
+   PKG_CHECK_MODULES(THEORA, theora, :,
+     AC_MSG_ERROR([*** Theora development files not found!]))
+   XIPH_CFLAGS="$OGG_CFLAGS $VORBIS_CFLAGS $VORBISENC_CFLAGS $THEORA_CFLAGS"
+   XIPH_LIBS="$OGG_LIBS $VORBIS_LIBS $VORBISENC_LIBS $THEORA_LIBS"
+   AC_SUBST([XIPH_CFLAGS])
+   AC_SUBST([XIPH_LIBS])
 
-dnl TODO(shammash): before this refactoring we were enabling jack
-dnl only if alsa was present, check inconsistencies in the code.
-PKG_CHECK_MODULES(JACK, jack, :,
-  AC_MSG_ERROR([*** Jack development files not found!]))
+   dnl TODO(shammash): heritage from conditional build, still used somewhere.
+   AC_DEFINE(WITH_OGGTHEORA,1,[define if compiling with Ogg/Theora encoding])
 
-PKG_CHECK_MODULES(FFTW, fftw3, :,
-  AC_MSG_ERROR([*** Fftw3 development files not found!]))
 
-PKG_CHECK_MODULES(SAMPLERATE, samplerate, :,
-  AC_MSG_ERROR([*** Samplerate development files not found!]))
+   dnl ==============================================================
+   dnl Alsa
+   dnl ==============================================================
+   AC_ARG_ENABLE(alsa,
+      [AS_HELP_STRING([--enable-alsa], [Enable alsa support])],
+      [case "${enableval}" in
+         yes)  build_alsa=true ;;
+         no)   build_alsa=false ;;
+         *)    AC_MSG_ERROR(bad value ${enableval} for --enable-alsa) ;;
+      esac],
+      [build_alsa=auto]
+   )
+   PKG_CHECK_MODULES([ALSA], [alsa],
+     [
+       build_alsa=true
+     ],
+     [if test $build_alsa == true ; then
+       AC_MSG_ERROR([*** Alsa development files not found!])
+     else
+       build_alsa=false
+     fi]
+   )
 
-AC_DEFINE(WITH_AUDIO,1,[define if compiling audio system])
+
+   dnl ==============================================================
+   dnl Jack
+   dnl ==============================================================
+   AC_ARG_ENABLE(jack,
+      [AS_HELP_STRING([--enable-jack], [Enable jack support])],
+      [case "${enableval}" in
+         yes)  build_jack=true ;;
+         no)   build_jack=false ;;
+         *)    AC_MSG_ERROR(bad value ${enableval} for --enable-jack) ;;
+      esac],
+      [build_jack=auto]
+   )
+   PKG_CHECK_MODULES([JACK], [jack],
+     [
+       build_jack=true
+     ],
+     [if test $build_jack == true ; then
+       AC_MSG_ERROR([*** Jack development files not found!])
+     else
+       build_jack=false
+     fi]
+   )
+   PKG_CHECK_MODULES([FFTW], [fftw3],
+     [
+       build_fftw=true
+     ],
+     [if test $build_audio == true ; then
+       AC_MSG_ERROR([*** Fftw3 development files not found!])
+     else
+       build_fftw=false
+     fi]
+   )
+   PKG_CHECK_MODULES([SAMPLERATE], [samplerate],
+     [
+       build_samplerate=true
+     ],
+     [if test $build_audio == true ; then
+       AC_MSG_ERROR([*** Samplerate development files not found!])
+     else
+       build_samplerate=false
+     fi]
+   )
+   if test x$build_fftw != xfalse \
+      -a x$build_samplerate != xfalse; then
+     build_audio=true
+   else
+     build_audio=false
+   fi
+fi
+
+AM_CONDITIONAL(BUILD_AUDIO, test x$build_audio != xfalse)
+if test $build_audio != false ; then
+   AC_DEFINE(WITH_AUDIO, 1, [define if compiling audio system])
+fi
+if test $build_jack != false ; then
+   AC_DEFINE(WITH_JACK, 1, [define if compiling jack system])
+fi
+if test $build_alsa != false ; then
+  AC_DEFINE(WITH_ALSA, 1, [define if compiling alsa system])
+fi
 
 dnl ==============================================================
 dnl compile including the javascript interpreter
@@ -966,7 +1045,7 @@ FREEJ_CFLAGS="\$(FREEJ_STATIC_CFLAGS) \
     \$(LIBLO_CFLAGS)    \
     \$(MOZJS_CFLAGS)    \
     \$(OPENCV_CFLAGS)   \
-    \$(QTGUI_CFLAGS)	\
+    \$(QTGUI_CFLAGS)    \
     \$(SDL_CFLAGS)      \
     \$(SDLGFX_CFLAGS)   \
     \$(SDLIMAGE_CFLAGS) \
@@ -1001,7 +1080,7 @@ FREEJ_LIBS="-lpthread -lm -lrt $DL_LIBS \
     \$(LIBLO_LIBS)      \
     \$(MOZJS_LIBS)      \
     \$(OPENCV_LIBS)     \
-    \$(QTGUI_LIBS)	\
+    \$(QTGUI_LIBS)      \
     \$(SAMPLERATE_LIBS) \
     \$(SDLGFX_LIBS)     \
     \$(SDLIMAGE_LIBS)   \

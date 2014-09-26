@@ -69,7 +69,9 @@ JSFunctionSpec global_functions[] = {
     {"file_to_strings", file_to_strings,        1},
     {"register_controller", register_controller, 1},
     {"rem_controller",  rem_controller, 1},
+#ifdef WITH_OGGTHEORA
     {"register_encoder", register_encoder, 1},
+#endif
     {"include",         include_javascript_file, 1},
     {"use",             execute_javascript_command, 1},
     {"exec",            system_exec,            1},
