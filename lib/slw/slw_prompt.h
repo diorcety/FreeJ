@@ -26,7 +26,7 @@
 #include <slw_text.h>
 
 FREEJ_FORWARD_PTR(SLW_Prompt)
-class SLW_Prompt : public EnableSharedFromThis<SLW_Prompt>, public SLangWidget {
+class SLW_Prompt : public SLangWidget {
 
 public:
     SLW_Prompt();

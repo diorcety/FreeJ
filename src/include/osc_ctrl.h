@@ -27,8 +27,7 @@
 #include <controller.h>
 #include <factory.h>
 
-class Context;
-
+FREEJ_FORWARD_PTR(OscCommand)
 class OscCommand : public Entry {
 public:
     // osc_cmd is Entry::name
@@ -36,6 +35,7 @@ public:
     char js_cmd[512];
 };
 
+FREEJ_FORWARD_PTR(OscController)
 class OscController : public Controller {
 
 public:

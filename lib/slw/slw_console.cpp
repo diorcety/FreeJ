@@ -193,7 +193,7 @@ bool SLangConsole::place(SLangWidgetPtr wid, int hx, int hy, int lx, int ly) {
 
 
     // save a reference of the console in the widget
-    wid->console = SharedFromThis();
+    wid->console = SharedFromThis(SLangConsole);
 
 
     // append the new widget in our linklist

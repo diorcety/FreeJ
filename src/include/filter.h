@@ -37,7 +37,7 @@ FREEJ_FORWARD_PTR(Freeframe)
 template <class T> class Linklist;
 
 FREEJ_FORWARD_PTR(Filter)
-class Filter : public EnableSharedFromThis<Filter>, public Entry {
+class Filter : public Entry {
     friend class FilterInstance;
 public:
     // supported filter types

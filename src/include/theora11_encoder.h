@@ -31,8 +31,9 @@
 #include <vorbis/codec.h>
 #include <vorbis/vorbisenc.h>
 
-class Context;
+FREEJ_FORWARD_PTR(Context)
 
+FREEJ_FORWARD_PTR(Theora11Encoder)
 class Theora11Encoder : public Videoencoder {
 
 
@@ -42,7 +43,7 @@ public:
     ~Theora11Encoder();
 
 
-    bool init(Context *_env);
+    bool init(ContextPtr _env);
 
     bool feed_video();
 

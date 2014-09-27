@@ -92,7 +92,7 @@ bool ViewPort::add_layer(LayerPtr lay) {
         return(false);
     }
 
-    lay->screen = SharedFromThis();
+    lay->screen = SharedFromThis(ViewPort);
 
     setup_blits(lay);
 
@@ -157,7 +157,7 @@ bool ViewPort::add_encoder(VideoEncoderPtr enc) {
     LockedLinkList<VideoEncoder> list = encoders.getLock();
 
     func("initializing encoder %s", enc->getName().c_str());
-    if(!enc->init(this)) {
+    if(!enc->init(SharedFromThis(ViewPort))) {
         error("%s : failed initialization", __PRETTY_FUNCTION__);
         return(false);
     }
@@ -232,7 +232,7 @@ void ViewPort::handle_resize() {
     LockedLinkList<Layer> list = layers.getLock();
     std::for_each(list.begin(), list.end(), [&](LayerPtr &lay) {
         lay->lock();
-        lay->blitter->crop(lay, SharedFromThis());
+        lay->blitter->crop(lay, SharedFromThis(ViewPort));
         lay->unlock();
     });
 }

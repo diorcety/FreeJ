@@ -46,7 +46,7 @@ JoyController::~JoyController() {
 
 }
 
-bool JoyController::init(Context *freej) {
+bool JoyController::init(ContextPtr freej) {
     func("%s", __PRETTY_FUNCTION__);
     Controller::init(freej);
 

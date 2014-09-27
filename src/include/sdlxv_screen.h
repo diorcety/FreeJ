@@ -25,6 +25,7 @@
 #include <SDL.h>
 #include <screen.h>
 
+FREEJ_FORWARD_PTR(SdlXvScreen)
 class SdlXvScreen : public ViewPort {
 public:
 
@@ -32,8 +33,8 @@ public:
     ~SdlXvScreen();
 
     bool init(int width, int height);
-    void blit(Layer *layer);
-    void crop(Layer *layer);
+    void blit(LayerPtr layer);
+    void crop(LayerPtr layer);
     void show();
     void clear();
     void fullscreen() {

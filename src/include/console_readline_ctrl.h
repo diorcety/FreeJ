@@ -26,11 +26,12 @@
 #define MAX_CMDLINE 256
 
 /* callback functions for console input modes */
-typedef int (cmd_process_t)(Context *env, char *cmd);
-typedef int (cmd_complete_t)(Context *env, char *cmd);
+typedef int (cmd_process_t)(ContextPtr env, char *cmd);
+typedef int (cmd_complete_t)(ContextPtr env, char *cmd);
 
-class Context;
+FREEJ_FORWARD_PTR(Context)
 
+FREEJ_FORWARD_PTR(SlwReadline)
 class SlwReadline : public SLangWidget {
 public:
     SlwReadline();
@@ -51,14 +52,13 @@ public:
 
     int movestep;
 
-    Context *env;
-
+    ContextPtr env;
 
 
 private:
 
     Linklist<Entry> history;
-    Entry *mSelectedHistory;
+    EntryPtr mSelectedHistory;
 
     /* input console command */
     bool commandline;

@@ -21,32 +21,34 @@
 #ifndef __CONSOLE_CALLS_CTRL_H__
 #define __CONSOLE_CALLS_CTRL_H__
 
-class Context;
+#include "sharedptr.h"
 
-int console_open_layer(Context *env, char *cmd);
+FREEJ_FORWARD_PTR(Context)
 
-int console_param_selection(Context *env, char *cmd);
-int console_param_completion(Context *env, char *cmd);
+int console_open_layer(ContextPtr env, char *cmd);
 
-int console_blit_selection(Context *env, char *cmd);
-int console_blit_completion(Context *env, char *cmd);
+int console_param_selection(ContextPtr env, char *cmd);
+int console_param_completion(ContextPtr env, char *cmd);
 
-int console_blit_param_selection(Context *env, char *cmd);
-int console_blit_param_completion(Context *env, char *cmd);
+int console_blit_selection(ContextPtr env, char *cmd);
+int console_blit_completion(ContextPtr env, char *cmd);
 
-int console_filter_selection(Context *env, char *cmd);
-int console_filter_completion(Context *env, char *cmd);
+int console_blit_param_selection(ContextPtr env, char *cmd);
+int console_blit_param_completion(ContextPtr env, char *cmd);
 
-int console_exec_script(Context *env, char *cmd);
-int console_exec_script_command(Context *env, char *cmd);
+int console_filter_selection(ContextPtr env, char *cmd);
+int console_filter_completion(ContextPtr env, char *cmd);
 
-int console_generator_selection(Context *env, char *cmd);
-int console_generator_completion(Context *env, char *cmd);
+int console_exec_script(ContextPtr env, char *cmd);
+int console_exec_script_command(ContextPtr env, char *cmd);
 
-int console_print_text_layer(Context *env, char *cmd);
-int console_open_text_layer(Context *env, char *cmd);
+int console_generator_selection(ContextPtr env, char *cmd);
+int console_generator_completion(ContextPtr env, char *cmd);
 
-int console_filebrowse_completion(Context *env, char *cmd);
+int console_print_text_layer(ContextPtr env, char *cmd);
+int console_open_text_layer(ContextPtr env, char *cmd);
+
+int console_filebrowse_completion(ContextPtr env, char *cmd);
 
 
 #endif

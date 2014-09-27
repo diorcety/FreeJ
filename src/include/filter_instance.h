@@ -31,7 +31,7 @@
 FREEJ_FORWARD_PTR(Filter)
 
 FREEJ_FORWARD_PTR(FilterInstance)
-class FilterInstance : public EnableSharedFromThis<FilterInstance>, public Entry {
+class FilterInstance : public Entry {
     friend class Filter;
 
 public:

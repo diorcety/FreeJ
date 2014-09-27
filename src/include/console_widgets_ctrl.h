@@ -24,10 +24,11 @@
 #include <slw.h>
 
 
-class Context;
-class Layer;
-class FilterInstance;
+FREEJ_FORWARD_PTR(Context)
+FREEJ_FORWARD_PTR(Layer)
+FREEJ_FORWARD_PTR(FilterInstance)
 
+FREEJ_FORWARD_PTR(SlwTitle)
 class SlwTitle : public SLangWidget {
 public:
     SlwTitle();
@@ -37,7 +38,7 @@ public:
     bool feed(int key);
     bool refresh();
 
-    Context *env;
+    ContextPtr env;
 
 private:
     char title[256];
@@ -45,6 +46,7 @@ private:
 
 };
 
+FREEJ_FORWARD_PTR(SlwSelector)
 class SlwSelector : public SLangWidget {
 public:
 
@@ -55,11 +57,11 @@ public:
     bool feed(int key);
     bool refresh();
 
-    Context *env;
+    ContextPtr env;
 
 private:
-    Layer *layer;
-    FilterInstance *filter;
+    LayerPtr layer;
+    FilterInstancePtr filter;
 
     char *tmp;
 

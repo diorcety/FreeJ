@@ -234,7 +234,7 @@ BLIT schiffler_binarize(void *src, void *dst, int bytes, Linklist<Parameter> *pa
         ((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
-void setup_linear_blits(Blitter *blitter) {
+void setup_linear_blits(BlitterPtr blitter) {
     BlitPtr b;
     ParameterPtr p;
 

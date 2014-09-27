@@ -39,11 +39,6 @@
 
 #include <iostream>
 
-class Context;
-class AudioCollector;
-class FPS;
-class ViewPort;
-
 /**
  * Abstract class describing the general interface of a VideoEncoder
  *
@@ -61,7 +56,7 @@ class ViewPort;
  */
 
 
-//class VideoEncoder: public Entry,public JSyncThread{
+FREEJ_FORWARD_PTR(VideoEncoder)
 class VideoEncoder : public Entry, public JSyncThread {
 
 public:
@@ -71,7 +66,7 @@ public:
 
     double getStreamRate();
 
-    virtual bool init(ViewPort *scr) = 0;   ///< pure virtual function to implement
+    virtual bool init(ViewPortPtr scr) = 0;   ///< pure virtual function to implement
     virtual int encode_frame()       = 0;   ///< pure virtual function to implement
 
     void thread_setup(); ///< setup data needed in encoding thread
@@ -114,7 +109,7 @@ public:
 
     shout_t *ice;
 
-    ViewPort *screen;
+    ViewPortWeakPtr screen;
 
     void *enc_y;
     void *enc_u;

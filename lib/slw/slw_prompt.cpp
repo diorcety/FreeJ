@@ -52,7 +52,7 @@ bool SLW_Prompt::init() {
 
     // create the private structure where to hold text
     textconsole = MakeShared<SLW_TextConsole>();
-    textconsole->widget = SharedFromThis();
+    textconsole->widget = SharedFromThis(SLW_Prompt);
     textconsole->w = w;
     textconsole->h = h;
     textconsole->cur_x = 0;

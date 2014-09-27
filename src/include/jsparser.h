@@ -44,6 +44,7 @@ void js_debug_argument(JSContext *cx, jsval val);
 
 // This class represents the execution context for a single script,
 // holding its context, runtime and global object.
+FREEJ_FORWARD_PTR(JsExecutionContext)
 class JsExecutionContext : public Entry {
     friend class JsParser;
 public:

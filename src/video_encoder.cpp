@@ -175,6 +175,8 @@ void VideoEncoder::thread_setup() {
 void VideoEncoder::thread_loop() {
     int encnum;
     int res;
+    auto screen = this->screen.lock();
+
     /* Convert picture from rgb to yuv420 planar
 
        two steps here:

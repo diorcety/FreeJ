@@ -46,17 +46,13 @@
 
 extern volatile int SLang_Error; // hack for fucking debian!
 
-class Context;
-class Layer;
-class FilterInstance;
+FREEJ_FORWARD_PTR(SLangConsole)
+FREEJ_FORWARD_PTR(SlwSelector)
+FREEJ_FORWARD_PTR(SlwTitle)
+FREEJ_FORWARD_PTR(SLW_Log)
+FREEJ_FORWARD_PTR(SlwReadline)
 
-class SLangConsole;
-class SLW_Log;
-class SlwSelector;
-class SlwTitle;
-class SlwReadline;
-
-
+FREEJ_FORWARD_PTR(SlwConsole)
 class SlwConsole : public ConsoleController {
 public:
 
@@ -88,11 +84,11 @@ public:
 
 private:
 
-    SLangConsole *slw;
-    SlwSelector *sel;
-    SlwTitle *tit;
-    SLW_Log *log;
-    SlwReadline *rdl;
+    SLangConsolePtr slw;
+    SlwSelectorPtr sel;
+    SlwTitlePtr tit;
+    SLW_LogPtr log;
+    SlwReadlinePtr rdl;
 
     int x, y;
 

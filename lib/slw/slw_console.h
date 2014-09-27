@@ -29,7 +29,7 @@ extern volatile int SLang_Error; // hack for old versions
 
 
 FREEJ_FORWARD_PTR(SLangConsole)
-class SLangConsole: EnableSharedFromThis<SLangConsole> {
+class SLangConsole: public EnableSharedFromThis<SLangConsole> {
 public:
     SLangConsole();
     ~SLangConsole();

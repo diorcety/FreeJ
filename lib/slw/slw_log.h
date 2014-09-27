@@ -27,7 +27,7 @@
 
 
 FREEJ_FORWARD_PTR(SLW_Log)
-class SLW_Log : public EnableSharedFromThis<SLW_Log>, public SLangWidget {
+class SLW_Log : public SLangWidget {
 
 public:
     SLW_Log();

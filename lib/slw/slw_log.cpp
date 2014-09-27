@@ -53,7 +53,7 @@ bool SLW_Log::init() {
 
     // create the private structure where to hold text
     textconsole = MakeShared<SLW_TextConsole>();
-    textconsole->widget = SharedFromThis();
+    textconsole->widget = SharedFromThis(SLW_Log);
     textconsole->w = w;
     textconsole->h = h;
     textconsole->cur_x = 0;

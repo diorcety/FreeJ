@@ -79,7 +79,7 @@ OggTheoraEncoder::~OggTheoraEncoder() { // XXX TODO clear the memory !!
     if(m_MixedRing) ringbuffer_free(m_MixedRing);
 }
 
-bool OggTheoraEncoder::init(ViewPort *scr) {
+bool OggTheoraEncoder::init(ViewPortPtr scr) {
 
     if(initialized) return true;
 
@@ -123,8 +123,8 @@ bool OggTheoraEncoder::init(ViewPort *scr) {
     /* Set up Theora encoder */
 
     int theora_quality = (int)((video_quality * 63) / 100);
-    int w                   = screen->geo.w;
-    int h                   = screen->geo.h;
+    int w                   = scr->geo.w;
+    int h                   = scr->geo.h;
     func("VideoEncoder: encoding theora to quality %u", theora_quality);
     /* Theora has a divisible-by-sixteen restriction for the encoded video size */
     /* scale the frame size up to the nearest /16 and calculate offsets */
@@ -142,8 +142,8 @@ bool OggTheoraEncoder::init(ViewPort *scr) {
 
     oggmux.ti.width                        = video_x;
     oggmux.ti.height                       = video_y;
-    oggmux.ti.frame_width                  = screen->geo.w;
-    oggmux.ti.frame_height                 = screen->geo.h;
+    oggmux.ti.frame_width                  = scr->geo.w;
+    oggmux.ti.frame_height                 = scr->geo.h;
     oggmux.ti.offset_x                     = frame_x_offset;
     oggmux.ti.offset_y                     = frame_y_offset;
     oggmux.ti.fps_numerator                = 25; // env->fps.fps;
@@ -171,10 +171,10 @@ bool OggTheoraEncoder::init(ViewPort *scr) {
 
     oggmux_init(&oggmux);
 
-    enc_y     = malloc(screen->geo.w * screen->geo.h);
-    enc_u     = malloc((screen->geo.w * screen->geo.h) / 2);
-    enc_v     = malloc((screen->geo.w * screen->geo.h) / 2);
-    enc_yuyv   = (uint8_t*)malloc(screen->geo.bytesize);
+    enc_y     = malloc(scr->geo.w * scr->geo.h);
+    enc_u     = malloc((scr->geo.w * scr->geo.h) / 2);
+    enc_v     = malloc((scr->geo.w * scr->geo.h) / 2);
+    enc_yuyv   = (uint8_t*)malloc(scr->geo.bytesize);
 
     act("initialization successful");
     initialized = true;

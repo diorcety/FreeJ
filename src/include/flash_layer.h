@@ -29,6 +29,7 @@
 #include <layer.h>
 #include <flash.h>
 
+FREEJ_FORWARD_PTR(FlashLayer)
 class FlashLayer : public Layer {
 
 public:

@@ -188,17 +188,17 @@ public:
             func("Looking for %s in instantiators_map (%d)", tag, instances_map->size());
             FInstancesMap::iterator instance_pair = instances_map->find(tag);
             if(instance_pair != instances_map->end()) {
-                void *instance = instance_pair->second;
-                func("Returning instance of %s at address %p", tag, instance);
-                return (T *)instance;
+                SharedPtr<void> instance = instance_pair->second;
+                func("Returning instance of %s at address %p", tag, instance.get());
+                return StaticPointerCast<T>(instance);
             }
         } else {
             instances_map = new FInstancesMap();
         }
         // create on first use
-        T *instance = new_instance(category, id);
-        instances_map->insert(FInstancePair(tag, (void *)instance));
-        func("Created instance of %s at address %p", tag, (void *)instance);
+        SharedPtr<T> instance = new_instance(category, id);
+        instances_map->insert(FInstancePair(tag, instance));
+        func("Created instance of %s at address %p", tag, instance.get());
         return instance;
     }
 

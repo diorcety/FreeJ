@@ -95,8 +95,10 @@ static void init_factory() {
 }
 
 void * run_context(void * data) {
-    Context * context = (Context *)data;
+    ContextPtr *contextPtr = (ContextPtr *)data;
+    ContextPtr context = *contextPtr;
     context->start();
+    delete contextPtr;
     pthread_exit(NULL);
 }
 
@@ -232,7 +234,7 @@ bool Context::init() {
     }
 
     // refresh the list of available plugins
-    plugger.refresh(this);
+    plugger.refresh(SharedFromThis(Context));
 
     return true;
 }
@@ -248,7 +250,7 @@ void Context::start() {
 
 void Context::start_threaded() {
     if(!running)
-        pthread_create(&cafudda_thread, 0, run_context, this);
+        pthread_create(&cafudda_thread, 0, run_context, new SharedPtr<Context>(SharedFromThis(Context)));
 }
 
 /*
@@ -346,7 +348,7 @@ bool Context::register_controller(ControllerPtr ctrl) {
     if(!ctrl->initialized) {
         func("initialising controller %s (%p)", ctrl->getName().c_str(), ctrl.get());
 
-        ctrl->init(SharedFromThis());
+        ctrl->init(SharedFromThis(Context));
 
     } else
         warning("controller was already initialised on this context");

@@ -144,7 +144,7 @@ int MidiController::event_pgmchange(int channel, int param, int value) {
    } snd_seq_event_t;
  */
 
-bool MidiController::init(Context *freej) {
+bool MidiController::init(ContextPtr freej) {
     func("%s", __PRETTY_FUNCTION__);
     Controller::init(freej);
 

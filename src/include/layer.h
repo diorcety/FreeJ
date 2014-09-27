@@ -77,7 +77,7 @@ FREEJ_FORWARD_PTR(JSContext)
    @brief Provides input to the Context
  */
 FREEJ_FORWARD_PTR(Layer)
-class Layer : public EnableSharedFromThis<Layer>, public Entry, public JSyncThread {
+class Layer : public Entry, public JSyncThread {
     friend class Blitter;
     friend class Context;
     friend class JSyncThread;

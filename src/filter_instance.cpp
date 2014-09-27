@@ -52,7 +52,7 @@ FilterInstance::~FilterInstance() {
     func("~FilterInstance");
 
     if(proto)
-        proto->destruct(SharedFromThis());
+        proto->destruct(SharedFromThis(FilterInstance));
 
     if(outframe)
         free(outframe);
@@ -72,7 +72,7 @@ uint32_t *FilterInstance::process(float fps, uint32_t *inframe) {
         error("void filter instance was called for process: %p", this);
         return inframe;
     }
-    proto->update(SharedFromThis(), fps, inframe, outframe);
+    proto->update(SharedFromThis(FilterInstance), fps, inframe, outframe);
     return outframe;
 }
 
@@ -81,7 +81,7 @@ bool FilterInstance::apply() {
     bool ret = false;
     if(proto) {
         if(auto layer=this->layer.lock()) {
-             ret = proto->apply(layer, SharedFromThis());
+             ret = proto->apply(layer, SharedFromThis(FilterInstance));
         }
     }
     return ret;

@@ -91,7 +91,7 @@ FREEJ_FORWARD_PTR(VideoEncoder)
  */
 
 FREEJ_FORWARD_PTR(ViewPort)
-class ViewPort : public EnableSharedFromThis<ViewPort>, public Entry {
+class ViewPort : public Entry {
 public:
     friend class Layer;
     LayerPtr mSelectedLayer;

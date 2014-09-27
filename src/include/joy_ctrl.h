@@ -38,13 +38,14 @@
 #include <linux/input.h>
 #endif
 
+FREEJ_FORWARD_PTR(JoyController)
 class JoyController : public SdlController {
 
 public:
     JoyController();
     virtual ~JoyController();
 
-    bool init(Context *freej);
+    bool init(ContextPtr freej);
     int  poll();
     virtual int dispatch();
 

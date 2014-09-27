@@ -98,7 +98,7 @@ bool SlwSelector::init() {
 bool SlwSelector::feed(int key) {
     bool res = false;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return false;
@@ -114,7 +114,7 @@ bool SlwSelector::feed(int key) {
         if(!screen->mSelectedLayer) {
             screen->mSelectedLayer = layerList.front();
         }
-        Layer *le = screen->mSelectedLayer;
+        LayerPtr le = screen->mSelectedLayer;
 
 
         LockedLinkList<FilterInstance> filterList = le->filters.getLock();
@@ -207,7 +207,7 @@ bool SlwSelector::feed(int key) {
             } else {
                 //	le->rem();
                 //	((Layer*)le)->close();
-                env->rem_layer((Layer*)le);
+                env->rem_layer(DynamicPointerCast<Layer>(le));
             }
             break;
 
@@ -230,7 +230,7 @@ bool SlwSelector::feed(int key) {
 bool SlwSelector::refresh() {
     int sellayercol = 0, layercol, pos;
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return false;
@@ -244,7 +244,7 @@ bool SlwSelector::refresh() {
     LockedLinkList<VideoEncoder> encoderList = screen->encoders.getLock();
     LockedLinkList<VideoEncoder>::iterator it = encoderList.begin();
     if(it != encoderList.end()) {
-        VideoEncoder *enc = *it;
+        VideoEncoderPtr enc = *it;
         snprintf(tmp, w, "Stream: video %u kb/s : audio %u kb/s : encoded %u kb",
                  enc->video_kbps, enc->audio_kbps, enc->bytes_encoded / 1024);
         putnch(tmp, 1, 0, 0);
@@ -276,24 +276,25 @@ bool SlwSelector::refresh() {
         //    SLsmg_gotorc(4,1);
 
         /* take layer selected and first */
-        if(layer)
+        if(layer) {
             filter = layer->mSelectedFilter;
-        std::for_each(layerList.begin(), layerList.end(), [&](Layer *l) {
-            layercol += tmpsize + 4;
-            //      SLsmg_set_color(LAYERS_COLOR);
-            //      SLsmg_write_string((char *)" -> ");
-            color = LAYERS_COLOR;
-            putnch((char*)" ->", layercol, 2, 3);
+            std::for_each(layerList.begin(), layerList.end(), [&](LayerPtr l) {
+                layercol += tmpsize + 4;
+                //      SLsmg_set_color(LAYERS_COLOR);
+                //      SLsmg_write_string((char *)" -> ");
+                color = LAYERS_COLOR;
+                putnch((char*)" ->", layercol, 2, 3);
 
-            if(l == layer && !filter) color += 20;
-            if(l->fade | l->active) color += 10;
+                if(l == layer && !filter) color += 20;
+                if(l->fade | l->active) color += 10;
 
-            //      snprintf(tmp, w, " -> %s",l->getName().c_str());
-            tmpsize = strlen(l->getName().c_str());
-            putnch((char*)l->getName().c_str(), layercol + 4, 2, tmpsize);
-            // save position of selected layer
-            if(l == layer) sellayercol = layercol;
-        });
+                //      snprintf(tmp, w, " -> %s",l->getName().c_str());
+                tmpsize = strlen(l->getName().c_str());
+                putnch((char*)l->getName().c_str(), layercol + 4, 2, tmpsize);
+                // save position of selected layer
+                if(l == layer) sellayercol = layercol;
+            });
+        }
     }
 
 
@@ -319,7 +320,7 @@ bool SlwSelector::refresh() {
 
         LockedLinkList<FilterInstance> filterList = layer->filters.getLock();
         pos = 4;
-        std::for_each(filterList.begin(), filterList.end(), [&] (FilterInstance *f) {
+        std::for_each(filterList.begin(), filterList.end(), [&] (FilterInstancePtr f) {
             //       SLsmg_set_color(PLAIN_COLOR);
             //       SLsmg_gotorc(pos,0);
             //       SLsmg_erase_eol();

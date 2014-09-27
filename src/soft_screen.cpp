@@ -66,14 +66,14 @@ bool SoftScreen::_init() {
 void SoftScreen::blit(LayerPtr src) {
     int16_t c;
 
-    if(src->screen.lock() != SharedFromThis()) {
+    if(src->screen.lock() != SharedFromThis(SoftScreen)) {
         error("%s: blit called on a layer not belonging to screen",
               __PRETTY_FUNCTION__);
         return;
     }
 
     if(src->need_crop)
-        src->blitter->crop(src, SharedFromThis());
+        src->blitter->crop(src, SharedFromThis(SoftScreen));
 
     BlitPtr b = src->current_blit;
 

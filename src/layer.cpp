@@ -180,7 +180,7 @@ bool Layer::set_blit(const char *bname) {
 
         current_blit = b; // start using
         need_crop = true;
-        blitter->crop(SharedFromThis(), screen);
+        blitter->crop(SharedFromThis(Layer), screen);
         blitter->mSelectedBlit = b;
         act("blit %s set for layer %s", current_blit->getName().c_str(), name.c_str());
     } else {
@@ -209,7 +209,7 @@ void Layer::blit() {
 
         lock();
         if(auto screen = this->screen.lock()) {
-            screen->blit(SharedFromThis());
+            screen->blit(SharedFromThis(Layer));
         }
         unlock();
     }

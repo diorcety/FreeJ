@@ -40,6 +40,7 @@ private:
 
 };
 
+FREEJ_FORWARD_PTR(CairoLayer)
 class CairoLayer : public Layer {
 
 public:

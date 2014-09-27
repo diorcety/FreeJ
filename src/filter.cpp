@@ -62,7 +62,7 @@ Filter::~Filter() {
 FilterInstancePtr Filter::new_instance() {
     FilterInstancePtr instance = Factory<FilterInstance>::new_instance("FilterInstance");
     if(instance)
-        instance->init(SharedFromThis());
+        instance->init(SharedFromThis(Filter));
     return instance;
 }
 

@@ -121,7 +121,7 @@ private:
 
 
 FREEJ_FORWARD_PTR(Blitter)
-class Blitter {
+class Blitter: public EnableSharedFromThis<Blitter> {
 public:
     Blitter();
     ~Blitter();

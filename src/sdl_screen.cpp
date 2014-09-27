@@ -145,7 +145,7 @@ void SdlScreen::blit(LayerPtr src) {
 
 
     if(src->need_crop)
-        src->blitter->crop(src, SharedFromThis());
+        src->blitter->crop(src, SharedFromThis(SdlScreen));
 
     BlitPtr b = src->current_blit;
 

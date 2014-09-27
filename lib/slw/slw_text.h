@@ -26,7 +26,7 @@
 
 
 FREEJ_FORWARD_PTR(SLW_TextConsole)
-class SLW_TextConsole : public EnableSharedFromThis<SLW_TextConsole>, public TextConsole {
+class SLW_TextConsole : public TextConsole {
 
 public:
     SLW_TextConsole();
@@ -41,7 +41,7 @@ public:
 };
 
 FREEJ_FORWARD_PTR(SLW_Text)
-class SLW_Text : public EnableSharedFromThis<SLW_Text>, public SLangWidget {
+class SLW_Text : public SLangWidget {
 
 public:
     SLW_Text();

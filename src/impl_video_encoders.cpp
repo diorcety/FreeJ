@@ -26,12 +26,12 @@
 
 #include <impl_video_encoders.h>
 
-VideoEncoder *get_encoder(char *enctype) {
-    VideoEncoder *e = NULL;
+VideoEncoderPtr get_encoder(char *enctype) {
+    VideoEncoderPtr e;
 
 #ifdef WITH_OGGTHEORA
     if(strncasecmp(enctype, "theora", 3) == 0)
-        e = new OggTheoraEncoder();
+        e = MakeShared<OggTheoraEncoder>();
 #endif
 
     return e;

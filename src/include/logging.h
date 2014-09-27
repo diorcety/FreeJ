@@ -42,6 +42,7 @@
 
 #include <exceptions.h>
 #include <stdarg.h>
+#include "sharedptr.h"
 
 #define MAX_LOG_MSG 1024
 
@@ -54,9 +55,10 @@ enum LogLevel { // ordered by increasing verbosity
     DEBUG
 };
 
-class ConsoleController;
+FREEJ_FORWARD_PTR(ConsoleController)
 
 // Base class to implement for providing a logging service
+FREEJ_FORWARD_PTR(Logger)
 class Logger {
 public:
     virtual int printlog(LogLevel level, const char *format, ...);
@@ -78,8 +80,8 @@ public:
 
     Loggable();
     virtual ~Loggable();
-    bool register_logger(Logger *l);
-    bool unregister_logger(Logger *l);
+    bool register_logger(LoggerPtr l);
+    bool unregister_logger(LoggerPtr l);
     LogLevel get_loglevel() {
         return loglevel_;
     }
@@ -93,7 +95,7 @@ protected:
     int vlog(LogLevel level, const char *format, va_list arg);
 
 private:
-    Logger *logger_;
+    LoggerPtr logger_;
     LogLevel loglevel_;
     pthread_mutex_t logger_mutex_;
 };
@@ -103,16 +105,16 @@ class GlobalLogger {
 public:
     static int printlog(LogLevel level, const char *format, ...);
     static int vprintlog(LogLevel level, const char *format, va_list arg);
-    static bool register_logger(Logger *l);
-    static bool unregister_logger(Logger *l);
+    static bool register_logger(LoggerPtr l);
+    static bool unregister_logger(LoggerPtr l);
     static LogLevel get_loglevel();
     static void set_loglevel(LogLevel level);
-    static void set_console(ConsoleController *c);
+    static void set_console(ConsoleControllerPtr c);
 private:
     static LogLevel loglevel_;
-    static Logger *logger_;
+    static LoggerPtr logger_;
     static pthread_mutex_t logger_mutex_;
-    static ConsoleController *console_; // accessed under logger_mutex_
+    static ConsoleControllerPtr console_; // accessed under logger_mutex_
     static char logbuf_[];
 };
 
@@ -141,7 +143,7 @@ private:
 #define MAX_ERR_MSG MAX_LOG_MSG
 void set_debug(int lev);
 int get_debug();
-void set_console(ConsoleController *c);
+void set_console(ConsoleControllerPtr c);
 void error(const char *format, ...);
 void warning(const char *format, ...);
 void notice(const char *format, ...);

@@ -44,7 +44,8 @@ private:
     struct v4l2_format m_format;
 };
 
-class V4L2CamLayer : public Layer {
+FREEJ_FORWARD_PTR(V4L2CamLayer)
+class V4L2CamLayer :  public Layer {
 public:
     V4L2CamLayer();
     ~V4L2CamLayer();

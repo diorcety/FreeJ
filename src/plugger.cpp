@@ -101,7 +101,7 @@ int selector(const struct dirent *dir) {
     return(0);
 }
 
-int Plugger::refresh(Context *env) {
+int Plugger::refresh(ContextPtr env) {
 
     char *dir;
     struct dirent **filelist;

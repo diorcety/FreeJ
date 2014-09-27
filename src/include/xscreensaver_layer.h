@@ -25,6 +25,7 @@
 #include <layer.h>
 #include <vroot.h>
 
+FREEJ_FORWARD_PTR(XScreenSaverLayer)
 class XScreenSaverLayer : public Layer {
 
 public:

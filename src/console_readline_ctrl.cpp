@@ -47,13 +47,6 @@ SlwReadline::SlwReadline()
 }
 
 SlwReadline::~SlwReadline() {
-    LockedLinkList<Entry>  list = history.getLock();
-    while(!list.empty()) {
-        Entry *e = list.front();
-        list.pop_front();
-        free(e->data);
-        delete(e);
-    }
 }
 
 bool SlwReadline::init() {
@@ -179,14 +172,13 @@ int SlwReadline::readline(const char *msg, cmd_process_t *proc, cmd_complete_t *
 
 
 bool SlwReadline::parser_default(int key) {
-    Entry *le;
     bool res = true;
 
     commandline = false; // print statusline
 
     //  ::func("pressed %u",key);
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
@@ -196,7 +188,7 @@ bool SlwReadline::parser_default(int key) {
     if(!list.empty()) { // there are layers
 
         // get the one selected
-        le = screen->mSelectedLayer;
+        EntryPtr le = screen->mSelectedLayer;
         if(!le) {
              screen->mSelectedLayer = list.front();
         }
@@ -240,7 +232,7 @@ bool SlwReadline::parser_default(int key) {
 
 #if defined WITH_TEXTLAYER
         case KEY_CTRL_Y:
-            if(((Layer*)le)->type == Layer::TEXT)
+            if(DynamicPointerCast<Layer>(le)->type == Layer::TEXT)
                 readline("print a new word in Text Layer, type your words:",
                          &console_print_text_layer, NULL);
             break;
@@ -363,14 +355,14 @@ bool SlwReadline::parser_movelayer(int key) {
 
     commandline = false; // print statusline
 
-    ViewPort *screen = env->mSelectedScreen;
+    ViewPortPtr screen = env->mSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
     LockedLinkList<Layer> list = screen->layers.getLock();
     if(!list.empty()) { // there are layers
-        Layer *layer = screen->mSelectedLayer;
+        LayerPtr layer = screen->mSelectedLayer;
         if(!layer) {
             screen->mSelectedLayer = list.front();
         }
@@ -474,7 +466,7 @@ bool SlwReadline::parser_movelayer(int key) {
 bool SlwReadline::parser_commandline(int key) {
     int res, c;
     bool parsres = true;
-    Entry *entr = NULL;
+    EntryPtr entr = NULL;
     LockedLinkList<Entry> list = history.getLock();
     LockedLinkList<Entry>::iterator it = std::find(list.begin(), list.end(), mSelectedHistory);
     commandline = true; // don't print statusline
@@ -503,11 +495,10 @@ bool SlwReadline::parser_commandline(int key) {
         // reset the parser
         set_parser(DEFAULT);
         // save in commandline history
-        entr = new Entry();
+        entr = MakeShared<Entry>();
         entr->data = strdup(command);
         list.push_back(entr);
         if(list.size() > 32) {// histsize
-            delete list.front();
             list.pop_front();
         }
         // cleanup the command

@@ -33,6 +33,7 @@
 
 //#include <X11/extensions/Xvlib.h>
 
+FREEJ_FORWARD_PTR(XGrabLayer)
 class XGrabLayer : public Layer {
 protected:
     bool _init();

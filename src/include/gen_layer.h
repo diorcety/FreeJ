@@ -27,6 +27,7 @@
 
 #define PRIMES 11
 
+FREEJ_FORWARD_PTR(GenLayer)
 class GenLayer : public Layer {
 private:
 

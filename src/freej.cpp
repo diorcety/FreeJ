@@ -78,10 +78,10 @@ static const char *help =
 static const char *short_options = "-hvD:gas:S:nj:p:cgf:F";
 
 /* this is the global FreeJ context */
-Context *freej = NULL;
+ContextPtr freej;
 
 // the runtime will open one screen by default
-ViewPort *screen = NULL;
+ViewPortPtr screen;
 char screen_name[16];
 
 int debug_level = 0;
@@ -306,10 +306,10 @@ int scripts(char *path) {
 
 #ifndef HAVE_DARWIN
 int main(int argc, char **argv) {
-    Layer *lay = NULL;
-    ConsoleController *con = NULL;
+    LayerPtr lay;
+    ConsoleControllerPtr con;
 
-    freej = new Context();
+    freej = MakeShared<Context>();
 
     notice("%s version %s   free the veejay", PACKAGE, VERSION);
     act("2001-2009 RASTASOFT :: %s", PACKAGE_URL);
@@ -323,7 +323,6 @@ int main(int argc, char **argv) {
     //  screen = new SdlScreen();
     if(!screen) {
         error("no screen can be opened");
-        delete freej;
         exit(1);
     }
 
@@ -347,7 +346,7 @@ int main(int argc, char **argv) {
     /* initialize the S-Lang text Console */
     if(!noconsole) {
         if(getenv("TERM")) {
-            con = new SlwConsole();
+            con = MakeShared<SlwConsole>();
             freej->register_controller(con);
             con->console_init();
             set_console(con);
@@ -442,14 +441,6 @@ int main(int argc, char **argv) {
            so it's a tree of cafudda calls originating from here
            all synched to the environment, yea, feels good */
     }
-
-
-
-
-
-    /* quit */
-    if(con) delete con;
-    delete freej;
 
     exit(1);
 }
