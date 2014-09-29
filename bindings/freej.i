@@ -1,9 +1,12 @@
 %module(directors="1") freej
+#pragma SWIG nowarn=322
+
 %include <std_shared_ptr.i>
 %include <std_string.i>
 
-%{
+%include "freej_sharedptr.i"
 
+%{
 #include "context.h"
 #include "linklist.h"
 #include "entity.h"
@@ -37,7 +40,9 @@
 #include "mouse_ctrl.h"
 #include "wiimote_ctrl.h"
 #include "osc_ctrl.h"
+#ifdef WITH_AUDIO
 #include "audio_collector.h"
+#endif
 #include "console_ctrl.h"
 
 
@@ -125,14 +130,16 @@ freej_entry_typemap_in(Encoder);
 %ignore JSyncThread;
 
 /* Now the freej headers.. */
+%include "entity.h"
 %include "freej.h"
 %include "jutils.h"
 %include "context.h"
-%include "sharedptr.h"
 %include "screen.h"
 %template(ScreenFactory) Factory<ViewPort>;
 
+#ifdef WITH_AUDIO
 %include "audio_collector.h"
+#endif
 
 %ignore DumbCallback;
 %feature("director") DumbCall;
@@ -227,15 +234,6 @@ freej_entry_typemap_in(Encoder);
 %feature("director") ConsoleController;
 %include "console_ctrl.h"
 
-
-%extend Layer
-{
-  void add_filter(Filter *filter)
-  {
-    filter->apply(self);
-  }
-}
-
 /* Language specific extensions */
 #if defined(SWIGPYTHON)
   %include "pypost.i"
@@ -244,16 +242,5 @@ freej_entry_typemap_in(Encoder);
 #elif defined(SWIGLUA)
   %include "luapost.i"
 #endif
-
-%inline %{
-void delete_entry(Entry *entry)
-{
-   delete(entry);
-}
-void delete_layer(Layer *lay)
-{
-   delete(lay);
-}
-%}
 
 // SWIGPERL5, SWIGRUBY, SWIGJAVA, SWIGLUA...

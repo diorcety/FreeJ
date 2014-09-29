@@ -95,12 +95,15 @@ AC_CONFIG_HEADERS([config.h])
 
 dnl never run autotools and configure automatically
 dnl AM_MAINTAINER_MODE
+${CFLAGS=""}
+${CXXFLAGS=""}
 
 dnl Checks for programs.
+AC_PROG_AWK
+AC_PROG_CPP
+AC_PROG_CC
 AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX_11
-AC_PROG_AWK
-AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -166,7 +169,7 @@ if test -z "$SWIG_LIB"; then
 else
     have_swig=yes
 
-    SWIG_COMMAND='$(SWIG) -c++ -O -Wall -I$(top_builddir) -I$(top_srcdir)/src/include -I$(top_builddir)/doc'
+    SWIG_COMMAND='$(SWIG) -c++ -O -I$(top_builddir) -I$(top_srcdir)/src/include -I$(top_builddir)/doc'
     AC_SUBST(SWIG_COMMAND)
     SWIG_IFACE='$(top_srcdir)/bindings/freej.i'
     AC_SUBST(SWIG_IFACE)
@@ -1407,7 +1410,8 @@ else
 fi
 
 
-INFO([= COMPILER FLAGS : $CFLAGS])
+INFO([= C COMPILER FLAGS : $CFLAGS])
+INFO([= CXX COMPILER FLAGS : $CXXFLAGS])
 INFO([= LINKER FLAGS   : $LDFLAGS])
 INFO([= INSTALL PREFIX : $prefix])
 echo "============================== now type make, may the source be with you!"

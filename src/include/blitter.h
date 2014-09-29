@@ -134,8 +134,6 @@ public:
     /** @param force crop even if nothing changed */
     void crop(LayerPtr lay, ViewPortPtr scr);
     ///< crop to fit in the ViewPort
-
-    LayerPtr layer; ///< the layer on which is applied the blitter
 private:
     int16_t old_lay_x;
     int16_t old_lay_y;

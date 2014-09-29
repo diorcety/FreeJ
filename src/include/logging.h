@@ -120,6 +120,7 @@ private:
 
 // Basic Logger implementation compatible with dynamic languages bindings,
 // subclasses in other languages should implement logmsg()
+FREEJ_FORWARD_PTR(WrapperLogger)
 class WrapperLogger : public Logger {
 public:
     class Error : public FreejError {

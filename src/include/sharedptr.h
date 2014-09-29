@@ -22,6 +22,7 @@
 
 #include <memory>
 
+#ifndef SWIG
 template <class T>
 using SharedPtr = std::shared_ptr<T>;
 template <class T>
@@ -32,6 +33,13 @@ template <class T>
 using ConstWeakPtr = std::weak_ptr<const T>;
 template <class T>
 using EnableSharedFromThis = std::enable_shared_from_this<T>;
+#else
+#define SharedPtr std::shared_ptr
+#define WeakPtr std::weak_ptr
+#define ConstSharedPtr std::shared_ptr
+#define ConstWeakPtr std::weak_ptr
+#define EnableSharedFromThis std::enable_shared_from_this
+#endif
 
 #define MakeShared std::make_shared
 #define DynamicPointerCast std::dynamic_pointer_cast

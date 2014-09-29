@@ -230,7 +230,7 @@ int Freior::open(char *file) {
 
     f0r_init();
 
-    setName((char*)info.name);
+    init();
 
     if(get_debug() > 2)
         print_info();
@@ -244,11 +244,7 @@ void Freior::init_parameters(Linklist<Parameter> &parameters) {
     LockedLinkList<Parameter> list = parameters.getLock();
 
     // Get the list of params.
-    param_infos.resize(info.num_params);
     for(int i = 0; i < info.num_params; ++i) {
-
-        (f0r_get_param_info)(&param_infos[i], i);
-
         //TODO EXTENDED PARAMETER
         ParameterPtr param = MakeShared<Parameter>((Parameter::Type)param_infos[i].type);
         param->setName(param_infos[i].name);
@@ -256,6 +252,16 @@ void Freior::init_parameters(Linklist<Parameter> &parameters) {
 
         param->setDescription(param_infos[i].explanation);
         list.push_back(param);
+    }
+}
+
+void Freior::init() {
+    setName((char*)info.name);
+
+    // Get the list of params.
+    param_infos.resize(info.num_params);
+    for(int i = 0; i < info.num_params; ++i) {
+        (f0r_get_param_info)(&param_infos[i], i);
     }
 }
 

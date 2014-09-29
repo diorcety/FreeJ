@@ -234,7 +234,7 @@ bool Context::init() {
     }
 
     // refresh the list of available plugins
-    plugger.refresh(SharedFromThis(Context));
+    plugger.refresh(this);
 
     return true;
 }
@@ -453,7 +453,7 @@ int Context::reset() {
         LockedLinkList<Controller>::iterator it = list.begin();
         func("deleting %u controllers", list.size());
         while(it != list.end()) {
-            ControllerPtr ctrl = list.front();
+            ControllerPtr ctrl = *it;
             if(ctrl->indestructible) {
                 ctrl->reset();
                 ++it;
@@ -468,8 +468,7 @@ int Context::reset() {
         LockedLinkList<ViewPort>::iterator it = list.begin();
         func("deleting %u screens", list.size());
         while(it != list.end()) {
-            ViewPortPtr scr = list.front();
-            list.pop_front();
+            ViewPortPtr scr = *it;
             if(scr->indestructible) {
                 scr->reset();
                 ++it;
@@ -724,16 +723,14 @@ LayerPtr Context::open(char *file, int w, int h) {
     }  else if(strncasecmp(end_file_ptr - 4, ".swf", 4) == 0) {
 
 #ifdef WITH_FLASH
-        nlayer = new FlashLayer();
+        nlayer = MakeShared<FlashLayer>();
         if(!nlayer->init()) {
             error("failed initialization of layer %s for %s", nlayer->getName().c_str(), file_ptr);
-            delete nlayer;
             return NULL;
         }
 
         if(!nlayer->open(file_ptr)) {
             error("create_layer : SWF open failed");
-            delete nlayer;
             nlayer = NULL;
         }
 #else
@@ -744,10 +741,9 @@ LayerPtr Context::open(char *file, int w, int h) {
     } else if(strcasecmp(file_ptr, "layer_opencv_cam") == 0) {
 #ifdef WITH_OPENCV
         func("creating a cam layer using OpenCV");
-        nlayer = new OpenCVCamLayer();
+        nlayer = MakeShared<OpenCVCamLayer>();
         if(!nlayer->init()) {
             error("failed initialization of webcam with OpenCV");
-            delete nlayer;
             return NULL;
         }
 #else

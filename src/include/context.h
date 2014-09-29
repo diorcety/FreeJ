@@ -49,13 +49,10 @@
 #include <string>
 
 FREEJ_FORWARD_PTR(Controller)
-
-class JsParser;
-class AudioCollector;
+FREEJ_FORWARD_PTR(JsParser)
+FREEJ_FORWARD_PTR(AudioCollector)
 FREEJ_FORWARD_PTR(VideoEncoder)
-
-
-class FreejDaemon;
+FREEJ_FORWARD_PTR(FreejDaemon)
 
 template <class T> class Linklist;
 

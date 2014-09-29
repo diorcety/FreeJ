@@ -43,9 +43,12 @@ template <class T> class Linklist;
    @brief Collects DLO plugins that can be used as Effect or Layer
  */
 class Plugger {
+	friend Context;
 public:
     Plugger(); ///< Plugger onstructor
     ~Plugger(); ///< Plugger destructor
+
+private:
 
     /**
        Tell the Plugger to read again thru configured paths and updates
@@ -54,7 +57,7 @@ public:
        @param type the type name of the plugins to look for (ie. "filters")
        @return number of valid plugins found
      */
-    int refresh(ContextPtr env);
+    int refresh(Context *env);
 
 
 

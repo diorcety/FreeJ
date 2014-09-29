@@ -175,13 +175,9 @@ void SdlScreen::blit(LayerPtr src) {
 
         // executes SDL blit
     } else if(b->type == Blit::SDL) {
-        //TODO 
-/*
-        if(src->blitter->geo)
-            (*b->sdl_fun)
-                (offset, &b->sdl_rect, sdl_screen,
-                NULL, src->blitter->geo, &b->parameters); */
-
+        (*b->sdl_fun)
+            (offset, &b->sdl_rect, sdl_screen,
+            NULL, &src->geo, &b->parameters);
     }
 
 //  else if (b->type == Blit::PAST) {

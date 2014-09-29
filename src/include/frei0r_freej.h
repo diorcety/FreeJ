@@ -79,6 +79,7 @@ protected:
 
     void init_parameters(Linklist<Parameter> &parameters);
 private:
+    void init();
 
     // dlopen handle
     void *handle;
