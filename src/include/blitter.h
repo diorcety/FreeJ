@@ -22,103 +22,15 @@
 #ifndef __BLITTER_H__
 #define __BLITTER_H__
 
-#include <SDL.h>
-#include <geometry.h>
-
-#include <screen.h>
+#include <blit.h>
 #include <linklist.h>
-#include <parameter.h>
-
-/////////////////////////////////// blit functions prototypes
-#define BLIT static inline void
-
-typedef void (blit_f)(void *src, void *dst, int len, Linklist<Parameter> *params);
-
-typedef void (blit_sdl_f)(void *src, SDL_Rect *src_rect,
-                          SDL_Surface *dst, SDL_Rect *dst_rect,
-                          Geometry *geo, Linklist<Parameter> *params);
-
-typedef void (blit_past_f)(void *src, void *past, void *dst, int len);
-
-///////////////////////////////////////////////////////////////////////
 
 FREEJ_FORWARD_PTR(Layer)
-
-
-template <class T> class Linklist;
-
-FREEJ_FORWARD_PTR(Blitter)
 FREEJ_FORWARD_PTR(ViewPort)
 
-////// blit setup functions to be used by the screen
-void setup_sdl_blits(BlitterPtr blitter);
-void setup_linear_blits(BlitterPtr blitter);
-
+template <class T> class LinkList;
 
 FREEJ_FORWARD_PTR(Blit)
-class Blit : public Entry {
-    friend class Blitter;
-    friend class ViewPort;
-
-public:
-
-    Blit();
-    ~Blit();
-
-    float value;    ///< parameter value
-
-    Linklist<Parameter> parameters; ///< linklist of blit parameters
-
-    blit_f *fun; ///< pointer to linear blit function
-    blit_sdl_f *sdl_fun; ///< pointer to sdl blit function
-    blit_past_f *past_fun; ///< pointer to past blit function
-
-    enum BlitType {
-        NONE = 0,
-        LINEAR = 1,
-        SDL = 2,
-        PAST = 3
-    };
-
-//#define LINEAR_BLIT 1
-//#define SDL_BLIT 2
-//#define PAST_BLIT 3
-    BlitType type; ///< LINEAR|SDL|PAST type
-
-
-    int32_t scr_stride_dx;
-    int32_t scr_stride_sx;
-    int32_t scr_stride_up;
-    int32_t scr_stride;
-    uint32_t scr_offset;
-
-    int32_t lay_pitch;
-    int32_t lay_bytepitch;
-    int32_t lay_stride;
-    int32_t lay_stride_sx;
-    int32_t lay_stride_dx;
-    int32_t lay_stride_up;
-    int32_t lay_height;
-    uint32_t lay_offset;
-
-    SDL_Rect sdl_rect; // sdl crop rectangle
-
-private:
-    // parameters for linear crop
-
-
-
-
-
-    // past blit buffer
-    void *past_frame;
-
-    /*   /\* small vars used in blits *\/ */
-    /*   int chan, c, cc; */
-    /*   uint32_t *scr, *pscr, *off, *poff, *pastoff, *ppastoff; */
-
-};
-
 
 FREEJ_FORWARD_PTR(Blitter)
 class Blitter : public EnableSharedFromThis<Blitter> {
@@ -126,8 +38,7 @@ public:
     Blitter();
     ~Blitter();
 
-    Linklist<Blit> blitlist; ///< list of available blits
-    BlitPtr mSelectedBlit;
+    LinkList<Blit> blitlist; ///< list of available blits
     BlitPtr default_blit;
 
     /* ==== CROP */

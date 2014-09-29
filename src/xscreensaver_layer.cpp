@@ -19,7 +19,7 @@
 
 XScreenSaverLayer::XScreenSaverLayer()
     : Layer() {
-    setName("XSS");
+    name = "XSS";
 }
 
 XScreenSaverLayer::~XScreenSaverLayer() {
@@ -33,7 +33,7 @@ bool XScreenSaverLayer::_init() {
     // img = XGetImage(dpy, back_win, 0, 0, geo.w, geo.h, ~0L, ZPixmap);
     // buffer=img->data;
     // buffer=*(&img->data);
-    output = malloc(geo.bytesize);
+    output = malloc(geo.getByteSize());
 
     return true;
 }
@@ -127,7 +127,7 @@ bool XScreenSaverLayer::open(const char *file) {
     return(true);
 }
 
-void *XScreenSaverLayer::feed() {
+void *XScreenSaverLayer::feed(double feed) {
     // notice("feed %i, %i",  freej->screen->w, freej->screen->h);
     // XCopyArea(display, wmgen.pixmap, iconwin, NormalGC, 0,0,
     //           wmgen.attributes.width, wmgen.attributes.height, 0, 0);
@@ -150,7 +150,7 @@ void *XScreenSaverLayer::feed() {
     // img = XGetImage(dpy, back_win, 0, 0, geo.w, geo.h, 32, XYBitmap);
     img = XGetImage(dpy, back_win, 0, 0, geo.w, geo.h, ~0L, ZPixmap);
     // buffer=img->data;
-    memcpy(output, img->data, geo.bytesize);
+    memcpy(output, img->data, geo.getByteSize());
     // buffer=*(&img->data);
     XDestroyImage(img);
     // XSync(dpy, true);

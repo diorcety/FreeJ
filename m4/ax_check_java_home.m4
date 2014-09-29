@@ -1,30 +1,21 @@
 # ===========================================================================
-#              http://autoconf-archive.cryp.to/swig_python.html
+#    http://www.gnu.org/software/autoconf-archive/ax_check_java_home.html
 # ===========================================================================
 #
 # SYNOPSIS
 #
-#   SWIG_PYTHON([use-shadow-classes = {no, yes}])
+#   AX_CHECK_JAVA_HOME
 #
 # DESCRIPTION
 #
-#   Checks for Python and provides the $(SWIG_PYTHON_CPPFLAGS), and
-#   $(SWIG_PYTHON_OPT) output variables.
-#
-#   $(SWIG_PYTHON_OPT) contains all necessary SWIG options to generate code
-#   for Python. Shadow classes are enabled unless the value of the optional
-#   first argument is exactly 'no'. If you need multi module support
-#   (provided by the SWIG_MULTI_MODULE_SUPPORT macro) use
-#   $(SWIG_PYTHON_LIBS) to link against the appropriate library. It contains
-#   the SWIG Python runtime library that is needed by the type check system
-#   for example.
+#   Check for Sun Java (JDK / JRE) installation, where the 'java' VM is in.
+#   If found, set environment variable JAVA_HOME = Java installation home,
+#   else left JAVA_HOME untouch, which in most case means JAVA_HOME is
+#   empty.
 #
 # LICENSE
 #
-#   Copyright (c) 2008 Sebastian Huber <sebastian-huber@web.de>
-#   Copyright (c) 2008 Alan W. Irwin <irwin@beluga.phys.uvic.ca>
-#   Copyright (c) 2008 Rafael Laboissiere <rafael@laboissiere.net>
-#   Copyright (c) 2008 Andrew Collier <colliera@ukzn.ac.za>
+#   Copyright (c) 2008 Gleen Salmon <gleensalmon@yahoo.com>
 #
 #   This program is free software; you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License as published by the
@@ -52,10 +43,38 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-AC_DEFUN([SWIG_PYTHON],[
-        AC_REQUIRE([AC_PROG_SWIG])
-        AC_REQUIRE([AC_PYTHON_DEVEL])
-        test "x$1" != "xno" || swig_shadow=" -noproxy"
-        AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow])
-        AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
+#serial 6
+
+AU_ALIAS([AC_CHECK_JAVA_HOME], [AX_CHECK_JAVA_HOME])
+
+AC_DEFUN([AX_CHECK_JAVA_HOME],
+[AC_MSG_CHECKING([for JAVA_HOME])
+# We used a fake loop so that we can use "break" to exit when the result
+# is found.
+while true
+do
+  # If the user defined JAVA_HOME, don't touch it.
+  test "${JAVA_HOME+set}" = set && break
+
+  # On Mac OS X 10.5 and following, run /usr/libexec/java_home to get
+  # the value of JAVA_HOME to use.
+  # (http://developer.apple.com/library/mac/#qa/qa2001/qa1170.html).
+  JAVA_HOME=`/usr/libexec/java_home 2>/dev/null`
+  test x"$JAVA_HOME" != x && break
+
+  # See if we can find the java executable, and compute from there.
+  TRY_JAVA_HOME=`ls -dr /usr/java/* 2> /dev/null | head -n 1`
+  if test x$TRY_JAVA_HOME != x; then
+    PATH=$PATH:$TRY_JAVA_HOME/bin
+  fi
+  AC_PATH_PROG([JAVAC_PATH_NAME], [javac])
+  if test "x$JAVAC_PATH_NAME" != x; then
+    JAVA_HOME=`readlink -f $JAVAC_PATH_NAME | sed "s:bin/javac::"`
+    break
+  fi
+
+  AC_MSG_NOTICE([Could not compute JAVA_HOME])
+  break
+done
+AC_MSG_RESULT([$JAVA_HOME])
 ])

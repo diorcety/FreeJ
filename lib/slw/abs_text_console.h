@@ -72,7 +72,7 @@ public:
 
     int cur_x, cur_y; ///< cursor positioning
 
-    Linklist<Row> rows;
+    LinkList<Row> rows;
     RowPtr cur_row;
     RowPtr vis_row_in;
 

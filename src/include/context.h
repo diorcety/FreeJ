@@ -47,6 +47,7 @@
 #include <factory.h>
 #include <config.h>
 #include <string>
+#include <timelapse.h>
 
 FREEJ_FORWARD_PTR(Controller)
 FREEJ_FORWARD_PTR(JsParser)
@@ -54,7 +55,7 @@ FREEJ_FORWARD_PTR(AudioCollector)
 FREEJ_FORWARD_PTR(VideoEncoder)
 FREEJ_FORWARD_PTR(FreejDaemon)
 
-template <class T> class Linklist;
+template <class T> class LinkList;
 
 /* maximum height & width supported by context */
 #define MAX_HEIGHT 1024
@@ -62,9 +63,6 @@ template <class T> class Linklist;
 
 FREEJ_FORWARD_PTR(Context)
 class Context : public EnableSharedFromThis<Context> {
-public:
-    ViewPortPtr mSelectedScreen;
-
 private:
 
     static bool factory_initialized;
@@ -115,22 +113,11 @@ public:
     bool register_controller(ControllerPtr ctrl);
     bool rem_controller(ControllerPtr ctrl);
 
-    bool add_layer(LayerPtr lay); ///< add a layer to the screen and engine
-    void rem_layer(LayerPtr lay);
-
-    bool add_encoder(VideoEncoderPtr enc); ///< add an encoder to the engine
-
-    void *coords(int x, int y); ///< returns an offset to currently selected screen
-
-    int parse_js_cmd(const char *cmd);
-
-    int open_script(char *filename);
-
     int reset(); ///< clear the engine and deletes all registered objects
 
     bool config_check(const char *filename);
 
-    void resize(int w, int h);
+private:
 
     bool quit;
 
@@ -145,38 +132,68 @@ public:
     SDL_Event event;
     bool poll_events;
 
+public:
     bool add_screen(ViewPortPtr scr); ///< add a new screen
-    Linklist<ViewPort> screens; ///< linked list of registered screens
+    //bool rem_screen(ViewPortPtr src); ///< remove a screen
 
-    Linklist<Controller> controllers; ///< linked list of registered interactive controllers
+private:
+    LinkList<ViewPort> screens; ///< linked list of registered screens
 
-    Linklist<Filter> filters; ///< linked list of registered filters
+    LinkList<Controller> controllers; ///< linked list of registered interactive controllers
 
-    Linklist<Filter> generators; ///< linked list of registered generators
+    LinkList<Filter> filters; ///< linked list of registered filters
+
+    LinkList<Filter> generators; ///< linked list of registered generators
 
     //AudioCollector *audio; ///< audio device recording input (PortAudio)
 
     Plugger plugger; ///< filter plugins host
 
-#ifdef WITH_JAVASCRIPT
-    JsParser *js; ///< javascript parser object
-#endif //WITH_JAVASCRIPT
-
-    char main_javascript[512]; ///< if started with a javascript, save the filename here (used by reset)
-
-    /* Set the interval (in frames) after
-       the fps counter is updated */
-    FPS fps;
-    double fps_speed;
-
     bool clear_all;
     bool start_running;
 
+    FPS fps;
+    Timelapse timelapse;
+
+public:
+    inline double getFps() {
+        return this->fps.get();
+    }
+
+    inline void getFps(double fps) {
+        this->fps.set(fps);
+    }
+
+    inline double getCurrentFps() {
+        return this->fps.getCurrent();
+    }
+
+//TODO
+public:
     char *layers_description; ///< string describing available layer types
     char *screens_description; ///< string describing available screen types
 
     LayerPtr open(char *file, int w = 0, int h = 0); ///< creates a layer from a filename, detecting its type
 
+    inline bool isInteractive() const {
+        return interactive;
+    }
+    
+    inline void setInteractive(bool interactive) {
+        this-> interactive = interactive;
+    }
+    
+    inline bool isQuitting() const {
+        return quit;
+    }
+    
+    inline bool isStartRunning() const {
+        return start_running;
+    }
+    
+    inline void setStartRunning(bool state) {
+        start_running = state;
+    }
 };
 
 #endif

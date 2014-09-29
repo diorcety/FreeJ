@@ -39,8 +39,6 @@ protected:
     bool _init();
 
 private:
-    //void run(); ///< Main Layer thread loop
-    //bool cafudda();
     void resize();
     bool autosize, mapped, unobscured;
     Geometry crop;
@@ -77,10 +75,9 @@ public:
     bool open(uint32_t win_id);
     bool open(const char *);
 
-    //void *feed();
     void close();
 
-    void *feed();
+    void *feed(double time);
 };
 #endif // WITH_XGRAB
 

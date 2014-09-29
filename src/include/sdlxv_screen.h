@@ -40,6 +40,8 @@ public:
     void fullscreen() {
     };
     void *get_surface();
+
+private:
     SDL_Surface *scr;
 
     // deprecated

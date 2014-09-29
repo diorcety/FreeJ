@@ -102,4 +102,16 @@ void GlScreen::blit(LayerPtr layer) {
     layer->unlock();
 }
 
+void GlScreen::show() {
+}
+
+void GlScreen::clear() {
+}
+
+void GlScreen::fullscreen() {
+}
+
+void GlScreen::do_resize(int resize_w, int resize_h) {
+}
+
 #endif

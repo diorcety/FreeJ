@@ -34,7 +34,7 @@
 #include <jutils.h>
 
 MidiController::MidiController() : SdlController() {
-    setName("Midi Controller");
+    name = "Midi Controller";
     seq_handle = NULL;
 }
 

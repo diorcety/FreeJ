@@ -18,8 +18,6 @@ txt = freej.TextLayer()
 txt.init()
 # writes the hello world text inside the layer
 txt.write("Hello World!")
-# start the layer
-txt.start()
 # add the layer to the screen
 scr.add_layer(txt)
 # starts freej in a separate thread

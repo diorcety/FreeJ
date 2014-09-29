@@ -34,7 +34,7 @@ GeoLayer::GeoLayer()
     fsurf[0] = NULL;
     fsurf[1] = NULL;
     color = 0xffffffff;
-    setName("GEO");
+    name = "GEO";
     set_filename("/geometrical layer");
     is_native_sdl_surface = true;
 }
@@ -63,8 +63,8 @@ bool GeoLayer::_init() {
 //     return(false);
 //   }
 
-    fsurf[0] = (uint32_t*)malloc(geo.bytesize);
-    fsurf[1] = (uint32_t*)malloc(geo.bytesize);
+    fsurf[0] = (uint32_t*)malloc(geo.getByteSize());
+    fsurf[1] = (uint32_t*)malloc(geo.getByteSize());
 
     func("Geometry surface initialized");
     opened = true;
@@ -81,7 +81,7 @@ void GeoLayer::close() {
     return;
 }
 
-void *GeoLayer::feed() {
+void *GeoLayer::feed(double feed) {
     /* TODO: check synchronisation here
        we might want to use a double buffer and do a memcpy here
        or a locking system

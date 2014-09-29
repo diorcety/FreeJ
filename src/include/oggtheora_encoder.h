@@ -68,7 +68,6 @@ public:
     void setMixCoef(float val);
     long getAvBitRate();
     int encode_frame();
-//   size_t	rv;
 
 private:
     float m_MixVal;

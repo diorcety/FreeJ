@@ -30,7 +30,7 @@
 
 FREEJ_FORWARD_PTR(Context)
 
-template <class T> class Linklist;
+template <class T> class LinkList;
 
 /**
    This class implements the object storing all available filter
@@ -48,18 +48,8 @@ public:
     Plugger(); ///< Plugger onstructor
     ~Plugger(); ///< Plugger destructor
 
-private:
-
-    /**
-       Tell the Plugger to read again thru configured paths and updates
-       the plugin table.
-       @param env the context environment where to save found plugins
-       @param type the type name of the plugins to look for (ie. "filters")
-       @return number of valid plugins found
-     */
-    int refresh(Context *env);
-
-
+    LinkList<Filter> getFilters();
+    LinkList<Filter> getGenerators();
 
 private:
 

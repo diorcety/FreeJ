@@ -32,6 +32,7 @@ typedef void (filter_param_f)(FilterInstancePtr filt, ParameterPtr param, int id
 
 class Parameter : public Entry {
     friend class Iterator;
+    friend class ParameterInstance;
     // TODO: different iterator beahaviour for different parameter types
 public:
     enum Type {
@@ -47,29 +48,18 @@ public:
         STRING
     };
 
-    Parameter(Type param_type);
+    Parameter(Type param_type, const std::string &name, const std::string &description, float multiplier = 1.0);
     ~Parameter();
+    inline Type getType() {
+        return type;
+    }
 
-    virtual bool set(void *val);
-
-    virtual void update();
-
-    virtual void *get();
-    ///< calling  function should  do correct type-casting
-    ///< according to the parameter type
-
-    bool parse(char *p);
-
+private:
     Type type;
-public:
-    void *value;
     void *min_value;
     void *max_value;
     size_t value_size;
-
-    bool changed; ///< can be used externally by application caller
     float multiplier; ///< multiplier to adjust the value on set (none if 1.0)
-
 };
 
 #endif

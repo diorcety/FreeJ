@@ -29,11 +29,6 @@
 
 Entry::Entry() {
     data = NULL;
-#ifdef WITH_JAVASCRIPT
-    jsclass = NULL;
-    jsobj = NULL;
-    jsenv = NULL;
-#endif //WITH_JAVASCRIPT
 }
 
 Entry::~Entry() {
@@ -42,16 +37,8 @@ Entry::~Entry() {
     }
 }
 
-void Entry::setName(const std::string &name) {
-    this->name = name;
-}
-
 const std::string &Entry::getName() const {
     return name;
-}
-
-void Entry::setDescription(const std::string &description) {
-    this->description = description;
 }
 
 const std::string &Entry::getDescription() const {

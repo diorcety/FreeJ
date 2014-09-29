@@ -52,6 +52,15 @@ public:
     void *coords(int x, int y) {
         return NULL;
     };
+    
+    void show();
+    void clear();
+
+    void fullscreen();
+protected:
+    void do_resize(int resize_w, int resize_h);
+
+private:
 
     // whis is the main window surface
     SDL_Surface *surface;

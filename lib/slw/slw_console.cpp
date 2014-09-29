@@ -197,7 +197,7 @@ bool SLangConsole::place(SLangWidgetPtr wid, int hx, int hy, int lx, int ly) {
 
 
     // append the new widget in our linklist
-    widgets.getLock().push_back( wid );
+    LockedLinkList<SLangWidget>(widgets).push_back( wid );
 
     func("s-lang widget %s sized %ux%u placed at %u,%u",
          wid->getName().c_str(), wid->w, wid->h,
@@ -245,7 +245,7 @@ bool SLangConsole::refresh() {
         screen_size_changed = false;
 
         // refresh all widgets
-        LockedLinkList<SLangWidget> list = widgets.getLock();
+        LockedLinkList<SLangWidget> list = LockedLinkList<SLangWidget>(widgets);
         std::for_each(list.begin(), list.end(), [&](SLangWidgetPtr wid) {
                           wid->refresh();
                       });

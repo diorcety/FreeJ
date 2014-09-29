@@ -33,7 +33,7 @@ public:
     ~ImageLayer();
 
     bool open(const char *file);
-    void *feed();
+    void *feed(double time);
 
     void close();
 

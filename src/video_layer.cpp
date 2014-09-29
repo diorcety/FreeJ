@@ -67,10 +67,10 @@ src_short_to_float_array (const short *in, float *out, int len)
 FACTORY_REGISTER_INSTANTIATOR(Layer, VideoLayer, MovieLayer, ffmpeg);
 
 VideoLayer::VideoLayer()
-    : Layer() {
+    : Layer(), JSyncThread() {
 
     grab_dv = false;
-    setName("VID");
+    name = "VID";
     frame_number = 0;
     av_buf = NULL;
     avformat_context = NULL;
@@ -248,8 +248,6 @@ bool VideoLayer::open(const char *file) {
                 frame_rate = video_codec_ctx->frame_rate /
                              video_codec_ctx->frame_rate_base;
 #endif
-                // set the layer fps
-                fps.set(frame_rate);
                 /* this saves only file without full path! */
                 set_filename(file);
 
@@ -319,7 +317,7 @@ bool VideoLayer::open(const char *file) {
     full_filename = strdup(file);
 
     geo.init(video_codec_ctx->width, video_codec_ctx->height, 32);
-    func("VideoLayer :: w[%u] h[%u] size[%u]", geo.w, geo.h, geo.bytesize);
+    func("VideoLayer :: w[%u] h[%u] size[%u]", geo.w, geo.h, geo.getByteSize());
     func("VideoLayer :: frame_rate[%f]", frame_rate);
 
     // initialize picture
@@ -358,7 +356,7 @@ bool VideoLayer::open(const char *file) {
     return true;
 }
 
-void *VideoLayer::feed() {
+void *VideoLayer::feed(double secs) {
     int got_picture = 0;
     int len1 = 0;
     int ret = 0;
@@ -532,7 +530,7 @@ void *VideoLayer::feed() {
                 len1 = decode_audio_packet(&data_size);
                 if(len1 > 0)  {
                     int samples = data_size / sizeof(uint16_t);
-                    long unsigned int m_SampleRate = screen->m_SampleRate ? *(screen->m_SampleRate) : 48000;
+                    long unsigned int m_SampleRate = screen->getSampleRate() ? *(screen->getSampleRate()) : 48000;
                     double m_ResampleRatio = (double)(m_SampleRate) / (double)audio_samplerate;
                     long unsigned max_buf = ceil(AVCODEC_MAX_AUDIO_FRAME_SIZE * m_ResampleRatio * audio_channels);
 
@@ -544,7 +542,7 @@ void *VideoLayer::feed() {
 
                     src_short_to_float_array((const short*) audio_buf, audio_float_buf, samples);
                     if(m_ResampleRatio == 1.0) {
-                        ringbuffer_write(screen->audio, (const char*)audio_float_buf,  samples * sizeof(float));
+                        ringbuffer_write(screen->getAudio(), (const char*)audio_float_buf,  samples * sizeof(float));
                         time_t *tm = (time_t *)malloc(sizeof(time_t));
                         time(tm);
 //          std::cerr << "-- VL:" << asctime(localtime(tm));
@@ -565,7 +563,7 @@ void *VideoLayer::feed() {
                             src_data.data_out      = audio_resampled_buf + offset;
 
                             src_simple(&src_data, SRC_SINC_MEDIUM_QUALITY, audio_channels);
-                            ringbuffer_write(screen->audio,
+                            ringbuffer_write(screen->getAudio(),
                                              (const char*)audio_resampled_buf,
                                              src_data.output_frames_gen * audio_channels * sizeof(float));
 

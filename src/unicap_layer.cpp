@@ -319,7 +319,7 @@ bool UnicapLayer::_init() {
         detected++;
     }
 
-    parameters = new Linklist<Parameter>();
+    parameters = new LinkList<Parameter>();
 
     return true;
 }

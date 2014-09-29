@@ -43,7 +43,7 @@ ImageLayer::ImageLayer()
     image = NULL;
     black_image = NULL;
 
-    setName("IMG");
+    name = "IMG";
     is_native_sdl_surface = true;
 
     opened = false;
@@ -88,9 +88,9 @@ bool ImageLayer::open(const char *file) {
 
     geo.init(image->w, image->h, 32);
 
-
+    auto bytesize = geo.getByteSize();
     notice("ImageLayer opened %s :: w[%u] h[%u] (%u bytes)",
-           file, geo.w, geo.h, geo.bytesize);
+           file, geo.w, geo.h, bytesize);
 
 
     /** allocate memory for the black image */
@@ -99,9 +99,9 @@ bool ImageLayer::open(const char *file) {
         black_image = NULL;
     }
 
-    black_image = malloc(geo.bytesize);
+    black_image = malloc(bytesize);
     // paint it black!
-    black_image = memset(black_image, 0, geo.bytesize);
+    black_image = memset(black_image, 0, bytesize);
 
     // do not apply the mask,
     // copy image+alpha to surf
@@ -115,7 +115,7 @@ bool ImageLayer::open(const char *file) {
     return true;
 }
 
-void *ImageLayer::feed() {
+void *ImageLayer::feed(double time) {
     return ((surf) ? surf->pixels : NULL);
 }
 

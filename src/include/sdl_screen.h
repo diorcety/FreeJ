@@ -34,8 +34,10 @@ public:
     ~SdlScreen();
 
 
-    void resize(int resize_w, int resize_h);
-    void setup_blits(LayerPtr lay);
+protected:
+    void do_resize(int resize_w, int resize_h);
+
+public:
     void blit(LayerPtr src);
 
 
@@ -48,9 +50,11 @@ public:
         return BGRA32;
     };
 
+private:
     SDL_Event event;
     SDL_Surface *sdl_screen;
 
+public:
     void *coords(int x, int y);
 
     bool lock();

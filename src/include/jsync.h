@@ -49,8 +49,8 @@ public:
     JSyncThread();
     virtual ~JSyncThread();
 
-    int start();
-    void stop();
+    virtual int start();
+    virtual void stop();
 
     virtual void thread_setup() {
     }
@@ -60,8 +60,6 @@ public:
 
     virtual void thread_teardown() {
     }
-
-    FPS fps;
 
     void lock() {
         pthread_mutex_lock(&_mutex);

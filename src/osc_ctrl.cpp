@@ -61,7 +61,7 @@ OscController::OscController()
     srv = NULL;
     sendto = NULL;
 
-    setName("OscCtrl");
+    name = "OscCtrl";
 }
 
 OscController::~OscController() {
@@ -72,7 +72,7 @@ OscController::~OscController() {
 }
 
 int OscController::poll() {
-    LockedLinkList<Entry> list = commands_pending.getLock();
+    LockedLinkList<Entry> list = LockedLinkList<Entry>(commands_pending);
     // check if there are pending commands
     if(list.size() > 0)
         return dispatch();

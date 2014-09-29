@@ -57,6 +57,7 @@
 %import "inttypes.i"
 
 //ditch some of the defines we have that don't need to be exposed to the user
+%ignore JSyncThread;
 %ignore THREADSAFE;
 %ignore MAX_ERR_MSG;
 %ignore MAX_COMPLETION;
@@ -75,8 +76,9 @@
 %immutable layers_description;
 %immutable Parameter::description;
 
-%ignore Linklist::operator[];
-%ignore Linklist::getLock;
+%ignore Plugger::getGenerators;
+%ignore Plugger::getFilters;
+%ignore LinkList::operator[];
 %ignore Layer::parameters;
 %ignore Controller::listeners;
 %ignore ViewPort::encoders;
@@ -117,7 +119,7 @@ freej_entry_typemap_in(Controller);
 freej_entry_typemap_in(Encoder);
 */
 
-/* for Linklist.search (note normally you want to add
+/* for LinkList.search (note normally you want to add
    support for dict like access for specific languages) */
 %apply int * OUTPUT { int *idx };
 
@@ -154,15 +156,15 @@ freej_entry_typemap_in(Encoder);
 
 %include "entity.h"
 %include "linklist.h"
-%template(EntryLinkList) Linklist<Entry>;
+%template(EntryLinkList) LinkList<Entry>;
 
 %include "parameter.h"
-%template(ParameterLinkList) Linklist<Parameter>;
+%template(ParameterLinkList) LinkList<Parameter>;
 
 %include "filter.h"
-%template(FilterLinkList) Linklist<Filter>;
+%template(FilterLinkList) LinkList<Filter>;
 %include "filter_instance.h"
-%template(FilterInstanceLinkList) Linklist<FilterInstance>;
+%template(FilterInstanceLinkList) LinkList<FilterInstance>;
 
 %include "blitter.h"
 %include "plugger.h"
@@ -171,7 +173,7 @@ freej_entry_typemap_in(Encoder);
 
 // layers
 %include "fps.h"
-%template(LayerLinkList) Linklist<Layer>;
+%template(LayerLinkList) LinkList<Layer>;
 %include "layer.h"
 
 %include "generator_layer.h"
@@ -183,7 +185,7 @@ freej_entry_typemap_in(Encoder);
 
 
 // screens...
-%template(ScreenLinkList) Linklist<ViewPort>;
+%template(ScreenLinkList) LinkList<ViewPort>;
 %include "screen.h"
 
 %include "sdl_screen.h"
@@ -200,7 +202,7 @@ freej_entry_typemap_in(Encoder);
 // controllers
 %feature("director") Controller;
 %include "controller.h"
-%template(ControllerLinkList) Linklist<Controller>;
+%template(ControllerLinkList) LinkList<Controller>;
 
 %feature("director") SdlController;
 %include "sdl_controller.h"

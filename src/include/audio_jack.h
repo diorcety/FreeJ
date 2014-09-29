@@ -32,6 +32,9 @@ const int MAX_INPUTPORTS = 256;
 const int MAX_OUTPUTPORTS = 256;
 
 class JackClient {
+    friend class ViewPort;
+    friend class AudioCollector;
+    friend class OggTheoraEncoder;
 public:
     static JackClient *Get()      {
         if(!m_Singleton) m_Singleton = new JackClient;
@@ -75,13 +78,15 @@ public:
     int          AddOutputPort();
 
     int SetRingbufferPtr(ringbuffer_t *rb, int samplerate, int channels); ///< connect a rinbuffer to JACK out
+    void        isEncoded(bool isEnc);
+
+private:
     static long unsigned int m_BufferSize;
     static long unsigned int m_SampleRate;
     static bool m_Attached;
     ringbuffer_t *audio_mix_ring;       //ringbuffer to be streamed
     ringbuffer_t *first;
     int m_ringbufferchannels;
-    void        isEncoded(bool isEnc);
 
 protected:
     JackClient();

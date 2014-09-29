@@ -42,7 +42,7 @@ XGrabLayer::XGrabLayer()
     autosize = true;
     //gc = NULL;
 
-    setName("XGR");
+    name = "XGR";
     int r = XInitThreads();
     func("XinitThread: %i", r);
 }
@@ -128,10 +128,8 @@ bool XGrabLayer::open(uint32_t win_id_new) {
     XSync(display, False);
     //XSetErrorHandler(old_h);
 
-    lock();
     win = win_id_new;
     resize();
-    unlock();
 
     opened = true;
     active = true;
@@ -258,7 +256,7 @@ bool XGrabLayer::_init() {
 //XImage *XGetImage(Display *display, Drawable d, int x, int y, unsigned int width, unsigned int height, unsigned long plane_mask, int format);
 //XImage *XGetSubImage(Display *display, Drawable d, int x, int y, unsigned int width, unsigned int height, unsigned long plane_mask, int format, XImage *dest_image, int dest_x, dest_y);
 
-void *XGrabLayer::feed() {
+void *XGrabLayer::feed(double time) {
     //func("%u:%s:%s (%p)",__LINE__,__FILE__,__FUNCTION__, this);
     //return surf->pixels;
     //
@@ -334,7 +332,6 @@ void XGrabLayer::close() {
     func("%u:%s:%s (%p)", __LINE__, __FILE__, __FUNCTION__, this);
     opened = false;
     active = false;
-    stop();
     buffer = NULL;
 
     if(ximage) {

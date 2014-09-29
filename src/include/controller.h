@@ -29,9 +29,6 @@
 
 #include <config.h>
 #include <cstdarg> // va_list
-#ifdef WITH_JAVASCRIPT
-#include <jsapi.h> // spidermonkey header
-#endif //WITH_JAVASCRIPT
 
 #include <linklist.h>
 
@@ -40,21 +37,9 @@ FREEJ_FORWARD_PTR(Context)
 FREEJ_FORWARD_PTR(ControllerListener)
 class ControllerListener : public Entry {
 public:
-#ifdef WITH_JAVASCRIPT
-    ControllerListener(JSContext *cx, JSObject *obj);
-#endif //WITH_JAVASCRIPT
     ~ControllerListener();
     bool frame();
-    // TODO: eliminate runtime resolution -> C++ overhead alert!
-#ifdef WITH_JAVASCRIPT
-    bool call(const char *funcname, int argc, jsval *argv);
-    bool call(const char *funcname, int argc, const char *format, ...);
-#endif //WITH_JAVASCRIPT
 private:
-#ifdef WITH_JAVASCRIPT
-    jsval frameFunc;
-#endif //WITH_JAVASCRIPT
-
 };
 
 FREEJ_FORWARD_PTR(Controller)
@@ -76,6 +61,8 @@ public:
     virtual int dispatch() = 0; ///< dispatch() is implemented by the specific controller
     ///< distributes the signals to listeners, can be overrided in python
 
+protected:
+
     bool initialized; ///< is this class initialized on a context?
     bool active; ///< is this class active?
 
@@ -83,16 +70,13 @@ public:
 
     bool javascript; ///< was this controller created by javascript?
 
+public:
     bool add_listener(ControllerListenerPtr listener);
+    //bool rem_listener(ControllerListenerPtr listener);
 
     void reset();
-
-    // TODO: eliminate runtime resolution -> C++ overhead alert!
-#ifdef WITH_JAVASCRIPT
-    int JSCall(const char *funcname, int argc, jsval *argv);
-    int JSCall(const char *funcname, int argc, const char *format, ...);
-#endif //WITH_JAVASCRIPT
-    Linklist<ControllerListener> listeners;
+protected:
+    LinkList<ControllerListener> listeners;
 };
 
 #endif

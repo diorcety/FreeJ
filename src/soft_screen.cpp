@@ -23,6 +23,7 @@
 
 #include <layer.h>
 #include <blitter.h>
+#include <blit_instance.h>
 
 #include <jutils.h>
 #include <soft_screen.h>
@@ -30,14 +31,14 @@
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, SoftScreen, Screen, soft);
 
-
+typedef void (blit_f)(void *src, void *dst, int len, LinkList<ParameterInstance> &params);
 
 
 SoftScreen::SoftScreen()
     : ViewPort() {
 
     screen_buffer = NULL;
-    setName("SOFT");
+    name = "SOFT";
 }
 
 SoftScreen::~SoftScreen() {
@@ -45,21 +46,8 @@ SoftScreen::~SoftScreen() {
     if(screen_buffer) free(screen_buffer);
 }
 
-void SoftScreen::setup_blits(LayerPtr lay) {
-
-    BlitterPtr b = MakeShared<Blitter>();
-
-    setup_linear_blits(b);
-
-    lay->blitter = b;
-
-    lay->set_blit("RGB"); // default
-
-}
-
 bool SoftScreen::_init() {
-
-    screen_buffer = malloc(geo.bytesize);
+    screen_buffer = malloc(geo.getByteSize());
     return(true);
 }
 
@@ -73,9 +61,9 @@ void SoftScreen::blit(LayerPtr src) {
     }
 
     if(src->need_crop)
-        src->blitter->crop(src, SharedFromThis(SoftScreen));
+        blitter->crop(src, SharedFromThis(SoftScreen));
 
-    BlitPtr b = src->current_blit;
+    BlitInstancePtr b = src->current_blit;
 
     pscr = (uint32_t*) get_surface() + b->scr_offset;
     play = (uint32_t*) src->buffer   + b->lay_offset;
@@ -83,10 +71,10 @@ void SoftScreen::blit(LayerPtr src) {
     // iterates the blit on each horizontal line
     for(c = b->lay_height; c > 0; c--) {
 
-        (*b->fun)
+        ((blit_f*)b->getFun())
             ((void*)play, (void*)pscr,
             b->lay_bytepitch, // * src->geo.bpp>>3,
-            &b->parameters);
+           b->getParameters());
 
         // strides down to the next line
         pscr += b->scr_stride + b->lay_pitch;
@@ -107,7 +95,7 @@ void *SoftScreen::coords(int x, int y) {
 // use the .pixelsize geometric property for a pre-calculated stride
 // that is: number of bytes for one full line
     return
-        (x + geo.pixelsize +
+        (x + geo.getPixelSize() +
          (uint32_t*)get_surface());
 }
 
@@ -120,3 +108,15 @@ void *SoftScreen::get_surface() {
     return screen_buffer;
 }
 
+
+void SoftScreen::show() {
+}
+
+void SoftScreen::clear() {
+}
+
+void SoftScreen::fullscreen() {
+}
+
+void SoftScreen::do_resize(int resize_w, int resize_h) {
+}

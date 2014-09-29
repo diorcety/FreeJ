@@ -75,6 +75,10 @@ public:
 
     bool set_filedump(const char *filename); ///< start to dump to filename, call with NULL to stop
     bool filedump_close(); ///stops to dump in the file and close it
+    
+    virtual int start();
+    virtual void stop();
+protected:
     char filedump[512]; ////< filename to which encoder is writing dump
 
     char *status; ///< string updated with encoder status
@@ -88,7 +92,6 @@ public:
     int video_kbps; ///< encoded video, kilobit per second
     int bytes_encoded; ///< encoded bytes in total in the last encoding pass
 
-    // now in jsync
     // bool quit; ///< flag it up if encoder has to quit
 
     bool active; ////< flag to de/activate the encoder

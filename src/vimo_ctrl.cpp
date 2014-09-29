@@ -98,7 +98,7 @@ ViMoController::ViMoController()
     initialized = active = false;
     filename = NULL;
     fd = 0;
-    setName("Video Mouse");
+    name = "Video Mouse";
     vmd = (ViMoData*)malloc(2 * sizeof(ViMoData));
     vmd_old = vmd + 1;
     // NULL setting: k: 00 wi: 03 wo: 0f

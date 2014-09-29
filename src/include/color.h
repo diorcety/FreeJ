@@ -31,16 +31,34 @@ public:
     Color();
     virtual ~Color();
 
+protected:
     double r;
     double g;
     double b;
     double a;
 
+public:
     void set_rgb(double nr, double ng, double nb);
     void set_rgba(double nr, double ng, double nb, double na);
 
     void set_gray(double g);
     void set_gray_alpha(double g, double a);
+    
+    inline const double &get_r() {
+        return r;
+    }
+    
+    inline const double &get_g() {
+        return g;
+    }
+
+    inline const double &get_b() {
+        return b;
+    }
+    
+    inline const double &get_a() {
+        return a;
+    }
 
     /* void set_hsb(double h, double s, double b); */
 

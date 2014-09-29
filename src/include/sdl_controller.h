@@ -6,9 +6,10 @@
 
 FREEJ_FORWARD_PTR(SdlController)
 class SdlController : public Controller {
-public:
+protected:
     SDL_Event event; ///< SDL event structure
 
+public:
     SdlController();
     ~SdlController();
     void poll_sdlevents(Uint32 eventmask);

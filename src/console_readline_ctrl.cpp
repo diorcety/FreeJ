@@ -37,7 +37,7 @@
 
 SlwReadline::SlwReadline()
     : SLangWidget() {
-
+    name = "console readline";
     mSelectedHistory = NULL;
     movestep = 2;
     parser = DEFAULT;
@@ -184,7 +184,7 @@ bool SlwReadline::parser_default(int key) {
         return 0;
     }
 
-    LockedLinkList<Layer> list = screen->layers.getLock();
+    LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->layers);
     if(!list.empty()) { // there are layers
 
         // get the one selected
@@ -360,7 +360,7 @@ bool SlwReadline::parser_movelayer(int key) {
         ::error("no screen currently selected");
         return 0;
     }
-    LockedLinkList<Layer> list = screen->layers.getLock();
+    LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->layers);
     if(!list.empty()) { // there are layers
         LayerPtr layer = screen->mSelectedLayer;
         if(!layer) {
@@ -467,7 +467,7 @@ bool SlwReadline::parser_commandline(int key) {
     int res, c;
     bool parsres = true;
     EntryPtr entr = NULL;
-    LockedLinkList<Entry> list = history.getLock();
+    LockedLinkList<Entry> list = LockedLinkList<Entry>(history);
     LockedLinkList<Entry>::iterator it = std::find(list.begin(), list.end(), mSelectedHistory);
     commandline = true; // don't print statusline
 

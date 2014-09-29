@@ -32,7 +32,7 @@
 
 TriggerController::TriggerController()
     : Controller() {
-    setName("Trigger");
+    name = "Trigger";
     /* we are going to be used as a singleton, so we don't want
        our instance to be destruncted before the program ends */
     indestructible = true;
@@ -45,7 +45,7 @@ TriggerController::~TriggerController() {
 int TriggerController::poll() {
 
     if(javascript) {
-        LockedLinkList<ControllerListener> list = listeners.getLock();
+        LockedLinkList<ControllerListener> list = LockedLinkList<ControllerListener>(listeners);
         std::for_each(list.begin(), list.end(), [&](ControllerListenerPtr listener){
                           listener->frame();
                       });

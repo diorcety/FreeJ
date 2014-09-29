@@ -39,7 +39,7 @@
 #include <blitter.h>
 
 
-template <class T> class Linklist;
+template <class T> class LinkList;
 
 ///////////////////////
 // GLOBAL COLOR MASKING
@@ -92,10 +92,6 @@ FREEJ_FORWARD_PTR(VideoEncoder)
 
 FREEJ_FORWARD_PTR(ViewPort)
 class ViewPort : public Entry {
-public:
-    friend class Layer;
-    LayerPtr mSelectedLayer;
-    VideoEncoderPtr mSelectedEncoder;
 
 public:
     ViewPort();
@@ -103,7 +99,12 @@ public:
 
     bool init(int w = 0, int h = 0, int bpp = 0); ///< general initialization
 
+private:
     bool initialized;
+public:
+    inline bool isInitialized() {
+        return initialized;
+    }
 
     enum fourcc { RGBA32, BGRA32, ARGB32 }; ///< pixel formats understood
     virtual fourcc get_pixel_format() = 0; ///< return the pixel format
@@ -115,33 +116,41 @@ public:
 
     virtual void blit(LayerPtr src) = 0; ///< operate the blit
 
-    virtual void setup_blits(LayerPtr lay) = 0; ///< setup available blits on added layer
-
     void blit_layers();
 
     virtual bool add_layer(LayerPtr lay); ///< add a new layer to the screen
+    virtual void rem_layer(LayerPtr lay); ///< remove a layer from the screen
 #ifdef WITH_AUDIO
     virtual bool add_audio(JackClientPtr jcl); ///< connect layer to audio output
+    //virtual void rem_audio(JackClientPtr lay); ///< disconnect layer from the screen
 #endif
-    virtual void rem_layer(LayerPtr lay); ///< remove a layer from the screen
 
-    Linklist<Layer> layers; ///< linked list of registered layers
+private:
+
+    LinkList<Layer> layers; ///< linked list of registered layers
+
+public:
 
     bool add_encoder(VideoEncoderPtr enc); ///< add a new encoder for the screen
+    //bool rem_encoder(VideoEncoderPtr enc); ///< remove a encoder from the screen
 
-    Linklist<VideoEncoder> encoders; ///< linked list of registered encoders
+private:
+    LinkList<VideoEncoder> encoders; ///< linked list of registered encoders
 
+public:
 #ifdef WITH_GD
     void save_frame(char *file); ///< save a screenshot of the current frame into file
 #endif
+    void cafudda(double secs); ///< run the engine for seconds or one single frame pass
 
     void handle_resize();
+    virtual void resize(int w, int h) final; //TODO REMOVE final
 
-    virtual void resize(int resize_w, int resize_h);
-    virtual void show();
-    virtual void clear();
+    virtual void do_resize(int resize_w, int resize_h) = 0;
+    virtual void show() = 0;
+    virtual void clear() = 0;
 
-    virtual void fullscreen();
+    virtual void fullscreen() = 0;
     virtual bool lock() {
         return(true);
     };
@@ -151,21 +160,45 @@ public:
 
     void reset();
 
+    inline BlitterPtr getBlitter() const {
+        return blitter;
+    }
+
+public:
+    inline const Geometry& getGeometry() const {
+        return geo;
+    }
+
+protected:
+    BlitterPtr blitter; ///< Blitter interface for this Layer
     Geometry geo;
 
-    ringbuffer_t *audio; ///< FIFO ringbuffer for audio
-
-    bool changeres;
     bool resizing;
     int resize_w;
     int resize_h;
 
+#ifdef WITH_AUDIO
+private:
+    ringbuffer_t *audio; ///< FIFO ringbuffer for audio
     long unsigned int  *m_SampleRate; // pointer to JACKd's SampleRate (add_audio)
+    
+public:
+    inline ringbuffer_t* getAudio() {
+        return audio;
+    }
+    inline const long unsigned int *getSampleRate() {
+        return m_SampleRate;
+    }
+#endif
 
     // opengl special blit
     bool opengl;
 
     bool indestructible;
+public:
+    inline bool isIndestructible() {
+        return indestructible;
+    }
 protected:
     virtual bool _init() = 0; ///< implemented initialization
 

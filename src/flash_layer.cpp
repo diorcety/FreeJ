@@ -91,7 +91,7 @@ FlashLayer::FlashLayer()
         return;
     }
 
-    setName("SWF");
+    name = "SWF";
 }
 
 FlashLayer::~FlashLayer() {
@@ -121,12 +121,12 @@ bool FlashLayer::open(const char *file) {
     //  render = calloc(geo.size,1);
 
     if(procbuf) free(procbuf);
-    procbuf = calloc(geo.bytesize, 1);
+    procbuf = calloc(geo.getByteSize(), 1);
 
     fd.pixels = procbuf;
     fd.width = geo.w;
     fd.height = geo.h;
-    fd.bpl = geo.bytewidth;
+    fd.bpl = geo.getByteWidth();
     fd.depth = geo.bpp >> 3; //DefaultDepth(dpy, DefaultScreen(dpy));
     fd.bpp = geo.bpp >> 3; // bytes per pixel
 

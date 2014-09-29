@@ -38,7 +38,7 @@ OpenCVCamLayer::OpenCVCamLayer()
     frame = NULL;
     rgba = NULL;
 
-    setName("CAM");
+    name = "CAM";
 }
 
 OpenCVCamLayer::~OpenCVCamLayer() {
@@ -82,7 +82,7 @@ bool OpenCVCamLayer::open(const char *devfile) {
     act("Camera capture initialized: %ux%u %u chans, %u depth, fourcc %s (seq %s)",
         w, h, frame->nChannels, frame->depth, frame->colorModel, frame->channelSeq);
 
-    rgba = malloc(geo.bytesize);
+    rgba = malloc(geo.getByteSize());
 
     opened = true;
     return(true);

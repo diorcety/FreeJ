@@ -50,6 +50,7 @@ public:
     int cafudda(); ///< called by Context to publish buffer in data
 
 
+private:
     int16_t *input;  ///< public audio buffer recorder
     int16_t *output; ///< public audio buffer playback
 
@@ -68,10 +69,7 @@ public:
     ringbuffer_t *input_pipe;
     ringbuffer_t *output_pipe;
 
-private:
-
     AudioCollector *audio;
-
 };
 
 

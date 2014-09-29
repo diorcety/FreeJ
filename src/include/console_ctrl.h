@@ -48,6 +48,7 @@ public:
 
     virtual void refresh() = 0;
 
+private:
     bool active;
 };
 

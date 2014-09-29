@@ -37,6 +37,7 @@
 #include <config.h>
 
 #include <freeframe_freej.h>
+#include <freeframe_instance.h>
 
 #include <jutils.h>
 #include <layer.h>
@@ -53,8 +54,7 @@ Freeframe::Freeframe()
     handle = NULL;
     opened = false;
 
-
-    setName((char*)info->pluginName);
+    name = (char*)info->pluginName;
 
     // init freeframe filter
     if(plugmain(FF_INITIALISE, NULL, 0).ivalue == FF_FAIL)
@@ -66,15 +66,9 @@ Freeframe::Freeframe()
 }
 
 Freeframe::~Freeframe() {
-
-    if(handle)
+    if(handle) {
         dlclose(handle);
-
-}
-
-void Freeframe::init_parameters(Linklist<Parameter> &parameters) {
-    // TODO freeframe parameters
-
+    }
 }
 
 int Freeframe::open(char *file) {
@@ -173,30 +167,6 @@ void Freeframe::print_info() {
     act("Parameters [%i total]", plugmain(FF_GETNUMPARAMETERS, NULL, 0).ivalue);
 }
 
-bool Freeframe::apply(LayerPtr lay, FilterInstancePtr instance) {
-    VideoInfoStruct vidinfo;
-    vidinfo.frameWidth = lay->geo.w;
-    vidinfo.frameHeight = lay->geo.h;
-    vidinfo.orientation = 1;
-    vidinfo.bitDepth = FF_CAP_32BITVIDEO;
-    instance->intcore = plugmain(FF_INSTANTIATE, &vidinfo, 0).ivalue;
-    if(instance->intcore == FF_FAIL) {
-        error("Filter %s cannot be instantiated", name.c_str());
-        return false;
-    }
-    return Filter::apply(lay, instance);
-}
-
-void Freeframe::destruct(FilterInstancePtr inst) {
-    plugmain(FF_DEINSTANTIATE, NULL, inst->intcore);
-}
-
-void Freeframe::update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe) {
-    Filter::update(inst, time, inframe, outframe);
-    jmemcpy(outframe, inframe, bytesize);
-    plugmain(FF_PROCESSFRAME, (void*)outframe, inst->intcore);
-}
-
 const char *Freeframe::description() {
     // TODO freeframe has no extentedinfostruct returned!?
     return "freeframe VFX";
@@ -207,17 +177,14 @@ const char *Freeframe::author() {
     return "freeframe authors";
 }
 
-int Freeframe::get_parameter_type(int i) {
-    // TODO
-    return -1;
-}
-
-char *Freeframe::get_parameter_description(int i) {
-    // TODO
-    return (char *)"Unknown";
-}
-
 int Freeframe::type() {
     return Filter::FREEFRAME;
+}
+
+FilterInstancePtr Freeframe::new_instance() {
+    FilterInstancePtr instance = Factory<FilterInstance>::new_instance("FreeframeInstance");
+    if(instance)
+        instance->init(SharedFromThis(Filter));
+    return instance;
 }
 

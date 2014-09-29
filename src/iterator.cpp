@@ -39,7 +39,7 @@ Iterator::Iterator(float *val)
 
     func("initialized iterator with value %i", *value);
 
-    setName("iterator");
+    name = "iterator";
 
     // we start aiming at the present value
     aim = *val;

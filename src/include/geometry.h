@@ -43,9 +43,17 @@ public:
     uint16_t w; ///< width of frame in pixels
     uint16_t h; ///< height of frame in pixels
     uint8_t bpp; ///< bits per pixel
+
+private:
     uint32_t pixelsize; ///< size of the whole frame in pixels
     uint32_t bytesize; ///< size of the whole frame in bytes
     uint16_t bytewidth; ///< width of frame in bytes (also called pitch or stride)
+
+public:
+    uint32_t getPixelSize() const;
+    uint32_t getByteSize() const;
+    uint16_t getByteWidth() const;
+
 
 };
 

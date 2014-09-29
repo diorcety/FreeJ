@@ -35,7 +35,7 @@ public:
     ~GeoLayer();
 
     bool open(const char *file);
-    void *feed();
+    void *feed(double time);
     void close();
 
     void set_color(uint32_t hex) {

@@ -48,9 +48,8 @@ public:
     void set_mode(iterator_mode_t m);
     void set_envelope(iterator_envelope_t e);
 
-    bool direction;
-
 private:
+    bool direction;
     float *value;
     float saved_value;
     float min;

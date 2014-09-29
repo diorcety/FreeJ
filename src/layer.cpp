@@ -21,10 +21,10 @@
 
 #include <string.h>
 
-//#include <SDL.h>
-
 #include <layer.h>
 #include <blitter.h>
+#include <blit.h>
+#include <blit_instance.h>
 #include <filter.h>
 #include <iterator.h>
 #include <closure.h>
@@ -35,30 +35,26 @@
 #include <algorithm>
 
 #include <jutils.h>
-#ifdef WITH_JAVASCRIPT
-#include <jsparser_data.h>
-#endif //WITH_JAVASCRIPT
 
 //#include <fps.h>
 
 Layer::Layer()
-    : Entry(), JSyncThread() {
+    : Entry() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
     active = false;
     hidden = false;
     fade = false;
     use_audio = false;
     need_crop = true;
+#ifdef WITH_AUDIO
     audio = NULL;
+#endif
     opened = false;
     bgcolor = 0;
-    setName("???");
+    name = "???";
     filename[0] = 0;
     buffer = NULL;
     is_native_sdl_surface = false;
-#ifdef WITH_JAVASCRIPT
-    jsclass = &layer_class;
-#endif //WITH_JAVASCRIPT
 
     zoom_x = 1.0;
     zoom_y = 1.0;
@@ -67,16 +63,13 @@ Layer::Layer()
     rotating = false;
 
     antialias = false;
-
-    blitter = NULL;
+    
     current_blit = NULL;
 
     null_feeds = 0;
     max_null_feeds = 10;
 
     priv_data = NULL;
-
-    fps.set(25);
 }
 
 Layer::~Layer() {
@@ -99,7 +92,7 @@ bool Layer::init(int wdt, int hgt, int bpp) {
 
     func("initialized %s layer %ix%i", getName().c_str(), geo.w, geo.h);
 
-    if(!geo.bytesize) {
+    if(!geo.getByteSize()) {
         // if  the   size  is  still  unknown   at  init  then   it  is  the
         // responsability for the layer implementation to create the buffer
         // (see for instance text_layer)
@@ -107,50 +100,8 @@ bool Layer::init(int wdt, int hgt, int bpp) {
 
     }
 
-    // default fps
-    fps.set(25);
-
     // call the specific layer's implementation _init()
     return _init();
-
-}
-
-void Layer::thread_setup() {
-    func("ok, layer %s in rolling loop", getName().c_str());
-
-    //while(!feed()) fps.calc();
-
-    func(" layer %s entering loop", getName().c_str());
-}
-
-void Layer::thread_loop() {
-
-    void *tmp_buf;
-
-    // process all registered operations
-    // and signal to the synchronous waiting feed()
-    // includes parameter changes for layer
-
-    tmp_buf = feed();
-
-    // check if feed returned a NULL buffer
-    if(tmp_buf) {
-        // process filters on the feed buffer
-        tmp_buf = do_filters(tmp_buf);
-    }
-
-    // we add  a memcpy at the end  of the layer pipeline  this is not
-    // that  expensive as leaving  the lock  around the  feed(), which
-    // slows down the whole engine in case the layer is slow. -jrml
-
-    buffer = tmp_buf;
-    //  unlock();
-    fps.calc();
-    fps.delay();
-}
-
-void Layer::thread_teardown() {
-    func("%s this=%p thread end: %p %s", __PRETTY_FUNCTION__, this, pthread_self(), name.c_str());
 }
 
 char *Layer::get_blit() {
@@ -164,8 +115,9 @@ char *Layer::get_blit() {
 
 bool Layer::set_blit(const char *bname) {
     auto screen = this->screen.lock();
-    if(screen && blitter) {
-        LockedLinkList<Blit> list = blitter->blitlist.getLock();
+    if(screen) {
+        auto blitter = screen->getBlitter();
+        LockedLinkList<Blit> list = LockedLinkList<Blit>(blitter->blitlist);
         LockedLinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (BlitPtr &b) {
                                                              return b->getName() == bname;
                                                          });
@@ -178,10 +130,9 @@ bool Layer::set_blit(const char *bname) {
 
         func("blit for layer %s set to %s", name.c_str(), b->getName().c_str());
 
-        current_blit = b; // start using
+        current_blit = b->new_instance(); // start using
         need_crop = true;
         blitter->crop(SharedFromThis(Layer), screen);
-        blitter->mSelectedBlit = b;
         act("blit %s set for layer %s", current_blit->getName().c_str(), name.c_str());
     } else {
         warning("can't set blit for layer %s: not added on any screen yet", name.c_str());
@@ -207,15 +158,13 @@ void Layer::blit() {
 
         null_feeds = 0;
 
-        lock();
         if(auto screen = this->screen.lock()) {
             screen->blit(SharedFromThis(Layer));
         }
-        unlock();
     }
 }
 
-bool Layer::cafudda() {
+bool Layer::cafudda(double time) {
     if(!opened) return false;
 
     if(!fade)
@@ -225,16 +174,31 @@ bool Layer::cafudda() {
     do_iterators();
 
 
-    //  signal_feed();
+    void *tmp_buf;
+
+    // process all registered operations
+    // and signal to the synchronous waiting feed()
+    // includes parameter changes for layer
+    tmp_buf = feed(time);
+
+    // check if feed returned a NULL buffer
+    if(tmp_buf) {
+        // process filters on the feed buffer
+        tmp_buf = do_filters(time, tmp_buf);
+    }
+
+    // we add  a memcpy at the end  of the layer pipeline  this is not
+    // that  expensive as leaving  the lock  around the  feed(), which
+    // slows down the whole engine in case the layer is slow. -jrml
+    buffer = tmp_buf;
 
     return(true);
 }
 
-void *Layer::do_filters(void *tmp_buf) {
-    LockedLinkList<FilterInstance> list = filters.getLock();
+void *Layer::do_filters(double time, void *tmp_buf) {
+    LockedLinkList<FilterInstance> list = LockedLinkList<FilterInstance>(filters);
     std::for_each(list.begin(), list.end(), [&](FilterInstancePtr filt) {
-                      if(filt->active)
-                          tmp_buf = (void*) filt->process(fps.fps, (uint32_t*)tmp_buf);
+                      tmp_buf = (void*) filt->process(time, (uint32_t*)tmp_buf);
                   });
     return tmp_buf;
 }
@@ -242,7 +206,7 @@ void *Layer::do_filters(void *tmp_buf) {
 int Layer::do_iterators() {
 
     /* process thru iterators */
-    LockedLinkList<Iterator> list = iterators.getLock();
+    LockedLinkList<Iterator> list = LockedLinkList<Iterator>(iterators);
     LockedLinkList<Iterator>::iterator it = list.begin();
     while(it != list.end()) {
         IteratorPtr iter = *it;
@@ -269,15 +233,10 @@ void Layer::set_filename(const char *f) {
     strncpy(filename, p + 1, 256);
 }
 
-void Layer::_set_position(int x, int y) {
+void Layer::set_position(int x, int y) {
     geo.x = x;
     geo.y = y;
     need_crop = true;
-}
-
-void Layer::set_position(int x, int y) {
-    Closure *job = NewClosure(this, &Layer::_set_position, x, y);
-    deferred_calls->add_job(job);
 }
 
 int Layer::get_x_position() const {
@@ -285,8 +244,7 @@ int Layer::get_x_position() const {
 }
 
 void Layer::set_x_position(int x) {
-    Closure *job = NewClosure(this, &Layer::_set_position, x, (int)geo.y);
-    deferred_calls->add_job(job);
+    set_position(x, geo.y);
 }
 
 int Layer::get_y_position() const {
@@ -294,11 +252,10 @@ int Layer::get_y_position() const {
 }
 
 void Layer::set_y_position(int y) {
-    Closure *job = NewClosure(this, &Layer::_set_position, (int)geo.x, y);
-    deferred_calls->add_job(job);
+    set_position(geo.x, y);
 }
 
-void Layer::_set_zoom(double x, double y) {
+void Layer::set_zoom(double x, double y) {
     if((x == 1) && (y == 1)) {
         zooming = false;
         zoom_x = zoom_y = 1.0;
@@ -312,12 +269,7 @@ void Layer::_set_zoom(double x, double y) {
     need_crop = true;
 }
 
-void Layer::set_zoom(double x, double y) {
-    Closure *job = NewClosure(this, &Layer::_set_zoom, x, y);
-    deferred_calls->add_job(job);
-}
-
-void Layer::_set_rotate(double angle) {
+void Layer::set_rotate(double angle) {
     if(!angle) {
         rotating = false;
         rotate = 0;
@@ -330,12 +282,7 @@ void Layer::_set_rotate(double angle) {
     need_crop = true;
 }
 
-void Layer::set_rotate(double angle) {
-    Closure *job = NewClosure(this, &Layer::_set_rotate, angle);
-    deferred_calls->add_job(job);
-}
-
-void Layer::_fit(bool maintain_aspect_ratio) {
+void Layer::fit(bool maintain_aspect_ratio) {
     double width_zoom, height_zoom;
     int new_x = 0;
     int new_y = 0;
@@ -346,8 +293,9 @@ void Layer::_fit(bool maintain_aspect_ratio) {
         return;
     }
 
-    width_zoom = (double)screen->geo.w / geo.w;
-    height_zoom = (double)screen->geo.h / geo.h;
+    const Geometry &screen_geo = screen->getGeometry();
+    width_zoom = (double)screen_geo.w / geo.w;
+    height_zoom = (double)screen_geo.h / geo.h;
     if(maintain_aspect_ratio) {
         //to maintain the aspect ratio we simply zoom to the smaller of the
         //two zoom values
@@ -357,98 +305,16 @@ void Layer::_fit(bool maintain_aspect_ratio) {
             height_zoom = width_zoom;
         }
     }
-    _set_zoom(width_zoom, height_zoom);
+    set_zoom(width_zoom, height_zoom);
     // reposition layer upper corner
     new_x = ((double)(width_zoom * geo.w - geo.w) / 2.0);
     new_y = ((double)(height_zoom * geo.h - geo.h) / 2.0);
+
     // center layer
-    new_x += ((double)(screen->geo.w - width_zoom * geo.w) / 2.0);
-    new_y += ((double)(screen->geo.h - height_zoom * geo.h) / 2.0);
-    _set_position(new_x, new_y);
+    new_x += ((double)(screen_geo.w - width_zoom * geo.w) / 2.0);
+    new_y += ((double)(screen_geo.h - height_zoom * geo.h) / 2.0);
+    set_position(new_x, new_y);
 }
-
-void Layer::fit(bool maintain_aspect_ratio) {
-    Closure *job = NewClosure(this, &Layer::_fit, maintain_aspect_ratio);
-    deferred_calls->add_job(job);
-}
-
-#ifdef WITH_JAVASCRIPT
-void *Layer::js_constructor(Context *env, JSContext *cx, JSObject *obj,
-                            int argc, void *aargv, char *err_msg) {
-
-    char *filename;
-    void *ret = NULL;
-    int check_thread;
-    uint16_t width  = geo.w;
-    uint16_t height = geo.h;
-
-    jsval *argv = (jsval*)aargv;
-    check_thread = JS_GetContextThread(cx);
-    if(!check_thread)  // set the context thread only if none is already set
-        JS_SetContextThread(cx);
-    JS_BeginRequest(cx);
-    if(argc == 0) {
-        if(!init()) {
-            sprintf(err_msg, "Layer constructor failed initialization");
-            return NULL;
-        }
-
-    } else if(argc == 1) {
-        filename = js_get_string(argv[0]);
-        if(!init()) {
-            sprintf(err_msg, "Layer constructor failed initialization");
-            return NULL;
-        }
-
-        if(!open(filename)) {
-            snprintf(err_msg, MAX_ERR_MSG, "Layer constructor failed open(%s): %s",
-                     filename, strerror(errno));
-            return NULL;
-        }
-
-    } else if(argc == 2) {
-        JS_ValueToUint16(cx, argv[0], &width);
-        JS_ValueToUint16(cx, argv[1], &height);
-        if(!init(width, height, 32)) {
-            snprintf(err_msg, MAX_ERR_MSG,
-                     "Layer constructor failed initialization w[%u] h[%u]", width, height);
-            return NULL;
-        }
-
-    } else if(argc == 3) {
-        JS_ValueToUint16(cx, argv[0], &width);
-        JS_ValueToUint16(cx, argv[1], &height);
-        filename = js_get_string(argv[2]);
-        if(!init(width, height, 32)) {
-            snprintf(err_msg, MAX_ERR_MSG,
-                     "Layer constructor failed initializaztion w[%u] h[%u]", width, height);
-            return NULL;
-        }
-        if(!open(filename)) {
-            snprintf(err_msg, MAX_ERR_MSG,
-                     "Layer constructor failed initialization (%s): %s", filename, strerror(errno));
-            return NULL;
-        }
-
-    } else {
-        sprintf(err_msg,
-                "Wrong numbers of arguments\n use (\"filename\") or (width, height, \"filename\") or ()");
-        return NULL;
-    }
-    if(JS_SetPrivate(cx, obj, (void*)this)) {
-        jsobj = obj; // save the JS instance object into the C++ instance object
-        ret = (void*)OBJECT_TO_JSVAL(obj);
-    } else {
-        sprintf(err_msg, "%s", "JS_SetPrivate failed");
-    }
-    JS_EndRequest(cx);
-    if(!check_thread)
-        JS_ClearContextThread(cx);
-    return ret;
-
-}
-
-#endif
 
 bool Layer::_init() {
     // Don't do anything in base implementation
@@ -466,4 +332,3 @@ void Layer::close() {
     func("base Layer::close() called passing");
     return;
 }
-

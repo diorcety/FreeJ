@@ -37,6 +37,7 @@ FREEJ_FORWARD_PTR(AudioCollector)
 FREEJ_FORWARD_PTR(Iterator)
 FREEJ_FORWARD_PTR(Blitter)
 FREEJ_FORWARD_PTR(Blit)
+FREEJ_FORWARD_PTR(BlitInstance)
 FREEJ_FORWARD_PTR(ViewPort)
 FREEJ_FORWARD_PTR(JSContext)
 
@@ -77,15 +78,14 @@ FREEJ_FORWARD_PTR(JSContext)
    @brief Provides input to the Context
  */
 FREEJ_FORWARD_PTR(Layer)
-class Layer : public Entry, public JSyncThread {
+class Layer : public Entry {
     friend class Blitter;
     friend class Context;
-    friend class JSyncThread;
     friend class ViewPort;
+    friend class SdlScreen; // TODO REMOVE
+    friend class SoftScreen; // TODO REMOVE
 
 public:
-    FilterInstancePtr mSelectedFilter;
-
     enum Type {
         UNKNOWN,
         TEXT,
@@ -99,18 +99,10 @@ public:
 
     Layer(); ///< Layer constructor
     virtual ~Layer(); ///< Layer destructor
-
-    /* wrap JSyncThread::start() so we don't export JSyncThread on SWIG */
-
-    /**
-       Start the layer thread
-     */
-    virtual int start() {
-        return JSyncThread::start();
-    }
-
+protected:
     Type type; ///< type of the layer
 
+public:
     /* these must be defined in layer implementations */
 
     /**
@@ -156,7 +148,8 @@ public:
        @param angle from 0 to 360 degrees rotation
      */
     virtual void set_rotate(double angle); ///< Rotate a Layer
-
+    
+private:
     bool antialias;
     bool zooming;
     bool rotating;
@@ -164,27 +157,35 @@ public:
     double zoom_y;
     double rotate;
 
+public:
     virtual void fit(bool maintain_aspect_ratio = true);
 
-    Linklist<Parameter> parameters;
+protected:
+
+    LinkList<Parameter> parameters;
     ///< Parameter list for the layer
 
-    Linklist<FilterInstance> filters;
+    LinkList<FilterInstance> filters;
     ///< Filter list of effects applied on the Layer
-    virtual void *do_filters(void *tmp_buf); ///< process all filters on a buffer
+    virtual void *do_filters(double time, void *tmp_buf); ///< process all filters on a buffer
 
     Geometry geo;
     ///< Geometrical information about the Layer
     Geometry geo_rotozoom;
     ///< Geometrical information about the Rotozoom
 
+public:
+    inline const Geometry& getGeometry() {
+        return geo;
+    }
+
 private:
-    Linklist<Iterator> iterators;
+    LinkList<Iterator> iterators;
 public:
     ///< Iterator list of value modifiers
     int do_iterators(); ///< process all registered iterators
 
-
+protected:
     bool active; // is active? (read-only)
     bool hidden; // is hidden (read-only by the blit)
     bool fade; // layer is deactivated at the end of current iterations (read-write internal)
@@ -196,8 +197,13 @@ public:
     int max_null_feeds; // maximum null feeds tolerated
 
     //////////////////////// BLIT operations
-    BlitterPtr blitter; ///< Blitter interface for this Layer
-    BlitPtr current_blit; ///< currently set Blit on this Layer
+    BlitInstancePtr current_blit; ///< currently set Blit on this Layer
+
+public:
+
+    //virtual void add_filter(FilterPtr filter);
+    //virtual void rem_filter(FilterPtr filter);
+    
     virtual char *get_blit(); ///< return the name of the currently seleted Blit
     virtual bool set_blit(const char *bname); ///< select a Blit by name
 
@@ -206,25 +212,18 @@ public:
     void *get_data(); // returns private data associated to this layer
     void set_data(void *data);
 
+protected:
     ViewPortWeakPtr screen;  ///< ViewPort on which the Layer is blitted
 
 
+#ifdef WITH_AUDIO
     AudioCollector *audio; //< registered audio collector
+#endif
 
     /** physical buffers */
     void *buffer; ///< RGBA pixel buffer returned by the layer
 
-
-#ifdef WITH_JAVASCRIPT
-    void *js_constructor(Context *env, JSContext *cx,
-                         JSObject *obj, int argc, void *aargv, char *err_msg);
-#endif //WITH_JAVASCRIPT
-       ///< javascript layer constructor
-       //  void layer_gc(JSContext *cx, JSObject *obj);
-
     unsigned int textureID; ///< opengl texture id
-
-    float frame_rate; ///< value set by implemented layer type
 
 protected:
 
@@ -242,21 +241,11 @@ protected:
     void *priv_data; // pointer to private data eventually associated to this layer
 
 private:
-
-    void _set_position(int x, int y);
-    void _set_zoom(double x, double y);
-    void _set_rotate(double angle);
-    void _fit(bool maintain_aspect_ratio);
-
     char alphastr[5];
 
-    void thread_setup();
-    void thread_loop();
-    void thread_teardown();
+    virtual void *feed(double time) = 0; ///< feeds in the image source
 
-    virtual void *feed() = 0; ///< feeds in the image source
-
-    bool cafudda(); ///< cafudda is called by the Context
+    bool cafudda(double time); ///< cafudda is called by the Context
 
     // colorkey point
     uint8_t colorkey_r;

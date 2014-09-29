@@ -20,22 +20,13 @@
 #ifndef __entity_h__
 #define __entity_h__
 
-// javascript context
-class JSContext;
-// , class
-class JSClass;
-// and object
-class JSObject;
-
 FREEJ_FORWARD_PTR(Entry)
 class Entry : public EnableSharedFromThis<Entry> {
 public:
     Entry();
     virtual ~Entry();
 
-    void setName(const std::string &name);
     const std::string &getName() const;
-    void setDescription(const std::string &description);
     const std::string &getDescription() const;
     bool up();
     bool down();
@@ -50,21 +41,6 @@ public:
     // generic data pointer, so far only used in console
     // and now also as JSObject -> jsval
     void *data;
-
-#ifdef WITH_JAVASCRIPT
-    JSContext *jsenv; ///< pointer to the javasript context
-    JSClass *jsclass; ///< pointer to the javascript class
-    JSObject *jsobj; ///< pointer to the javascript instantiated object
-    JSContext *context() {
-        return jsenv;
-    }                                    // TO REMOVE
-
-    JSObject  *object() {
-        return jsobj;
-    }                                   // TO REMOVE
-
-#endif //WITH_JAVASCRIPT
-
 };
 
 #endif //__entity_h__

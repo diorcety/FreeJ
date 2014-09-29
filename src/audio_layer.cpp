@@ -56,7 +56,7 @@ bool AudioLayer::open(const char *file) {
     return(true);
 }
 
-void *AudioLayer::feed() {
+void *AudioLayer::feed(double time) {
     // add data to the ring-buffer
     return NULL;
 }

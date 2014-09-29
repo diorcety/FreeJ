@@ -46,6 +46,7 @@ private:
 };
 
 class AudioCollector {
+    friend class OggTheoraEncoder;
 public:
     AudioCollector(char *port, int BufferLength, unsigned int Samplerate, int FFTBuffers = 1);
     AudioCollector(int BufferLength, unsigned int Samplerate, JackClient *, int FFTBuffers = 1);
@@ -77,6 +78,7 @@ public:
 
     void get_audio(void *buffer);
 
+protected:
     int samplerate;
     unsigned int buffersize;
     bool attached;

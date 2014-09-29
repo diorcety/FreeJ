@@ -112,7 +112,7 @@ V4L2CamLayer::V4L2CamLayer()
     buffers = NULL;
     nb_sizes = 0;
     m_res = NULL;
-    setName("V4L2");
+    name = "V4L2";
 }
 
 V4L2CamLayer::~V4L2CamLayer() {
@@ -262,7 +262,7 @@ bool V4L2CamLayer::open(const char *devfile) {
 
     geo.init(format.fmt.pix.width, format.fmt.pix.height, 32);
 
-    frame = malloc(geo.bytesize);
+    frame = malloc(geo.getByteSize());
     memset(&reqbuf, 0, sizeof(reqbuf));
     reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     reqbuf.memory = V4L2_MEMORY_MMAP;
@@ -360,7 +360,7 @@ bool V4L2CamLayer::_init() {
     return(true);
 }
 
-void *V4L2CamLayer::feed() {
+void *V4L2CamLayer::feed(double time) {
 
     // Can we have a buffer please?
     memset(&buffer, 0, sizeof buffer);
@@ -457,7 +457,7 @@ void V4L2CamLayer::chgRes(int idx, Res *res) {
     }
     geo.init(format.fmt.pix.width, format.fmt.pix.height, 32);
     free(frame);
-    frame = malloc(geo.bytesize);
+    frame = malloc(geo.getByteSize());
 
     //////// init buffers
     memset(&reqbuf, 0, sizeof(reqbuf));

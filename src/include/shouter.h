@@ -25,13 +25,13 @@
 #include <shout/shout.h>
 
 
+#include <jsync.h>
 #include <jutils.h>
 
 #include <string.h>
-#include <jsync.h>
 #include <linklist.h>
 
-template <class T> class Linklist;
+template <class T> class LinkList;
 
 #define ERRORMSG 128
 #define RETRY_DELAY 60 /* time to retry connect on broken icecasts, in seconds */
@@ -97,16 +97,23 @@ public:
     CHAR_SET(name, _name);
     CHAR_SET(url, _url);
     CHAR_SET(desc, _desc);
+
+private:
     int format;
 
+public:
     bool start();
     bool stop();
     int send(unsigned char *buf, unsigned int enc);
 
+private:
     bool running;
     time_t retry;
 
+public:
     bool apply_profile();
+
+private:
     bool profile_changed;
 
 };

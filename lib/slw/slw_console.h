@@ -60,7 +60,7 @@ public:
     //   box coords: hx,hy = upper left corner
     //               lx,ly = lower right corner
 
-    Linklist<SLangWidget> widgets; ///< a console can hold multiple widgets
+    LinkList<SLangWidget> widgets; ///< a console can hold multiple widgets
 
     SLangWidgetWeakPtr focused; ///< only the focused widget receives the key
 

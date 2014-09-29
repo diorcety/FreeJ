@@ -69,7 +69,7 @@ public:
     };
 
     bool open(char *file);
-    void *feed();
+    void *feed(double time);
     void close();
 
     void blossom_recal(bool r);

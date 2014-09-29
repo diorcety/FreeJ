@@ -270,6 +270,19 @@ if test x"$enable_perl" = xyes; then
 fi
 ])
 
+AC_DEFUN([ENABLE_SWIG_JAVASCRIPT],
+[
+AC_ARG_ENABLE(javascript,
+    AS_HELP_STRING([--enable-javascript],[enable javascript bindings (no)]),
+	[enable_javascript=$enableval],
+	[enable_javascript=no])
+
+if test x"$enable_javascript" = xyes; then
+	AC_SUBST([SWIG_JAVASCRIPT_OPT],["-javascript -v8"])
+	AC_SUBST([SWIG_JAVASCRIPT_CPPFLAGS],[])
+fi
+])
+
 AC_DEFUN([ENABLE_SWIG_PYTHON],
 [
 AC_ARG_ENABLE(python,
@@ -279,8 +292,9 @@ AC_ARG_ENABLE(python,
 
 if test x"$enable_python" = xyes; then
 	AC_PYTHON_DEVEL
-	AM_PATH_PYTHON(2.4)
-	SWIG_PYTHON
+	AM_PATH_PYTHON([$ac_python_version])
+	AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow])
+	AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
 fi
 ])
 
@@ -292,10 +306,22 @@ AC_ARG_ENABLE(java,
 	[enable_java=no])
 
 if test x"$enable_java" = x"yes"; then
-   JAVA_CFLAGS="-W -Wall -static-libgcc"
-   JAVA_LDFLAGS="-norunpath -xnolib"
-   AC_SUBST(JAVA_CFLAGS)
-   AC_SUBST(JAVA_LDFLAGS)
+    AC_CHECK_JAVA_HOME
+    AC_SUBST(JAVA_HOME)
+    if test "x$JAVA_HOME" = "x" ; then
+            AC_MSG_ERROR([Could not found java home, java wrapper cannot be compiled.])
+    fi
+
+    dnl Check for JNI headers
+    JNI_CPPFLAGS=""
+    for dir in `find $JAVA_HOME/include -follow -type d`
+    do
+        JNI_CPPFLAGS="$JNI_CPPFLAGS -I$dir"
+    done
+    JAVA_CFLAGS="$JNI_CPPFLAGS"
+    JAVA_LDFLAGS=""
+    AC_SUBST(JAVA_CFLAGS)
+    AC_SUBST(JAVA_LDFLAGS)
 fi
 ])
 

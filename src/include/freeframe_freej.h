@@ -29,6 +29,7 @@ class Filter;
 
 FREEJ_FORWARD_PTR(Freeframe)
 class Freeframe : public Filter {
+    friend class FreeframeInstance;
     friend class GeneratorLayer;
 #ifdef WITH_COCOA
     friend class CVF0rLayer;
@@ -38,32 +39,27 @@ public:
     Freeframe();
     virtual ~Freeframe();
 
-    int type();
+    virtual int type();
 
     int open(char *file);
 
-    const char *description();
-    const char *author();
-
+    virtual const char *description();
+    virtual const char *author();
+    virtual FilterInstancePtr new_instance();
+    
+    inline const PlugInfoStruct *getInfo() const {
+        return info;
+    }
+    
+protected:
     void print_info();
-    int  get_parameter_type(int i);
-    char *get_parameter_description(int i);
-
-    bool apply(LayerPtr lay, FilterInstancePtr instance);
-
     PlugInfoStruct *info;
-
     VideoInfoStruct vidinfo;
-
     bool opened;
 
-protected:
-    void destruct(FilterInstancePtr inst);
-    void update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe);
-    void init_parameters(Linklist<Parameter> &parameters);
     // Interface function pointers.
     plugMainType *plugmain;
-
+    
 private:
     // dlopen handle
     void *handle;

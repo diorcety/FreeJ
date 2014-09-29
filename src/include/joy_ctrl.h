@@ -56,6 +56,7 @@ public:
     virtual int button_up(int device, int button);
 
 #ifdef HAVE_LINUX
+private:
     // joystick rumble
 
 #define N_EFFECTS 6

@@ -28,7 +28,7 @@
 SLW_Prompt::SLW_Prompt()
     : SLangWidget() {
 
-    setName("prompt");
+    name = "prompt";
     textconsole = NULL;
 
 }

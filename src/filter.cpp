@@ -35,12 +35,9 @@
 Filter::Filter()
     : Entry() {
 
-    initialized = false;
-    active = false;
-    inuse = false;
-
-    bytesize = 0;
-
+    //initialized = false;
+    //active = false;
+    //inuse = false;
 }
 
 /*
@@ -66,36 +63,6 @@ FilterInstancePtr Filter::new_instance() {
     return instance;
 }
 
-bool Filter::apply(LayerPtr lay, FilterInstancePtr instance) {
-
-    errno = 0;
-    instance->outframe = (uint32_t*) calloc(lay->geo.bytesize, 1);
-    if(errno != 0) {
-        error("calloc outframe failed (%i) applying filter %s", errno, name.c_str());
-        error("Filter %s cannot be instantiated", name.c_str());
-        return NULL;
-    }
-
-    bytesize = lay->geo.bytesize;
-
-    lay->filters.getLock().push_back(instance);
-
-    act("initialized filter %s on layer %s", name.c_str(), lay->getName().c_str());
-
-    instance->set_layer(lay);
-
-    return true;
-}
-
-FilterInstancePtr Filter::apply(LayerPtr lay) {
-
-    FilterInstancePtr instance = new_instance();
-
-    if(apply(lay, instance))
-        return instance;
-    return NULL;
-}
-
 const char *Filter::description() {
     return "Unknown"; // TODO - use a more meaningful default
 }
@@ -103,31 +70,3 @@ const char *Filter::description() {
 const char *Filter::author()  {
     return "Unknown";
 }
-
-int Filter::get_parameter_type(int i) {
-    return -1; // this method must be extended by subclasses (perhaps it should be pure virtual?)
-}
-
-char *Filter::get_parameter_description(int i) {
-    return (char *)"Unknown";
-}
-
-void Filter::destruct(FilterInstancePtr inst) {
-
-}
-
-void Filter::update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe) {
-    apply_parameters(inst);
-}
-
-void Filter::apply_parameters(FilterInstancePtr inst) {
-    LockedLinkList<Parameter> list = inst->parameters.getLock();
-
-    std::for_each(list.begin(), list.end(), [&] (ParameterPtr param) {
-                      if(param->changed) {
-                          param->update();
-                          param->changed = false; // XXX
-                      }
-                  });
-}
-

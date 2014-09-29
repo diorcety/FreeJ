@@ -27,67 +27,30 @@
 #include <filter.h>
 
 #include <jutils.h>
+#include <algorithm>
 
-FACTORY_REGISTER_INSTANTIATOR(FilterInstance, FilterInstance, FilterInstance, core);
-
-
-FilterInstance::FilterInstance()
-    : Entry() {
-    core = NULL;
-    intcore = 0;
+FilterInstance::FilterInstance() {
     outframe = NULL;
     active = false;
 }
 
 FilterInstance::FilterInstance(FilterPtr fr)
-    : Entry() {
-    core = NULL;
-    intcore = 0;
-    outframe = NULL;
-    active = false;
+    : FilterInstance() {
     init(fr);
 }
 
 FilterInstance::~FilterInstance() {
     func("~FilterInstance");
 
-    if(proto)
-        proto->destruct(SharedFromThis(FilterInstance));
-
     if(outframe)
         free(outframe);
-
 }
 
 void FilterInstance::init(FilterPtr fr) {
     func("initializing instance for filter %s", fr->getName().c_str());
     proto = fr;
-    setName(proto->name);
-    fr->init_parameters(parameters);
+    name = proto->name;
     active = true;
-}
-
-uint32_t *FilterInstance::process(float fps, uint32_t *inframe) {
-    if(!proto) {
-        error("void filter instance was called for process: %p", this);
-        return inframe;
-    }
-    proto->update(SharedFromThis(FilterInstance), fps, inframe, outframe);
-    return outframe;
-}
-
-bool FilterInstance::apply() {
-    bool ret = false;
-    if(proto) {
-        if(auto layer=this->layer.lock()) {
-            ret = proto->apply(layer, SharedFromThis(FilterInstance));
-        }
-    }
-    return ret;
-}
-
-void FilterInstance::set_layer(LayerPtr lay) {
-    layer = lay;
 }
 
 LayerPtr FilterInstance::get_layer() {
@@ -98,3 +61,38 @@ bool FilterInstance::inuse() {
     return layer.lock() != NULL;
 }
 
+uint32_t *FilterInstance::process(double time, uint32_t *inframe) {
+    if(!active) {
+        return inframe;
+    }
+    return _process(time, inframe);
+}
+
+uint32_t *FilterInstance::_process(double time, uint32_t *inframe) {
+    LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(parameters);
+
+    std::for_each(list.begin(), list.end(), [&] (ParameterInstancePtr param) {
+        param->update();
+    });
+    return outframe;
+}
+
+
+bool FilterInstance::apply(LayerPtr lay) {
+    auto &geo = lay->getGeometry();
+    errno = 0;
+    outframe = (uint32_t*) calloc(geo.getByteSize(), 1);
+    if(errno != 0) {
+        error("calloc outframe failed (%i) applying filter %s", errno, name.c_str());
+        error("Filter %s cannot be instantiated", name.c_str());
+        return false;
+    }
+
+    bytesize = geo.getByteSize();
+
+    act("initialized filter %s on layer %s", name.c_str(), lay->getName().c_str());
+
+    layer = lay;
+
+    return true;
+}

@@ -19,20 +19,15 @@
 #include <geometry.h>
 
 Geometry::Geometry() {
-    x = 0;
-    y = 0;
-    w = 0;
-    h = 0;
-    bpp = 0;
-    pixelsize = 0;
-    bytesize = 0;
-    bytewidth = 0;
+    init(0, 0, 0);
 }
 
 Geometry::~Geometry() {
 }
 
 void Geometry::init(int nw, int nh, int nbpp) {
+    x = 0;
+    y = 0;
     w = nw;
     h = nh;
     bpp = nbpp;
@@ -40,4 +35,17 @@ void Geometry::init(int nw, int nh, int nbpp) {
     bytesize  = w * h * (bpp / 8);
     bytewidth = w * (bpp / 8);
 }
+
+uint32_t Geometry::getPixelSize() const {
+    return pixelsize;
+}
+
+uint32_t Geometry::getByteSize() const {
+    return bytesize;
+}
+
+uint16_t Geometry::getByteWidth() const {
+    return bytewidth;
+}
+
 

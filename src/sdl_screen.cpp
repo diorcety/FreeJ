@@ -27,6 +27,7 @@
 
 #include <layer.h>
 #include <blitter.h>
+#include <blit_instance.h>
 #include <linklist.h>
 #include <sdl_screen.h>
 
@@ -35,6 +36,16 @@
 #include <SDL_rotozoom.h>
 
 #include <jutils.h>
+
+
+void setup_sdl_blits(BlitterPtr blitter);
+
+typedef void (blit_f)(void *src, void *dst, int len, LinkList<ParameterInstance> &params);
+
+typedef void (blit_sdl_f)(void *src, SDL_Rect *src_rect,
+                          SDL_Surface *dst, SDL_Rect *dst_rect,
+                          Geometry *geo, LinkList<ParameterInstance> &params);
+
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, SdlScreen, Screen, sdl);
@@ -55,7 +66,9 @@ SdlScreen::SdlScreen()
 
     switch_fullscreen = false;
 
-    setName("SDL");
+    setup_sdl_blits(blitter);
+
+    name = "SDL";
 }
 
 SdlScreen::~SdlScreen() {
@@ -97,57 +110,44 @@ bool SdlScreen::_init() {
     return(true);
 }
 
-void SdlScreen::setup_blits(LayerPtr lay) {
-
-    BlitterPtr b = MakeShared<Blitter>();
-
-    setup_linear_blits(b);
-
-    setup_sdl_blits(b);
-
-    lay->blitter = b;
-
-    lay->set_blit("SDL"); // default
-}
-
-void SdlScreen::blit(LayerPtr src) {
+void SdlScreen::blit(LayerPtr lay) {
     register int16_t c;
     void *offset;
 
-    if(src->rotating | src->zooming) {
+    if(lay->rotating | lay->zooming) {
 
         // if we have to rotate or scale,
         // create a sdl surface from current pixel buffer
         pre_rotozoom = SDL_CreateRGBSurfaceFrom
-                           (src->buffer,
-                           src->geo.w, src->geo.h, src->geo.bpp,
-                           src->geo.bytewidth, red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
+                           (lay->buffer,
+                           lay->geo.w, lay->geo.h, lay->geo.bpp,
+                           lay->geo.getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
-        if(src->rotating) {
-
-            rotozoom =
-                rotozoomSurface(pre_rotozoom, src->rotate, src->zoom_x, (int)src->antialias);
-
-        } else if(src->zooming) {
+        if(lay->rotating) {
 
             rotozoom =
-                zoomSurface(pre_rotozoom, src->zoom_x, src->zoom_y, (int)src->antialias);
+                rotozoomSurface(pre_rotozoom, lay->rotate, lay->zoom_x, (int)lay->antialias);
+
+        } else if(lay->zooming) {
+
+            rotozoom =
+                zoomSurface(pre_rotozoom, lay->zoom_x, lay->zoom_y, (int)lay->antialias);
 
         }
 
         offset = rotozoom->pixels;
         // free the temporary surface (needed again in sdl blits)
-        src->geo_rotozoom.init(rotozoom->w, rotozoom->h, src->geo.bpp);
+        lay->geo_rotozoom.init(rotozoom->w, rotozoom->h, lay->geo.bpp);
 
 
-    } else offset = src->buffer;
+    } else offset = lay->buffer;
 
 
 
-    if(src->need_crop)
-        src->blitter->crop(src, SharedFromThis(SdlScreen));
+    if(lay->need_crop)
+        blitter->crop(lay, SharedFromThis(SdlScreen));
 
-    BlitPtr b = src->current_blit;
+    BlitInstancePtr b = lay->current_blit;
 
 //   if(!b) {
 //     error("%s: blit is NULL",__PRETTY_FUNCTION__);
@@ -155,7 +155,7 @@ void SdlScreen::blit(LayerPtr src) {
 //   }
 
     // executes LINEAR blit
-    if(b->type == Blit::LINEAR) {
+    if(b->getType() == Blit::LINEAR) {
 
         pscr = (uint32_t*) get_surface() + b->scr_offset;
         play = (uint32_t*) offset        + b->lay_offset;
@@ -163,10 +163,10 @@ void SdlScreen::blit(LayerPtr src) {
         // iterates the blit on each horizontal line
         for(c = b->lay_height; c > 0; c--) {
 
-            (*b->fun)
+            ((blit_f*)b->getFun())
                 ((void*)play, (void*)pscr,
-                b->lay_bytepitch, // * src->geo.bpp>>3,
-                &b->parameters);
+                b->lay_bytepitch, // * lay->geo.bpp>>3,
+                b->getParameters());
 
             // strides down to the next line
             pscr += b->scr_stride + b->lay_pitch;
@@ -174,10 +174,10 @@ void SdlScreen::blit(LayerPtr src) {
         }
 
         // executes SDL blit
-    } else if(b->type == Blit::SDL) {
-        (*b->sdl_fun)
+    } else if(b->getType() == Blit::SDL) {
+        ((blit_sdl_f*)b->getFun())
             (offset, &b->sdl_rect, sdl_screen,
-            NULL, &src->geo, &b->parameters);
+            NULL, &lay->geo, b->getParameters());
     }
 
 //  else if (b->type == Blit::PAST) {
@@ -217,7 +217,7 @@ void SdlScreen::blit(LayerPtr src) {
 
 }
 
-void SdlScreen::resize(int resize_w, int resize_h) {
+void SdlScreen::do_resize(int resize_w, int resize_h) {
     act("resizing viewport to %u x %u", resize_w, resize_h);
     sdl_screen = SDL_SetVideoMode(resize_w, resize_h, 32, sdl_flags);
     geo.init(resize_w, resize_h, 32);
@@ -225,7 +225,7 @@ void SdlScreen::resize(int resize_w, int resize_h) {
 
 void *SdlScreen::coords(int x, int y) {
     return
-        (x + geo.pixelsize * y +
+        (x + geo.getPixelSize() * y +
          (uint32_t*)sdl_screen->pixels);
 }
 

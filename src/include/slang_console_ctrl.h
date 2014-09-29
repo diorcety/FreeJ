@@ -79,10 +79,8 @@ public:
 
     void refresh();
 
-    bool active;
-
-
 private:
+    bool active;
 
     SLangConsolePtr slw;
     SlwSelectorPtr sel;

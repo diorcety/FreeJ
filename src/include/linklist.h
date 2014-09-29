@@ -47,7 +47,7 @@ template <typename T>
 class LockedLinkList;
 
 template <typename T>
-class Linklist : private std::list<SharedPtr<T> > {
+class LinkList : private std::list<SharedPtr<T> > {
     friend class LockedLinkList<T>;
 
 private:
@@ -56,15 +56,15 @@ private:
 #endif
 
 public:
-    Linklist();
-    LockedLinkList<T> getLock();
-
+    LinkList();
+    LinkList(LinkList<T> &&list);
 };
 
 template <typename T>
 class LockedLinkList {
 private:
-    std::list<SharedPtr<T> > &mList;
+    LinkList<T> mInnerList;
+    LinkList<T> &mList;
 #ifdef THREADSAFE
     std::unique_lock<std::recursive_mutex> mLock;
 #endif
@@ -81,7 +81,8 @@ public:
     typedef typename std::list<SharedPtr<T> >::reverse_iterator reverse_iterator;
 
 public:
-    LockedLinkList(Linklist<T> &list);
+    LockedLinkList(LinkList<T> &list);
+    LockedLinkList(LinkList<T> &&list);
     void push_front(const value_type& val);
 #if __cplusplus >= 201103L
     void push_front(value_type&& val);
@@ -115,16 +116,22 @@ public:
 };
 
 template <typename T>
-Linklist<T>::Linklist() {
+LinkList<T>::LinkList() {
 }
 
 template <typename T>
-LockedLinkList<T> Linklist<T>::getLock() {
-    return LockedLinkList<T>(*this);
+LinkList<T>::LinkList(LinkList<T> &&list) : std::list<SharedPtr<T>>(std::forward<LinkList<T>>(list)) {
 }
 
 template <typename T>
-LockedLinkList<T>::LockedLinkList(Linklist<T> &list) :
+LockedLinkList<T>::LockedLinkList(LinkList<T> &&list) :
+    mInnerList(std::forward<LinkList<T>>(list)), mList(mInnerList)
+{
+
+}
+
+template <typename T>
+LockedLinkList<T>::LockedLinkList(LinkList<T> &list) :
     mList(list)
 #ifdef THREADSAFE
     ,mLock(list.mMutex)

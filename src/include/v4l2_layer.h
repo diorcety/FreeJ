@@ -45,13 +45,13 @@ private:
 };
 
 FREEJ_FORWARD_PTR(V4L2CamLayer)
-class V4L2CamLayer :  public Layer {
+class V4L2CamLayer :  public Layer, public JSyncThread {
 public:
     V4L2CamLayer();
     ~V4L2CamLayer();
 
     bool open(const char *devfile);
-    void *feed();
+    void *feed(double time);
     void close();
     Res *getRes();
     void chgRes(int, Res *);

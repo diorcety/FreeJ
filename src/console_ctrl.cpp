@@ -108,7 +108,7 @@ SlwConsole::SlwConsole() : ConsoleController() {
     // by default, meaning that reset() won't delete it.
     indestructible = true;
 
-    setName("Console");
+    name = "Console";
 }
 
 SlwConsole::~SlwConsole() {
@@ -140,21 +140,18 @@ bool SlwConsole::slw_init() {
 
     // title
     tit = MakeShared<SlwTitle>();
-    tit->setName("console title");
     slw->place(tit, 0, 0, slw->w, 2);
     tit->init();
     /////////////////////////////////
 
     // layer and filter selector
     sel = MakeShared<SlwSelector>();
-    sel->setName("layer & filter selector");
     slw->place(sel, 0, 2, slw->w, 8);
     sel->init();
     ////////////////////////////
 
     // log scroller
     log = MakeShared<SLW_Log>();
-    log->setName("console log messages");
     slw->place(log, 0, 10, slw->w, slw->h - 3);
     log->init();
     ////////////////////////////
@@ -162,7 +159,6 @@ bool SlwConsole::slw_init() {
 
     // status line
     rdl = MakeShared<SlwReadline>();
-    rdl->setName("console readline");
     slw->place(rdl, 0, slw->h - 1, slw->w, slw->h);
     rdl->init();
     ////////////////////////////

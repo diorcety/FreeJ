@@ -36,7 +36,7 @@
 TextConsole::TextConsole() {
     // create the first row
     RowPtr row = MakeShared<Row>();
-    rows.getLock().push_back(row);
+    LockedLinkList<Row>(rows).push_back(row);
 
     cur_row = row;
     vis_row_in = row;
@@ -50,7 +50,7 @@ bool TextConsole::feed(int key) {
     // interprets a keycode and perform the action (or write a letter)
 
     RowPtr r;
-    LockedLinkList<Row> list = rows.getLock();
+    LockedLinkList<Row> list = LockedLinkList<Row>(rows);
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), cur_row);
     switch(key) {
 
@@ -236,7 +236,7 @@ bool TextConsole::refresh() {
     if(!vis_row_in) return false;
     else r = vis_row_in;
 
-    LockedLinkList<Row> list = rows.getLock();
+    LockedLinkList<Row> list = LockedLinkList<Row>(rows);
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
 
     // tell the renderer to blank the surface for a refresh
@@ -263,7 +263,7 @@ void TextConsole::refresh_current() {
     if(!vis_row_in) return;
     else r = vis_row_in;
 
-    LockedLinkList<Row> list = rows.getLock();
+    LockedLinkList<Row> list = LockedLinkList<Row>(rows);
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
 
     for( c = 0; c < h; c++ ) {

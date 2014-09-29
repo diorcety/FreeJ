@@ -39,9 +39,10 @@ public:
 
     bool open(const char *devfile);
 
-    void *feed();
+    void *feed(double time);
     void close();
 
+prvate:
     void *feed_ready;
     void *rgba[2];
     int swap;

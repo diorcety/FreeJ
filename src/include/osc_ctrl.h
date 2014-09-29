@@ -56,8 +56,8 @@ public:
 
     char port[64];
 
-    Linklist<Entry> commands_handled;
-    Linklist<Entry> commands_pending;
+    LinkList<Entry> commands_handled;
+    LinkList<Entry> commands_pending;
 
     FACTORY_ALLOWED;
 };

@@ -25,129 +25,33 @@
 
 #ifdef WITH_FREI0R
 
+#include <parameter_instance.h>
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <stdio.h> // for snprintf()
 
 #include <cstdlib>
 #include <string>
+#include <algorithm>
 
 #include <frei0r_freej.h>
+#include <frei0r_instance.h>
 #include <layer.h>
 #include <jutils.h>
 
 FACTORY_REGISTER_INSTANTIATOR(Filter, Freior, Frei0rFilter, core);
 
-/// frei0r parameter callbacks
-static void get_frei0r_parameter(FilterInstancePtr filt, Parameter *param, int idx) {
-    FreiorPtr f = DynamicPointerCast<Freior>(filt->proto);
-
-    switch(f->param_infos[idx - 1].type) {
-
-    // idx-1 because frei0r's index starts from 0
-    case F0R_PARAM_BOOL:
-        (*f->f0r_get_param_value)(filt->core, (f0r_param_t)param->value, idx - 1);
-        func("bool value is %s", (*(bool*)param->value == true) ? "true" : "false");
-        break;
-
-    case F0R_PARAM_DOUBLE:
-        (*f->f0r_get_param_value)(filt->core, (f0r_param_t)param->value, idx - 1);
-        func("number value is %g", *(double*)param->value);
-        break;
-
-    case F0R_PARAM_COLOR: {
-        f0r_param_color *color = new f0r_param_color;
-        (*f->f0r_get_param_value)(filt->core, (f0r_param_t)color, idx - 1);
-        ((double*)param->value)[0] = (double)color->r;
-        ((double*)param->value)[1] = (double)color->g;
-        ((double*)param->value)[2] = (double)color->b;
-        delete color;
-    }
-    break;
-
-    case F0R_PARAM_POSITION: {
-        f0r_param_position *position = new f0r_param_position;
-        (*f->f0r_get_param_value)(filt->core, (f0r_param_t)position, idx - 1);
-        ((double*)param->value)[0] = (double)position->x;
-        ((double*)param->value)[1] = (double)position->y;
-        delete position;
-    }
-    break;
-
-    default:
-
-        error("Unrecognized parameter type %u for get_parameter_value",
-              f->param_infos[idx].type);
-    }
-}
-
-static void set_frei0r_parameter(FilterInstancePtr filt, ParameterPtr param, int idx) {
-
-    func("set_frei0r_param callback on %s for parameter %s at pos %u", filt->proto->getName().c_str(), param->getName().c_str(), idx);
-
-    FreiorPtr f = DynamicPointerCast<Freior>(filt->proto);
-    double *val = (double*)param->value;
-
-    switch(f->param_infos[idx - 1].type) {
-
-    // idx-1 because frei0r's index starts from 0
-    case F0R_PARAM_BOOL:
-
-        func("bool value is %s", (*(bool*)param->value == true) ? "true" : "false");
-
-        (*f->f0r_set_param_value)
-            (filt->core, new f0r_param_bool(*(bool*)param->value), idx - 1);
-
-        break;
-
-    case F0R_PARAM_DOUBLE:
-        func("number value is %g", *(double*)param->value);
-        (*f->f0r_set_param_value)(filt->core, new f0r_param_double(*(double*)param->value), idx - 1);
-        break;
-
-    case F0R_PARAM_COLOR: {
-        f0r_param_color *color = new f0r_param_color;
-        color->r = val[0];
-        color->g = val[1];
-        color->b = val[2];
-        (*f->f0r_set_param_value)(filt->core, color, idx - 1);
-        delete color;
-        // QUAAA: should we delete the new allocated object? -jrml
-    }
-    break;
-
-    case F0R_PARAM_POSITION: {
-        f0r_param_position *position = new f0r_param_position;
-        position->x = val[0];
-        position->y = val[1];
-        (*f->f0r_set_param_value)(filt->core, position, idx - 1);
-    }
-    break;
-
-    default:
-
-        error("Unrecognized parameter type %u for set_parameter_value",
-              f->param_infos[idx].type);
-
-    }
-
-}
-
-// end of parameter callbacks
-
 Freior::Freior()
     : Filter() {
     handle = NULL;
     opened = false;
-
-    setName((char *)"Unknown");
+    name = "Unknown";
 }
 
 Freior::~Freior() {
-
-    if(handle)
+    if(handle) {
         dlclose(handle);
-
+    }
 }
 
 int Freior::open(char *file) {
@@ -228,8 +132,6 @@ int Freior::open(char *file) {
     opened = true;
     snprintf(filename, 255, "%s", file);
 
-    f0r_init();
-
     init();
 
     if(get_debug() > 2)
@@ -239,29 +141,21 @@ int Freior::open(char *file) {
 
 }
 
-void Freior::init_parameters(Linklist<Parameter> &parameters) {
-
-    LockedLinkList<Parameter> list = parameters.getLock();
-
-    // Get the list of params.
-    for(int i = 0; i < info.num_params; ++i) {
-        //TODO EXTENDED PARAMETER
-        ParameterPtr param = MakeShared<Parameter>((Parameter::Type)param_infos[i].type);
-        param->setName(param_infos[i].name);
-        func("registering parameter %s for filter %s\n", param->getName().c_str(), info.name);
-
-        param->setDescription(param_infos[i].explanation);
-        list.push_back(param);
-    }
-}
-
 void Freior::init() {
-    setName((char*)info.name);
+    f0r_init();
+
+    name = info.name;
 
     // Get the list of params.
-    param_infos.resize(info.num_params);
     for(int i = 0; i < info.num_params; ++i) {
-        (f0r_get_param_info)(&param_infos[i], i);
+        f0r_param_info_t param_info;
+        (f0r_get_param_info)(&param_info, i);
+        parameters.push_back(MakeShared<FreiorParameter>(
+            (Parameter::Type)param_info.type,
+            param_info.name,
+            param_info.explanation,
+            i
+        ));
     }
 }
 
@@ -285,49 +179,30 @@ void Freior::print_info() {
         error("Unrecognized plugin type");
     }
     act("Author           : %s", info.author);
-    act("Parameters [%i total]", info.num_params);
-    for(int i = 0; i < info.num_params; ++i) {
+    act("Parameters [%i total]", parameters.size());
+    std::for_each(this->parameters.begin(), this->parameters.end(), [&] (FreiorParameterPtr param) {
         char tmp[256];
-        snprintf(tmp, 255, "  [%i] %s ", i, param_infos[i].name);
-        switch(param_infos[i].type) {
+        snprintf(tmp, 255, "  [%i] %s ", param->getIndex(), param->getName().c_str());
+        switch(param->getType()) {
         case F0R_PARAM_BOOL:
-            act("%s (bool) %s", tmp, param_infos[i].explanation);
+            act("%s (bool) %s", tmp, param->getDescription().c_str());
             break;
         case F0R_PARAM_DOUBLE:
-            act("%s (double) %s", tmp, param_infos[i].explanation);
+            act("%s (double) %s", tmp, param->getDescription().c_str());
             break;
         case F0R_PARAM_COLOR:
-            act("%s (color) %s", tmp, param_infos[i].explanation);
+            act("%s (color) %s", tmp, param->getDescription().c_str());
             break;
         case F0R_PARAM_POSITION:
-            act("%s (position) %s", tmp, param_infos[i].explanation);
+            act("%s (position) %s", tmp, param->getDescription().c_str());
             break;
         case F0R_PARAM_STRING:
-            act("%s (string) %s", tmp, param_infos[i].explanation);
+            act("%s (string) %s", tmp, param->getDescription().c_str());
             break;
         default:
             error("%s Unrecognized info type.", tmp);
         }
-    }
-}
-
-bool Freior::apply(LayerPtr lay, FilterInstancePtr instance) {
-    instance->core = (*f0r_construct)(lay->geo.w, lay->geo.h);
-    if(!instance->core)
-        return false;
-    return Filter::apply(lay, instance);
-}
-
-void Freior::destruct(FilterInstancePtr inst) {
-    if(inst->core) {
-        f0r_destruct((f0r_instance_t*)inst->core);
-        inst->core = NULL;
-    }
-}
-
-void Freior::update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe) {
-    Filter::update(inst, time, inframe, outframe);
-    f0r_update((f0r_instance_t*)inst->core, time, inframe, outframe);
+    });
 }
 
 const char *Freior::description() {
@@ -338,16 +213,15 @@ const char *Freior::author() {
     return info.author;
 }
 
-int Freior::get_parameter_type(int i) {
-    return param_infos[i].type;
-}
-
-char *Freior::get_parameter_description(int i) {
-    return (char*)param_infos[i].explanation;
-}
-
 int Freior::type() {
     return Filter::FREIOR;
+}
+
+FilterInstancePtr Freior::new_instance() {
+    FilterInstancePtr instance = Factory<FilterInstance>::new_instance("FreiorInstance");
+    if(instance)
+        instance->init(SharedFromThis(Filter));
+    return instance;
 }
 
 #endif // WITH_FREI0R

@@ -39,10 +39,6 @@
 #include <fastmemcpy.h>
 
 #include <jutils.h>
-#ifdef WITH_JAVASCRIPT
-#include <jsparser.h>
-#include <jsparser_data.h>
-#endif
 
 #ifdef WITH_FFMPEG
 #include <video_layer.h>
@@ -105,7 +101,6 @@ void * run_context(void * data) {
 Context::Context() {
     func("%s this=%p", __PRETTY_FUNCTION__, this);
 
-    mSelectedScreen = NULL;
     //audio           = NULL;
 
     /* initialize fps counter */
@@ -117,12 +112,6 @@ Context::Context() {
     save_to_file    = false;
     interactive     = true;
     poll_events     = true;
-
-    fps_speed       = 25;
-#ifdef WITH_JAVASCRIPT
-    js = NULL;
-#endif //WITH_JAVASCRIPT
-    main_javascript[0] = 0x0;
 
     layers_description = (char*)
                          " .  - ImageLayer for image files (png, jpeg etc.)\n"
@@ -187,14 +176,13 @@ Context::~Context() {
 
 bool Context::add_screen(ViewPortPtr scr) {
 
-    if(!scr->initialized) {
+    if(!scr->isInitialized()) {
         error("can't add screen %s - not initialized yet", scr->getName().c_str());
         error("use init( width, height, bits_per_pixel )");
         return false;
     }
-    LockedLinkList<ViewPort> list = screens.getLock();
+    LockedLinkList<ViewPort> list = LockedLinkList<ViewPort>(screens);
     list.push_front(scr);
-    mSelectedScreen = scr;
     func("screen %s successfully added", scr->getName().c_str());
     act("screen %s now on top", scr->getName().c_str());
 
@@ -207,14 +195,6 @@ bool Context::init() {
 
     // a fast benchmark to select the best memcpy to use
     find_best_memcpy();
-
-
-    fps.init(fps_speed);
-
-#ifdef WITH_JAVASCRIPT
-    // create javascript object
-    js = new JsParser(this);
-#endif
 
 #ifdef WITH_FFMPEG
     /** init ffmpeg libraries: register all codecs, demux and protocols */
@@ -234,7 +214,13 @@ bool Context::init() {
     }
 
     // refresh the list of available plugins
-    plugger.refresh(this);
+    auto filters = LockedLinkList<Filter>(this->filters);
+    auto new_filters = LockedLinkList<Filter>(plugger.getFilters());
+    filters.insert(filters.end(), new_filters.begin(), new_filters.end());
+
+    auto generators = LockedLinkList<Filter>(this->generators);
+    auto new_generators = LockedLinkList<Filter>(plugger.getGenerators());
+    generators.insert(generators.end(), new_generators.begin(), new_generators.end());
 
     return true;
 }
@@ -243,7 +229,7 @@ void Context::start() {
     quit = false;
     running = true;
     while(!quit) {
-        cafudda(0.0);
+        cafudda(1.0);
     }
     running = false;
 }
@@ -257,6 +243,8 @@ void Context::start_threaded() {
  * Main loop called fps_speed times a second
  */
 void Context::cafudda(double secs) {
+    timelapse.setRatio(secs);
+    timelapse.start();
 
     ///////////////////////////////
     //// process controllers
@@ -266,32 +254,21 @@ void Context::cafudda(double secs) {
     ///////////////////////////////
 
     /////////////////////////////
-    LockedLinkList<ViewPort> list = screens.getLock();
+    LockedLinkList<ViewPort> list = LockedLinkList<ViewPort>(screens);
     // blit layers on screens
     std::for_each(list.begin(), list.end(), [&](ViewPortPtr scr) {
                       if(clear_all) scr->clear();
 
                       // Change resolution if needed
-                      if(scr->changeres) scr->handle_resize();
+                      scr->handle_resize();
+
+                      scr->cafudda(timelapse.getTime());
 
                       scr->blit_layers();
 
                       // show the new painted screen
                       scr->show();
                   });
-#ifdef WITH_JAVASCRIPT
-    /////////////////////////////
-    // TODO - try to garbage collect only if we have been faster
-    //        than fps
-    // XXX - temporarily disabling explicit garbage-collection
-    //       because it still triggers deadlocks somewhere
-    if(js) {
-        js->gc();
-    }
-#endif //WITH_JAVASCRIPT
-       /// FPS calculation
-    fps.calc();
-    fps.delay();
 }
 
 #define SDL_KEYEVENTMASK (SDL_KEYDOWNMASK|SDL_KEYUPMASK)
@@ -318,13 +295,14 @@ void Context::handle_controllers() {
         if(event.key.state == SDL_PRESSED)
             if(event.key.keysym.mod & KMOD_CTRL)
                 if(event.key.keysym.sym == SDLK_f) {
-                    ViewPortPtr scr = mSelectedScreen;
-                    scr->fullscreen();
-                    res = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYEVENTMASK | SDL_QUITMASK);
-                    if(res < 0) warning("SDL_PeepEvents error");
+                    // WTF?
+                    //ViewPortPtr scr = mSelectedScreen;
+                    //scr->fullscreen();
+                    //res = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYEVENTMASK | SDL_QUITMASK);
+                    //if(res < 0) warning("SDL_PeepEvents error");
                 }
 
-    LockedLinkList<Controller> list = controllers.getLock();
+    LockedLinkList<Controller> list = LockedLinkList<Controller>(controllers);
     std::for_each(list.begin(), list.end(), [] (ControllerPtr ctrl) {
                       if(ctrl->active)
                           ctrl->poll();
@@ -357,7 +335,7 @@ bool Context::register_controller(ControllerPtr ctrl) {
 
     ctrl->active = true;
 
-    controllers.getLock().push_back(ctrl);
+    LockedLinkList<Controller>(controllers).push_back(ctrl);
 
     act("registered %s controller", ctrl->getName().c_str());
     return true;
@@ -373,73 +351,10 @@ bool Context::rem_controller(ControllerPtr ctrl) {
     //  if(js) js->gc(); // ?!
 
     ctrl->active = false;
-    controllers.getLock().remove(ctrl);
+    LockedLinkList<Controller>(controllers).remove(ctrl);
     act("removed controller %s", ctrl->getName().c_str());
 
     return true;
-}
-
-bool Context::add_encoder(VideoEncoderPtr enc) {
-    func("%s", __PRETTY_FUNCTION__);
-
-    ViewPortPtr scr = mSelectedScreen;
-    if(!scr) {
-        error("no screen initialized, can't add encoder %s", enc->getName().c_str());
-        return(false);
-    }
-    return(scr->add_encoder(enc));
-}
-
-bool Context::add_layer(LayerPtr lay) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-
-    warning("use of Context::add_layer is DEPRECATED");
-    warning("please use ViewPort::add_layer instead");
-    warning("a list of screens (view ports) is available");
-    warning("kijk in Context::screens Linklist");
-
-    ViewPortPtr scr = mSelectedScreen;
-    if(!scr) {
-        error("no screen initialized, can't add layer %s", lay->getName().c_str());
-        return(false);
-    }
-    return(scr->add_layer(lay));
-
-}
-
-void Context::rem_layer(LayerPtr lay) {
-    func("%u:%s:%s", __LINE__, __FILE__, __FUNCTION__);
-
-    ViewPortPtr scr = mSelectedScreen;
-    if(scr)
-        scr->rem_layer(lay);
-}
-
-int Context::open_script(char *filename) {
-#ifdef WITH_JAVASCRIPT
-    if(!js) {
-        error("can't open script %s: javascript interpreter is not initialized", filename);
-        return 0;
-    }
-    return js->open(filename);
-#else //WITH_JAVASCRIPT
-    error("Compiled without javascript. Can't open a script file");
-    return 0;
-#endif //WITH_JAVASCRIPT
-}
-
-int Context::parse_js_cmd(const char *cmd) {
-#ifdef WITH_JAVASCRIPT
-    if(!js) {
-        error("javascript interpreter is not initialized");
-        error("can't parse script \"%s\"", cmd);
-        return 0;
-    }
-    return js->parse(cmd);
-#else //WITH_JAVASCRIPT
-    error("Compiled without javascript. Can't execute a script command");
-    return 0;
-#endif //WITH_JAVASCRIPT
 }
 
 int Context::reset() {
@@ -449,7 +364,7 @@ int Context::reset() {
 
 
     {
-        LockedLinkList<Controller> list = controllers.getLock();
+        LockedLinkList<Controller> list = LockedLinkList<Controller>(controllers);
         LockedLinkList<Controller>::iterator it = list.begin();
         func("deleting %u controllers", list.size());
         while(it != list.end()) {
@@ -464,12 +379,12 @@ int Context::reset() {
     }
 
     {
-        LockedLinkList<ViewPort> list = screens.getLock();
+        LockedLinkList<ViewPort> list = LockedLinkList<ViewPort>(screens);
         LockedLinkList<ViewPort>::iterator it = list.begin();
         func("deleting %u screens", list.size());
         while(it != list.end()) {
             ViewPortPtr scr = *it;
-            if(scr->indestructible) {
+            if(scr->isIndestructible()) {
                 scr->reset();
                 ++it;
             } else {
@@ -477,83 +392,7 @@ int Context::reset() {
             }
         }
     }
-
-#ifdef WITH_JAVASCRIPT
-    if(js)
-        js->reset();
-#endif //WITH_JAVASCRIPT
-       //does anyone care about reset() return value?
     return 1;
-}
-
-bool Context::config_check(const char *filename) {
-#ifdef WITH_JAVASCRIPT
-    char tmp[512];
-
-    if(!js) {
-        warning("javascript is not initialized");
-        warning("no configuration is loaded");
-        return(false);
-    }
-
-    snprintf(tmp, 512, "%s/.freej/%s", getenv("HOME"), filename);
-    if(filecheck(tmp)) {
-        js->open(tmp);
-        return(true);
-    }
-
-    snprintf(tmp, 512, "/etc/freej/%s", filename);
-    if(filecheck(tmp)) {
-        js->open(tmp);
-        return(true);
-    }
-
-#ifdef HAVE_DARWIN
-    snprintf(tmp, 512, "%s/%s", "CHANGEME", filename);
-#else
-    snprintf(tmp, 512, "%s/%s", DATADIR, filename);
-#endif
-    if(filecheck(tmp)) {
-        js->open(tmp);
-        return(true);
-    }
-
-    snprintf(tmp, 512, "/usr/lib/freej/%s", filename);
-    if(filecheck(tmp)) {
-        js->open(tmp);
-        return(true);
-    }
-
-    snprintf(tmp, 512, "/usr/local/lib/freej/%s", filename);
-    if(filecheck(tmp)) {
-        js->open(tmp);
-        return(true);
-    }
-
-    snprintf(tmp, 512, "/opt/video/lib/freej/%s", filename);
-    if(filecheck(tmp)) {
-        js->open(tmp);
-        return(true);
-    }
-
-    return(false);
-#else //WITH_JAVASCRIPT
-    error("Compiled without javascript. Can't run configuration");
-    return(false);
-#endif //WITH_JAVASCRIPT
-}
-
-void Context::resize(int w, int h) {
-    ViewPortPtr scr = mSelectedScreen;
-    scr->resize_w = w;
-    scr->resize_h = h;
-    scr->resizing = true;
-    scr->changeres = true;
-}
-
-void *Context::coords(int x, int y) {
-    ViewPortPtr scr = mSelectedScreen;
-    return(scr->coords(x, y));
 }
 
 void fsigpipe(int Sig) {
@@ -589,12 +428,14 @@ LayerPtr Context::open(char *file, int w, int h) {
     end_file_ptr += strlen(file);
 //  while(*end_file_ptr!='\0' && *end_file_ptr!='\n') end_file_ptr++; *end_file_ptr='\0';
 
+    /* Usefull?  TODO REMOVE
     if(!w || !h) {
         // uses the size of currently selected screen
         ViewPortPtr screen = mSelectedScreen;
         w = screen->geo.w;
         h = screen->geo.h;
     }
+    */
 
     /* ==== Unified caputure API (V4L & V4L2) */
     if(strncasecmp(file_ptr, "/dev/video", 10) == 0) {

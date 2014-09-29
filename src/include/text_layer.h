@@ -37,7 +37,7 @@ public:
     ~TextLayer();
 
     bool open(const char *file);
-    void *feed();
+    void *feed(double time);
     void close();
 
     void calculate_string_size(char *text, int *w, int *h);

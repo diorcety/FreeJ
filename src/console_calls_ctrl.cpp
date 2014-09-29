@@ -70,7 +70,7 @@ int console_param_selection(ContextPtr env, char *cmd) {
     if(*p == '\0') return 0;  // no value was given
 
     if(filt) { ///////////////////////// parameters for filter
-        LockedLinkList<Parameter> list = filt->parameters.getLock();
+        LockedLinkList<Parameter> list = LockedLinkList<Parameter>(filt->parameters);
         LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
                                                                   return param->getName() == cmd;
 
@@ -88,7 +88,7 @@ int console_param_selection(ContextPtr env, char *cmd) {
             param->parse(p);
         }
     } else { /////// parameters for layer
-        LockedLinkList<Parameter> list = lay->parameters.getLock();
+        LockedLinkList<Parameter> list = LockedLinkList<Parameter>(lay->parameters);
         LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
                                                                   return param->getName() == cmd;
 
@@ -123,14 +123,14 @@ int console_param_completion(ContextPtr env, char *cmd) {
     }
     FilterInstancePtr filt = lay->mSelectedFilter;
 
-    Linklist<Parameter> *parameters;
+    LinkList<Parameter> *parameters;
     if(filt) parameters = &filt->parameters;
     else parameters = &lay->parameters;
 
     // Find completions
     ParameterPtr exactParam = NULL;
     std::list<ParameterPtr> retList;
-    LockedLinkList<Parameter> list = parameters->getLock();
+    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(parameters);
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
@@ -226,7 +226,7 @@ int console_blit_completion(ContextPtr env, char *cmd) {
     // Find completions
     BlitPtr exactBlit;
     std::list<BlitPtr> retList;
-    LockedLinkList<Blit> list = lay->blitter->blitlist.getLock();
+    LockedLinkList<Blit> list = LockedLinkList<Blit>(lay->blitter->blitlist);
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (BlitPtr blit) {
@@ -300,7 +300,7 @@ int console_blit_param_selection(ContextPtr env, char *cmd) {
     while(*p == ' ') p++;  // jump all spaces
     if(*p == '\0') return 0;  // no value was given
 
-    LockedLinkList<Parameter> list = b->parameters.getLock();
+    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(b->parameters);
     LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&](ParameterPtr p) {
                                                               return p->getName() == cmd;
                                                           });
@@ -339,7 +339,7 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
     // Find completions
     ParameterPtr exactParam;
     std::list<ParameterPtr> retList;
-    LockedLinkList<Parameter> list = b->parameters.getLock();
+    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(b->parameters);
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
@@ -402,7 +402,7 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
 int console_filter_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    LockedLinkList<Filter> list = env->filters.getLock();
+    LockedLinkList<Filter> list = LockedLinkList<Filter>(env->filters);
     LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](FilterPtr filter) {
                                                            return filter->getName() == cmd;
                                                        });
@@ -440,7 +440,7 @@ int console_filter_completion(ContextPtr env, char *cmd) {
     // Find completions
     FilterPtr exactFilter;
     std::list<FilterPtr> retList;
-    LockedLinkList<Filter> list = env->filters.getLock();
+    LockedLinkList<Filter> list = LockedLinkList<Filter>(env->filters);
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (FilterPtr filter) {
@@ -553,7 +553,7 @@ int console_open_layer(ContextPtr env, char *cmd) {
             ::error("no screen currently selected");
             return 0;
         }
-        int len = screen->layers.getLock().size();
+        int len = LockedLinkList<Layer>(screen->layers).size();
         notice("layer successfully created, now you have %i layers", len);
         return len;
     }
@@ -575,7 +575,7 @@ int console_print_text_layer(ContextPtr env, char *cmd) {
         return 0;
     }
     DynamicPointerCast<TextLayer>(lay)->write(cmd);
-    return screen->layers.getLock().size();
+    return LockedLinkList<Layer>(screen->layers).size();
 }
 
 int console_open_text_layer(ContextPtr env, char *cmd) {
@@ -598,7 +598,7 @@ int console_open_text_layer(ContextPtr env, char *cmd) {
         ::error("no screen currently selected");
         return 0;
     }
-    return screen->layers.getLock().size();
+    return LockedLinkList<Layer>(screen->layers).size();
 }
 
 #endif
@@ -742,7 +742,7 @@ int console_filebrowse_completion(ContextPtr env, char *cmd) {
 int console_generator_completion(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    LockedLinkList<Filter> list = env->generators.getLock();
+    LockedLinkList<Filter> list =  LockedLinkList<Filter>(env->generators);
     FilterPtr exactGenerator;
     std::list<FilterPtr> retList;
     std::string cmdString(cmd);

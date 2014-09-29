@@ -198,13 +198,11 @@ void VideoEncoder::thread_loop() {
     time(tm);
 //   std::cerr << "-- ENC:" << asctime(localtime(tm));
     if(!surface) {
-        fps->calc();
         fps->delay();
         /* std::cout << "fps->start_tv.tv_sec :" << fps->start_tv.tv_sec << \
            " tv_usec :" << fps->start_tv.tv_usec << "   \r" << std::endl; */
         return;
     }
-    fps->calc();
     fps->delay();
     //uncomment this to see how long it takes between two frames in us.
     /*    timeval start_t;
@@ -215,24 +213,24 @@ void VideoEncoder::thread_loop() {
         m_lastTime.tv_usec = start_t.tv_usec;
         std::cerr << "diff time :" << did.tv_usec << std::endl;*/
     screen->lock();
-
+    auto & geo = screen->getGeometry();
     switch(screen->get_pixel_format()) {
     case ViewPort::RGBA32:
         mlt_convert_rgb24a_to_yuv422(surface,
-                                     screen->geo.w, screen->geo.h,
-                                     screen->geo.w << 2, (uint8_t*)enc_yuyv, NULL);
+                                     geo.w, geo.h,
+                                     geo.w << 2, (uint8_t*)enc_yuyv, NULL);
         break;
 
     case ViewPort::BGRA32:
         mlt_convert_bgr24a_to_yuv422(surface,
-                                     screen->geo.w, screen->geo.h,
-                                     screen->geo.w << 2, (uint8_t*)enc_yuyv, NULL);
+                                     geo.w, geo.h,
+                                     geo.w << 2, (uint8_t*)enc_yuyv, NULL);
         break;
 
     case ViewPort::ARGB32:
         mlt_convert_argb_to_yuv422(surface,
-                                   screen->geo.w, screen->geo.h,
-                                   screen->geo.w << 2, (uint8_t*)enc_yuyv, NULL);
+                                   geo.w, geo.h,
+                                   geo.w << 2, (uint8_t*)enc_yuyv, NULL);
         break;
 
     default:
@@ -242,7 +240,7 @@ void VideoEncoder::thread_loop() {
 
     screen->unlock();
 
-    ccvt_yuyv_420p(screen->geo.w, screen->geo.h, enc_yuyv, enc_y, enc_u, enc_v);
+    ccvt_yuyv_420p(geo.w, geo.h, enc_yuyv, enc_y, enc_u, enc_v);
 
     ////// got the YUV, do the encoding
     res = encode_frame();
@@ -385,3 +383,13 @@ bool VideoEncoder::filedump_close() {
     }
 }
 
+int VideoEncoder::start() {
+    int ret = JSyncThread::start();
+    active = true;
+    return ret;
+}
+
+void VideoEncoder::stop() {
+    active = false;
+    JSyncThread::stop();
+}

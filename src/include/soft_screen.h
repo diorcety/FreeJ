@@ -39,24 +39,27 @@ public:
 
     void *get_surface();
 
-    void setup_blits(LayerPtr);
-
     void blit(LayerPtr src);
 
     void set_buffer(void *buf);
     void *coords(int x, int y);
+    void show();
+    void clear();
 
+    void fullscreen();
+protected:
+    void do_resize(int resize_w, int resize_h);
+private:
     void *screen_buffer;
 
     uint32_t *pscr, *play;  // generic blit buffer pointers
-
-    // allow to use Factory on this class
-    FACTORY_ALLOWED;
 
 protected:
     bool _init();
 
 
+    // allow to use Factory on this class
+    FACTORY_ALLOWED;
 };
 
 #endif

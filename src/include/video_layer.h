@@ -64,19 +64,21 @@ extern "C" {
 //void av_log_null_callback(void* ptr, int level, const char* fmt, va_list vl);
 
 FREEJ_FORWARD_PTR(VideoLayer)
-class VideoLayer : public Layer {
-
+class VideoLayer : public Layer, public JSyncThread {
+   friend class ViewPort;
 public:
     VideoLayer();
     ~VideoLayer();
 
 
     bool open(const char *file);
-    void *feed();
+    void *feed(double time);
     void close();
 
+private:
     int64_t to_seek;
 
+public:
     bool relative_seek(double increment);
 
     bool set_mark_in();
@@ -92,9 +94,9 @@ public:
         return eos->rem_call(c);
     }
 
+private:
 #ifdef WITH_AUDIO
     bool use_audio; ///< set true if audio should be decoded and fed to the scren->audio FIFO pipe
-
     int audio_channels;
     int audio_samplerate;
 #endif
@@ -103,6 +105,8 @@ protected:
     bool _init();
 
 private:
+    float frame_rate; ///< value set by implemented layer type
+    
     /**
      * av(codec|format) aka ffmpeg related variables
      */

@@ -30,18 +30,19 @@ public:
     ~GeneratorLayer();
 
     bool open(const char *file);
-    void *feed();
+    void *feed(double time);
     void close();
 
-    void register_generators(Linklist<Filter> *gens);
+    void register_generators(LinkList<Filter> *gens);
 
+private:
     void *swap_buffer;
     FilterInstancePtr generator;
 
 protected:
     bool _init();
 
-    Linklist<Filter> *generators; ///< linked list of registered generators
+    LinkList<Filter> *generators; ///< linked list of registered generators
 
     FACTORY_ALLOWED
 };

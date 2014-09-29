@@ -174,24 +174,11 @@ else
     SWIG_IFACE='$(top_srcdir)/bindings/freej.i'
     AC_SUBST(SWIG_IFACE)
 
-AC_ARG_ENABLE(python,
-    AS_HELP_STRING([--enable-python],[enable Python bindings (no)]),
-	[enable_python=$enableval],
-	[enable_python=no])
-
-    if test x"$enable_python" = xyes; then
-	AC_PYTHON_DEVEL
-	AM_PATH_PYTHON([$ac_python_version])
-	AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow])
-	AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
-
-    fi
-
-
-#    ENABLE_SWIG_PYTHON
+    ENABLE_SWIG_PYTHON
     ENABLE_SWIG_RUBY
     ENABLE_SWIG_JAVA
     ENABLE_SWIG_PERL
+    ENABLE_SWIG_JAVASCRIPT
 
     if test x$enable_perl = xyes; then
       AC_CHECK_FUNCS([strtoul])
@@ -203,13 +190,15 @@ AM_CONDITIONAL([BUILD_SWIG_PYTHON], [test x$enable_python = xyes])
 AM_CONDITIONAL([BUILD_SWIG_RUBY], [test x$enable_ruby = xyes])
 AM_CONDITIONAL([BUILD_SWIG_JAVA], [test x$enable_java = xyes])
 AM_CONDITIONAL([BUILD_SWIG_PERL], [test x$enable_perl = xyes])
+AM_CONDITIONAL([BUILD_SWIG_JAVASCRIPT], [test x$enable_javascript = xyes])
 
 dnl swig not found but bindings requested is fatal
 if test x$have_swig = xno && {
       test x$enable_python = xyes ||
       test x$enable_java = xyes   ||
       test x$enable_ruby = xyes   ||
-      test x$enable_perl = xyes
+      test x$enable_perl = xyes   ||
+      test x$enable_javascript = xyes
    }; then
     AC_MSG_ERROR([*** bindings requested but swig not found!])
 fi
@@ -682,165 +671,167 @@ dnl ==============================================================
 dnl compile including the javascript interpreter
 dnl ==============================================================
 
-AC_ARG_ENABLE(javascript,
-    AS_HELP_STRING([--enable-javascript],[enable javascript binding]),
-    [enable_javascript=$enableval],
-    [enable_javascript=yes])
-
-if test x$enable_javascript = xyes; then
-AC_MSG_NOTICE([checking if mozilla-js is ok])
-PKG_CHECK_MODULES([MOZJS_JS],
-                  [mozilla-js >= 1.9],
-                  [have_mozjs_js=yes], [have_mozjs_js=no])
-if test x$have_mozjs_js = xyes; then
-  FREEJ_SAVE_FLAGS
-  CFLAGS="$MOZJS_JS_CFLAGS"
-  CPPFLAGS="$MOZJS_JS_CFLAGS"
-  LDFLAGS="$MOZJS_JS_LIBS"
-  FREEJ_CHECK_LIB_HEADER([mozjs], [JS_NewContext], [jsapi.h],
-                          [have_mozjs_js=yes], [have_mozjs_js=no])
-  FREEJ_RESTORE_FLAGS
-fi
-if test x$have_mozjs_js = xyes; then
-  AC_MSG_NOTICE([using mozilla-js])
-  MOZJS_CFLAGS="$MOZJS_JS_CFLAGS"
-  MOZJS_LIBS="$MOZJS_JS_LIBS"
-  have_mozjs=yes
-else
-  AC_MSG_NOTICE([NOT using mozilla-js])
-  have_mozjs=no
-fi
-
-if test x$have_mozjs = xno; then
-  AC_MSG_NOTICE([checking if mozilla-js && libxul-embedding-stable are ok])
-  dnl test if https://bugzilla.mozilla.org/show_bug.cgi?id=500645 has been closed
-  PKG_CHECK_MODULES([MOZJS_STABLE],
-                    [mozilla-js >= 1.9 libxul-embedding-stable >= 1.9],
-                    [have_mozjs_stable=yes], [have_mozjs_stable=no])
-  if test x$have_mozjs_stable = xyes; then
-    FREEJ_SAVE_FLAGS
-    CFLAGS="$MOZJS_STABLE_CFLAGS"
-    CPPFLAGS="$MOZJS_STABLE_CFLAGS"
-    LDFLAGS="$MOZJS_STABLE_LIBS"
-    FREEJ_CHECK_LIB_HEADER([mozjs], [JS_NewContext], [jsapi.h],
-                            [have_mozjs_stable=yes], [have_mozjs_stable=no])
-    FREEJ_RESTORE_FLAGS
-  fi
-  if test x$have_mozjs_stable = xyes; then
-    AC_MSG_NOTICE([using mozilla-js && libxul-embedding-stable])
-    MOZJS_CFLAGS="$MOZJS_STABLE_CFLAGS"
-    MOZJS_LIBS="$MOZJS_STABLE_LIBS"
-    have_mozjs=yes
-  else
-    AC_MSG_NOTICE([NOT using mozilla-js && libxul-embedding-stable])
-    have_mozjs=no
-  fi
-fi
-
-if test x$have_mozjs = xno; then
-  dnl test if adding unstable is enough
-  AC_MSG_NOTICE([checking if mozilla-js && libxul-embedding-unstable are ok])
-  PKG_CHECK_MODULES([MOZJS_UNSTABLE],
-                    [mozilla-js >= 1.9 libxul-embedding-unstable >= 1.9],
-                    [have_mozjs_unstable=yes], [have_mozjs_unstable=no])
-  if test x$have_mozjs_unstable = xyes; then
-    FREEJ_SAVE_FLAGS
-    CFLAGS="$MOZJS_UNSTABLE_CFLAGS"
-    CPPFLAGS="$MOZJS_UNSTABLE_CFLAGS"
-    LDFLAGS="$MOZJS_UNSTABLE_LIBS"
-    FREEJ_CHECK_LIB_HEADER([mozjs], [JS_NewContext], [jsapi.h],
-                            [have_mozjs_unstable=yes], [have_mozjs_unstable=no])
-    FREEJ_RESTORE_FLAGS
-  fi
-  if test x$have_mozjs_unstable = xyes; then
-    AC_MSG_NOTICE([using mozilla-js && libxul-embedding-unstable])
-    MOZJS_CFLAGS="$MOZJS_UNSTABLE_CFLAGS"
-    MOZJS_LIBS="$MOZJS_UNSTABLE_LIBS"
-    have_mozjs=yes
-  else
-    AC_MSG_NOTICE([NOT using mozilla-js && libxul-embedding-unstable])
-    have_mozjs=no
-  fi
-fi
-
-if test x$have_mozjs = xyes; then
-  AC_DEFINE(JS_THREADSAFE,1,[define if compiling with threadsafe libjs])
-  AC_MSG_CHECKING([if libmozjs is in linker search path])
-
-  FREEJ_SAVE_FLAGS
-  CFLAGS="$MOZJS_CFLAGS"
-  CPPFLAGS="$MOZJS_CFLAGS"
-  dnl strip -L<arg> from MOZJS_LIBS
-  LDFLAGS=`echo $MOZJS_LIBS | sed 's/-L \?[^ ]*//g'`
-  AC_RUN_IFELSE([AC_LANG_SOURCE([[
-#include <jsapi.h>
-int main() {
- JSRuntime *jsr = JS_NewRuntime(8L * 1024L * 1024L);
-return 0;
-}]])],
-  [have_mozjs_linkable=yes], [have_mozjs_linkable=no],
-  [have_mozjs_linkable=no]) dnl action if cross-compiling
-  FREEJ_RESTORE_FLAGS
-
-  if test x$have_mozjs_linkable = xno; then
-    AC_MSG_RESULT([no, compiling static version])
-    have_mozjs=no
-  else
-    AC_MSG_RESULT([yes])
-  fi
-fi
-
-dnl this flag is supposed to be for users having problem with xulrunner
-dnl installed on the system and want to force a static linking with our shipped
-dnl xulrunner
-AC_ARG_ENABLE(static-mozjs,
-    AS_HELP_STRING([--enable-static-mozjs],[force use of shipped mozjs]),
-    [static_mozjs=$enableval],
-    [static_mozjs=no])
-if test x$have_mozjs = xno || test x$static_mozjs = xyes; then
-  AC_MSG_NOTICE([fallback to static mozjs])
-  MOZJS_CFLAGS="-I\$(top_srcdir)/lib/javascript -I\$(top_builddir)/lib/javascript"
-  dnl libs in top_srcdir instead of top_builddir because js is not under autotools
-  MOZJS_LIBS="\$(top_builddir)/lib/javascript/libmozjs.a"
-
-  dnl run lib/javascript/configure after freej's configure, building it static
-  dnl XXX config.cache can be shared between the two configures? is it safe?
-  AC_CONFIG_COMMANDS([lib/javascript/.xulrunner-subdir],
-                     [
-    (cd lib/javascript &&
-      CXXFLAGS="$GLOBAL_CFLAGS $CXXFLAGS -fPIC" \
-      CFLAGS="$GLOBAL_CFLAGS $CFLAGS -fPIC" \
-      $ac_srcdir/configure --enable-static \
-        --enable-js-static-build --disable-jit) || exit $?
-  ])
-  have_mozjs=no
-fi
-
-if test x$enable_debug = xyes ; then
-   MOZJS_CFLAGS="$MOZJS_CFLAGS -DJS_GCMETER"
-fi
-
-# I don't think this is needed (shammash)
-#if test x$have_freebsd = xyes; then
-#   MOZJS_CFLAGS="-I/usr/local/include -L/usr/local/lib -I../lib/javascript"
-#   MOZJS_LIBS="-ljs"
-#   AC_DEFINE(XP_UNIX,1,[Define use of UNIX types in javascript])
-#fi
-
-if test x$have_linux = xyes ; then
-   AC_DEFINE(XP_UNIX,1,[Define use of UNIX types in javascript])
-fi
-if test x$have_darwin = xyes ; then
-   AC_DEFINE(XP_MAC,1,[Define use of MAC types in javascript])
-fi
-
-AC_SUBST(MOZJS_CFLAGS)
-AC_SUBST(MOZJS_LIBS)
-
-AC_DEFINE(WITH_JAVASCRIPT,1,[Define if using libmozjs for spidermonkey javascript])
-fi
-AM_CONDITIONAL([BUILD_JAVASCRIPT_ENGINE], [test x$have_mozjs = xno && test x$enable_javascript = xyes])
-AM_CONDITIONAL([BUILD_JAVASCRIPT], [test x$enable_javascript = xyes])
+dnl AC_ARG_ENABLE(javascript,
+dnl     AS_HELP_STRING([--enable-javascript],[enable javascript binding]),
+dnl     [enable_javascript=$enableval],
+dnl     [enable_javascript=yes])
+dnl 
+dnl if test x$enable_javascript = xyes; then
+dnl AC_MSG_NOTICE([checking if mozilla-js is ok])
+dnl PKG_CHECK_MODULES([MOZJS_JS],
+dnl                   [mozilla-js >= 1.9],
+dnl                   [have_mozjs_js=yes], [have_mozjs_js=no])
+dnl if test x$have_mozjs_js = xyes; then
+dnl   FREEJ_SAVE_FLAGS
+dnl   CFLAGS="$MOZJS_JS_CFLAGS"
+dnl   CPPFLAGS="$MOZJS_JS_CFLAGS"
+dnl   LDFLAGS="$MOZJS_JS_LIBS"
+dnl   FREEJ_CHECK_LIB_HEADER([mozjs], [JS_NewContext], [jsapi.h],
+dnl                           [have_mozjs_js=yes], [have_mozjs_js=no])
+dnl   FREEJ_RESTORE_FLAGS
+dnl fi
+dnl if test x$have_mozjs_js = xyes; then
+dnl   AC_MSG_NOTICE([using mozilla-js])
+dnl   MOZJS_CFLAGS="$MOZJS_JS_CFLAGS"
+dnl   MOZJS_LIBS="$MOZJS_JS_LIBS"
+dnl   have_mozjs=yes
+dnl else
+dnl   AC_MSG_NOTICE([NOT using mozilla-js])
+dnl   have_mozjs=no
+dnl fi
+dnl 
+dnl if test x$have_mozjs = xno; then
+dnl   AC_MSG_NOTICE([checking if mozilla-js && libxul-embedding-stable are ok])
+dnl   dnl test if https://bugzilla.mozilla.org/show_bug.cgi?id=500645 has been closed
+dnl   PKG_CHECK_MODULES([MOZJS_STABLE],
+dnl                     [mozilla-js >= 1.9 libxul-embedding-stable >= 1.9],
+dnl                     [have_mozjs_stable=yes], [have_mozjs_stable=no])
+dnl   if test x$have_mozjs_stable = xyes; then
+dnl     FREEJ_SAVE_FLAGS
+dnl     CFLAGS="$MOZJS_STABLE_CFLAGS"
+dnl     CPPFLAGS="$MOZJS_STABLE_CFLAGS"
+dnl     LDFLAGS="$MOZJS_STABLE_LIBS"
+dnl     FREEJ_CHECK_LIB_HEADER([mozjs], [JS_NewContext], [jsapi.h],
+dnl                             [have_mozjs_stable=yes], [have_mozjs_stable=no])
+dnl     FREEJ_RESTORE_FLAGS
+dnl   fi
+dnl   if test x$have_mozjs_stable = xyes; then
+dnl     AC_MSG_NOTICE([using mozilla-js && libxul-embedding-stable])
+dnl     MOZJS_CFLAGS="$MOZJS_STABLE_CFLAGS"
+dnl     MOZJS_LIBS="$MOZJS_STABLE_LIBS"
+dnl     have_mozjs=yes
+dnl   else
+dnl     AC_MSG_NOTICE([NOT using mozilla-js && libxul-embedding-stable])
+dnl     have_mozjs=no
+dnl   fi
+dnl fi
+dnl 
+dnl if test x$have_mozjs = xno; then
+dnl   dnl test if adding unstable is enough
+dnl   AC_MSG_NOTICE([checking if mozilla-js && libxul-embedding-unstable are ok])
+dnl   PKG_CHECK_MODULES([MOZJS_UNSTABLE],
+dnl                     [mozilla-js >= 1.9 libxul-embedding-unstable >= 1.9],
+dnl                     [have_mozjs_unstable=yes], [have_mozjs_unstable=no])
+dnl   if test x$have_mozjs_unstable = xyes; then
+dnl     FREEJ_SAVE_FLAGS
+dnl     CFLAGS="$MOZJS_UNSTABLE_CFLAGS"
+dnl     CPPFLAGS="$MOZJS_UNSTABLE_CFLAGS"
+dnl     LDFLAGS="$MOZJS_UNSTABLE_LIBS"
+dnl     FREEJ_CHECK_LIB_HEADER([mozjs], [JS_NewContext], [jsapi.h],
+dnl                             [have_mozjs_unstable=yes], [have_mozjs_unstable=no])
+dnl     FREEJ_RESTORE_FLAGS
+dnl   fi
+dnl   if test x$have_mozjs_unstable = xyes; then
+dnl     AC_MSG_NOTICE([using mozilla-js && libxul-embedding-unstable])
+dnl     MOZJS_CFLAGS="$MOZJS_UNSTABLE_CFLAGS"
+dnl     MOZJS_LIBS="$MOZJS_UNSTABLE_LIBS"
+dnl     have_mozjs=yes
+dnl   else
+dnl     AC_MSG_NOTICE([NOT using mozilla-js && libxul-embedding-unstable])
+dnl     have_mozjs=no
+dnl   fi
+dnl fi
+dnl 
+dnl if test x$have_mozjs = xyes; then
+dnl   AC_DEFINE(JS_THREADSAFE,1,[define if compiling with threadsafe libjs])
+dnl   AC_MSG_CHECKING([if libmozjs is in linker search path])
+dnl 
+dnl   FREEJ_SAVE_FLAGS
+dnl   CFLAGS="$MOZJS_CFLAGS"
+dnl   CPPFLAGS="$MOZJS_CFLAGS"
+dnl   dnl strip -L<arg> from MOZJS_LIBS
+dnl   LDFLAGS=`echo $MOZJS_LIBS | sed 's/-L \?[^ ]*//g'`
+dnl   AC_RUN_IFELSE([AC_LANG_SOURCE([[
+dnl #include <jsapi.h>
+dnl int main() {
+dnl  JSRuntime *jsr = JS_NewRuntime(8L * 1024L * 1024L);
+dnl return 0;
+dnl }]])],
+dnl   [have_mozjs_linkable=yes], [have_mozjs_linkable=no],
+dnl   [have_mozjs_linkable=no]) dnl action if cross-compiling
+dnl   FREEJ_RESTORE_FLAGS
+dnl 
+dnl   if test x$have_mozjs_linkable = xno; then
+dnl     AC_MSG_RESULT([no, compiling static version])
+dnl     have_mozjs=no
+dnl   else
+dnl     AC_MSG_RESULT([yes])
+dnl   fi
+dnl fi
+dnl 
+dnl dnl this flag is supposed to be for users having problem with xulrunner
+dnl dnl installed on the system and want to force a static linking with our shipped
+dnl dnl xulrunner
+dnl AC_ARG_ENABLE(static-mozjs,
+dnl     AS_HELP_STRING([--enable-static-mozjs],[force use of shipped mozjs]),
+dnl     [static_mozjs=$enableval],
+dnl     [static_mozjs=no])
+dnl if test x$have_mozjs = xno || test x$static_mozjs = xyes; then
+dnl   AC_MSG_NOTICE([fallback to static mozjs])
+dnl   MOZJS_CFLAGS="-I\$(top_srcdir)/lib/javascript -I\$(top_builddir)/lib/javascript"
+dnl   dnl libs in top_srcdir instead of top_builddir because js is not under autotools
+dnl   MOZJS_LIBS="\$(top_builddir)/lib/javascript/libmozjs.a"
+dnl 
+dnl   dnl run lib/javascript/configure after freej's configure, building it static
+dnl   dnl XXX config.cache can be shared between the two configures? is it safe?
+dnl   AC_CONFIG_COMMANDS([lib/javascript/.xulrunner-subdir],
+dnl                      [
+dnl     (cd lib/javascript &&
+dnl       CXXFLAGS="$GLOBAL_CFLAGS $CXXFLAGS -fPIC" \
+dnl       CFLAGS="$GLOBAL_CFLAGS $CFLAGS -fPIC" \
+dnl       $ac_srcdir/configure --enable-static \
+dnl         --enable-js-static-build --disable-jit) || exit $?
+dnl   ])
+dnl   have_mozjs=no
+dnl fi
+dnl 
+dnl if test x$enable_debug = xyes ; then
+dnl    MOZJS_CFLAGS="$MOZJS_CFLAGS -DJS_GCMETER"
+dnl fi
+dnl 
+dnl # I don't think this is needed (shammash)
+dnl #if test x$have_freebsd = xyes; then
+dnl #   MOZJS_CFLAGS="-I/usr/local/include -L/usr/local/lib -I../lib/javascript"
+dnl #   MOZJS_LIBS="-ljs"
+dnl #   AC_DEFINE(XP_UNIX,1,[Define use of UNIX types in javascript])
+dnl #fi
+dnl 
+dnl if test x$have_linux = xyes ; then
+dnl    AC_DEFINE(XP_UNIX,1,[Define use of UNIX types in javascript])
+dnl fi
+dnl if test x$have_darwin = xyes ; then
+dnl    AC_DEFINE(XP_MAC,1,[Define use of MAC types in javascript])
+dnl fi
+dnl 
+dnl AC_SUBST(MOZJS_CFLAGS)
+dnl AC_SUBST(MOZJS_LIBS)
+dnl 
+dnl AC_DEFINE(WITH_JAVASCRIPT,1,[Define if using libmozjs for spidermonkey javascript])
+dnl fi
+dnl AM_CONDITIONAL([BUILD_JAVASCRIPT_ENGINE], [test x$have_mozjs = xno && test x$enable_javascript = xyes])
+dnl AM_CONDITIONAL([BUILD_JAVASCRIPT], [test x$enable_javascript = xyes])
+AM_CONDITIONAL([BUILD_JAVASCRIPT_ENGINE], [test xno = xyes])
+AM_CONDITIONAL([BUILD_JAVASCRIPT], [test xno = xyes])
 
 
 dnl ==============================================================
@@ -1117,6 +1108,7 @@ bindings/java/Makefile
 bindings/perl/Makefile
 bindings/python/Makefile
 bindings/ruby/Makefile
+bindings/javascript/Makefile
 doc/Makefile
 doc/freej.dox
 doc/scripting/Makefile

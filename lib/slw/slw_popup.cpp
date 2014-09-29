@@ -27,7 +27,7 @@
 SLW_Popup::SLW_Popup()
     : SLangWidget() {
 
-    setName("popup");
+    name = "popup";
     txt = NULL;
     len = 0;
 

@@ -33,8 +33,6 @@
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, SdlGlScreen, Screen, sdlgl);
 
 
-
-
 SdlGlScreen::SdlGlScreen()
     : ViewPort() {
 
@@ -75,7 +73,7 @@ SdlGlScreen::SdlGlScreen()
 
     // add above | SDL_FULLSCREEN to go fullscreen from the start
 
-    setName("SDLGL");
+    name = "SDLGL";
 }
 
 SdlGlScreen::~SdlGlScreen() {
@@ -156,22 +154,14 @@ bool SdlGlScreen::_init() {
     return(true);
 }
 
-void SdlGlScreen::setup_blits(LayerPtr lay) {
-    BlitterPtr b = MakeShared<Blitter>();
-
-    setup_linear_blits(b);
-
-    lay->blitter = b;
-}
-
-void SdlGlScreen::resize(int resize_w, int resize_h) {
+void SdlGlScreen::do_resize(int resize_w, int resize_h) {
     surface = SDL_SetVideoMode(resize_w, resize_h, 32, sdl_flags);
     geo.init(resize_w, resize_h, 32);
 }
 
 void *SdlGlScreen::coords(int x, int y) {
     return
-        (x + geo.pixelsize * y +
+        (x + geo.getPixelSize() * y +
          (uint32_t*)screen->pixels);
 }
 

@@ -44,8 +44,6 @@ public:
     SdlGlScreen();
     ~SdlGlScreen();
 
-    void resize(int resize_w, int resize_h);
-
     void show();
     void blit(LayerPtr lay);
     void clear();
@@ -55,9 +53,9 @@ public:
     fourcc get_pixel_format() {
         return BGRA32;
     };
-
-    void setup_blits(LayerPtr lay);
-
+protected:
+    void do_resize(int resize_w, int resize_h);
+private:
     float x_translation;
     float y_translation;
     float x_rotation;

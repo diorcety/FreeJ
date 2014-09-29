@@ -38,9 +38,8 @@ public:
     bool feed(int key);
     bool refresh();
 
-    ContextPtr env;
-
 private:
+    ContextPtr env;
     char title[256];
     int titlelen;
 
@@ -57,14 +56,12 @@ public:
     bool feed(int key);
     bool refresh();
 
-    ContextPtr env;
-
 private:
+    ContextPtr env;
     LayerPtr layer;
     FilterInstancePtr filter;
 
     char *tmp;
-
 };
 
 

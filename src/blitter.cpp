@@ -21,32 +21,16 @@
 
 #include <layer.h>
 #include <blitter.h>
+#include <blit.h>
+#include <blit_instance.h>
 #include <context.h>
 #include <iterator.h>
 #include <linklist.h>
-
 
 #include <sdl_screen.h>
 
 #include <jutils.h>
 #include <config.h>
-
-
-
-
-
-Blit::Blit() : Entry() {
-    setDescription("none");
-
-    value = 0.0;
-    fun = NULL;
-    type = NONE;
-    past_frame = NULL;
-
-}
-
-Blit::~Blit() {
-}
 
 Blitter::Blitter() {
     old_lay_x = 0;
@@ -127,7 +111,7 @@ void Blitter::crop(LayerPtr lay, ViewPortPtr scr) {
         return;
     }
 
-    BlitPtr b = lay->current_blit;
+    BlitInstancePtr b = lay->current_blit;
 
     func("crop on layer %s x%i y%i w%i h%i for blit %s",
          lay->getName().c_str(), lay->geo.x, lay->geo.y,
@@ -137,6 +121,7 @@ void Blitter::crop(LayerPtr lay, ViewPortPtr scr) {
     // we use the normal geometry if not roto|zoom
     // otherwise the layer::geo_rotozoom
     Geometry *geo;
+    const Geometry &scr_geo = scr->getGeometry();
     if(lay->rotating | lay->zooming) {
         geo = &lay->geo_rotozoom;
 
@@ -153,16 +138,16 @@ void Blitter::crop(LayerPtr lay, ViewPortPtr scr) {
 
 
     // crop for the SDL blit
-    if(b->type == Blit::SDL) {
+    if(b->getType() == Blit::SDL) {
 
         b->sdl_rect.x = -(geo->x);
         b->sdl_rect.y = -(geo->y);
-        b->sdl_rect.w = scr->geo.w;
-        b->sdl_rect.h = scr->geo.h;
+        b->sdl_rect.w = scr_geo.w;
+        b->sdl_rect.h = scr_geo.h;
 
         // crop for the linear and past blit
-    } else if(b->type == Blit::LINEAR
-              || b->type == Blit::PAST) {
+    } else if(b->getType() == Blit::LINEAR
+              || b->getType() == Blit::PAST) {
 
         b->lay_pitch =  geo->w; // how many pixels to copy each row
         b->lay_height = geo->h; // how many rows we should copy
@@ -176,13 +161,13 @@ void Blitter::crop(LayerPtr lay, ViewPortPtr scr) {
         b->lay_stride_dx = 0; // how many pixels stride on the right of each row
 
         // BOTTOM
-        if(geo->y + geo->h > scr->geo.h) {
-            if(geo->y > scr->geo.h) {   // out of screen
-                geo->y = scr->geo.h + 1; // don't go far
+        if(geo->y + geo->h > scr_geo.h) {
+            if(geo->y > scr_geo.h) {   // out of screen
+                geo->y = scr_geo.h + 1; // don't go far
                 lay->hidden = true;
                 return;
             } else { // partially out
-                b->lay_height -= (geo->y + geo->h) - scr->geo.h;
+                b->lay_height -= (geo->y + geo->h) - scr_geo.h;
             }
         }
 
@@ -215,17 +200,17 @@ void Blitter::crop(LayerPtr lay, ViewPortPtr scr) {
         }
 
         // RIGHT
-        if(geo->x + geo->w > scr->geo.w) {
-            if(geo->x > scr->geo.w) {   // out of screen
-                geo->x = scr->geo.w + 1; // don't go far
+        if(geo->x + geo->w > scr_geo.w) {
+            if(geo->x > scr_geo.w) {   // out of screen
+                geo->x = scr_geo.w + 1; // don't go far
                 lay->hidden = true;
                 return;
             } else { // partially out
-                b->lay_pitch -= (geo->x + geo->w) - scr->geo.w;
-                b->lay_stride_dx += (geo->x + geo->w) - scr->geo.w;
+                b->lay_pitch -= (geo->x + geo->w) - scr_geo.w;
+                b->lay_stride_dx += (geo->x + geo->w) - scr_geo.w;
             }
         } else { // inside
-            b->scr_stride_dx += scr->geo.w - (geo->x + geo->w);
+            b->scr_stride_dx += scr_geo.w - (geo->x + geo->w);
         }
 
         lay->hidden = false;
@@ -238,7 +223,7 @@ void Blitter::crop(LayerPtr lay, ViewPortPtr scr) {
         b->scr_stride = b->scr_stride_dx + b->scr_stride_sx; // sum strides
         // precalculate upper left starting offset for screen
         b->scr_offset = (b->scr_stride_sx +
-                         (b->scr_stride_up * scr->geo.w));
+                         (b->scr_stride_up * scr_geo.w));
     }
 
     // calculate bytes per row

@@ -33,7 +33,7 @@
 JoyController::JoyController()
     : SdlController() {
 
-    setName("Joystick");
+    name = "Joystick";
 
     num = 0;
 }

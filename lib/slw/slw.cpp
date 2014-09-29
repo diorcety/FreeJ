@@ -29,7 +29,7 @@ SLangWidget::SLangWidget()
     int c;
 
     // real name will be set by inheriting widget
-    setName("unknown");
+    name = "unknown";
 
     // reset geometry
     w = 0;

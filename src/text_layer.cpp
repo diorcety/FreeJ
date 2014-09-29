@@ -52,16 +52,13 @@ TextLayer::TextLayer()
     bgcolor.b = 0x00;
 
     type = Layer::TEXT;
-    setName("TXT");
+    name = "TXT";
     surf = NULL;
 
-    LockedLinkList<Parameter> list = parameters.getLock();
+    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(parameters);
     {
         // setup specific layer parameters
-        ParameterPtr param = MakeShared<Parameter>(Parameter::NUMBER);
-        param->setName("size");
-        param->setDescription("set the size of the font");
-        list.push_back(param);
+        list.push_back(MakeShared<Parameter>(Parameter::NUMBER, "size", "set the size of the font"));
     }
 }
 
@@ -231,14 +228,12 @@ void TextLayer::write(const char *str) {
     // newsurf will become next this->surf, we don't need to free
     newsurf = SDL_DisplayFormat(tmp);
 
-    Closure *display = NewClosure(this, &TextLayer::_display_text, newsurf);
-    deferred_calls->add_job(display);
+    _display_text(newsurf);
 
     SDL_FreeSurface(tmp);
-
 }
 
-void *TextLayer::feed() {
+void *TextLayer::feed(double time) {
     if(!surf)
         return NULL;
     else

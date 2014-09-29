@@ -60,7 +60,7 @@ CairoLayer::CairoLayer()
     color = NULL;
     saved_color = NULL;
 
-    setName("VEC");
+    name = "VEC";
     set_filename("/vector layer");
 }
 
@@ -92,7 +92,7 @@ bool CairoLayer::_init() {
 
 }
 
-void *CairoLayer::feed() {
+void *CairoLayer::feed(double time) {
     return(pixels);
 }
 
@@ -217,7 +217,7 @@ void CairoLayer::pop_color() {
     color = saved_color;
     saved_color = NULL;
     func("popped back color: r[%.2f] g[%.2f] b[%.2f] a[%.2f]",
-         color->r, color->g, color->b, color->a);
+         color->get_r(), color->get_b(), color->get_b(), color->get_a());
 }
 
 #endif

@@ -35,7 +35,7 @@ public:
     ~OpenCVCamLayer();
 
     bool open(const char *devfile);
-    void *feed();
+    void *feed(double time);
     void close();
 
 protected:

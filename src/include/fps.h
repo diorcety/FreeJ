@@ -31,16 +31,14 @@ public:
 
     void init(double rate);
 
-    float get();
+    double getCurrent();
+    double get();
     double set(double rate);
-    void calc();
     void delay();
-    void select_sleep(long usec);
-
-    double fps, fps_old;
 
 private:
-
+    void calc();
+    static void select_sleep(long usec);
     struct fps_data_t {
         int i;
         int n;
@@ -49,10 +47,8 @@ private:
     } fpsd;
 
     struct timespec wake_ts;
-    double _fps, _passes, _ratio;
-    struct timeval start_tv, m_OldTime, m_OrgTime;
-    long int _period;
-    bool m_OrgSets;
+    struct timeval start_tv;
+    double _fps;
 };
 
 #endif

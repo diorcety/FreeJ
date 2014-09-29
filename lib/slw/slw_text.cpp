@@ -29,7 +29,7 @@
 SLW_Text::SLW_Text()
     : SLangWidget() {
 
-    setName("text");
+    name = "text";
 
     textconsole = NULL;
 }

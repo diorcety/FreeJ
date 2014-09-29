@@ -34,7 +34,7 @@ FACTORY_REGISTER_INSTANTIATOR(Controller, MouseController, MouseController, sdl)
 
 MouseController::MouseController()
     : SdlController() {
-    setName("Mouse");
+    name = "Mouse";
     indestructible = true;
 }
 

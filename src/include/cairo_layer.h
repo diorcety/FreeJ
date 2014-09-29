@@ -48,14 +48,16 @@ public:
     ~CairoLayer();
 
     bool open(const char *file);
-    void *feed();
+    void *feed(double time);
     void close();
 
+private:
     cairo_t *cairo;
 
     Color *color;
     Color *saved_color;
 
+public:
     ///////////////////////////////////////////////
     // public methods exported to language bindings
 

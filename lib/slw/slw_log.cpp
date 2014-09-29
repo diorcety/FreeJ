@@ -28,7 +28,7 @@
 SLW_Log::SLW_Log()
     : SLangWidget() {
 
-    setName("log");
+    name = "log";
     textconsole = NULL;
     scrolling = false;
 
@@ -70,7 +70,7 @@ bool SLW_Log::feed(int key) {
     // interprets a keycode and perform the action (or write a letter)
     if(!key) return(false);
 
-    LockedLinkList<Row> list = textconsole->rows.getLock();
+    LockedLinkList<Row> list = LockedLinkList<Row>(textconsole->rows);
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), textconsole->vis_row_in);
 
     switch(key) {
@@ -111,7 +111,7 @@ bool SLW_Log::refresh() {
     if(!textconsole->vis_row_in) return false;
     else r = textconsole->vis_row_in;
 
-    LockedLinkList<Row> list = textconsole->rows.getLock();
+    LockedLinkList<Row> list = LockedLinkList<Row>(textconsole->rows);
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), textconsole->vis_row_in);
 
     // tell the renderer to blank the surface for a refresh
@@ -141,7 +141,7 @@ bool SLW_Log::refresh() {
 }
 
 void SLW_Log::append(const char *text) {
-    LockedLinkList<Row> list = textconsole->rows.getLock();
+    LockedLinkList<Row> list = LockedLinkList<Row>(textconsole->rows);
     LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), textconsole->vis_row_in);
     RowPtr r = MakeShared<Row>();
     int len = strlen(text);

@@ -101,15 +101,15 @@ int selector(const struct dirent *dir) {
     return(0);
 }
 
-int Plugger::refresh(Context *env) {
 
+LinkList<Filter> Plugger::getFilters() {
     char *dir;
     struct dirent **filelist;
     int found;
     char *path = _getsearchpath();
 
-    LockedLinkList<Filter> filterList = env->filters.getLock();
-    LockedLinkList<Filter> generatorList = env->generators.getLock();
+    LinkList<Filter> list;
+    LockedLinkList<Filter> filterList = LockedLinkList<Filter>(list);
 
 #ifdef WITH_COCOA
     CVFilter::listFilters(env->filters);
@@ -127,7 +127,7 @@ int Plugger::refresh(Context *env) {
             found = scandir(dir, &filelist, selector, alphasort);
             if(found < 0) {
                 error("Plugger::scandir");
-                return(-1);
+                return list;
             };
             /* .so files found, check if they are plugins */
 
@@ -144,19 +144,18 @@ int Plugger::refresh(Context *env) {
                     FreiorPtr fr = DynamicPointerCast<Freior>(Factory<Filter>::new_instance("Frei0rFilter"));
                     if(fr && fr->open(temp)) {
                         // check what kind of plugin is and place it
-                        if(fr->info.plugin_type == F0R_PLUGIN_TYPE_FILTER) {
+                        auto info = fr->getInfo();
+                        if(info.plugin_type == F0R_PLUGIN_TYPE_FILTER) {
                             filterList.push_back(fr);
                             func("found frei0r filter: %s (%p)", fr->getName().c_str(), fr.get());
                             continue;
-                        } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_SOURCE) {
-                            generatorList.push_back(fr);
-                            func("found frei0r generator: %s (%p)", fr->getName().c_str(), fr.get());
+                        } else if(info.plugin_type == F0R_PLUGIN_TYPE_SOURCE) {
                             continue;
-                        } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_MIXER2) {
-                            func("frei0r plugin of type MIXER2 not supported (yet)", fr->info.plugin_type);
+                        } else if(info.plugin_type == F0R_PLUGIN_TYPE_MIXER2) {
+                            func("frei0r plugin of type MIXER2 not supported (yet)", info.plugin_type);
                             continue;
-                        } else if(fr->info.plugin_type == F0R_PLUGIN_TYPE_MIXER3) {
-                            func("frei0r plugin of type MIXER3 not supported (yet)", fr->info.plugin_type);
+                        } else if(info.plugin_type == F0R_PLUGIN_TYPE_MIXER3) {
+                            func("frei0r plugin of type MIXER3 not supported (yet)", info.plugin_type);
                             continue;
                         }
                     }
@@ -167,13 +166,12 @@ int Plugger::refresh(Context *env) {
                     FreeframePtr fr = DynamicPointerCast<Freeframe>(Factory<Filter>::new_instance("FreeframeFilter"));
                     if(fr && fr->open(temp)) {
                         // check what kind of plugin is and place it
-                        if(fr->info->pluginType == FF_EFFECT) {
+                        auto info = fr->getInfo();
+                        if(info->pluginType == FF_EFFECT) {
                             filterList.push_back(fr);
-                            func("found freeframe filter: %s (%p)", fr->info->pluginName, fr.get());
+                            func("found freeframe filter: %s (%p)", info->pluginName, fr.get());
                             continue;
-                        } else if(fr->info->pluginType == FF_SOURCE) {
-                            generatorList.push_back(fr);
-                            func("found freeframe generator: %s (%p)", fr->info->pluginName, fr.get());
+                        } else if(info->pluginType == FF_SOURCE) {
                             continue;
                         }
                     }
@@ -187,12 +185,102 @@ int Plugger::refresh(Context *env) {
         } while((dir = strtok(NULL, ":")));
     } else {
         warning("can't find any valid plugger directory");
-        return(-1);
+        return list;
     }
     act("filters found: %u", filterList.size());
+
+    return list;
+}
+
+LinkList<Filter> Plugger::getGenerators() {
+
+    char *dir;
+    struct dirent **filelist;
+    int found;
+    char *path = _getsearchpath();
+
+    LinkList<Filter> list;
+    LockedLinkList<Filter> generatorList = LockedLinkList<Filter>(list);
+
+#ifdef WITH_COCOA
+    CVFilter::listFilters(env->filters);
+#endif
+    if(path) {
+
+        notice("serching available plugins in %s", path);
+
+        dir = strtok(path, ":");
+
+        // scan for all available effects
+        do {
+            func("scanning %s", dir);
+
+            found = scandir(dir, &filelist, selector, alphasort);
+            if(found < 0) {
+                error("Plugger::scandir");
+                return list;
+            };
+            /* .so files found, check if they are plugins */
+
+
+            while(found--) {
+
+                char temp[256];
+
+                snprintf(temp, 255, "%s/%s", dir, filelist[found]->d_name);
+                free(filelist[found]);
+
+#ifdef WITH_FREI0R
+                {
+                    FreiorPtr fr = DynamicPointerCast<Freior>(Factory<Filter>::new_instance("Frei0rFilter"));
+                    if(fr && fr->open(temp)) {
+                        // check what kind of plugin is and place it
+                        auto info = fr->getInfo();
+                        if(info.plugin_type == F0R_PLUGIN_TYPE_FILTER) {
+                            continue;
+                        } else if(info.plugin_type == F0R_PLUGIN_TYPE_SOURCE) {
+                            generatorList.push_back(fr);
+                            func("found frei0r generator: %s (%p)", fr->getName().c_str(), fr.get());
+                            continue;
+                        } else if(info.plugin_type == F0R_PLUGIN_TYPE_MIXER2) {
+                            func("frei0r plugin of type MIXER2 not supported (yet)", info.plugin_type);
+                            continue;
+                        } else if(info.plugin_type == F0R_PLUGIN_TYPE_MIXER3) {
+                            func("frei0r plugin of type MIXER3 not supported (yet)", info.plugin_type);
+                            continue;
+                        }
+                    }
+                }
+#endif
+#ifdef WITH_FREEFRAME
+                {
+                    FreeframePtr fr = DynamicPointerCast<Freeframe>(Factory<Filter>::new_instance("FreeframeFilter"));
+                    if(fr && fr->open(temp)) {
+                        // check what kind of plugin is and place it
+                        auto info = fr->getInfo();
+                        if(info->pluginType == FF_EFFECT) {
+                            continue;
+                        } else if(info->pluginType == FF_SOURCE) {
+                            generatorList.push_back(fr);
+                            func("found freeframe generator: %s (%p)", info->pluginName, fr.get());
+                            continue;
+                        }
+                    }
+                }
+#endif
+                if(found < 0)
+                    break;
+            }
+
+            free(filelist);
+        } while((dir = strtok(NULL, ":")));
+    } else {
+        warning("can't find any valid plugger directory");
+        return list;
+    }
     act("generators found: %u", generatorList.size());
 
-    return 0;
+    return list;
 }
 
 void Plugger::addsearchdir(const char *dir) {

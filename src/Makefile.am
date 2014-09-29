@@ -7,15 +7,17 @@ SUBDIRS = include
 
 SOURCES = \
 	context.cpp		layer.cpp	\
-	fps.cpp			blitter.cpp	\
+	fps.cpp		timelapse.cpp	blitter.cpp	\
+	blit.cpp		blit_instance.cpp \
 	sdl_blits.cpp		linear_blits.cpp \
 	iterator.cpp		entity.cpp	\
 	jsync.cpp		closure.cpp	\
 	callback.cpp		cpu_accel.cpp	\
 	plugin.cpp		plugger.cpp	\
-	frei0r.cpp		freeframe.cpp   \
+	frei0r.cpp		frei0r_instance.cpp \
+	freeframe.cpp		freeframe_instance.cpp \
 	filter.cpp		parameter.cpp   \
-	filter_instance.cpp \
+	filter_instance.cpp	parameter_instance.cpp \
 	jutils.cpp		fastmemcpy.cpp  \
 	ringbuffer.cpp  	convertvid.cpp  \
 	logging.cpp geometry.cpp color.cpp \
@@ -46,50 +48,18 @@ CONSOLE_SOURCES =	console_ctrl.cpp  \
 	console_calls_ctrl.cpp 	console_readline_ctrl.cpp \
 	console_widgets_ctrl.cpp
 
-JS_SOURCES = 	context_js.cpp  \
-		parameter_js.cpp \
-		layer_js.cpp    \
-		filter_js.cpp   \
-		jsparser.cpp	\
-		callbacks_js.cpp \
-		video_encoder_js.cpp \
-		cam_layer_js.cpp \
-		video_layer_js.cpp \
-		image_layer_js.cpp \
-		text_layer_js.cpp \
-		geo_layer_js.cpp \
-		generator_layer_js.cpp \
-		flash_layer_js.cpp \
-		screen_js.cpp \
-		cairo_layer_js.cpp \
-		kbd_ctrl_js.cpp \
-		joy_ctrl_js.cpp \
-		vimo_ctrl_js.cpp \
-		trigger_ctrl_js.cpp \
-		controller_js.cpp \
-		xgrab_layer_js.cpp \
-		mouse_ctrl_js.cpp \
-		wiimote_ctrl_js.cpp \
-		osc_ctrl_js.cpp \
-		midi_ctrl_js.cpp
-
 if BUILD_AUDIO
 SOURCES += audio_layer.cpp \
 	audio_jack.cpp \
 	audio_collector.cpp \
 	theorautils.cpp \
 	oggtheora_encoder.cpp
-
-JS_SOURCES += audio_collector_js.cpp
 endif
 
 lib_LTLIBRARIES = libfreej.la
 libfreej_la_SOURCES = $(SOURCES)
-if BUILD_JAVASCRIPT
-libfreej_la_SOURCES += $(JS_SOURCES)
-endif
 libfreej_la_LIBADD  = $(FREEJ_STATIC_LIBS)
-libfreej_la_LDFLAGS = $(FREEJ_LIBS) -version-info $(FREEJ_VERSION_INFO)
+libfreej_la_LDFLAGS = $(FREEJ_LIBS) -no-undefined -version-info $(FREEJ_VERSION_INFO)
 
 if BUILD_CONSOLE
 bin_PROGRAMS = freej

@@ -34,7 +34,7 @@ FREEJ_FORWARD_PTR(CVFilter)
 #endif
 FREEJ_FORWARD_PTR(Freeframe)
 
-template <class T> class Linklist;
+template <class T> class LinkList;
 
 FREEJ_FORWARD_PTR(Filter)
 class Filter : public Entry {
@@ -55,29 +55,11 @@ public:
 
     virtual FilterInstancePtr new_instance();
 
-    virtual FilterInstancePtr apply(LayerPtr lay);
-    virtual bool apply(LayerPtr lay, FilterInstancePtr instance);
-
+public:
     virtual const char *description();
     virtual const char *author();
 
-    virtual int get_parameter_type(int i);
-
-    virtual char *get_parameter_description(int i);
-
     virtual int type() = 0;
-
-    bool initialized;
-    bool active;
-    bool inuse;
-
-protected:
-    virtual void destruct(FilterInstancePtr inst);
-    virtual void update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe);
-    virtual void apply_parameters(FilterInstancePtr inst);
-    virtual void init_parameters(Linklist<Parameter> &parameters) = 0;
-    int bytesize;
-
 };
 
 #endif

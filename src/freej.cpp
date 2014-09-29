@@ -37,15 +37,10 @@
 #include <video_encoder.h>
 #include <plugger.h>
 #include <jutils.h>
-//#include <fps.h>
 
 #include <impl_layers.h>
 #include <impl_screens.h>
 #include <impl_video_encoders.h>
-
-
-// javascript
-#include <jsparser.h>
 
 //[of]cli options parser:commandline
 #define MAX_CLI_CHARS 4096
@@ -358,20 +353,22 @@ int main(int argc, char **argv) {
 
     /* execute javascript */
     if(javascript[0]) {
-        freej->interactive = false;
+        freej->setInteractive(false);
         freej->open_script(javascript); // TODO: quit here when script failed??
-        if(freej->quit) {
+        if(freej->isQuitting()) {
             //      freej.close();
             // here calling close directly we double the destructor
             // fixed omitting the explicit close() call
             // but would be better to make the destructor reentrant
             exit(1);
-        } else freej->interactive = true;
+        } else {
+            freej->setInteractive(true);
+        }
     }
 
     /* execute processing */
     if(processing[0]) {
-        freej->interactive = false;
+        freej->setInteractive(false);
 #ifdef WITH_JAVASCRIPT
         char tmp[1024];
 
@@ -380,8 +377,11 @@ int main(int argc, char **argv) {
         freej->js->parse(tmp);
 #endif //WITH_JAVASCRIPT
 
-        if(freej->quit) exit(1);
-        else freej->interactive = true;
+        if(freej->isQuitting()) {
+            exit(1);
+        } else {
+            freej->setInteractive(true);
+        }
     }
 
 
@@ -391,9 +391,9 @@ int main(int argc, char **argv) {
 
 
     // Set fps
-    freej->fps.set(fps);
+    freej->getFps().set(fps);
 
-    freej->start_running = startstate;
+    freej->setStartRunning(startstate);
 
     /* create layers requested on commandline */
     {
@@ -427,7 +427,7 @@ int main(int argc, char **argv) {
     }
 
     /* MAIN loop */
-    while(!freej->quit) {
+    while(!freej->isQuitting()) {
         /* CAFUDDARE in sicilian means to add a lot of
            stuff into something; for example, to do the
            bread or the pasta for the pizza you have to

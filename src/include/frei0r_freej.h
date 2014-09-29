@@ -31,8 +31,12 @@
 #include <factory.h>
 
 
+FREEJ_FORWARD_PTR(FreiorParameter)
+
 FREEJ_FORWARD_PTR(Freior)
 class Freior : public Filter {
+    friend class FreiorInstance;
+    friend class FreiorParameterInstance;
     friend class GenF0rLayer;
 #ifdef WITH_COCOA
     friend class CVF0rLayer;
@@ -42,29 +46,28 @@ public:
     Freior();
     virtual ~Freior();
 
-    int type();
+    virtual int type();
     int open(char *file);
-    bool apply(LayerPtr lay, FilterInstancePtr instance);
-    const char *description();
-    const char *author();
-    void print_info();
-    int  get_parameter_type(int i);
-    char *get_parameter_description(int i);
+    virtual FilterInstancePtr new_instance();
+    virtual const char *description();
+    virtual const char *author();
 
+    inline const f0r_plugin_info_t getInfo() const {
+        return info;
+    }
+
+protected:
     f0r_plugin_info_t info;
+    void print_info();
 
     bool opened;
+    std::list<FreiorParameterPtr> parameters;
 
-    // parameter map
-    std::vector<f0r_param_info_t> param_infos;
     void (*f0r_set_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);
     void (*f0r_get_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);
 
     f0r_instance_t (*f0r_construct)(unsigned int width, unsigned int height);
 
-protected:
-    void destruct(FilterInstancePtr inst);
-    void update(FilterInstancePtr inst, double time, uint32_t *inframe, uint32_t *outframe);
     // Interface function pointers.
     int (*f0r_init)();
     void (*f0r_get_plugin_info)(f0r_plugin_info_t* pluginInfo);
@@ -76,11 +79,10 @@ protected:
     void (*f0r_update2)(f0r_instance_t instance, double time,
                         const uint32_t* inframe1, const uint32_t* inframe2,
                         const uint32_t* inframe3, uint32_t* outframe);
-
-    void init_parameters(Linklist<Parameter> &parameters);
+                        
 private:
-    void init();
 
+    void init();
     // dlopen handle
     void *handle;
     // full .so file path

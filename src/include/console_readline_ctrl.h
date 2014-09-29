@@ -50,14 +50,12 @@ public:
        in charge of processing the input collected */
     int readline(const char *msg, cmd_process_t *proc, cmd_complete_t *comp);
 
+private:
     int movestep;
 
     ContextPtr env;
 
-
-private:
-
-    Linklist<Entry> history;
+    LinkList<Entry> history;
     EntryPtr mSelectedHistory;
 
     /* input console command */

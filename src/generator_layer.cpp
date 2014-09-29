@@ -40,7 +40,7 @@ GeneratorLayer::GeneratorLayer()
     generators = NULL;
 
     type = Layer::GENERATOR;
-    setName("GEN");
+    name = "GEN";
     //jsclass = &gen0r_layer_class;
     //  set_filename("/particle generator");
     swap_buffer = NULL;
@@ -53,67 +53,9 @@ GeneratorLayer::~GeneratorLayer() {
     }
 }
 
-/// set_parameter callback for generator layers
-// TODO
-static void set_freeframe_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
-}
-
-static void get_freeframe_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
-}
-
-#ifdef WITH_FREI0R
-static void get_frei0r_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
-}
-
-static void set_frei0r_layer_parameter(LayerPtr lay, ParameterPtr param, int idx) {
-    GeneratorLayerPtr layer = DynamicPointerCast<GeneratorLayer>(lay);
-    FreiorPtr f = DynamicPointerCast<Freior>(layer->generator->proto);
-    void *val = param->value;
-
-    switch(f->param_infos[idx - 1].type) {
-
-    // idx-1 because frei0r's index starts from 0
-    case F0R_PARAM_BOOL:
-        (*f->f0r_set_param_value)
-            (layer->generator->core, new f0r_param_bool(*(bool*)val), idx - 1);
-        break;
-
-    case F0R_PARAM_DOUBLE:
-        (*f->f0r_set_param_value)(layer->generator->core,
-                                  new f0r_param_double(*(double*)val), idx - 1);
-        break;
-
-    case F0R_PARAM_COLOR: {
-        f0r_param_color *color = new f0r_param_color;
-        color->r = ((double*)val)[0];
-        color->g = ((double*)val)[1];
-        color->b = ((double*)val)[2];
-        (*f->f0r_set_param_value)(layer->generator->core, color, idx - 1);
-        // QUAAA: should we delete the new allocated object? -jrml
-    }
-    break;
-
-    case F0R_PARAM_POSITION: {
-        f0r_param_position *position = new f0r_param_position;
-        position->x = ((double*)val)[0];
-        position->y = ((double*)val)[1];
-        (*f->f0r_set_param_value)(layer->generator->core, position, idx - 1);
-        // QUAAA: should we delete the new allocated object? -jrml
-    }
-    break;
-
-    default:
-
-        error("Unrecognized parameter type %u for set_parameter_value",
-              f->param_infos[idx].type);
-    }
-}
-
-#endif
-
-void GeneratorLayer::register_generators(Linklist<Filter> *gens) {
+void GeneratorLayer::register_generators(LinkList<Filter> *gens) {
     generators = gens;
-    act("%u generators available", gens->getLock().size());
+    act("%u generators available", LockedLinkList<Filter>(*gens).size());
 }
 
 bool GeneratorLayer::open(const char *file) {
@@ -123,7 +65,7 @@ bool GeneratorLayer::open(const char *file) {
         return false;
     }
 
-    LockedLinkList<Filter> list = generators->getLock();
+    LockedLinkList<Filter> list = LockedLinkList<Filter>(*generators);
     LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&] (FilterPtr &filter) {
                                                            return filter->getName() == file;
                                                        });
@@ -135,57 +77,17 @@ bool GeneratorLayer::open(const char *file) {
 
     close();
 
-    generator = Factory<FilterInstance>::new_instance("FilterInstance");
-    if(generator)
-        generator->init(proto);
-
-#ifdef WITH_FREI0R
     if(proto->type() == Filter::FREIOR) {
-        generator->core = (void*)(*(DynamicPointerCast<Freior>(proto))->f0r_construct)(geo.w, geo.h);
-        if(!generator->core) {
-            error("freior constructor returned NULL instantiating generator %s", file);
-            generator = NULL;
-            return false;
-        }
-
-        LockedLinkList<Parameter> list1 = parameters.getLock();
-        LockedLinkList<Parameter> list2 = generator->parameters.getLock();
-
-        std::for_each(list2.begin(), list2.end(), [&](ParameterPtr &p) {
-                          // TODO ?
-                          //p->layer_set_f = set_frei0r_layer_parameter;
-                          //p->layer_get_f = get_frei0r_layer_parameter;
-                          list1.push_back(p);
-                      });
+        generator = Factory<FilterInstance>::new_instance("FreiorInstance");
+    } else if(proto->type() == Filter::FREEFRAME) {
+        generator = Factory<FilterInstance>::new_instance("FreeframeInstance");
+    } else {
+        generator = Factory<FilterInstance>::new_instance("FilterInstance");
     }
-#endif
-
-    if(proto->type() == Filter::FREEFRAME) {
-        VideoInfoStruct vidinfo;
-        vidinfo.frameWidth = geo.w;
-        vidinfo.frameHeight = geo.h;
-        vidinfo.orientation = 1;
-        vidinfo.bitDepth = FF_CAP_32BITVIDEO;
-        generator->intcore = (DynamicPointerCast<Freeframe>(proto))->plugmain(FF_INSTANTIATE, &vidinfo, 0).ivalue;
-        if(generator->intcore == FF_FAIL) {
-            error("Freeframe generator %s cannot be instantiated", name.c_str());
-            generator = NULL;
-            return false;
-        }
-        // todo: parameters in freeframe
-        LockedLinkList<Parameter> list1 = parameters.getLock();
-        LockedLinkList<Parameter> list2 = generator->parameters.getLock();
-        std::for_each(list2.begin(), list2.end(), [&](ParameterPtr &p) {
-                          // TODO ?
-                          //p->layer_set_f = set_freeframe_layer_parameter;
-                          //p->layer_get_f = get_freeframe_layer_parameter;
-                          list1.push_back(p);
-                      });
+    if(generator) {
+        generator->init(proto);
     }
-
-    // XXX - are we allocating memory for someone else? ... this is crap !!!
-    generator->outframe = (uint32_t*) calloc(geo.bytesize, 1);
-
+    generator->apply(SharedFromThis(GeneratorLayer));
 
     set_filename(file);
     opened = true;
@@ -198,23 +100,19 @@ void GeneratorLayer::close() {
 }
 
 bool GeneratorLayer::_init() {
-
-    //  open("lissajous0r");
-    //  open("ising0r");
-
     if(!swap_buffer)
-        swap_buffer = malloc(geo.bytesize);
+        swap_buffer = malloc(geo.getByteSize());
     else { // if changing context ensure we can handle its resolution
-        swap_buffer = realloc(swap_buffer, geo.bytesize);
+        swap_buffer = realloc(swap_buffer, geo.getByteSize());
     }
     return(true);
 }
 
-void *GeneratorLayer::feed() {
+void *GeneratorLayer::feed(double time) {
     void *res;
     if(generator) {
-        res = generator->process(fps.get(), NULL);
-        jmemcpy(swap_buffer, res, geo.bytesize);
+        res = generator->process(time, NULL);
+        jmemcpy(swap_buffer, res, geo.getByteSize());
     }
     return swap_buffer;
 }

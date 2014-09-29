@@ -7,17 +7,15 @@ python_module = freej.py
 BUILT_SOURCES = $(swig_source) $(swig_header)
 
 $(swig_source): $(SWIG_IFACE)
-		$(SWIG_COMMAND) $(SWIG_PYTHON_OPT) -threads -shadow -o $(swig_source) $(SWIG_IFACE)
+		$(SWIG_COMMAND) $(SWIG_PYTHON_OPT) -interface libfreej_py -threads -shadow -o $(swig_source) $(SWIG_IFACE)
 
 pkgpython_PYTHON = __init__.py
 nodist_pkgpython_PYTHON = $(python_module)
-pkgpyexec_LTLIBRARIES = _freej.la
-#pkgpython_instdir = $(pythondir)
-#pkgpython_inst_PYTHON = freej.pth
+pkgpyexec_LTLIBRARIES = libfreej_py.la
 
-nodist__freej_la_SOURCES = $(swig_source)
-_freej_la_CXXFLAGS = $(FREEJ_CFLAGS) $(SWIG_PYTHON_CPPFLAGS)
-_freej_la_LDFLAGS = -module -avoid-version -no-undefined
-_freej_la_LIBADD = $(top_builddir)/src/libfreej.la
+nodist_libfreej_py_la_SOURCES = $(swig_source)
+libfreej_py_la_CXXFLAGS = $(FREEJ_CFLAGS) $(SWIG_PYTHON_CPPFLAGS)
+libfreej_py_la_LDFLAGS = -module -avoid-version -no-undefined
+libfreej_py_la_LIBADD = $(top_builddir)/src/libfreej.la
 
 CLEANFILES = $(BUILT_SOURCES) $(python_module)

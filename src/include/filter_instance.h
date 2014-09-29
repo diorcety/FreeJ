@@ -23,7 +23,7 @@
 
 #include <config.h>
 
-#include <parameter.h>
+#include <parameter_instance.h>
 #include <linklist.h>
 #include <stdint.h>
 #include <factory.h>
@@ -40,30 +40,22 @@ public:
     virtual ~FilterInstance();
 
     virtual void init(FilterPtr fr);
-    virtual uint32_t *process(float fps, uint32_t *inframe);
-
-    virtual bool apply();
-
+    virtual bool apply(LayerPtr lay);
     virtual bool inuse();
+    virtual LayerPtr get_layer();
+    
+    uint32_t *process(double time, uint32_t *inframe);
 
-    LayerPtr get_layer();
-
-    // XXX - most of this stuff should be private or protected
-    FilterPtr proto;
-
-    bool active;
-
-    unsigned intcore;
-    void *core;
-
-    uint32_t *outframe;
-
-    Linklist<Parameter> parameters;
 
 protected:
-    void set_layer(LayerPtr lay);
-
-private:
+    virtual uint32_t *_process(double time, uint32_t *inframe);
+    
+    FilterPtr proto;
+    LinkList<ParameterInstance> parameters;
+    bool active;
+    
+    uint32_t *outframe;
+    uint32_t bytesize;
     LayerWeakPtr layer;
 
     FACTORY_ALLOWED

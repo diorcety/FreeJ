@@ -1,4 +1,4 @@
-%extend Parameter
+%extend ParameterInstance
 {
    double getDouble()
    {
