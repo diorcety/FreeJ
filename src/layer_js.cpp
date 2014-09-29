@@ -175,11 +175,11 @@ JS(layer_list_blits) {
     int c = 0;
     LockedLinkList<Blit> list = lay->blitter->blitlist.getLock();
     std::for_each(list.begin(), list.end(), [&] (Blit *b) {
-        str = JS_NewStringCopyZ(cx, b->getName().c_str());
-        val = STRING_TO_JSVAL(str);
-        JS_SetElement(cx, arr, c, &val);
-        c++;
-    });
+                      str = JS_NewStringCopyZ(cx, b->getName().c_str());
+                      val = STRING_TO_JSVAL(str);
+                      JS_SetElement(cx, arr, c, &val);
+                      c++;
+                  });
 
     *rval = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
@@ -538,16 +538,16 @@ JSP(layer_list_filters) {
 
     int c = 0;
     std::for_each(list.begin(), list.end(), [&] (FilterInstance *filter_instance) {
-        objtmp = JS_NewObject(cx, &filter_class, NULL, obj);
+                      objtmp = JS_NewObject(cx, &filter_class, NULL, obj);
 
-        JS_SetPrivate(cx, objtmp, (void*) filter_instance);
+                      JS_SetPrivate(cx, objtmp, (void*) filter_instance);
 
-        val = OBJECT_TO_JSVAL(objtmp);
+                      val = OBJECT_TO_JSVAL(objtmp);
 
-        JS_SetElement(cx, arr, c, &val);
+                      JS_SetElement(cx, arr, c, &val);
 
-        c++;
-    });
+                      c++;
+                  });
 
     *vp = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
@@ -572,11 +572,11 @@ JSP(layer_list_parameters) {
 
     int c = 0;
     std::for_each(list.begin(), list.end(), [&] (Parameter *parm) {
-        str = JS_NewStringCopyZ(cx, parm->getName().c_str());
-        val = STRING_TO_JSVAL(str);
-        JS_SetElement(cx, arr, c, &val);
-        c++;
-    });
+                      str = JS_NewStringCopyZ(cx, parm->getName().c_str());
+                      val = STRING_TO_JSVAL(str);
+                      JS_SetElement(cx, arr, c, &val);
+                      c++;
+                  });
 
     *vp = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;

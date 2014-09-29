@@ -124,10 +124,10 @@ void Filter::apply_parameters(FilterInstancePtr inst) {
     LockedLinkList<Parameter> list = inst->parameters.getLock();
 
     std::for_each(list.begin(), list.end(), [&] (ParameterPtr param) {
-        if(param->changed) {
-            param->update();
-            param->changed = false; // XXX
-        }
-    });
+                      if(param->changed) {
+                          param->update();
+                          param->changed = false; // XXX
+                      }
+                  });
 }
 

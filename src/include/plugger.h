@@ -43,7 +43,7 @@ template <class T> class Linklist;
    @brief Collects DLO plugins that can be used as Effect or Layer
  */
 class Plugger {
-	friend Context;
+    friend Context;
 public:
     Plugger(); ///< Plugger onstructor
     ~Plugger(); ///< Plugger destructor

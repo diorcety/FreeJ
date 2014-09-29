@@ -60,8 +60,8 @@ JS(filter_constructor) {
 
     LockedLinkList<Filter> list = global_environment->filters.getLock();
     LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](Filter *filter) {
-        return filter->getName() == name;
-    });
+                                                           return filter->getName() == name;
+                                                       });
 
     if(it == list.end()) {
         error("filter not found: %s", name);
@@ -137,17 +137,17 @@ JS(filter_set_parameter) {
         idx = *argidx;
         int c = 0;
         it = std::find_if(list.begin(), list.end(), [&] (Parameter* param) {
-            if(c == idx) {
-                return true;
-            }
-            c++;
-            return false;
-        });
+                              if(c == idx) {
+                                  return true;
+                              }
+                              c++;
+                              return false;
+                          });
     } else { // get it by the param name
         name = js_get_string(argv[0]);
         it = std::find_if(list.begin(), list.end(), [&] (Parameter* param) {
-            return param->getName() == name;
-        });
+                              return param->getName() == name;
+                          });
     }
 
     if(it != list.end()) {
@@ -230,14 +230,14 @@ JSP(filter_list_parameters) {
     LockedLinkList<Parameter> list = filter_instance->parameters.getLock();
     int c = 0;
     std::for_each(list.begin(), list.end(), [&](Parameter *parm) {
-        otmp = JS_NewObject(cx, &parameter_class, NULL, obj);
-        JS_SetPrivate(cx, otmp, (void*)parm);
-        parm->jsclass = &parameter_class;
-        parm->jsobj = otmp;
-        val = OBJECT_TO_JSVAL(otmp);
-        JS_SetElement(cx, arr, c, &val);
-        c++;
-    });
+                      otmp = JS_NewObject(cx, &parameter_class, NULL, obj);
+                      JS_SetPrivate(cx, otmp, (void*)parm);
+                      parm->jsclass = &parameter_class;
+                      parm->jsobj = otmp;
+                      val = OBJECT_TO_JSVAL(otmp);
+                      JS_SetElement(cx, arr, c, &val);
+                      c++;
+                  });
 
     *vp = OBJECT_TO_JSVAL(arr);
     JS_EndRequest(cx);

@@ -61,7 +61,7 @@ template <class T> class Linklist;
 #define MAX_WIDTH 768
 
 FREEJ_FORWARD_PTR(Context)
-class Context: public EnableSharedFromThis<Context> {
+class Context : public EnableSharedFromThis<Context> {
 public:
     ViewPortPtr mSelectedScreen;
 

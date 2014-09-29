@@ -213,11 +213,11 @@ JS(list_filters) {
     int c = 0;
     LockedLinkList<Filter> list = global_environment->filters.getLock();
     std::for_each(list.begin(), list.end(), [&](Filter *&f) {
-        str = JS_NewStringCopyZ(cx, f->getName().c_str());
-        val = STRING_TO_JSVAL(str);
-        JS_SetElement(cx, arr, c, &val);
-        c++;
-    });
+                      str = JS_NewStringCopyZ(cx, f->getName().c_str());
+                      val = STRING_TO_JSVAL(str);
+                      JS_SetElement(cx, arr, c, &val);
+                      c++;
+                  });
     *rval = OBJECT_TO_JSVAL(arr);
     return JS_TRUE;
 }

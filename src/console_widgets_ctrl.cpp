@@ -212,7 +212,7 @@ bool SlwSelector::feed(int key) {
             break;
 
         case KEY_SPACE:
-            if(filterIt != filterList.end()){
+            if(filterIt != filterList.end()) {
                 (*filterIt)->active = !(*filterIt)->active;
             } else {
                 (*layerIt)->active = !(*layerIt)->active;
@@ -279,21 +279,21 @@ bool SlwSelector::refresh() {
         if(layer) {
             filter = layer->mSelectedFilter;
             std::for_each(layerList.begin(), layerList.end(), [&](LayerPtr l) {
-                layercol += tmpsize + 4;
-                //      SLsmg_set_color(LAYERS_COLOR);
-                //      SLsmg_write_string((char *)" -> ");
-                color = LAYERS_COLOR;
-                putnch((char*)" ->", layercol, 2, 3);
+                              layercol += tmpsize + 4;
+                              //      SLsmg_set_color(LAYERS_COLOR);
+                              //      SLsmg_write_string((char *)" -> ");
+                              color = LAYERS_COLOR;
+                              putnch((char*)" ->", layercol, 2, 3);
 
-                if(l == layer && !filter) color += 20;
-                if(l->fade | l->active) color += 10;
+                              if(l == layer && !filter) color += 20;
+                              if(l->fade | l->active) color += 10;
 
-                //      snprintf(tmp, w, " -> %s",l->getName().c_str());
-                tmpsize = strlen(l->getName().c_str());
-                putnch((char*)l->getName().c_str(), layercol + 4, 2, tmpsize);
-                // save position of selected layer
-                if(l == layer) sellayercol = layercol;
-            });
+                              //      snprintf(tmp, w, " -> %s",l->getName().c_str());
+                              tmpsize = strlen(l->getName().c_str());
+                              putnch((char*)l->getName().c_str(), layercol + 4, 2, tmpsize);
+                              // save position of selected layer
+                              if(l == layer) sellayercol = layercol;
+                          });
         }
     }
 
@@ -321,18 +321,18 @@ bool SlwSelector::refresh() {
         LockedLinkList<FilterInstance> filterList = layer->filters.getLock();
         pos = 4;
         std::for_each(filterList.begin(), filterList.end(), [&] (FilterInstancePtr f) {
-            //       SLsmg_set_color(PLAIN_COLOR);
-            //       SLsmg_gotorc(pos,0);
-            //       SLsmg_erase_eol();
+                          //       SLsmg_set_color(PLAIN_COLOR);
+                          //       SLsmg_gotorc(pos,0);
+                          //       SLsmg_erase_eol();
 
-                        color = FILTERS_COLOR;
-            //       SLsmg_gotorc(pos,layercol);
-                        if(f == filter) color += 20;
-                        if(f->active) color += 10;
-            //       SLsmg_set_color (color);
-                        putnch((char*)f->getName().c_str(), sellayercol + 4, pos, 0);
-                        pos++;
-        });
+                          color = FILTERS_COLOR;
+                          //       SLsmg_gotorc(pos,layercol);
+                          if(f == filter) color += 20;
+                          if(f->active) color += 10;
+                          //       SLsmg_set_color (color);
+                          putnch((char*)f->getName().c_str(), sellayercol + 4, pos, 0);
+                          pos++;
+                      });
 
 //     SLsmg_set_color(PLAIN_COLOR);
 //     for(;pos<5;pos++) {

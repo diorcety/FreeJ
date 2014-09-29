@@ -72,9 +72,9 @@ int console_param_selection(ContextPtr env, char *cmd) {
     if(filt) { ///////////////////////// parameters for filter
         LockedLinkList<Parameter> list = filt->parameters.getLock();
         LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
-            return param->getName() == cmd;
+                                                                  return param->getName() == cmd;
 
-        });
+                                                              });
 
         if(it == list.end()) {
             error("parameter %s not found in filter %s", cmd, filt->proto->getName().c_str());
@@ -90,9 +90,9 @@ int console_param_selection(ContextPtr env, char *cmd) {
     } else { /////// parameters for layer
         LockedLinkList<Parameter> list = lay->parameters.getLock();
         LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
-            return param->getName() == cmd;
+                                                                  return param->getName() == cmd;
 
-        });
+                                                              });
 
         if(it == list.end()) {
             error("parameter %s not found in layers %s", cmd, lay->getName().c_str());
@@ -134,13 +134,13 @@ int console_param_completion(ContextPtr env, char *cmd) {
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
-        std::string name = param->getName();
-        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-        if(name == cmdString) {
-            exactParam = param;
-        }
-        return name.compare(cmdString) == 0;
-    });
+                     std::string name = param->getName();
+                     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+                     if(name == cmdString) {
+                         exactParam = param;
+                     }
+                     return name.compare(cmdString) == 0;
+                 });
 
     if(retList.empty()) return 0;
 
@@ -157,36 +157,36 @@ int console_param_completion(ContextPtr env, char *cmd) {
 
     int c = 0;
     std::for_each(retList.begin(), retList.end(), [&] (ParameterPtr p) {
-        switch(p->type) {
-        case Parameter::BOOL:
-            ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
-                  (*(bool*)p->get() == true) ? "true" : "false",
-                  p->getDescription().c_str());
-            break;
-        case Parameter::NUMBER:
-            ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
-                  *(float*)p->get(),
-                  p->getDescription().c_str());
-            break;
-        case Parameter::STRING:
-            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->getDescription().c_str());
-            break;
-        case Parameter::POSITION: {
-            float *val = (float*)p->get();
-            ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
-                  val[0], val[1],
-                  p->getDescription().c_str());
-        }
-        break;
-        case Parameter::COLOR:
-            ::act("%s (color) %s", p->getName().c_str(), p->getDescription().c_str());
-            break;
-        default:
-            ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
-            break;
-        }
-        ++c;
-    });
+                      switch(p->type) {
+                      case Parameter::BOOL:
+                          ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
+                                (*(bool*)p->get() == true) ? "true" : "false",
+                                p->getDescription().c_str());
+                          break;
+                      case Parameter::NUMBER:
+                          ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
+                                *(float*)p->get(),
+                                p->getDescription().c_str());
+                          break;
+                      case Parameter::STRING:
+                          ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->getDescription().c_str());
+                          break;
+                      case Parameter::POSITION: {
+                          float *val = (float*)p->get();
+                          ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
+                                val[0], val[1],
+                                p->getDescription().c_str());
+                      }
+                      break;
+                      case Parameter::COLOR:
+                          ::act("%s (color) %s", p->getName().c_str(), p->getDescription().c_str());
+                          break;
+                      default:
+                          ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
+                          break;
+                      }
+                      ++c;
+                  });
     return c;
 }
 
@@ -230,13 +230,13 @@ int console_blit_completion(ContextPtr env, char *cmd) {
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (BlitPtr blit) {
-        std::string name = blit->getName();
-        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-        if(name == cmdString) {
-            exactBlit = blit;
-        }
-        return name.compare(cmdString) == 0;
-    });
+                     std::string name = blit->getName();
+                     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+                     if(name == cmdString) {
+                         exactBlit = blit;
+                     }
+                     return name.compare(cmdString) == 0;
+                 });
 
     if(retList.empty()) return 0;
 
@@ -254,16 +254,16 @@ int console_blit_completion(ContextPtr env, char *cmd) {
     int c = 0;
     char tmp[256];
     std::for_each(retList.begin(), retList.end(), [&] (BlitPtr b) {
-        if(c % 4 == 0) {
-            if(c != 0) {
-                ::act("%s", tmp);
-            }
-            tmp[0] = '\0';
-        }
-        strncat(tmp, "\t", sizeof(tmp) - 1);
-        strncat(tmp, b->getName().c_str(), sizeof(tmp) - 1);
-        ++c;
-    });
+                      if(c % 4 == 0) {
+                          if(c != 0) {
+                              ::act("%s", tmp);
+                          }
+                          tmp[0] = '\0';
+                      }
+                      strncat(tmp, "\t", sizeof(tmp) - 1);
+                      strncat(tmp, b->getName().c_str(), sizeof(tmp) - 1);
+                      ++c;
+                  });
     return c;
 }
 
@@ -302,8 +302,8 @@ int console_blit_param_selection(ContextPtr env, char *cmd) {
 
     LockedLinkList<Parameter> list = b->parameters.getLock();
     LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&](ParameterPtr p) {
-            return p->getName() == cmd;
-    });
+                                                              return p->getName() == cmd;
+                                                          });
     if(it == list.end()) {
         error("parameter %s not found in blit %s", cmd, b->getName().c_str());
         return 0;
@@ -343,13 +343,13 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
-        std::string name = param->getName();
-        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-        if(name == cmdString) {
-            exactParam = param;
-        }
-        return name.compare(cmdString) == 0;
-    });
+                     std::string name = param->getName();
+                     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+                     if(name == cmdString) {
+                         exactParam = param;
+                     }
+                     return name.compare(cmdString) == 0;
+                 });
 
     if(retList.empty()) return 0;
 
@@ -366,36 +366,36 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
 
     int c = 0;
     std::for_each(retList.begin(), retList.end(), [&] (ParameterPtr p) {
-        switch(p->type) {
-        case Parameter::BOOL:
-            ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
-                  (*(bool*)p->get() == true) ? "true" : "false",
-                  p->getDescription().c_str());
-            break;
-        case Parameter::NUMBER:
-            ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
-                  *(float*)p->get(),
-                  p->getDescription().c_str());
-            break;
-        case Parameter::STRING:
-            ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->getDescription().c_str());
-            break;
-        case Parameter::POSITION: {
-            float *val = (float*)p->get();
-            ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
-                  val[0], val[1],
-                  p->getDescription().c_str());
-        }
-        break;
-        case Parameter::COLOR:
-            ::act("%s (color) %s", p->getName().c_str(), p->getDescription().c_str());
-            break;
-        default:
-            ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
-            break;
-        }
-        ++c;
-    });
+                      switch(p->type) {
+                      case Parameter::BOOL:
+                          ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
+                                (*(bool*)p->get() == true) ? "true" : "false",
+                                p->getDescription().c_str());
+                          break;
+                      case Parameter::NUMBER:
+                          ::act("(number) %s = %.2f :: %s", p->getName().c_str(),
+                                *(float*)p->get(),
+                                p->getDescription().c_str());
+                          break;
+                      case Parameter::STRING:
+                          ::act("(string) %s = %s :: %s", p->getName().c_str(), (char*)p->get(), p->getDescription().c_str());
+                          break;
+                      case Parameter::POSITION: {
+                          float *val = (float*)p->get();
+                          ::act("(position) %s = %.2f x %.2f :: %s", p->getName().c_str(),
+                                val[0], val[1],
+                                p->getDescription().c_str());
+                      }
+                      break;
+                      case Parameter::COLOR:
+                          ::act("%s (color) %s", p->getName().c_str(), p->getDescription().c_str());
+                          break;
+                      default:
+                          ::error("%s (unknown) %s", p->getName().c_str(), p->getDescription().c_str());
+                          break;
+                      }
+                      ++c;
+                  });
     return c;
 }
 
@@ -404,8 +404,8 @@ int console_filter_selection(ContextPtr env, char *cmd) {
 
     LockedLinkList<Filter> list = env->filters.getLock();
     LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](FilterPtr filter) {
-            return filter->getName() == cmd;
-    });
+                                                           return filter->getName() == cmd;
+                                                       });
     if(it == list.end()) {
         ::error("filter not found: %s", cmd);
         return 0;
@@ -444,13 +444,13 @@ int console_filter_completion(ContextPtr env, char *cmd) {
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (FilterPtr filter) {
-        std::string name = filter->getName();
-        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-        if(name == cmdString) {
-            exactFilter = filter;
-        }
-        return name.compare(cmdString) == 0;
-    });
+                     std::string name = filter->getName();
+                     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+                     if(name == cmdString) {
+                         exactFilter = filter;
+                     }
+                     return name.compare(cmdString) == 0;
+                 });
 
     if(retList.empty()) return 0;
 
@@ -469,16 +469,16 @@ int console_filter_completion(ContextPtr env, char *cmd) {
     int c = 0;
     char tmp[256];
     std::for_each(retList.begin(), retList.end(), [&] (FilterPtr f) {
-        if(c % 4 == 0) {
-            if(c != 0) {
-                ::act("%s", tmp);
-            }
-            tmp[0] = '\0';
-        }
-        strncat(tmp, "\t", sizeof(tmp) - 1);
-        strncat(tmp, f->getName().c_str(), sizeof(tmp) - 1);
-        ++c;
-    });
+                      if(c % 4 == 0) {
+                          if(c != 0) {
+                              ::act("%s", tmp);
+                          }
+                          tmp[0] = '\0';
+                      }
+                      strncat(tmp, "\t", sizeof(tmp) - 1);
+                      strncat(tmp, f->getName().c_str(), sizeof(tmp) - 1);
+                      ++c;
+                  });
     return c;
 }
 
@@ -667,8 +667,8 @@ int console_filebrowse_completion(ContextPtr env, char *cmd) {
     func("file completion: %s", cmd);
     // at this point in path there should be something valid
     int found = scandir
-                (path, &filelist,
-                filebrowse_completion_selector, alphasort);
+                    (path, &filelist,
+                    filebrowse_completion_selector, alphasort);
 
     if(found < 0) {
         error("filebrowse_completion: scandir: %s", strerror(errno));
@@ -691,13 +691,13 @@ int console_filebrowse_completion(ContextPtr env, char *cmd) {
         std::string cmdString(needle);
         std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
         std::copy_if(files.begin(), files.end(), retList.begin(), [&] (EntryPtr entry) {
-            std::string name = entry->getName();
-            std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-            if(name == cmdString) {
-                exactEntry = entry;
-            }
-            return name.compare(cmdString) == 0;
-        });
+                         std::string name = entry->getName();
+                         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+                         if(name == cmdString) {
+                             exactEntry = entry;
+                         }
+                         return name.compare(cmdString) == 0;
+                     });
 
         c = retList.size();
         if(exactEntry != NULL) {
@@ -705,15 +705,15 @@ int console_filebrowse_completion(ContextPtr env, char *cmd) {
         } else {
             notice("list of %s* files in %s:", needle, path);
             std::for_each(retList.begin(), retList.end(), [&] (EntryPtr entry) {
-                ::act(" %s", entry->getName().c_str());
-            });
+                              ::act(" %s", entry->getName().c_str());
+                          });
         }
     } else {
         // list all entries
         notice("list of all files in %s:", path);
         std::for_each(files.begin(), files.end(), [&] (EntryPtr e) {
-            ::act("%s", e->getName().c_str());
-        });
+                          ::act("%s", e->getName().c_str());
+                      });
     }
 
     return(c);
@@ -748,13 +748,13 @@ int console_generator_completion(ContextPtr env, char *cmd) {
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (FilterPtr generator) {
-        std::string name = generator->getName();
-        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-        if(name == cmdString) {
-            exactGenerator = generator;
-        }
-        return name.compare(cmdString) == 0;
-    });
+                     std::string name = generator->getName();
+                     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+                     if(name == cmdString) {
+                         exactGenerator = generator;
+                     }
+                     return name.compare(cmdString) == 0;
+                 });
 
     if(retList.empty()) return 0;
 
@@ -767,16 +767,16 @@ int console_generator_completion(ContextPtr env, char *cmd) {
     int c = 0;
     char tmp[256];
     std::for_each(retList.begin(), retList.end(), [&] (FilterPtr f) {
-        if(c % 4 == 0) {
-            if(c != 0) {
-                ::act("%s", tmp);
-            }
-            tmp[0] = '\0';
-        }
-        strncat(tmp, "\t", sizeof(tmp) - 1);
-        strncat(tmp, f->getName().c_str(), sizeof(tmp) - 1);
-        ++c;
-    });
+                      if(c % 4 == 0) {
+                          if(c != 0) {
+                              ::act("%s", tmp);
+                          }
+                          tmp[0] = '\0';
+                      }
+                      strncat(tmp, "\t", sizeof(tmp) - 1);
+                      strncat(tmp, f->getName().c_str(), sizeof(tmp) - 1);
+                      ++c;
+                  });
     return c;
 }
 

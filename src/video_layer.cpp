@@ -54,12 +54,11 @@ extern "C" {
 inline void
 src_short_to_float_array (const short *in, float *out, int len)
 {
-	while (len)
-	{	len -- ;
-		out [len] = (float) (in [len] / (1.0 * 0x8000)) ;
-		} ;
+    while (len)
+    {       len--;
+            out [len] = (float) (in [len] / (1.0 * 0x8000)); };
 
-	return ;
+    return;
 } /* src_short_to_float_array */
 
 //#define DEBUG 1
@@ -439,7 +438,7 @@ void *VideoLayer::feed() {
 #ifdef WITH_AUDIO
                           || (pkt.stream_index == audio_index)
 #endif
-                         )
+                          )
                     break;  /* exit loop */
             }
         } // loop break after a known index is found
@@ -613,29 +612,29 @@ int VideoLayer::decode_audio_packet(int *data_size) {
     if (!frame) {
         if (audio_codec_ctx->get_buffer != avcodec_default_get_buffer) {
             av_log(audio_codec_ctx, AV_LOG_ERROR, "Custom get_buffer() for use with"
-            "avcodec_decode_audio3() detected. Overriding with avcodec_default_get_buffer\n");
+                   "avcodec_decode_audio3() detected. Overriding with avcodec_default_get_buffer\n");
             av_log(audio_codec_ctx, AV_LOG_ERROR, "Please port your application to "
-            "avcodec_decode_audio4()\n");
+                   "avcodec_decode_audio4()\n");
             audio_codec_ctx->get_buffer = avcodec_default_get_buffer;
             audio_codec_ctx->release_buffer = avcodec_default_release_buffer;
         }
-        
+
         res = avcodec_decode_audio4(audio_codec_ctx, frame, &got_frame, &pkt);
-        
+
         if (res >= 0 && got_frame) {
             int ch, plane_size;
             int planar = av_sample_fmt_is_planar(audio_codec_ctx->sample_fmt);
             int data_size = av_samples_get_buffer_size(&plane_size, audio_codec_ctx->channels,
-            frame->nb_samples,
-            audio_codec_ctx->sample_fmt, 1);
+                                                       frame->nb_samples,
+                                                       audio_codec_ctx->sample_fmt, 1);
             if (datasize < data_size) {
                 av_log(audio_codec_ctx, AV_LOG_ERROR, "output buffer size is too small for "
-                "the current frame (%d < %d)\n", datasize, data_size);
+                       "the current frame (%d < %d)\n", datasize, data_size);
                 res = -2;
             }
             if (res >= 0) {
                 memcpy(audio_buf, frame->extended_data[0], plane_size);
-                
+
                 if (planar && audio_codec_ctx->channels > 1) {
                     uint8_t *out = ((uint8_t *)audio_buf) + plane_size;
                     for (ch = 1; ch < audio_codec_ctx->channels; ch++) {
@@ -662,6 +661,7 @@ int VideoLayer::decode_audio_packet(int *data_size) {
     /* We have data, return it and come back for more later */
     return res;
 }
+
 #endif
 
 int VideoLayer::decode_video_packet(int *got_picture) {

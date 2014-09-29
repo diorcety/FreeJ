@@ -35,19 +35,19 @@
    extern "C" {
    #ifdef HAVE_LIBAVCODEC_AVCODEC_H
  #   include <libavcodec/avcodec.h>
- ##elif defined(HAVE_FFMPEG_AVCODEC_H)
+ ###elif defined(HAVE_FFMPEG_AVCODEC_H)
  #   include <ffmpeg/avcodec.h>
- ##else
+ ###else
  #   include <avcodec.h>
- ##endif
+ ###endif
 
- ##ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
+ ###ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
  #   include <libavformat/avformat.h>
- ##elif defined(HAVE_FFMPEG_AVFORMAT_H)
+ ###elif defined(HAVE_FFMPEG_AVFORMAT_H)
  #   include <ffmpeg/avformat.h>
- ##else
+ ###else
  #   include <avformat.h>
- ##endif
+ ###endif
    }
  */
 

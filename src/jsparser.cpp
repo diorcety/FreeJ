@@ -366,8 +366,8 @@ void JsParser::gc() {
     LockedLinkList<JsExecutionContext> list = runtimes.getLock();
 
     std::for_each(list.begin(), list.end(), [&] (JsExecutionContext *ecx) {
-        ecx->gc();
-    });
+                      ecx->gc();
+                  });
 }
 
 void JsParser::init() {

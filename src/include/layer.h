@@ -128,6 +128,7 @@ public:
     char *get_filename() {
         return filename;
     }
+
     ///< Get Layer's filename
 
     /**

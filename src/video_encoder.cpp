@@ -275,7 +275,7 @@ void VideoEncoder::thread_loop() {
                != SHOUTERR_SUCCESS) {
                 error("shout_send: %s", shout_get_error(ice));
             } // else
-             //printf("%d %d\n", encnum, (int)shout_queuelen(ice));
+              //printf("%d %d\n", encnum, (int)shout_queuelen(ice));
         }
         gettimeofday(&m_ActualTime, NULL);
         if(m_ActualTime.tv_sec == m_OldTime.tv_sec)

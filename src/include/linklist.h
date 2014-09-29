@@ -47,7 +47,7 @@ template <typename T>
 class LockedLinkList;
 
 template <typename T>
-class Linklist: private std::list<SharedPtr<T>> {
+class Linklist : private std::list<SharedPtr<T> > {
     friend class LockedLinkList<T>;
 
 private:
@@ -64,21 +64,21 @@ public:
 template <typename T>
 class LockedLinkList {
 private:
-    std::list<SharedPtr<T>> &mList;
+    std::list<SharedPtr<T> > &mList;
 #ifdef THREADSAFE
     std::unique_lock<std::recursive_mutex> mLock;
 #endif
 
 public:
-    typedef typename std::list<SharedPtr<T>>::value_type               value_type;
-    typedef typename std::list<SharedPtr<T>>::pointer                  pointer;
-    typedef typename std::list<SharedPtr<T>>::iterator                 iterator;
-    typedef typename std::list<SharedPtr<T>>::const_iterator           const_iterator;
-    typedef typename std::list<SharedPtr<T>>::reference                reference;
-    typedef typename std::list<SharedPtr<T>>::const_reference          const_reference;
-    typedef typename std::list<SharedPtr<T>>::size_type                size_type;
-    typedef typename std::list<SharedPtr<T>>::const_reverse_iterator   const_reverse_iterator;
-    typedef typename std::list<SharedPtr<T>>::reverse_iterator         reverse_iterator;
+    typedef typename std::list<SharedPtr<T> >::value_type value_type;
+    typedef typename std::list<SharedPtr<T> >::pointer pointer;
+    typedef typename std::list<SharedPtr<T> >::iterator iterator;
+    typedef typename std::list<SharedPtr<T> >::const_iterator const_iterator;
+    typedef typename std::list<SharedPtr<T> >::reference reference;
+    typedef typename std::list<SharedPtr<T> >::const_reference const_reference;
+    typedef typename std::list<SharedPtr<T> >::size_type size_type;
+    typedef typename std::list<SharedPtr<T> >::const_reverse_iterator const_reverse_iterator;
+    typedef typename std::list<SharedPtr<T> >::reverse_iterator reverse_iterator;
 
 public:
     LockedLinkList(Linklist<T> &list);
@@ -124,10 +124,10 @@ LockedLinkList<T> Linklist<T>::getLock() {
 }
 
 template <typename T>
-LockedLinkList<T>::LockedLinkList(Linklist<T> &list):
+LockedLinkList<T>::LockedLinkList(Linklist<T> &list) :
     mList(list)
 #ifdef THREADSAFE
-   ,mLock(list.mMutex)
+    ,mLock(list.mMutex)
 #endif
 {
 
@@ -153,6 +153,7 @@ template <typename T>
 void LockedLinkList<T>::push_front(typename LockedLinkList<T>::value_type&& val) {
     mList.push_front(std::forward<typename LockedLinkList<T>::value_type>(val));
 }
+
 #endif
 
 template <typename T>
@@ -171,7 +172,7 @@ typename LockedLinkList<T>::iterator LockedLinkList<T>::end() {
 }
 
 template <typename T>
-typename LockedLinkList<T>::const_iterator LockedLinkList<T>::end() const{
+typename LockedLinkList<T>::const_iterator LockedLinkList<T>::end() const {
     return mList.end();
 }
 
@@ -213,8 +214,9 @@ void LockedLinkList<T>::push_back(const typename LockedLinkList<T>::value_type& 
 #if __cplusplus >= 201103L
 template <typename T>
 void LockedLinkList<T>::push_back(typename LockedLinkList<T>::value_type&& val) {
-     mList.push_back(std::forward<typename LockedLinkList<T>::value_type>(val));
+    mList.push_back(std::forward<typename LockedLinkList<T>::value_type>(val));
 }
+
 #endif
 
 template <typename T>
@@ -247,7 +249,6 @@ typename LockedLinkList<T>::iterator LockedLinkList<T>::insert(typename LockedLi
     return mList.insert(position, val);
 }
 
-
 template <typename T>
 void LockedLinkList<T>::insert(typename LockedLinkList<T>::iterator position, size_type n, const value_type& val) {
     mList.insert(position, n, val);
@@ -258,6 +259,5 @@ template <class InputIterator>
 void LockedLinkList<T>::insert(typename LockedLinkList<T>::iterator position, InputIterator first, InputIterator last) {
     mList.insert(position, first, last);
 }
-
 
 #endif

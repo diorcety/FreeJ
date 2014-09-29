@@ -190,7 +190,7 @@ bool SlwReadline::parser_default(int key) {
         // get the one selected
         EntryPtr le = screen->mSelectedLayer;
         if(!le) {
-             screen->mSelectedLayer = list.front();
+            screen->mSelectedLayer = list.front();
         }
 
         // switch over operations and perform
@@ -498,7 +498,7 @@ bool SlwReadline::parser_commandline(int key) {
         entr = MakeShared<Entry>();
         entr->data = strdup(command);
         list.push_back(entr);
-        if(list.size() > 32) {// histsize
+        if(list.size() > 32) { // histsize
             list.pop_front();
         }
         // cleanup the command
@@ -508,7 +508,7 @@ bool SlwReadline::parser_commandline(int key) {
     case SL_KEY_UP:
         // pick from history
         if(it == list.begin()) {
-             break;  // no hist
+            break;   // no hist
         }
         mSelectedHistory = *(--it);
         entr = mSelectedHistory;

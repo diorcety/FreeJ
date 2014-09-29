@@ -103,6 +103,8 @@ void * run_context(void * data) {
 }
 
 Context::Context() {
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
+
     mSelectedScreen = NULL;
     //audio           = NULL;
 
@@ -163,9 +165,7 @@ Context::Context() {
 }
 
 Context::~Context() {
-
-    //Controller *ctrl;
-    //ViewPort *scr;
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
 
     reset();
 
@@ -269,16 +269,16 @@ void Context::cafudda(double secs) {
     LockedLinkList<ViewPort> list = screens.getLock();
     // blit layers on screens
     std::for_each(list.begin(), list.end(), [&](ViewPortPtr scr) {
-        if(clear_all) scr->clear();
+                      if(clear_all) scr->clear();
 
-        // Change resolution if needed
-        if(scr->changeres) scr->handle_resize();
+                      // Change resolution if needed
+                      if(scr->changeres) scr->handle_resize();
 
-        scr->blit_layers();
+                      scr->blit_layers();
 
-        // show the new painted screen
-        scr->show();
-    });
+                      // show the new painted screen
+                      scr->show();
+                  });
 #ifdef WITH_JAVASCRIPT
     /////////////////////////////
     // TODO - try to garbage collect only if we have been faster
@@ -326,9 +326,9 @@ void Context::handle_controllers() {
 
     LockedLinkList<Controller> list = controllers.getLock();
     std::for_each(list.begin(), list.end(), [] (ControllerPtr ctrl) {
-            if(ctrl->active)
-                ctrl->poll();
-    });
+                      if(ctrl->active)
+                          ctrl->poll();
+                  });
 
     // flushes all events that are leftover
     while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS) > 0)

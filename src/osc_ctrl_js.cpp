@@ -50,8 +50,8 @@ static int osc_command_handler(const char *path, const char *types,
     LockedLinkList<Entry> list = osc->commands_handled.getLock();
 
     LockedLinkList<Entry>::iterator it = std::find_if(list.begin(), list.end(), [&] (Entry*cmd) {
-        return cmd->getName() == path;
-    });
+                                                          return cmd->getName() == path;
+                                                      });
 
     // check that path is handled
     if(it == list.end()) {

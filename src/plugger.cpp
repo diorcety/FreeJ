@@ -45,6 +45,8 @@
 #endif
 
 Plugger::Plugger() {
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
+
     char temp[256];
 
     _searchpath = NULL;
@@ -86,10 +88,8 @@ Plugger::Plugger() {
 }
 
 Plugger::~Plugger() {
-
-    func("Plugger::~Plugger()");
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
     if(_searchpath) free(_searchpath);
-
 }
 
 int selector(const struct dirent *dir) {

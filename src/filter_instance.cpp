@@ -76,12 +76,11 @@ uint32_t *FilterInstance::process(float fps, uint32_t *inframe) {
     return outframe;
 }
 
-
 bool FilterInstance::apply() {
     bool ret = false;
     if(proto) {
         if(auto layer=this->layer.lock()) {
-             ret = proto->apply(layer, SharedFromThis(FilterInstance));
+            ret = proto->apply(layer, SharedFromThis(FilterInstance));
         }
     }
     return ret;

@@ -268,21 +268,21 @@ JSP(screen_list_layers) {
     int c = 0;
     LockedLinkList<Layer> list = screen->layers.getLock();
     std::for_each(list.begin(), list.end(), [&] (Layer *lay) {
-        if(lay->jsobj) {
-            func("TESTING: reusing layer jsobj %p", lay->jsobj);
-            objtmp = lay->jsobj;
-        } else {
-            func("TESTING: creating a jsobj for layer %s", lay->getName().c_str());
-            objtmp = JS_NewObject(cx, lay->jsclass, NULL, obj);
-            JS_SetPrivate(cx, objtmp, (void*) lay);
-        }
+                      if(lay->jsobj) {
+                          func("TESTING: reusing layer jsobj %p", lay->jsobj);
+                          objtmp = lay->jsobj;
+                      } else {
+                          func("TESTING: creating a jsobj for layer %s", lay->getName().c_str());
+                          objtmp = JS_NewObject(cx, lay->jsclass, NULL, obj);
+                          JS_SetPrivate(cx, objtmp, (void*) lay);
+                      }
 
-        val = OBJECT_TO_JSVAL(objtmp);
+                      val = OBJECT_TO_JSVAL(objtmp);
 
-        JS_SetElement(cx, arr, c, &val);
+                      JS_SetElement(cx, arr, c, &val);
 
-        c++;
-    });
+                      c++;
+                  });
 
     *vp = OBJECT_TO_JSVAL(arr);
     JS_EndRequest(cx);

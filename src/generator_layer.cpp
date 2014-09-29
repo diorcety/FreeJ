@@ -117,7 +117,7 @@ void GeneratorLayer::register_generators(Linklist<Filter> *gens) {
 }
 
 bool GeneratorLayer::open(const char *file) {
-    func("%s - %s", __PRETTY_FUNCTION__, file); 
+    func("%s - %s", __PRETTY_FUNCTION__, file);
     if(!generators) {
         error("No generators registered");
         return false;
@@ -125,8 +125,8 @@ bool GeneratorLayer::open(const char *file) {
 
     LockedLinkList<Filter> list = generators->getLock();
     LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&] (FilterPtr &filter) {
-            return filter->getName() == file;
-    });
+                                                           return filter->getName() == file;
+                                                       });
     if(it != list.end()) {
         error("generator not found: %s", file);
         return(false);
@@ -152,11 +152,11 @@ bool GeneratorLayer::open(const char *file) {
         LockedLinkList<Parameter> list2 = generator->parameters.getLock();
 
         std::for_each(list2.begin(), list2.end(), [&](ParameterPtr &p) {
-            // TODO ?
-            //p->layer_set_f = set_frei0r_layer_parameter;
-            //p->layer_get_f = get_frei0r_layer_parameter;
-            list1.push_back(p);
-        });
+                          // TODO ?
+                          //p->layer_set_f = set_frei0r_layer_parameter;
+                          //p->layer_get_f = get_frei0r_layer_parameter;
+                          list1.push_back(p);
+                      });
     }
 #endif
 
@@ -176,11 +176,11 @@ bool GeneratorLayer::open(const char *file) {
         LockedLinkList<Parameter> list1 = parameters.getLock();
         LockedLinkList<Parameter> list2 = generator->parameters.getLock();
         std::for_each(list2.begin(), list2.end(), [&](ParameterPtr &p) {
-            // TODO ?
-            //p->layer_set_f = set_freeframe_layer_parameter;
-            //p->layer_get_f = get_freeframe_layer_parameter;
-            list1.push_back(p);
-        });
+                          // TODO ?
+                          //p->layer_set_f = set_freeframe_layer_parameter;
+                          //p->layer_get_f = get_freeframe_layer_parameter;
+                          list1.push_back(p);
+                      });
     }
 
     // XXX - are we allocating memory for someone else? ... this is crap !!!

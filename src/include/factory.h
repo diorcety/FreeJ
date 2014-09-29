@@ -98,8 +98,8 @@ typedef std::pair<std::string, const char *> FTagPair;
 typedef std::map<std::string, const char *> FTagMap;
 typedef std::map<std::string, FInstantiatorsMap *> FMapsMap;
 typedef std::pair<std::string, FInstantiatorsMap *> FMapPair;
-typedef std::map<std::string, SharedPtr<void>> FInstancesMap;
-typedef std::pair<std::string, SharedPtr<void>> FInstancePair;
+typedef std::map<std::string, SharedPtr<void> > FInstancesMap;
+typedef std::pair<std::string, SharedPtr<void> > FInstancePair;
 typedef std::map<std::string, const char *> FDefaultClassesMap;
 
 template <class T>

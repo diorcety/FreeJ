@@ -275,3 +275,4 @@ void AudioCollector::AudioCallback_i(unsigned int Size) {
 void AudioCollector::AudioCallback(void *Context, unsigned int Size) {
     ((AudioCollector*)Context)->AudioCallback_i(Size);
 }
+

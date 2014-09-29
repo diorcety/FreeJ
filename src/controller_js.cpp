@@ -57,10 +57,10 @@ int Controller::JSCall(const char *funcname, int argc, jsval *argv) {
     int res = 0;
     LockedLinkList<ControllerListener> list = listeners.getLock();
     std::for_each(list.begin(), list.end(), [&] (ControllerListener *listener) {
-        // TODO - unregister listener if returns false
-        if(listener->call(funcname, argc, argv))
-            res++;
-    });
+                      // TODO - unregister listener if returns false
+                      if(listener->call(funcname, argc, argv))
+                          res++;
+                  });
     return res;
 }
 
@@ -72,16 +72,16 @@ int Controller::JSCall(const char *funcname, int argc, const char *format, ...) 
     va_start(args, format);
     va_end(args);
     std::for_each(list.begin(), list.end(), [&] (ControllerListener *listener) {
-        void *markp = NULL;
-        JS_SetContextThread(listener->context());
-        JS_BeginRequest(listener->context());
-        argv = JS_PushArgumentsVA(listener->context(), &markp, format, args);
-        JS_EndRequest(listener->context());
-        JS_ClearContextThread(listener->context());
-        // TODO - unregister listener if returns false
-        if(listener->call(funcname, argc, argv))
-            res++;
-    });
+                      void *markp = NULL;
+                      JS_SetContextThread(listener->context());
+                      JS_BeginRequest(listener->context());
+                      argv = JS_PushArgumentsVA(listener->context(), &markp, format, args);
+                      JS_EndRequest(listener->context());
+                      JS_ClearContextThread(listener->context());
+                      // TODO - unregister listener if returns false
+                      if(listener->call(funcname, argc, argv))
+                          res++;
+                  });
     return res;
 }
 

@@ -60,140 +60,140 @@ const std::string &Entry::getDescription() const {
 
 bool Entry::up() {
     /*
-     *TODO
-    if(!list) return(false);
-    if(!prev) return(false);
+       *TODO
+       if(!list) return(false);
+       if(!prev) return(false);
 
-#ifdef THREADSAFE
-    list->lock();
-#endif
+       #ifdef THREADSAFE
+       list->lock();
+       #endif
 
-    Entry *tprev = prev,
-    *tnext = next,
-    *pp = prev->prev;
+       Entry *tprev = prev,
+       *tnext = next,
+       *pp = prev->prev;
 
-    if(!next)
+       if(!next)
         list->last = prev;
 
-    if(tnext)
+       if(tnext)
         tnext->prev = tprev;
 
-    next = tprev;
-    prev = pp;
-    tprev->next = tnext;
-    tprev->prev = this;
+       next = tprev;
+       prev = pp;
+       tprev->next = tnext;
+       tprev->prev = this;
 
-    if(pp)
+       if(pp)
         pp->next = this;
 
-    if(!prev)
+       if(!prev)
         list->first = this;
 
-#ifdef THREADSAFE
-    list->unlock();
-#endif
-*/
+       #ifdef THREADSAFE
+       list->unlock();
+       #endif
+     */
     return(true);
 }
 
 bool Entry::down() {
     /*
-     *TODO
-    if(!list) return(false);
-    if(!next) return(false);
+       *TODO
+       if(!list) return(false);
+       if(!next) return(false);
 
-#ifdef THREADSAFE
-    list->lock();
-#endif
+       #ifdef THREADSAFE
+       list->lock();
+       #endif
 
-    Entry *tprev = prev,
-    *tnext = next,
-    *nn = next->next;
+       Entry *tprev = prev,
+       *tnext = next,
+       *nn = next->next;
 
-    if(!prev)
+       if(!prev)
         list->first = next;
 
-    if(tprev)
+       if(tprev)
         tprev->next = tnext;
 
-    prev = tnext;
-    next = nn;
-    tnext->prev = tprev;
-    tnext->next = this;
-    if(nn)
+       prev = tnext;
+       next = nn;
+       tnext->prev = tprev;
+       tnext->next = this;
+       if(nn)
         nn->prev = this;
 
-    if(!next)
+       if(!next)
         list->last = this;
 
-#ifdef THREADSAFE
-    list->unlock();
-#endif
-    */
+       #ifdef THREADSAFE
+       list->unlock();
+       #endif
+     */
     return(true);
 
 }
 
 bool Entry::move(int pos) {
     /*
-     *TODO
-    func("Entry::move(%i)", pos);
-    if(!list)
+       *TODO
+       func("Entry::move(%i)", pos);
+       if(!list)
         return(false);
-#ifdef THREADSAFE
-    list->lock();
-#endif
-    Entry *displaced;
+       #ifdef THREADSAFE
+       list->lock();
+       #endif
+       Entry *displaced;
 
-    // find our position
-    Entry *search = list->first;
-    int mypos = 1;
-    while(search && search != this) {
+       // find our position
+       Entry *search = list->first;
+       int mypos = 1;
+       while(search && search != this) {
         mypos++;
         search = search->next;
-    }
+       }
 
-    // no move is necessary
-    if(mypos == pos) {
-#ifdef THREADSAFE
+       // no move is necessary
+       if(mypos == pos) {
+       #ifdef THREADSAFE
         list->unlock();
-#endif
+       #endif
         return(true);
-    }
-    displaced = list->_pick(pos);
+       }
+       displaced = list->_pick(pos);
 
-    // detach ourselves from the list
-    if(next) {
+       // detach ourselves from the list
+       if(next) {
         next->prev = prev;
         if(prev)
             prev->next = next;
         else
             list->first = next;
-    } else {
+       } else {
         list->last = prev;
-    }
-    if(prev) {
+       }
+       if(prev) {
         prev->next = next;
         if(next)
             next->prev = prev;
         else
             list->last = prev;
 
-    } else {
+       } else {
         list->first = next;
-    }
-    prev = NULL;
-    next = NULL;
-    // now insert ourselves at the new position
-    if(pos >= list->length) {  // shortcut if we are going to be the last entry
+       }
+       prev = NULL;
+       next = NULL;
+       // now insert ourselves at the new position
+       if(pos >= list->length) {  // shortcut if we are going to be the last entry
         list->last->next = this;
         prev = list->last;
         list->last = this;
-    } else if(pos == 1) {  // shortcut if we are going to be the first entry
+       } else if(pos == 1) {  // shortcut if we are going to be the first entry
         list->first->prev = this;
         next = list->first;
         list->first = this;
-    } else {
+       } else {
         if(mypos > pos) {
             prev = displaced->prev;
             if(prev)
@@ -211,11 +211,12 @@ bool Entry::move(int pos) {
             prev = displaced;
             displaced->next = this;
         }
-    }
-#ifdef THREADSAFE
-    list->unlock();
-#endif
-    */
+       }
+       #ifdef THREADSAFE
+       list->unlock();
+       #endif
+     */
     return(true);
 
 }
+

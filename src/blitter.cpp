@@ -84,9 +84,9 @@ Blitter::~Blitter() {
  |       x,y_______V________________ w                |
  | scr_sx '                         '                 |
  | stride | layer                   |                 |
- ||<------>|                         |                 |
+ ||||<------>|                         |                 |
  |        |                         |<-------------...|
- ||...---->|                         | scr_stride_dx   |
+ ||||...---->|                         | scr_stride_dx   |
  |        '-------------------------'                 |
  |       h                                            |
  |                                                    |
@@ -103,7 +103,7 @@ Blitter::~Blitter() {
    (offset)    '                     '
    x,y________|_________            |  offset is the point of start
    '         |         '           |  scr_stride is added to screen every line
- ||layer    |         |           |  lay_stride is added to layer every line
+ ||||layer    |         |           |  lay_stride is added to layer every line
  |         |         | scr_stride|
  |         |         |<--------->|
  |         |         |           |

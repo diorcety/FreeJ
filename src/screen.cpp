@@ -204,18 +204,18 @@ void ViewPort::blit_layers() {
     LockedLinkList<Layer> list = layers.getLock();
     LockedLinkList<Layer>::reverse_iterator it = list.rbegin();
     std::for_each(list.rbegin(), list.rend(), [&](LayerPtr &lay) {
-        if(lay->buffer) {
-            if(lay->active & lay->opened) {
+                      if(lay->buffer) {
+                          if(lay->active & lay->opened) {
 
-                lay->lock();
-                lock();
-                blit(lay);
-                unlock();
-                lay->unlock();
+                              lay->lock();
+                              lock();
+                              blit(lay);
+                              unlock();
+                              lay->unlock();
 
-            }
-        }
-    });
+                          }
+                      }
+                  });
     /////////// finish processing layers
 
 }
@@ -231,10 +231,10 @@ void ViewPort::handle_resize() {
     /* crop all layers to new screen size */
     LockedLinkList<Layer> list = layers.getLock();
     std::for_each(list.begin(), list.end(), [&](LayerPtr &lay) {
-        lay->lock();
-        lay->blitter->crop(lay, SharedFromThis(ViewPort));
-        lay->unlock();
-    });
+                      lay->lock();
+                      lay->blitter->crop(lay, SharedFromThis(ViewPort));
+                      lay->unlock();
+                  });
 }
 
 void ViewPort::resize(int resize_w, int resize_h) {  // nop
@@ -250,3 +250,4 @@ void ViewPort::clear() {
 
 void ViewPort::fullscreen() {
 }
+

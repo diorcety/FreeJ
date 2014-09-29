@@ -167,8 +167,8 @@ bool Layer::set_blit(const char *bname) {
     if(screen && blitter) {
         LockedLinkList<Blit> list = blitter->blitlist.getLock();
         LockedLinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (BlitPtr &b) {
-            return b->getName() == bname;
-        });
+                                                             return b->getName() == bname;
+                                                         });
 
         if(it == list.end()) {
             error("blit %s not found in screen %s", bname, screen->getName().c_str());
@@ -233,9 +233,9 @@ bool Layer::cafudda() {
 void *Layer::do_filters(void *tmp_buf) {
     LockedLinkList<FilterInstance> list = filters.getLock();
     std::for_each(list.begin(), list.end(), [&](FilterInstancePtr filt) {
-        if(filt->active)
-            tmp_buf = (void*) filt->process(fps.fps, (uint32_t*)tmp_buf);
-    });
+                      if(filt->active)
+                          tmp_buf = (void*) filt->process(fps.fps, (uint32_t*)tmp_buf);
+                  });
     return tmp_buf;
 }
 

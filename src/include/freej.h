@@ -40,7 +40,7 @@
 
    ViewPort---(Blit)______________Layer_____Filter
  \   vvvv                    \____Filter
- \\-(Blit)____Layer__Filter   \___Filter
+ \\\-(Blit)____Layer__Filter   \___Filter
  \ vvvv         \__Filter        ...
               (Blit)__Layer  \_Filter
                               \Filter
