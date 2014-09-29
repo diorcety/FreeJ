@@ -1,59 +1,3 @@
-
-/* Extensions to the cpp api */
-/* dictionary like access to linked list */
-%extend BaseLinklist
-{
-  %pythoncode %{
-    def __len__(self):
-        return self.len()
-    def __getitem__(self,desc):
-        if isinstance(desc,str):
-
-            res = self.search(desc)
-            if(res == 0):
-                print "[!] element ", desc, " not found"
-            else:
-                return res[0]
-
-        else:
-            return self.pick(desc)
-    def __iter__(self):
-       for idx in xrange(len(self)):
-           yield self.pick(idx+1)
-  %}
-
-}
-
-%extend ViewPort
-{
-    PyObject *get_surface_buffer()
-    {
-        return PyBuffer_FromMemory(self->get_surface(), self->geo.bytesize);
-    }
-}
-%extend Layer
-{
-    PyObject *get_surface_buffer()
-    {
-        return PyBuffer_FromMemory(self->buffer, self->geo.bytesize);
-    }
-}
-%extend Blitter
-{
-   %pythoncode %{
-   def _get_zoomx(self):
-       return self.zoom_x
-   def _get_zoomy(self):
-       return self.zoom_y
-   def _set_zoomx(self,val):
-       self.set_zoom(val,self.zoom_y)
-   def _set_zoomy(self,val):
-       self.set_zoom(self.zoom_x,val)
-   zoomx = property(_get_zoomx,_set_zoomx)
-   zoomy = property(_get_zoomy,_set_zoomy)
-   %}
-}
-
 %extend Parameter
 {
    double getDouble()
@@ -101,17 +45,3 @@
           pass
    %}
 }
-
-/* add_filter function in the layers :P */
-%extend Layer
-{
-  int GetWidth()
-  {
-    return self->geo.w;
-  }
-  int GetHeight()
-  {
-    return self->geo.h;
-  }
-}
-

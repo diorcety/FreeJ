@@ -195,15 +195,13 @@ freej_entry_typemap_in(Encoder);
 #if defined(WITH_COCOA)
 %include "CVScreen.h"
 #endif
-			 
+
+
 // controllers
 %feature("director") Controller;
 %include "controller.h"
 %template(ControllerLinkList) Linklist<Controller>;
-// extends virtual methods of the Controllers to be overloadable (as callbacks)
 
-// this is needed because glues Controller class (expected by context) with some
-// controller classes below
 %feature("director") SdlController;
 %include "sdl_controller.h"
 
