@@ -1361,7 +1361,7 @@ fi
 dnl #### controllers
 
 INFO_N([= ALSA / MidiController : ])
-if test x$have_midi = xyes; then
+if test x$build_alsa = xtrue; then
    INFO(yes)
 VRB([  LIBS  : $ALSA_LIBS])
 VRB([  CFLAGS: $ALSA_CFLAGS])

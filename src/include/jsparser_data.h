@@ -88,7 +88,7 @@ JS(js_kbd_ctrl_constructor);
 JS(js_mouse_ctrl_constructor);
 JS(js_joy_ctrl_constructor);
 JS(js_vimo_ctrl_constructor);
-#ifdef WITH_MIDI
+#ifdef WITH_ALSA
 JS(js_midi_ctrl_constructor);
 #endif
 JS(js_trigger_ctrl_constructor);
@@ -155,7 +155,7 @@ extern JSClass js_joy_ctrl_class;
 extern JSFunctionSpec js_joy_ctrl_methods[];
 
 // MidiController
-#ifdef WITH_MIDI
+#ifdef WITH_ALSA
 extern JSClass js_midi_ctrl_class;
 extern JSFunctionSpec js_midi_ctrl_methods[];
 #endif

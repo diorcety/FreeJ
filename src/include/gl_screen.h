@@ -64,11 +64,9 @@ public:
     float zoom;
 
     // opengl stuff
-    void blit(Layer *layer);
-    //  bool glblitX(Layer *layer);
-    GLuint texturize(Layer *layer);
+    void blit(LayerPtr layer);
     Vertex g_quadVertices[4];
-    void setup_blits(Layer *lay) {
+    void setup_blits(LayerPtr lay) {
     };
 
 

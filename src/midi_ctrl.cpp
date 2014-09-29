@@ -22,7 +22,7 @@
 
 #include <config.h>
 
-#ifdef WITH_MIDI
+#ifdef WITH_ALSA
 #include <midi_ctrl.h>
 //#include <unistd.h>
 #include <alsa/asoundlib.h>
@@ -173,7 +173,7 @@ int MidiController::poll() {
     return dispatch();
 }
 
-#endif //WITH_MIDI
+#endif //WITH_ALSA
 
 
 

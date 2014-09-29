@@ -193,7 +193,7 @@
 #define WITH_JAVASCRIPT 1
 
 /* define if compiling midi controller */
-/* #undef WITH_MIDI */
+/* #undef WITH_ALSA */
 
 /* define if compiling with Ogg/Theora encoding */
 #define WITH_OGGTHEORA 1

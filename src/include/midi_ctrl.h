@@ -20,7 +20,7 @@
 #define __MIDI_CTRL_H__
 
 #include <config.h>
-#ifdef WITH_MIDI
+#ifdef WITH_ALSA
 
 //#include <unistd.h>
 #include <alsa/asoundlib.h>

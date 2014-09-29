@@ -156,8 +156,8 @@ bool SdlGlScreen::_init() {
     return(true);
 }
 
-void SdlGlScreen::setup_blits(Layer *lay) {
-    Blitter *b = new Blitter();
+void SdlGlScreen::setup_blits(LayerPtr lay) {
+    BlitterPtr b = MakeShared<Blitter>();
 
     setup_linear_blits(b);
 
@@ -194,7 +194,7 @@ void SdlGlScreen::check_opengl_error() {
 
 }
 
-void SdlGlScreen::blit(Layer *lay) {
+void SdlGlScreen::blit(LayerPtr lay) {
     // bind freej texture and copy it
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, lay->geo.w, lay->geo.h,

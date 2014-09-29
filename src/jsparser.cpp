@@ -306,7 +306,7 @@ void JsExecutionContext::init_class() {
                    js_vimo_ctrl_methods,
                    object_proto);
 
-#ifdef WITH_MIDI
+#ifdef WITH_ALSA
     REGISTER_CLASS("MidiController",
                    js_midi_ctrl_class,
                    js_midi_ctrl_constructor,

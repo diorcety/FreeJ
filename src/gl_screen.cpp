@@ -94,66 +94,12 @@ bool GlScreen::check_opengl_error() {
     return(false);
 }
 
-GLuint GlScreen::texturize(Layer *layer) {
-    GLuint textureID;
-    // generate texture for the layer
-    /* glGenTextures( 1, &textureID );
-       glBindTexture(GL_TEXTURE_2D, textureID);
-       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-       layer->textureID = textureID;*/
-    return textureID;
-}
-
-void GlScreen::blit(Layer *layer) {
+void GlScreen::blit(LayerPtr layer) {
     //glColor3f (0., 0., 0.);
     //glRasterPos2i (0,0);
     layer->lock();
     glDrawPixels(layer->geo.w, layer->geo.h, GL_BGRA, GL_UNSIGNED_BYTE, layer->buffer);
     layer->unlock();
 }
-
-/*
-   bool GlScreen::glblitX(Layer *layer) {
-
-   glBindTexture( GL_TEXTURE_2D, layer->textureID );
-   printf("bla\n");
-   layer->lock();
-
-   glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA,
-                layer->geo.w, layer->geo.h,
-                0, GL_RGBA, GL_UNSIGNED_BYTE, layer->offset );
-
-   layer->unlock();
-
-   if(!check_opengl_error()) return(false);
-
-   // reset opengl environment.
-   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-   glGetError ();
-   glMatrixMode( GL_MODELVIEW );
-   glGetError ();
-   glLoadIdentity();
-   glGetError ();
-   glTranslatef( x_translation, y_translation, -1 );
-   glGetError ();
-
-   // change scale
-   //  glScaled(zoom, zoom, zoom);
-   //  zoom-=0.01;
-
-   // draw the screen quad
-   glInterleavedArrays( GL_T2F_V3F, 0, g_quadVertices );
-   glGetError ();
-   glDrawArrays( GL_QUADS, 0, 4 );
-   if(check_opengl_error())
-    return(false);
-
-   return(true);
-
-   }
- */
-
-
 
 #endif

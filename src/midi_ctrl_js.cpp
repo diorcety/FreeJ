@@ -25,7 +25,7 @@
 
 #include <midi_ctrl.h>
 
-#ifdef WITH_MIDI
+#ifdef WITH_ALSA
 
 class MidiControllerJS : public MidiController {
 public:
@@ -151,4 +151,4 @@ JS(midi_connect_from) {
     return JS_NewNumberValue(cx, res, rval);
 }
 
-#endif //WITH_MIDI
+#endif //WITH_ALSA
