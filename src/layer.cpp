@@ -332,3 +332,7 @@ void Layer::close() {
     func("base Layer::close() called passing");
     return;
 }
+
+bool Layer::isActive() const {
+    return active;
+}

@@ -70,26 +70,26 @@ int console_param_selection(ContextPtr env, char *cmd) {
     if(*p == '\0') return 0;  // no value was given
 
     if(filt) { ///////////////////////// parameters for filter
-        LockedLinkList<Parameter> list = LockedLinkList<Parameter>(filt->parameters);
-        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
+        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(filt->getParameters());
+        LockedLinkList<ParameterInstance>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterInstancePtr &param) {
                                                                   return param->getName() == cmd;
 
                                                               });
 
         if(it == list.end()) {
-            error("parameter %s not found in filter %s", cmd, filt->proto->getName().c_str());
+            error("parameter %s not found in filter %s", cmd, filt->getName().c_str());
             return 0;
         } else {
-            ParameterPtr param = *it;
+            ParameterInstancePtr param = *it;
             func("parameter %s found in filter %s",
-                 param->getName().c_str(), filt->proto->getName().c_str());
+                 param->getName().c_str(), filt->getName().c_str());
 
             // parse from the string to the value
             param->parse(p);
         }
     } else { /////// parameters for layer
-        LockedLinkList<Parameter> list = LockedLinkList<Parameter>(lay->parameters);
-        LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterPtr &param) {
+        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(lay->getParameters());
+        LockedLinkList<ParameterInstance>::iterator it = std::find_if(list.begin(), list.end(), [&] (ParameterInstancePtr &param) {
                                                                   return param->getName() == cmd;
 
                                                               });
@@ -98,7 +98,7 @@ int console_param_selection(ContextPtr env, char *cmd) {
             error("parameter %s not found in layers %s", cmd, lay->getName().c_str());
             return 0;
         } else {
-            ParameterPtr param = *it;
+            ParameterInstancePtr param = *it;
             func("parameter %s found in layer %s at position %u",
                  param->getName().c_str(), lay->getName().c_str());
 
@@ -124,8 +124,8 @@ int console_param_completion(ContextPtr env, char *cmd) {
     FilterInstancePtr filt = lay->mSelectedFilter;
 
     LinkList<Parameter> *parameters;
-    if(filt) parameters = &filt->parameters;
-    else parameters = &lay->parameters;
+    if(filt) parameters = &filt->getParameters();
+    else parameters = &lay->getParameters();
 
     // Find completions
     ParameterPtr exactParam = NULL;
@@ -366,7 +366,7 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
 
     int c = 0;
     std::for_each(retList.begin(), retList.end(), [&] (ParameterPtr p) {
-                      switch(p->type) {
+                      switch(p->getType()) {
                       case Parameter::BOOL:
                           ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
                                 (*(bool*)p->get() == true) ? "true" : "false",
@@ -598,7 +598,7 @@ int console_open_text_layer(ContextPtr env, char *cmd) {
         ::error("no screen currently selected");
         return 0;
     }
-    return LockedLinkList<Layer>(screen->layers).size();
+    return LockedLinkList<Layer>(screen->getLayers()).size();
 }
 
 #endif
@@ -676,8 +676,7 @@ int console_filebrowse_completion(ContextPtr env, char *cmd) {
     }
 
     for(int c = found - 1; c > 0; c--) { // insert each entry found in a linklist
-        EntryPtr e = MakeShared<Entry>();
-        e->setName(filelist[c]->d_name);
+        EntryPtr e = MakeShared<Entry>(filelist[c]->d_name);
         files.push_back(e);
     }
 
@@ -742,7 +741,7 @@ int console_filebrowse_completion(ContextPtr env, char *cmd) {
 int console_generator_completion(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    LockedLinkList<Filter> list =  LockedLinkList<Filter>(env->generators);
+    LockedLinkList<Filter> list =  LockedLinkList<Filter>(env->getGenerators());
     FilterPtr exactGenerator;
     std::list<FilterPtr> retList;
     std::string cmdString(cmd);
@@ -797,17 +796,14 @@ int console_generator_selection(ContextPtr env, char *cmd) {
     }
     // this is something specific to the generator layer
     // it needs this from the environment..
-    tmp->register_generators(&env->generators);
+    tmp->register_generators(&env->getGenerators());
 
     if(!tmp->open(cmd)) {
         error("generator %s is not found", cmd);
         return 0;
     }
 
-    tmp->start();
-    //  tmp->set_fps(env->fps_speed);
     env->mSelectedScreen->add_layer(tmp);
-    tmp->active = true;
 
     notice("generator %s successfully created", tmp->getName().c_str());
     return 1;

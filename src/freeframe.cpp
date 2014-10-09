@@ -148,6 +148,11 @@ int Freeframe::open(char *file) {
     opened = true;
     snprintf(filename, 255, "%s", file);
 
+    // TODO freeframe has no extentedinfostruct returned!?
+    desciption = "freeframe VFX";
+    // TODO freeframe has no extentedinfostruct returned!?
+    author =  "freeframe authors";
+
     return 1;
 
 }
@@ -165,16 +170,6 @@ void Freeframe::print_info() {
         error("Unrecognized plugin type");
     }
     act("Parameters [%i total]", plugmain(FF_GETNUMPARAMETERS, NULL, 0).ivalue);
-}
-
-const char *Freeframe::description() {
-    // TODO freeframe has no extentedinfostruct returned!?
-    return "freeframe VFX";
-}
-
-const char *Freeframe::author() {
-    // TODO freeframe has no extentedinfostruct returned!?
-    return "freeframe authors";
 }
 
 int Freeframe::type() {

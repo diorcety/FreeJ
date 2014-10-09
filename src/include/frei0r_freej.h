@@ -49,12 +49,12 @@ public:
     virtual int type();
     int open(char *file);
     virtual FilterInstancePtr new_instance();
-    virtual const char *description();
-    virtual const char *author();
-
+    virtual const std::string &getDescription() const;
+    virtual const std::string &getAuthor() const;
     inline const f0r_plugin_info_t getInfo() const {
         return info;
     }
+
 
 protected:
     f0r_plugin_info_t info;
@@ -81,7 +81,6 @@ protected:
                         const uint32_t* inframe3, uint32_t* outframe);
                         
 private:
-
     void init();
     // dlopen handle
     void *handle;

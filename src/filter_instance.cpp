@@ -77,6 +77,17 @@ uint32_t *FilterInstance::_process(double time, uint32_t *inframe) {
     return outframe;
 }
 
+LinkList<ParameterInstance> &FilterInstance::getParameters() {
+    return parameters;
+}
+
+const std::string &FilterInstance::getDescription() const  {
+    return proto->getDescription();
+}
+
+const std::string &FilterInstance::getAuthor() const {
+    return proto->getAuthor();
+}
 
 bool FilterInstance::apply(LayerPtr lay) {
     auto &geo = lay->getGeometry();

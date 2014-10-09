@@ -56,10 +56,14 @@ public:
     virtual FilterInstancePtr new_instance();
 
 public:
-    virtual const char *description();
-    virtual const char *author();
+    virtual const std::string &getDescription() const;
+    virtual const std::string &getAuthor() const;
 
     virtual int type() = 0;
+
+protected:
+    std::string desciption;
+    std::string author;
 };
 
 #endif

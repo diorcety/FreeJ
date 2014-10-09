@@ -272,6 +272,63 @@ int script_selector(const struct dirent *dir)
     return(0);
 }
 
+#ifdef WITH_JAVASCRIPT
+int open_script(char *file) {
+   return 0;
+}
+
+bool config_check(const char *filename) {
+    char tmp[512];
+
+    if(!js) {
+        warning("javascript is not initialized");
+        warning("no configuration is loaded");
+        return(false);
+    }
+
+    snprintf(tmp, 512, "%s/.freej/%s", getenv("HOME"), filename);
+    if(filecheck(tmp)) {
+        js->open(tmp);
+        return(true);
+    }
+
+    snprintf(tmp, 512, "/etc/freej/%s", filename);
+    if(filecheck(tmp)) {
+        js->open(tmp);
+        return(true);
+    }
+
+#ifdef HAVE_DARWIN
+    snprintf(tmp, 512, "%s/%s", "CHANGEME", filename);
+#else
+    snprintf(tmp, 512, "%s/%s", DATADIR, filename);
+#endif
+    if(filecheck(tmp)) {
+        js->open(tmp);
+        return(true);
+    }
+
+    snprintf(tmp, 512, "/usr/lib/freej/%s", filename);
+    if(filecheck(tmp)) {
+        js->open(tmp);
+        return(true);
+    }
+
+    snprintf(tmp, 512, "/usr/local/lib/freej/%s", filename);
+    if(filecheck(tmp)) {
+        js->open(tmp);
+        return(true);
+    }
+
+    snprintf(tmp, 512, "/opt/video/lib/freej/%s", filename);
+    if(filecheck(tmp)) {
+        js->open(tmp);
+        return(true);
+    }
+    return(false);
+}
+
+
 // load all default scripts in $DATADIR/freej and ~/.freej
 int scripts(char *path) {
     char *dir;
@@ -290,19 +347,21 @@ int scripts(char *path) {
             char temp[256];
             snprintf(temp, 255, "%s/%s", dir, filelist[found]->d_name);
             // if it exist is a default one: source it
-            freej->open_script(temp);
+            open_script(temp);
         }
     } while((dir = strtok(NULL, ":")));
 
     return 1;
 }
-
-//[js]
+#endif //WITH_JAVASCRIPT
 
 #ifndef HAVE_DARWIN
 int main(int argc, char **argv) {
     LayerPtr lay;
     ConsoleControllerPtr con;
+#ifdef WITH_JAVASCRIPT
+    bool interactive = true;
+#endif //WITH_JAVASCRIPT
 
     freej = MakeShared<Context>();
 
@@ -348,13 +407,14 @@ int main(int argc, char **argv) {
         }
     }
 
+#ifdef WITH_JAVASCRIPT
     // load default settings
-    freej->config_check("keyboard.js");
+    config_check("keyboard.js");
 
     /* execute javascript */
     if(javascript[0]) {
-        freej->setInteractive(false);
-        freej->open_script(javascript); // TODO: quit here when script failed??
+        interactive = false;
+        open_script(javascript); // TODO: quit here when script failed??
         if(freej->isQuitting()) {
             //      freej.close();
             // here calling close directly we double the destructor
@@ -362,36 +422,28 @@ int main(int argc, char **argv) {
             // but would be better to make the destructor reentrant
             exit(1);
         } else {
-            freej->setInteractive(true);
+            interactive = true;
         }
     }
 
     /* execute processing */
     if(processing[0]) {
-        freej->setInteractive(false);
-#ifdef WITH_JAVASCRIPT
+        interactive = false;
         char tmp[1024];
 
         // parse includes our extra processing.js library
         snprintf(tmp, 1023, "include(\"processing.js\");script = read_file(\"%s\");Processing(script);", processing);
         freej->js->parse(tmp);
-#endif //WITH_JAVASCRIPT
-
         if(freej->isQuitting()) {
             exit(1);
         } else {
-            freej->setInteractive(true);
+            interactive = true;
         }
     }
-
-
-
-    /* initialize the On Screen Display */
-    //  freej.osd.init( &freej );
-
+#endif //WITH_JAVASCRIPT
 
     // Set fps
-    freej->getFps().set(fps);
+    freej->setFps(fps);
 
     freej->setStartRunning(startstate);
 
@@ -414,12 +466,7 @@ int main(int argc, char **argv) {
 
             lay = freej->open(pp); // hey, this already init and open the layer !!
             if(lay)  {
-                if(screen->add_layer(lay)) {
-                    lay->start();
-                    lay->fps.set(fps);
-                }
-                if(!startstate)
-                    lay->active = false;
+                screen->add_layer(lay);
             }
 
             pp = l;

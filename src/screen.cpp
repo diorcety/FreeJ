@@ -144,6 +144,10 @@ void ViewPort::rem_layer(LayerPtr lay) {
     notice("removed layer %s (but still present as an instance)", lay->getName().c_str());
 }
 
+LinkList<Layer> &ViewPort::getLayers() {
+    return layers;
+}
+
 void ViewPort::reset() {
     LockedLinkList<Layer>(layers).clear();
 }

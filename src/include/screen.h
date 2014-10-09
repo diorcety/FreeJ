@@ -125,6 +125,8 @@ public:
     //virtual void rem_audio(JackClientPtr lay); ///< disconnect layer from the screen
 #endif
 
+    LinkList<Layer> &getLayers();
+
 private:
 
     LinkList<Layer> layers; ///< linked list of registered layers

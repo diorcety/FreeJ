@@ -110,7 +110,6 @@ Context::Context() {
     quit            = false;
     pause           = false;
     save_to_file    = false;
-    interactive     = true;
     poll_events     = true;
 
     layers_description = (char*)
@@ -187,6 +186,22 @@ bool Context::add_screen(ViewPortPtr scr) {
     act("screen %s now on top", scr->getName().c_str());
 
     return(true);
+}
+
+LinkList<ViewPort>& Context::getScreens() {
+    return screens;
+}
+
+LinkList<Controller>& Context::getControllers() {
+    return controllers;
+}
+
+LinkList<Filter>& Context::getFilters() {
+    return filters;
+}
+
+LinkList<Filter>& Context::getGenerators() {
+    return generators;
 }
 
 bool Context::init() {

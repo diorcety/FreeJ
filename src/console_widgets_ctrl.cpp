@@ -309,9 +309,7 @@ bool SlwSelector::refresh() {
             snprintf(tmp, w, "No Filter selected");
             //      SLsmg_erase_eol();
         } else {
-            if(filter->proto)
-                snprintf(tmp, w, "Filter: %s :: %s",
-                         filter->getName().c_str(), filter->proto->description());
+            snprintf(tmp, w, "Filter: %s :: %s", filter->getName().c_str(), filter->getDescription().c_str());
 
             //      SLsmg_set_color(FILTERS_COLOR+10);
 

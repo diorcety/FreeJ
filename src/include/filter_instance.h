@@ -45,7 +45,9 @@ public:
     virtual LayerPtr get_layer();
     
     uint32_t *process(double time, uint32_t *inframe);
-
+    LinkList<ParameterInstance> &getParameters();
+    virtual const std::string &getDescription() const;
+    virtual const std::string &getAuthor() const;
 
 protected:
     virtual uint32_t *_process(double time, uint32_t *inframe);

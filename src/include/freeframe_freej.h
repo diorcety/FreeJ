@@ -43,10 +43,7 @@ public:
 
     int open(char *file);
 
-    virtual const char *description();
-    virtual const char *author();
     virtual FilterInstancePtr new_instance();
-    
     inline const PlugInfoStruct *getInfo() const {
         return info;
     }

@@ -34,23 +34,9 @@
 
 Filter::Filter()
     : Entry() {
-
-    //initialized = false;
-    //active = false;
-    //inuse = false;
+    description = "Unknown";
+    author = "Unknown";
 }
-
-/*
-   static const char *KnownFilters[] = {
-   #ifdef WITH_FREI0R
-    "Freior",
-   #endif
-   #ifdef WITH_COCOA
-    "CoreImage",
-   #endif
-    "FreeFrame"
-   };
- */
 
 Filter::~Filter() {
 
@@ -63,10 +49,10 @@ FilterInstancePtr Filter::new_instance() {
     return instance;
 }
 
-const char *Filter::description() {
-    return "Unknown"; // TODO - use a more meaningful default
+const std::string &Filter::getDescription() const {
+    return description;
 }
 
-const char *Filter::author()  {
-    return "Unknown";
+const std::string &Filter::getAuthor() const {
+    return author;
 }

@@ -23,7 +23,7 @@
 FREEJ_FORWARD_PTR(Entry)
 class Entry : public EnableSharedFromThis<Entry> {
 public:
-    Entry();
+    Entry(const std::string &name = "", const std::string &description = "");
     virtual ~Entry();
 
     const std::string &getName() const;

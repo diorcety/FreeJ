@@ -145,6 +145,8 @@ void Freior::init() {
     f0r_init();
 
     name = info.name;
+    description = info.explanation;
+    author = info.author;
 
     // Get the list of params.
     for(int i = 0; i < info.num_params; ++i) {
@@ -203,14 +205,6 @@ void Freior::print_info() {
             error("%s Unrecognized info type.", tmp);
         }
     });
-}
-
-const char *Freior::description() {
-    return info.explanation;
-}
-
-const char *Freior::author() {
-    return info.author;
 }
 
 int Freior::type() {

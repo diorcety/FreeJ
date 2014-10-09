@@ -184,6 +184,7 @@ private:
 public:
     ///< Iterator list of value modifiers
     int do_iterators(); ///< process all registered iterators
+    bool isActive() const;
 
 protected:
     bool active; // is active? (read-only)

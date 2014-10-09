@@ -115,8 +115,6 @@ public:
 
     int reset(); ///< clear the engine and deletes all registered objects
 
-    bool config_check(const char *filename);
-
 private:
 
     bool quit;
@@ -124,8 +122,6 @@ private:
     bool pause;
 
     bool save_to_file;
-
-    bool interactive;
 
     //  Osd osd; ///< On Screen Display
 
@@ -136,6 +132,15 @@ public:
     bool add_screen(ViewPortPtr scr); ///< add a new screen
     //bool rem_screen(ViewPortPtr src); ///< remove a screen
 
+    LinkList<ViewPort>& getScreens();
+
+    LinkList<Controller>& getControllers();
+
+    LinkList<Filter>& getFilters();
+
+    LinkList<Filter>& getGenerators();
+
+
 private:
     LinkList<ViewPort> screens; ///< linked list of registered screens
 
@@ -144,8 +149,6 @@ private:
     LinkList<Filter> filters; ///< linked list of registered filters
 
     LinkList<Filter> generators; ///< linked list of registered generators
-
-    //AudioCollector *audio; ///< audio device recording input (PortAudio)
 
     Plugger plugger; ///< filter plugins host
 
@@ -160,7 +163,7 @@ public:
         return this->fps.get();
     }
 
-    inline void getFps(double fps) {
+    inline void setFps(double fps) {
         this->fps.set(fps);
     }
 
@@ -175,14 +178,6 @@ public:
 
     LayerPtr open(char *file, int w = 0, int h = 0); ///< creates a layer from a filename, detecting its type
 
-    inline bool isInteractive() const {
-        return interactive;
-    }
-    
-    inline void setInteractive(bool interactive) {
-        this-> interactive = interactive;
-    }
-    
     inline bool isQuitting() const {
         return quit;
     }
