@@ -212,7 +212,7 @@ int Freior::type() {
 }
 
 FilterInstancePtr Freior::new_instance() {
-    FilterInstancePtr instance = Factory<FilterInstance>::new_instance("FreiorInstance");
+    FreiorInstancePtr instance = DynamicPointerCast<FreiorInstance>(Factory<FilterInstance>::new_instance("FreiorInstance"));
     if(instance)
         instance->init(SharedFromThis(Filter));
     return instance;

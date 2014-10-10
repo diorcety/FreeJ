@@ -32,6 +32,7 @@
 
 FREEJ_FORWARD_PTR(FreiorInstance)
 class FreiorInstance : public FilterInstance {
+    friend class Freior;
     friend class FreiorParameterInstance;
 
 public:

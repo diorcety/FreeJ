@@ -117,64 +117,68 @@ BLIT sdl_chromakey(void *src, SDL_Rect *src_rect,
 
 }
 
-void setup_sdl_blits(BlitterPtr blitter) {
-    ParameterPtr p;
+static LinkList<Blit> blits;
+static bool init = false;
 
-    LockedLinkList<Blit> list = LockedLinkList<Blit>(blitter->blitlist);
+LinkList<Blit> &get_sdl_blits() {
+    if(!init) {
+        LockedLinkList<Blit> list = LockedLinkList<Blit>(blits);
 
-    /////////////
+        /////////////
 
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::SDL,
-            "SDL",
-            "RGB blit (SDL)",
-            (void*) sdl_rgb
-        ));
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::SDL,
+                "SDL",
+                "RGB blit (SDL)",
+                (void*) sdl_rgb
+            ));
+        }
+
+        /////////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "alpha",
+                "level of transparency of alpha channel (0.0 - 1.0)",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::SDL,
+                "ALPHA",
+                "alpha blit (SDL)",
+                (void*)sdl_alpha,
+                parameters
+            ));
+        }
+
+        /////////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "alpha",
+                "level of transparency of alpha channel (0.0 - 1.0)",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::SDL,
+                "SRCALPHA",
+                "source alpha blit (SDL)",
+                (void*)sdl_srcalpha,
+                parameters
+            ));
+        }
+        init = true;
     }
 
-    /////////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "alpha",
-            "level of transparency of alpha channel (0.0 - 1.0)",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::SDL,
-            "ALPHA",
-            "alpha blit (SDL)",
-            (void*)sdl_alpha,
-            parameters
-        ));
-    }
-
-    /////////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "alpha",
-            "level of transparency of alpha channel (0.0 - 1.0)",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::SDL,
-            "SRCALPHA",
-            "source alpha blit (SDL)",
-            (void*)sdl_srcalpha,
-            parameters
-        ));
-    }
-
-    blitter->default_blit = list.front(); // SDL is default
+    return blits;
 }
 

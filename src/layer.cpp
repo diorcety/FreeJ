@@ -117,7 +117,7 @@ bool Layer::set_blit(const char *bname) {
     auto screen = this->screen.lock();
     if(screen) {
         auto blitter = screen->getBlitter();
-        LockedLinkList<Blit> list = LockedLinkList<Blit>(blitter->blitlist);
+        LockedLinkList<Blit> list = LockedLinkList<Blit>(blitter->getBlits());
         LockedLinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (BlitPtr &b) {
                                                              return b->getName() == bname;
                                                          });
@@ -335,4 +335,16 @@ void Layer::close() {
 
 bool Layer::isActive() const {
     return active;
+}
+
+BlitInstancePtr Layer::getCurrentBlit() const {
+    return current_blit;
+}
+
+LinkList<ParameterInstance>& Layer::getParameters() {
+    return parameters;
+}
+
+LinkList<FilterInstance>& Layer::getFilters() {
+    return filters;
 }

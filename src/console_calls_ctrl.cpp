@@ -33,6 +33,7 @@
 #include <parameter.h>
 #include <context.h>
 #include <blitter.h>
+#include <blit_instance.h>
 #include <layer.h>
 
 #include <generator_layer.h>
@@ -43,17 +44,17 @@ int console_param_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = screen->mSelectedLayer;
+    LayerPtr lay = consoleSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstancePtr filt = lay->mSelectedFilter;
+    FilterInstancePtr filt = consoleSelectedFilter;
 
     // find the values after the first blank space
     char *p;
@@ -111,29 +112,29 @@ int console_param_selection(ContextPtr env, char *cmd) {
 }
 
 int console_param_completion(ContextPtr env, char *cmd) {
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = screen->mSelectedLayer;
+    LayerPtr lay = consoleSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstancePtr filt = lay->mSelectedFilter;
+    FilterInstancePtr filt = consoleSelectedFilter;
 
-    LinkList<Parameter> *parameters;
+    LinkList<ParameterInstance> *parameters;
     if(filt) parameters = &filt->getParameters();
     else parameters = &lay->getParameters();
 
     // Find completions
-    ParameterPtr exactParam = NULL;
-    std::list<ParameterPtr> retList;
-    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(parameters);
+    ParameterInstancePtr exactParam = NULL;
+    std::list<ParameterInstancePtr> retList;
+    LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(*parameters);
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterInstancePtr param) {
                      std::string name = param->getName();
                      std::transform(name.begin(), name.end(), name.begin(), ::tolower);
                      if(name == cmdString) {
@@ -156,8 +157,8 @@ int console_param_completion(ContextPtr env, char *cmd) {
     }
 
     int c = 0;
-    std::for_each(retList.begin(), retList.end(), [&] (ParameterPtr p) {
-                      switch(p->type) {
+    std::for_each(retList.begin(), retList.end(), [&] (ParameterInstancePtr p) {
+                      switch(p->getType()) {
                       case Parameter::BOOL:
                           ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
                                 (*(bool*)p->get() == true) ? "true" : "false",
@@ -195,12 +196,12 @@ int console_blit_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = screen->mSelectedLayer;
+    LayerPtr lay = consoleSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -212,21 +213,16 @@ int console_blit_selection(ContextPtr env, char *cmd) {
 int console_blit_completion(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
-        return 0;
-    }
-    LayerPtr lay = screen->mSelectedLayer;
-    if(!lay) {
-        ::error("no layer currently selected");
         return 0;
     }
 
     // Find completions
     BlitPtr exactBlit;
     std::list<BlitPtr> retList;
-    LockedLinkList<Blit> list = LockedLinkList<Blit>(lay->blitter->blitlist);
+    LockedLinkList<Blit> list = LockedLinkList<Blit>(screen->getBlitter()->getBlits());
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (BlitPtr blit) {
@@ -270,18 +266,18 @@ int console_blit_completion(ContextPtr env, char *cmd) {
 int console_blit_param_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = screen->mSelectedLayer;
+    LayerPtr lay = consoleSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
 
-    BlitPtr b = lay->current_blit;
+    BlitInstancePtr b = lay->getCurrentBlit();
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
@@ -300,8 +296,8 @@ int console_blit_param_selection(ContextPtr env, char *cmd) {
     while(*p == ' ') p++;  // jump all spaces
     if(*p == '\0') return 0;  // no value was given
 
-    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(b->parameters);
-    LockedLinkList<Parameter>::iterator it = std::find_if(list.begin(), list.end(), [&](ParameterPtr p) {
+    LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(b->getParameters());
+    LockedLinkList<ParameterInstance>::iterator it = std::find_if(list.begin(), list.end(), [&](ParameterInstancePtr p) {
                                                               return p->getName() == cmd;
                                                           });
     if(it == list.end()) {
@@ -309,7 +305,7 @@ int console_blit_param_selection(ContextPtr env, char *cmd) {
         return 0;
     }
 
-    ParameterPtr param = *it;
+    ParameterInstancePtr param = *it;
 
     func("parameter %s found in blit %s",  param->getName().c_str(), b->getName().c_str());
 
@@ -318,18 +314,18 @@ int console_blit_param_selection(ContextPtr env, char *cmd) {
 }
 
 int console_blit_param_completion(ContextPtr env, char *cmd) {
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = screen->mSelectedLayer;
+    LayerPtr lay = consoleSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
 
-    BlitPtr b = lay->current_blit;
+    BlitInstancePtr b = lay->getCurrentBlit();
     if(!b) {
         ::error("no blit selected on layer %s", lay->getName().c_str());
         return 0;
@@ -337,12 +333,12 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
 
     // Find completions
     // Find completions
-    ParameterPtr exactParam;
-    std::list<ParameterPtr> retList;
-    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(b->parameters);
+    ParameterInstancePtr exactParam;
+    std::list<ParameterInstancePtr> retList;
+    LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(b->getParameters());
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
-    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterPtr param) {
+    std::copy_if(list.begin(), list.end(), retList.begin(), [&] (ParameterInstancePtr param) {
                      std::string name = param->getName();
                      std::transform(name.begin(), name.end(), name.begin(), ::tolower);
                      if(name == cmdString) {
@@ -365,7 +361,7 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
     }
 
     int c = 0;
-    std::for_each(retList.begin(), retList.end(), [&] (ParameterPtr p) {
+    std::for_each(retList.begin(), retList.end(), [&] (ParameterInstancePtr p) {
                       switch(p->getType()) {
                       case Parameter::BOOL:
                           ::act("(bool) %s = %s ::  %s", p->getName().c_str(),
@@ -402,7 +398,7 @@ int console_blit_param_completion(ContextPtr env, char *cmd) {
 int console_filter_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    LockedLinkList<Filter> list = LockedLinkList<Filter>(env->filters);
+    LockedLinkList<Filter> list = LockedLinkList<Filter>(env->getFilters());
     LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&](FilterPtr filter) {
                                                            return filter->getName() == cmd;
                                                        });
@@ -412,18 +408,18 @@ int console_filter_selection(ContextPtr env, char *cmd) {
     }
     FilterPtr filt = *it;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = screen->mSelectedLayer;
+    LayerPtr lay = consoleSelectedLayer;
     if(!lay) {
         ::error("no layer selected for effect %s", filt->getName().c_str());
         return 0;
     }
 
-    if(!filt->apply(lay)) {
+    if(!filt->new_instance()->apply(lay)) {
         ::error("error applying filter %s on layer %s", filt->getName().c_str(), lay->getName().c_str());
         return 0;
     }
@@ -440,7 +436,7 @@ int console_filter_completion(ContextPtr env, char *cmd) {
     // Find completions
     FilterPtr exactFilter;
     std::list<FilterPtr> retList;
-    LockedLinkList<Filter> list = LockedLinkList<Filter>(env->filters);
+    LockedLinkList<Filter> list = LockedLinkList<Filter>(env->getFilters());
     std::string cmdString(cmd);
     std::transform(cmdString.begin(), cmdString.end(), cmdString.begin(), ::tolower);
     std::copy_if(list.begin(), list.end(), retList.begin(), [&] (FilterPtr filter) {
@@ -482,6 +478,7 @@ int console_filter_completion(ContextPtr env, char *cmd) {
     return c;
 }
 
+#ifdef WITH_JAVASCRIPT
 int console_exec_script(ContextPtr env, char *cmd) {
     struct stat filestatus;
 
@@ -513,6 +510,7 @@ int console_exec_script_command(ContextPtr env, char *cmd) {
 
     return 0;
 }
+#endif
 
 int console_open_layer(ContextPtr env, char *cmd) {
     struct stat filestatus;
@@ -543,17 +541,15 @@ int console_open_layer(ContextPtr env, char *cmd) {
            } else {
          */
         //	  l->set_fps(env->fps_speed);
-        l->start();
-        env->mSelectedScreen->add_layer(l);
-        l->active = true;
+        consoleSelectedScreen->add_layer(l);
         //    l->fps=env->fps_speed;
 
-        ViewPortPtr screen = env->mSelectedScreen;
+        ViewPortPtr screen = consoleSelectedScreen;
         if(!screen) {
             ::error("no screen currently selected");
             return 0;
         }
-        int len = LockedLinkList<Layer>(screen->layers).size();
+        int len = LockedLinkList<Layer>(screen->getLayers()).size();
         notice("layer successfully created, now you have %i layers", len);
         return len;
     }
@@ -564,18 +560,18 @@ int console_open_layer(ContextPtr env, char *cmd) {
 #if defined WITH_TEXTLAYER
 #include <text_layer.h>
 int console_print_text_layer(ContextPtr env, char *cmd) {
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = screen->mSelectedLayer;
+    LayerPtr lay = consoleSelectedLayer;
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
     DynamicPointerCast<TextLayer>(lay)->write(cmd);
-    return LockedLinkList<Layer>(screen->layers).size();
+    return LockedLinkList<Layer>(screen->getLayers()).size();
 }
 
 int console_open_text_layer(ContextPtr env, char *cmd) {
@@ -587,13 +583,10 @@ int console_open_text_layer(ContextPtr env, char *cmd) {
 
 
     txt->write(cmd);
-    txt->start();
-    //  txt->set_fps(0);
-    env->mSelectedScreen->add_layer(txt);
-    txt->active = true;
+    consoleSelectedScreen->add_layer(txt);
 
     notice("layer successfully created with text: %s", cmd);
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
@@ -783,14 +776,13 @@ int console_generator_selection(ContextPtr env, char *cmd) {
     GeneratorLayerPtr tmp = MakeShared<GeneratorLayer>();
     if(!tmp) return 0;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = consoleSelectedScreen;
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    if(!tmp->init(env->mSelectedScreen->geo.w,
-                  env->mSelectedScreen->geo.h,
-                  env->mSelectedScreen->geo.bpp)) {
+    const Geometry &geo = consoleSelectedScreen->getGeometry();
+    if(!tmp->init(geo.w, geo.h, geo.bpp)) {
         error("can't initialize generator layer");
         return 0;
     }
@@ -803,7 +795,7 @@ int console_generator_selection(ContextPtr env, char *cmd) {
         return 0;
     }
 
-    env->mSelectedScreen->add_layer(tmp);
+    consoleSelectedScreen->add_layer(tmp);
 
     notice("generator %s successfully created", tmp->getName().c_str());
     return 1;

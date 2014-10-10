@@ -23,6 +23,9 @@
 
 #include <controller.h>
 #include <linklist.h>
+#include <screen.h>
+#include <layer.h>
+#include <filter_instance.h>
 
 FREEJ_FORWARD_PTR(ConsoleController)
 class ConsoleController : public Controller {
@@ -52,6 +55,8 @@ private:
     bool active;
 };
 
-
+extern LayerPtr consoleSelectedLayer;
+extern ViewPortPtr consoleSelectedScreen;
+extern FilterInstancePtr consoleSelectedFilter;
 
 #endif

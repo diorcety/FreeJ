@@ -55,7 +55,7 @@ FreiorParameterInstance::~FreiorParameterInstance() {
 bool FreiorParameterInstance::set(void *value) {
     auto f = freior.lock();
     auto filter = DynamicPointerCast<Freior>(f->getProto());
-    auto param = DynamicPointerCast<FreiorParameter>(parameter);
+    auto param = DynamicPointerCast<FreiorParameter>(proto);
     auto idx = param->getIndex();
     auto type = param->getType();
 
@@ -101,9 +101,9 @@ bool FreiorParameterInstance::set(void *value) {
 void *FreiorParameterInstance::get() {
     auto f = freior.lock();
     auto filter = DynamicPointerCast<Freior>(f->getProto());
-    auto param = DynamicPointerCast<FreiorParameter>(parameter);
+    auto param = DynamicPointerCast<FreiorParameter>(proto);
     auto idx = param->getIndex();
-    auto type = parameter->getType();
+    auto type = proto->getType();
 
     func("get_frei0r_param callback on %s for parameter %s at pos %u", f->getName().c_str(), param->getName().c_str(), idx);
     switch(type) {

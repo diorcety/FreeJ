@@ -236,430 +236,434 @@ BLIT schiffler_binarize(void *src, void *dst, int bytes, LinkList<ParameterInsta
         ((unsigned char*)src, (unsigned char*)dst, bytes, v);
 }
 
-void setup_linear_blits(BlitterPtr blitter) {
-    BlitPtr b;
-    ParameterPtr p;
+static LinkList<Blit> blits;
+static bool init = false;
 
-    LockedLinkList<Blit> list = LockedLinkList<Blit>(blitter->blitlist);
+LinkList<Blit> &get_linear_blits() {
+    if(!init) {
+        LockedLinkList<Blit> list = LockedLinkList<Blit>(blits);
 
-    /////////
+        /////////
 
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "RGB",
-            "RGB blit (jmemcpy)",
-            (void*)rgb_jmemcpy
-        ));
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "RGB",
+                "RGB blit (jmemcpy)",
+                (void*)rgb_jmemcpy
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "ADD",
+                "bytewise addition",
+                (void*)schiffler_add
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "SUB",
+                "bytewise subtraction",
+                (void*)schiffler_sub
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "MEAN",
+                "bytewise mean",
+                (void*)schiffler_add
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "ABSDIFF",
+                "absolute difference",
+                (void*)schiffler_absdiff
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "MULT",
+                "multiplication",
+                (void*)schiffler_mult
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "MULTNOR",
+                "normalized multiplication",
+                (void*)schiffler_multnor
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "DIV",
+                "division",
+                (void*)schiffler_div
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "MULTDIV2",
+                "multiplication and division by 2",
+                (void*)schiffler_multdiv2
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "MULTDIV4",
+                "multiplication and division by 4",
+                (void*)schiffler_multdiv4
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "AND",
+                "bitwise and",
+                (void*)schiffler_and
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "OR",
+                "bitwise or",
+                (void*)schiffler_or
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "XOR",
+                "bitwise xor",
+                (void*)blit_xor
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "RED",
+                "red channel only blit",
+                (void*)red_channel
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "GREEN",
+                "green channel only blit",
+                (void*)green_channel
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "BLUE",
+                "blue channel only blit",
+                (void*)blue_channel
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "bit threshold",
+                "bitmask threshold to apply to the red channel",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "REDMASK",
+                "red channel threshold mask",
+                (void*)red_mask,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "bit threshold",
+                "bitmask threshold to apply to the green channel",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "GREENMASK",
+                "green channel threshold mask",
+                (void*)green_mask,
+                parameters
+            ));
+        }
+
+        ////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "bit threshold",
+                "bitmask threshold to apply to the blue channel",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "BLUEMASK",
+                "blue channel threshold mask",
+                (void*)blue_mask,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "NEG",
+                "bitwise negation",
+                (void*)schiffler_neg
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "byte increment",
+                "amount to sum to the byte",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "ADDB",
+                "add byte to bytes",
+                (void*)schiffler_addbyte,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "half byte increment",
+                "amount to sum to the half byte",
+                127.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "ADDBH",
+                "add byte to half",
+                (void*)schiffler_addbytetohalf,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "byte decrement",
+                "amount to substract to the pixel bytes",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "SUBB",
+                "subtract byte to bytes",
+                (void*)schiffler_subbyte,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "byte decrement",
+                "amount to substract to the pixel bytes",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "SHL",
+                "shift left bits",
+                (void*)schiffler_shl,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "shift bits",
+                "amount of left bit shifts to apply on each pixel's byte",
+                8.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "SHLB",
+                "shift left byte",
+                (void*)schiffler_shlb,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "shift bits",
+                "amount of right bit shifts to apply on each pixel's byte",
+                8.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "SHR",
+                "shift right bits",
+                (void*)schiffler_shr,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "byte multiplier",
+                "amount to multiply on each pixel's byte",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "MULB",
+                "multiply by byte",
+                (void*)schiffler_mulbyte,
+                parameters
+            ));
+        }
+
+        /////////
+
+        {
+            LinkList<Parameter> parameters;
+            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
+            p.push_back(MakeShared<Parameter>(
+                Parameter::NUMBER,
+                "threshold",
+                "binary threshold value",
+                255.0
+            ));
+
+            list.push_back(MakeShared<Blit>(
+                Blit::LINEAR,
+                "BIN",
+                "binarize using threshold",
+                (void*)schiffler_binarize,
+                parameters
+            ));
+        }
+
+        init = true;
     }
 
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "ADD",
-            "bytewise addition",
-            (void*)schiffler_add
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "SUB",
-            "bytewise subtraction",
-            (void*)schiffler_sub
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "MEAN",
-            "bytewise mean",
-            (void*)schiffler_add
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "ABSDIFF",
-            "absolute difference",
-            (void*)schiffler_absdiff
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "MULT",
-            "multiplication",
-            (void*)schiffler_mult
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "MULTNOR",
-            "normalized multiplication",
-            (void*)schiffler_multnor
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "DIV",
-            "division",
-            (void*)schiffler_div
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "MULTDIV2",
-            "multiplication and division by 2",
-            (void*)schiffler_multdiv2
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "MULTDIV4",
-            "multiplication and division by 4",
-            (void*)schiffler_multdiv4
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "AND",
-            "bitwise and",
-            (void*)schiffler_and
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "OR",
-            "bitwise or",
-            (void*)schiffler_or
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "XOR",
-            "bitwise xor",
-            (void*)blit_xor
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "RED",
-            "red channel only blit",
-            (void*)red_channel
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "GREEN",
-            "green channel only blit",
-            (void*)green_channel
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "BLUE",
-            "blue channel only blit",
-            (void*)blue_channel
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "bit threshold",
-            "bitmask threshold to apply to the red channel",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "REDMASK",
-            "red channel threshold mask",
-            (void*)red_mask,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "bit threshold",
-            "bitmask threshold to apply to the green channel",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "GREENMASK",
-            "green channel threshold mask",
-            (void*)green_mask,
-            parameters
-        ));
-    }
-
-    ////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "bit threshold",
-            "bitmask threshold to apply to the blue channel",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "BLUEMASK",
-            "blue channel threshold mask",
-            (void*)blue_mask,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "NEG",
-            "bitwise negation",
-            (void*)schiffler_neg
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "byte increment",
-            "amount to sum to the byte",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "ADDB",
-            "add byte to bytes",
-            (void*)schiffler_addbyte,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "half byte increment",
-            "amount to sum to the half byte",
-            127.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "ADDBH",
-            "add byte to half",
-            (void*)schiffler_addbytetohalf,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "byte decrement",
-            "amount to substract to the pixel bytes",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "SUBB",
-            "subtract byte to bytes",
-            (void*)schiffler_subbyte,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "byte decrement",
-            "amount to substract to the pixel bytes",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "SHL",
-            "shift left bits",
-            (void*)schiffler_shl,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "shift bits",
-            "amount of left bit shifts to apply on each pixel's byte",
-            8.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "SHLB",
-            "shift left byte",
-            (void*)schiffler_shlb,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "shift bits",
-            "amount of right bit shifts to apply on each pixel's byte",
-            8.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "SHR",
-            "shift right bits",
-            (void*)schiffler_shr,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "byte multiplier",
-            "amount to multiply on each pixel's byte",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "MULB",
-            "multiply by byte",
-            (void*)schiffler_mulbyte,
-            parameters
-        ));
-    }
-
-    /////////
-
-    {
-        LinkList<Parameter> parameters;
-        LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-        p.push_back(MakeShared<Parameter>(
-            Parameter::NUMBER,
-            "threshold",
-            "binary threshold value",
-            255.0
-        ));
-
-        list.push_back(MakeShared<Blit>(
-            Blit::LINEAR,
-            "BIN",
-            "binarize using threshold",
-            (void*)schiffler_binarize,
-            parameters
-        ));
-    }
-
-
+    return blits;
 }
 

@@ -184,7 +184,7 @@ bool SlwReadline::parser_default(int key) {
         return 0;
     }
 
-    LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->layers);
+    LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->getLayers());
     if(!list.empty()) { // there are layers
 
         // get the one selected
@@ -366,6 +366,8 @@ bool SlwReadline::parser_movelayer(int key) {
         if(!layer) {
             screen->mSelectedLayer = list.front();
         }
+        const Geometry &screen_geo = screen->getGeometry();
+        const Geometry &layer_geo = layer->getGeometry();
 
         switch(key) {
         // XXX(shammash): set zoom/rotate/position are closures so they don't get
@@ -404,46 +406,46 @@ bool SlwReadline::parser_movelayer(int key) {
         case '8':
         case 'k':
         case SL_KEY_UP:
-            layer->set_position(layer->geo.x, layer->geo.y - movestep);
+            layer->set_position(layer_geo.x, layer_geo.y - movestep);
             break;
         case '2':
         case 'j':
         case SL_KEY_DOWN:
-            layer->set_position(layer->geo.x, layer->geo.y + movestep);
+            layer->set_position(layer_geo.x, layer_geo.y + movestep);
             break;
         case '4':
         case 'h':
         case SL_KEY_LEFT:
-            layer->set_position(layer->geo.x - movestep, layer->geo.y);
+            layer->set_position(layer_geo.x - movestep, layer_geo.y);
             break;
         case '6':
         case 'l':
         case SL_KEY_RIGHT:
-            layer->set_position(layer->geo.x + movestep, layer->geo.y);
+            layer->set_position(layer_geo.x + movestep, layer_geo.y);
             break;
         case '7':
         case 'y': // up+left
-            layer->set_position(layer->geo.x - movestep, layer->geo.y - movestep);
+            layer->set_position(layer_geo.x - movestep, layer_geo.y - movestep);
             break;
         case '9':
         case 'u': // up+right
-            layer->set_position(layer->geo.x + movestep, layer->geo.y - movestep);
+            layer->set_position(layer_geo.x + movestep, layer_geo.y - movestep);
             break;
         case '1':
         case 'b': // down+left
-            layer->set_position(layer->geo.x - movestep, layer->geo.y + movestep);
+            layer->set_position(layer_geo.x - movestep, layer_geo.y + movestep);
             break;
         case '3':
         case 'n': // down+right
-            layer->set_position(layer->geo.x + movestep, layer->geo.y + movestep);
+            layer->set_position(layer_geo.x + movestep, layer_geo.y + movestep);
             break;
 
         case '5':
         case KEY_SPACE:
             // place at the center
             layer->set_position
-                ((screen->geo.w - layer->geo.w) / 2,
-                (screen->geo.h - layer->geo.h) / 2);
+                ((screen_geo.w - layer_geo.w) / 2,
+                (screen_geo.h - layer_geo.h) / 2);
             break;
 
         case SL_KEY_ENTER:

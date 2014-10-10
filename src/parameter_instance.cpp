@@ -28,8 +28,8 @@
 #include <jutils.h>
 
 ParameterInstance::ParameterInstance(ParameterPtr pp) {
-    parameter = pp;
-    value = calloc(1, parameter->value_size);
+    proto = pp;
+    value = calloc(1, proto->value_size);
     changed = false;
     
     this->name = pp->name;
@@ -43,10 +43,10 @@ ParameterInstance::~ParameterInstance() {
 bool ParameterInstance::set(void *val) {
 
     ////////////////////////////////////////
-    auto &type = parameter->type;
+    auto &type = proto->type;
     if(type == Parameter::NUMBER) {
         double v = *(double*)val;
-        auto &multiplier = parameter->multiplier;
+        auto &multiplier = proto->multiplier;
         func("%s NUMBER %g (mult %g)", __PRETTY_FUNCTION__, v, multiplier);
         // range check (input is always 0.0 - 1.0)
         if((v < 0.0) || (v > 1.0)) {
@@ -111,7 +111,7 @@ bool ParameterInstance::parse(char *p) {
 
 
     //////////////////////////////////////
-    auto &type = parameter->type;
+    auto &type = proto->type;
     if(type == Parameter::NUMBER) {
         double val;
         func("parsing number parameter");
@@ -182,6 +182,10 @@ void ParameterInstance::update() {
 
 void ParameterInstance::_update() {
 
+}
+
+Parameter::Type ParameterInstance::getType() const {
+    return proto->type;
 }
 
 

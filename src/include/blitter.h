@@ -34,17 +34,24 @@ FREEJ_FORWARD_PTR(Blit)
 
 FREEJ_FORWARD_PTR(Blitter)
 class Blitter : public EnableSharedFromThis<Blitter> {
+    friend class ViewPort;
 public:
     Blitter();
     ~Blitter();
-
-    LinkList<Blit> blitlist; ///< list of available blits
-    BlitPtr default_blit;
 
     /* ==== CROP */
     /** @param force crop even if nothing changed */
     void crop(LayerPtr lay, ViewPortPtr scr);
     ///< crop to fit in the ViewPort
+
+    virtual LinkList<Blit>& getBlits();
+    virtual BlitPtr getDefaultBlit();
+    virtual void setDefaultBlit(BlitPtr blit);
+
+protected:
+    LinkList<Blit> blitlist; ///< list of available blits
+    BlitPtr default_blit;
+
 private:
     int16_t old_lay_x;
     int16_t old_lay_y;

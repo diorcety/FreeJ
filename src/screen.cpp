@@ -36,7 +36,7 @@
 
 #include <algorithm>
 
-void setup_linear_blits(BlitterPtr blitter);
+LinkList<Blit> &get_linear_blits();
 
 ViewPort::ViewPort()
     : Entry() {
@@ -60,7 +60,12 @@ ViewPort::ViewPort()
     audio = ringbuffer_create(4096 * 512 * 8);
 #endif
 
-    setup_linear_blits(blitter);
+    LockedLinkList<Blit> blitterBlits = LockedLinkList<Blit>(blitter->getBlits());
+    LockedLinkList<Blit> linearBlits = LockedLinkList<Blit>(get_linear_blits());
+    blitterBlits.insert(blitterBlits.end(), linearBlits.begin(), linearBlits.end());
+    if(linearBlits.size() > 0) {
+        blitter->setDefaultBlit(linearBlits.front());
+    }
 }
 
 ViewPort::~ViewPort() {

@@ -177,7 +177,7 @@ int Freeframe::type() {
 }
 
 FilterInstancePtr Freeframe::new_instance() {
-    FilterInstancePtr instance = Factory<FilterInstance>::new_instance("FreeframeInstance");
+    FreeframeInstancePtr instance = DynamicPointerCast<FreeframeInstance>(Factory<FilterInstance>::new_instance("FreeframeInstance"));
     if(instance)
         instance->init(SharedFromThis(Filter));
     return instance;

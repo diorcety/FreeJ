@@ -33,13 +33,13 @@ FREEJ_FORWARD_PTR(Filter)
 FREEJ_FORWARD_PTR(FilterInstance)
 class FilterInstance : public Entry {
     friend class Filter;
+    friend class GeneratorLayer;
 
 public:
     FilterInstance();
     FilterInstance(FilterPtr fr);
     virtual ~FilterInstance();
 
-    virtual void init(FilterPtr fr);
     virtual bool apply(LayerPtr lay);
     virtual bool inuse();
     virtual LayerPtr get_layer();
@@ -50,6 +50,7 @@ public:
     virtual const std::string &getAuthor() const;
 
 protected:
+    virtual void init(FilterPtr fr);
     virtual uint32_t *_process(double time, uint32_t *inframe);
     
     FilterPtr proto;

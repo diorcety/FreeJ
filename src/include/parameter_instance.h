@@ -37,12 +37,13 @@ public:
     ///< according to the parameter type
 
     bool parse(char *p);
+    Parameter::Type getType() const;
 
 protected:
     virtual void _update();
     void *value;
     bool changed; ///< can be used externally by application caller
-    ParameterPtr parameter;
+    ParameterPtr proto;
 };
 
 #endif

@@ -42,6 +42,18 @@ Blitter::Blitter() {
 Blitter::~Blitter() {
 }
 
+LinkList<Blit> &Blitter::getBlits() {
+    return blitlist;
+}
+
+BlitPtr Blitter::getDefaultBlit() {
+    return default_blit;
+}
+
+void Blitter::setDefaultBlit(BlitPtr blit) {
+    default_blit = blit;
+}
+
 // char *Blitter::getName().c_str() {
 //   return name;
 // }

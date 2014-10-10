@@ -50,9 +50,8 @@ public:
 
     Parameter(Type param_type, const std::string &name, const std::string &description, float multiplier = 1.0);
     ~Parameter();
-    inline Type getType() {
-        return type;
-    }
+    Type getType() const;
+    
 
 private:
     Type type;

@@ -66,3 +66,7 @@ Parameter::~Parameter() {
     free(max_value);
 }
 
+Parameter::Type Parameter::getType() const {
+    return type;
+}
+

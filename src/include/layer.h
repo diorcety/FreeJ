@@ -159,10 +159,12 @@ private:
 
 public:
     virtual void fit(bool maintain_aspect_ratio = true);
+    LinkList<ParameterInstance>& getParameters();
+    LinkList<FilterInstance>& getFilters();
 
 protected:
 
-    LinkList<Parameter> parameters;
+    LinkList<ParameterInstance> parameters;
     ///< Parameter list for the layer
 
     LinkList<FilterInstance> filters;
@@ -205,6 +207,7 @@ public:
     //virtual void add_filter(FilterPtr filter);
     //virtual void rem_filter(FilterPtr filter);
     
+    virtual BlitInstancePtr getCurrentBlit() const;
     virtual char *get_blit(); ///< return the name of the currently seleted Blit
     virtual bool set_blit(const char *bname); ///< select a Blit by name
 
