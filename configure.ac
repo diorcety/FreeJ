@@ -112,6 +112,18 @@ AM_PROG_AS
 dnl compatibility with older libtool
 dnl m4_ifndef([LT_INIT], [AC_PROG_RANLIB])
 
+cxx_compiler=unknown
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#if ! __clang__
+                                    #error
+                                    #endif
+                                    ]])],
+                  cxx_compiler=clang,
+                  [AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#if ! __GNUC__
+                                                       #error
+                                                       #endif
+                                                       ]])],
+                                     cxx_compiler=gcc, [])])
+
 
 dnl Checks for header files.
 AC_PATH_X
@@ -214,7 +226,12 @@ dnl ==============================================================
 dnl Add the local include path and some flags
 dnl ==============================================================
 dnl -freg-struct-return is to compile an host compatible with freeframe dso
-GLOBAL_CFLAGS="$GLOBAL_CFLAGS -pipe -D_REENTRANT -freg-struct-return -fPIC"
+GLOBAL_CFLAGS="$GLOBAL_CFLAGS -pipe -D_REENTRANT -fPIC"
+case "$llvm_cv_cxx_compiler" in
+    gcc)
+        GLOBAL_CFLAGS="$GLOBAL_CFLAGS -freg-struct-return"
+    ;;
+esac
 if test x$have_darwin = xyes; then
   dnl add the fink default path to find headers
   GLOBAL_CFLAGS="$GLOBAL_CFLAGS -I/sw/include"
@@ -1010,10 +1027,11 @@ dnl select CCVT CONVERSION TYPE
 CCVT_CONV="ccvt_c2.c"
 AC_SUBST(CCVT_CONV)
 
-CFLAGS="$GLOBAL_CFLAGS $CFLAGS"
+CPPFLAGS="$GLOBAL_CFLAGS"
+AC_SUBST(CPPFLAGS)
+
 AC_SUBST(CFLAGS)
 
-CXXFLAGS="$GLOBAL_CFLAGS $CXXFLAGS"
 AC_SUBST(CXXFLAGS)
 
 dnl ==============================================================
@@ -1050,7 +1068,7 @@ FREEJ_CFLAGS="\$(FREEJ_STATIC_CFLAGS) \
     \$(CAIRO_CFLAGS)    \
     \$(XIPH_CFLAGS)"
 dnl Strict
-FREEJ_CFLAGS="$FREEJ_CFLAGS -Wall -Wno-unused-function -Wno-deprecated-declarations -Werror"
+FREEJ_CFLAGS="$FREEJ_CFLAGS -Wall -Wno-deprecated-declarations -Werror"
 AC_SUBST(FREEJ_CFLAGS)
 
 FREEJ_STATIC_LIBS="\$(top_builddir)/lib/ccvt/libccvt.la \

@@ -401,10 +401,10 @@ void oggmux_init(oggmux_info *info) {
         long bitrate;
         struct ovectl_ratemanage2_arg ai;
         ret = vorbis_encode_ctl(&info->vi, OV_ECTL_RATEMANAGE2_GET, &ai);
-        if(ret && OV_EINVAL) {
+        if(ret & OV_EINVAL) {
             std::cerr << "Invalid argument, or an attempt to modify a setting after calling vorbis_encode_setup_init() 1" << std::endl;
             //return;
-        } else if(ret && OV_EIMPL) {
+        } else if(ret & OV_EIMPL) {
             std::cerr << "Unimplemented or unknown request" << std::endl;
             //return;
         }
@@ -427,17 +427,17 @@ void oggmux_init(oggmux_info *info) {
         ai.bitrate_limit_max_kbps = 256;
         ai.management_active = 1;
         ret = vorbis_encode_ctl(&info->vi, OV_ECTL_RATEMANAGE2_SET, &ai);
-        if(ret && OV_EINVAL) {
+        if(ret & OV_EINVAL) {
             std::cerr << "Invalid argument, or an attempt to modify a setting after calling vorbis_encode_setup_init() 2" << std::endl;
-        } else if(ret && OV_EIMPL) {
+        } else if(ret & OV_EIMPL) {
             std::cerr << "Unimplemented or unknown request" << std::endl;
         }
         ret = vorbis_encode_setup_init(&info->vi);
-        if(ret && OV_EINVAL) {
+        if(ret & OV_EINVAL) {
             std::cerr << "Attempt to use vorbis_encode_setup_init() without first calling \
 		one of vorbis_encode_setup_managed() or vorbis_encode_setup_vbr() \
 		to initialize the high-level encoding setup" << std::endl;
-        } else if(ret && OV_EFAULT) {
+        } else if(ret & OV_EFAULT) {
             std::cerr << "Internal logic fault; indicates a bug or heap/stack corruption." << std::endl;
         }
 
@@ -771,21 +771,21 @@ void oggmux_add_audio(oggmux_info *info, float * buffer, int bytes, int samples,
             ogg_stream_packetin(&info->vo, &op);
             info->a_pkg++;
         }
-        if(bet && OV_EINVAL)
+        if(bet & OV_EINVAL)
             std::cerr << std::endl << "vorbis_analysis_blockout :Invalid parameters." << std::endl << std::flush;
-        else if(bet && OV_EFAULT)
+        else if(bet & OV_EFAULT)
             std::cerr << std::endl << "vorbis_analysis_blockout :Internal fault; \
               indicates a bug or memory corruption." << std::endl << std::flush;
-        else if(bet && OV_EIMPL)
+        else if(bet & OV_EIMPL)
             std::cerr << std::endl << "vorbis_analysis_blockout : Unimplemented; \
               not supported by this version of the library." << std::endl << std::flush;
     }
-    if(ret && OV_EINVAL)
+    if(ret & OV_EINVAL)
         std::cerr << std::endl << "vorbis_analysis_blockout :Invalid parameters." << std::endl << std::flush;
-    else if(ret && OV_EFAULT)
+    else if(ret & OV_EFAULT)
         std::cerr << std::endl << "vorbis_analysis_blockout :Internal fault; \
 	    indicates a bug or memory corruption." << std::endl << std::flush;
-    else if(ret && OV_EIMPL)
+    else if(ret & OV_EIMPL)
         std::cerr << std::endl << "vorbis_analysis_blockout : Unimplemented; \
 	    not supported by this version of the library." << std::endl << std::flush;
 }

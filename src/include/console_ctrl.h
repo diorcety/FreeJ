@@ -50,9 +50,6 @@ public:
     virtual void logmsg(LogLevel level, const char *msg) = 0;
 
     virtual void refresh() = 0;
-
-private:
-    bool active;
 };
 
 const LayerPtr &getSelectedLayer();

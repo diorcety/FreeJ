@@ -210,7 +210,6 @@ void ViewPort::cafudda(double secs) {
 
 void ViewPort::blit_layers() {
     LockedLinkList<Layer> list = LockedLinkList<Layer>(layers);
-    LockedLinkList<Layer>::reverse_iterator it = list.rbegin();
     std::for_each(list.rbegin(), list.rend(), [&](LayerPtr &lay) {
                       if(lay->buffer) {
                           if(lay->active & lay->opened) {

@@ -36,11 +36,6 @@ public:
     void *feed(double time);
     void close();
 
-private:
-
-    unsigned int Samplerate;
-    unsigned int BufferLength;
-
 protected:
     bool _init() {
         return true;
@@ -51,13 +46,7 @@ private:
     void AudioCallback_i(unsigned int);
     static void AudioCallback(void *, unsigned int);
 
-    float *m_AudioBuffer;
     float *m_JackBuffer;
-    unsigned int m_ProcessPos;
-    unsigned int m_ProcessLength;
-    bool m_Processing;
-    pthread_mutex_t* m_Mutex;
-    float *m_Buffer;
 };
 
 #endif

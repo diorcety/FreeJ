@@ -89,13 +89,7 @@ private:
     SLW_LogPtr log;
     SlwReadlinePtr rdl;
 
-    int x, y;
-
     int paramsel;
-
-    int movestep;
-
-
 };
 
 

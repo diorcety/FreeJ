@@ -164,7 +164,7 @@
 #elif defined ( HAVE_3DNOW )
 #define PREFETCH  "prefetch"
 #else
-#define PREFETCH "/nop"
+#define PREFETCH "# nop"
 #endif
 
 

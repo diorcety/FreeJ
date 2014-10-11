@@ -85,9 +85,6 @@ private:
     int frame_x_offset;
     int frame_y_offset;
 
-
-    unsigned char *yuvframe[2]; /* yuv 420 */
-
     float *m_buffStream;
 
     float       *m_MixBuffer;

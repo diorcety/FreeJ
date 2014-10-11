@@ -56,13 +56,6 @@ private:
     bool paused;
 
     int x_pid;
-    char *_name;
-    char *_author;
-    char *_info;
-    int _version;
-    //  int _bpp;
-    char *_path;
-
 };
 
 #endif // WITH_XSCREENSAVER

@@ -53,7 +53,7 @@ Parameter::Parameter(Parameter::Type param_type, const std::string &name, const 
         min_value = calloc(1, value_size);
         max_value = calloc(1, value_size);
     }
-    multiplier = multiplier;
+    this->multiplier = multiplier;
 
     type = param_type;
 

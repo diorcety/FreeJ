@@ -191,7 +191,6 @@ protected:
 
 private:
     uint32_t *fsurf[2];
-    int doublebuf;
 
     int res;
 

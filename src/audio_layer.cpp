@@ -28,9 +28,7 @@
 
 AudioLayer::AudioLayer()
     : Layer(),
-    m_JackBuffer(NULL),
-    m_ProcessPos(0),
-    m_Processing(false) {
+    m_JackBuffer(NULL) {
     notice("Audio layer initialized.");
     JackClient *Jack = JackClient::Get();
     if(!Jack->IsAttached()) {

@@ -38,10 +38,8 @@ public:
     unsigned int getCurIdx();
 
 private:
-    unsigned int m_idx, m_curIdx, m_size, m_fd;
+    unsigned int m_idx, m_curIdx, m_size;
     unsigned int (*m_sizes)[2];
-    bool m_dec;
-    struct v4l2_format m_format;
 };
 
 FREEJ_FORWARD_PTR(V4L2CamLayer)

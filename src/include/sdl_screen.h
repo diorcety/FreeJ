@@ -51,7 +51,6 @@ public:
     };
 
 private:
-    SDL_Event event;
     SDL_Surface *sdl_screen;
 
 public:
@@ -72,15 +71,11 @@ private:
     bool dbl;
     uint32_t sdl_flags;
 
-    SDL_Surface *sdl_dest;
-
     SDL_Surface *pre_rotozoom;
     SDL_Surface *rotozoom; ///< pointer to blittable surface (rotated and zoomed if necessary)
 
     // small vars used in blits
-    int chan, c, cc;
-    uint32_t *scr, *off, *poff, *pastoff, *ppastoff;
-    uint32_t *pscr, *play, *ppast;  // generic blit buffer pointers
+    uint32_t *pscr, *play;  // generic blit buffer pointers
 
     // allow to use Factory on this class
     FACTORY_ALLOWED;

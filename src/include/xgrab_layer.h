@@ -40,7 +40,7 @@ protected:
 
 private:
     void resize();
-    bool autosize, mapped, unobscured;
+    bool autosize, mapped;
     Geometry crop;
     struct crop {
         uint16_t x;
