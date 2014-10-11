@@ -366,7 +366,7 @@ if test x$have_cwiid = xno; then
 fi
 if test x$have_cwiid = xyes; then
    CWIID_CFLAGS=""
-   CWIID_LIBS="-lcwiid"
+   CWIID_LIBS="-lcwiid -lbluetooth"
    AC_DEFINE(WITH_CWIID,1,[define if compiling cwiid WiiMote controller])
 fi
 

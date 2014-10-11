@@ -42,9 +42,6 @@
 #include <unistd.h>
 #include <string.h>
 
-/* freej specific: */
-#include <console_ctrl.h>
-
 #include <jutils.h>
 #include <config.h>
 

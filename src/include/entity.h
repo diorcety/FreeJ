@@ -28,19 +28,10 @@ public:
 
     const std::string &getName() const;
     const std::string &getDescription() const;
-    bool up();
-    bool down();
-    bool move(int pos);
 
 protected:
     std::string name;
     std::string description;
-
-public:
-
-    // generic data pointer, so far only used in console
-    // and now also as JSObject -> jsval
-    void *data;
 };
 
 #endif //__entity_h__

@@ -28,7 +28,7 @@
 #include <filter_instance.h>
 
 FREEJ_FORWARD_PTR(ConsoleController)
-class ConsoleController : public Controller {
+class ConsoleController : public Controller, public WrapperLogger {
 public:
 
     ConsoleController() : Controller() {
@@ -47,7 +47,7 @@ public:
     virtual void act(const char *msg) = 0;
     virtual void func(const char *msg) = 0;
     virtual void old_printlog(const char *msg) = 0;
-
+    virtual void logmsg(LogLevel level, const char *msg) = 0;
 
     virtual void refresh() = 0;
 
@@ -55,8 +55,11 @@ private:
     bool active;
 };
 
-extern LayerPtr consoleSelectedLayer;
-extern ViewPortPtr consoleSelectedScreen;
-extern FilterInstancePtr consoleSelectedFilter;
+const LayerPtr &getSelectedLayer();
+void setSelectedLayer(const LayerPtr &ptr);
+const ViewPortPtr &getSelectedScreen();
+void setSelectedScreen(const ViewPortPtr &ptr);
+const FilterInstancePtr &getSelectedFilter();
+void setSelectedFilter(const FilterInstancePtr &ptr);
 
 #endif

@@ -381,6 +381,7 @@ int main(int argc, char **argv) {
     }
 
     screen->init(width, height, 32);
+    setSelectedScreen(screen);
 
     // add the screen to the context
     freej->add_screen(screen);
@@ -400,10 +401,10 @@ int main(int argc, char **argv) {
     /* initialize the S-Lang text Console */
     if(!noconsole) {
         if(getenv("TERM")) {
-            con = MakeShared<SlwConsole>();
+            con = MakeShared<SlwConsole>(freej);
             freej->register_controller(con);
+            GlobalLogger::register_logger(con);
             con->console_init();
-            set_console(con);
         }
     }
 
@@ -445,7 +446,7 @@ int main(int argc, char **argv) {
     // Set fps
     freej->setFps(fps);
 
-    freej->setStartRunning(startstate);
+    // TODO freej->setStartRunning(startstate);
 
     /* create layers requested on commandline */
     {
@@ -473,23 +474,17 @@ int main(int argc, char **argv) {
         }
     }
 
-    /* MAIN loop */
-    while(!freej->isQuitting()) {
-        /* CAFUDDARE in sicilian means to add a lot of
-           stuff into something; for example, to do the
-           bread or the pasta for the pizza you have to
-           CAFUDDARE a lot of wheat flour or water.
-           This also involve an intense work for your
-           arms, mixing wheat flour, ingredients, and so
-           processing materia */
-        freej->cafudda(1.0);
-        /* also layers have the cafudda() function
-           which is called by the Context class (freej instance here)
-           so it's a tree of cafudda calls originating from here
-           all synched to the environment, yea, feels good */
+    freej->start();
+
+    /* initialize the S-Lang text Console */
+    if(!noconsole) {
+        if(getenv("TERM")) {
+            freej->rem_controller(con);
+            GlobalLogger::unregister_logger(con);
+        }
     }
 
-    exit(1);
+    return 0;
 }
 
 #endif

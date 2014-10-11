@@ -58,6 +58,7 @@
 
 FREEJ_FORWARD_PTR(VideoEncoder)
 class VideoEncoder : public Entry, public JSyncThread {
+    friend class SlwSelector;
 
 public:
 

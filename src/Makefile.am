@@ -22,14 +22,14 @@ SOURCES = \
 	ringbuffer.cpp  	convertvid.cpp  \
 	logging.cpp geometry.cpp color.cpp \
 \
-        tvfreq.c		unicap_layer.cpp \
+	tvfreq.c		unicap_layer.cpp \
 	v4l2_layer.cpp \
 	video_layer.cpp		image_layer.cpp \
 	text_layer.cpp 		generator_layer.cpp \
 	geo_layer.cpp		flash_layer.cpp \
 	xscreensaver_layer.cpp   \
 	xgrab_layer.cpp		opencv_cam_layer.cpp \
-	cairo_layer.cpp \
+	cairo_layer.cpp		vroot.cpp \
 \
 	screen.cpp		\
 	sdl_screen.cpp 		sdlgl_screen.cpp   \
@@ -59,7 +59,7 @@ endif
 lib_LTLIBRARIES = libfreej.la
 libfreej_la_SOURCES = $(SOURCES)
 libfreej_la_LIBADD  = $(FREEJ_STATIC_LIBS)
-libfreej_la_LDFLAGS = $(FREEJ_LIBS) -no-undefined -version-info $(FREEJ_VERSION_INFO)
+libfreej_la_LDFLAGS = $(FREEJ_LIBS) -Wl,-no-undefined -version-info $(FREEJ_VERSION_INFO)
 
 if BUILD_CONSOLE
 bin_PROGRAMS = freej

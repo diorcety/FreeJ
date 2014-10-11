@@ -135,7 +135,7 @@ public:
 
     bool add_encoder(VideoEncoderPtr enc); ///< add a new encoder for the screen
     //bool rem_encoder(VideoEncoderPtr enc); ///< remove a encoder from the screen
-
+    LinkList<VideoEncoder>& getEncoders();
 private:
     LinkList<VideoEncoder> encoders; ///< linked list of registered encoders
 

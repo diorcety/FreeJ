@@ -28,6 +28,7 @@
 
 #include <jutils.h>
 #include <algorithm>
+#include <assert.h>
 
 FilterInstance::FilterInstance() {
     outframe = NULL;
@@ -53,12 +54,20 @@ void FilterInstance::init(FilterPtr fr) {
     active = true;
 }
 
-LayerPtr FilterInstance::get_layer() {
+LayerPtr FilterInstance::get_layer() const {
     return layer.lock();
 }
 
-bool FilterInstance::inuse() {
+bool FilterInstance::inuse() const {
     return layer.lock() != NULL;
+}
+
+void FilterInstance::setActive(bool active) {
+    this->active = active;
+}
+
+bool FilterInstance::isActive() const {
+    return active;
 }
 
 uint32_t *FilterInstance::process(double time, uint32_t *inframe) {
@@ -104,6 +113,69 @@ bool FilterInstance::apply(LayerPtr lay) {
     act("initialized filter %s on layer %s", name.c_str(), lay->getName().c_str());
 
     layer = lay;
+
+    return true;
+}
+
+bool FilterInstance::up() {
+    auto layer = this->layer.lock();
+
+    if(!layer) {
+        error("Cannot up filter without a layer, add filter to a layer first");
+        return false;
+    }
+
+    LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
+    LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
+    assert(filterIt != filterList.end());
+    if(filterIt == filterList.begin()) {
+        error("Cannot up filter, it is already the first filter");
+        return false;
+    }
+    LockedLinkList<FilterInstance>::iterator newFilterInstanceIt = filterIt--;
+    filterList.splice(newFilterInstanceIt, filterList, filterIt);
+    return true;
+}
+
+bool FilterInstance::down() {
+    auto layer = this->layer.lock();
+
+    if(!layer) {
+        error("Cannot down filter without a layer, add filter to a layer first");
+        return false;
+    }
+
+    LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
+    LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
+    assert(filterIt != filterList.end());
+    LockedLinkList<FilterInstance>::iterator newFilterInstanceIt = filterIt++;
+    if(newFilterInstanceIt == filterList.end()) {
+        error("Cannot down filter, it is already the last filter");
+        return false;
+    }
+    filterList.splice(newFilterInstanceIt, filterList, filterIt);
+    return true;
+}
+
+bool FilterInstance::move(int pos) {
+    auto layer = this->layer.lock();
+
+    if(!layer) {
+        error("Cannot move filter without a layer, add filter to a layer first");
+        return false;
+    }
+
+    LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
+    if(pos < 0 || (size_t)pos >= filterList.size()) {
+        error("Cannot move filter to an invalid position");
+    }
+
+    LockedLinkList<FilterInstance>::iterator layerIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
+    assert(layerIt != filterList.end());
+    LockedLinkList<FilterInstance>::iterator newFilterInstanceIt = filterList.begin();
+    std::advance(newFilterInstanceIt, pos);
+
+    filterList.splice(newFilterInstanceIt, filterList, layerIt);
 
     return true;
 }

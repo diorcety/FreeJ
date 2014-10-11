@@ -28,15 +28,11 @@
 #include <linklist.h>
 
 Entry::Entry(const std::string& name, const std::string& description) {
-    data = NULL;
     this->name = name;
     this->description = description;
 }
 
 Entry::~Entry() {
-    if(data != NULL) {
-        free(data);
-    }
 }
 
 const std::string &Entry::getName() const {

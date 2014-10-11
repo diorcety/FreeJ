@@ -39,8 +39,10 @@ int console_blit_param_completion(ContextPtr env, char *cmd);
 int console_filter_selection(ContextPtr env, char *cmd);
 int console_filter_completion(ContextPtr env, char *cmd);
 
+#ifdef WITH_JAVASCRIPT
 int console_exec_script(ContextPtr env, char *cmd);
 int console_exec_script_command(ContextPtr env, char *cmd);
+#endif //WITH_JAVASCRIPT
 
 int console_generator_selection(ContextPtr env, char *cmd);
 int console_generator_completion(ContextPtr env, char *cmd);

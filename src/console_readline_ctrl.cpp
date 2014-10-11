@@ -33,6 +33,16 @@
 #include <keycodes.h> // from lib/slw
 
 
+SlwHistory::SlwHistory(const std::string &line) {
+    this->line = line;
+}
+
+SlwHistory::~SlwHistory() {
+}
+
+const std::string& SlwHistory::getLine() const {
+    return line;
+}
 
 
 SlwReadline::SlwReadline()
@@ -178,7 +188,7 @@ bool SlwReadline::parser_default(int key) {
 
     //  ::func("pressed %u",key);
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
@@ -188,9 +198,9 @@ bool SlwReadline::parser_default(int key) {
     if(!list.empty()) { // there are layers
 
         // get the one selected
-        EntryPtr le = screen->mSelectedLayer;
+        EntryPtr le = getSelectedLayer();
         if(!le) {
-            screen->mSelectedLayer = list.front();
+            setSelectedLayer(list.front());
         }
 
         // switch over operations and perform
@@ -232,7 +242,7 @@ bool SlwReadline::parser_default(int key) {
 
 #if defined WITH_TEXTLAYER
         case KEY_CTRL_Y:
-            if(DynamicPointerCast<Layer>(le)->type == Layer::TEXT)
+            if(DynamicPointerCast<Layer>(le)->getType() == Layer::TEXT)
                 readline("print a new word in Text Layer, type your words:",
                          &console_print_text_layer, NULL);
             break;
@@ -289,7 +299,7 @@ bool SlwReadline::parser_default(int key) {
      */
 
     case '@':
-        env->clear_all = !env->clear_all;
+        env->setClearAll(!env->isClearAll());
         break;
 
     /*
@@ -311,7 +321,7 @@ bool SlwReadline::parser_default(int key) {
     case KEY_CTRL_F:
         screen->fullscreen();
         break;
-
+#ifdef WITH_JAVASCRIPT
     case KEY_CTRL_X:
         readline("execute javascript command:",
                  &console_exec_script_command, NULL);
@@ -321,7 +331,7 @@ bool SlwReadline::parser_default(int key) {
         readline("load and execute a javascript file:",
                  &console_exec_script, &console_filebrowse_completion);
         break;
-
+#endif //WITH_JAVASCRIPT
 
     case KEY_CTRL_O:
         readline("open a file in a new Layer:",
@@ -355,16 +365,16 @@ bool SlwReadline::parser_movelayer(int key) {
 
     commandline = false; // print statusline
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->layers);
+    LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->getLayers());
     if(!list.empty()) { // there are layers
-        LayerPtr layer = screen->mSelectedLayer;
+        LayerPtr layer = getSelectedLayer();
         if(!layer) {
-            screen->mSelectedLayer = list.front();
+            setSelectedLayer(list.front());
         }
         const Geometry &screen_geo = screen->getGeometry();
         const Geometry &layer_geo = layer->getGeometry();
@@ -468,9 +478,9 @@ bool SlwReadline::parser_movelayer(int key) {
 bool SlwReadline::parser_commandline(int key) {
     int res, c;
     bool parsres = true;
-    EntryPtr entr = NULL;
-    LockedLinkList<Entry> list = LockedLinkList<Entry>(history);
-    LockedLinkList<Entry>::iterator it = std::find(list.begin(), list.end(), mSelectedHistory);
+    SlwHistoryPtr entr = NULL;
+    LockedLinkList<SlwHistory> list = LockedLinkList<SlwHistory>(history);
+    LockedLinkList<SlwHistory>::iterator it = std::find(list.begin(), list.end(), mSelectedHistory);
     commandline = true; // don't print statusline
 
     /* =============== console command input */
@@ -497,9 +507,7 @@ bool SlwReadline::parser_commandline(int key) {
         // reset the parser
         set_parser(DEFAULT);
         // save in commandline history
-        entr = MakeShared<Entry>();
-        entr->data = strdup(command);
-        list.push_back(entr);
+        list.push_back(MakeShared<SlwHistory>(command));
         if(list.size() > 32) { // histsize
             list.pop_front();
         }
@@ -514,7 +522,7 @@ bool SlwReadline::parser_commandline(int key) {
         }
         mSelectedHistory = *(--it);
         entr = mSelectedHistory;
-        strncpy(command, (char*)entr->data, MAX_CMDLINE);
+        strncpy(command, (char*)entr->getLine().c_str(), MAX_CMDLINE);
         // type the command on the consol
         cursor = strlen(command);
         //    GOTO_CURSOR;
@@ -533,7 +541,7 @@ bool SlwReadline::parser_commandline(int key) {
         mSelectedHistory = *it;
         entr = mSelectedHistory;
 
-        strncpy(command, (char*)entr->data, MAX_CMDLINE);
+        strncpy(command, (char*)entr->getLine().c_str(), MAX_CMDLINE);
         // type the command on the console
         cursor = strlen(command);
 

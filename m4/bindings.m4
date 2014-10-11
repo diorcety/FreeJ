@@ -295,6 +295,7 @@ if test x"$enable_python" = xyes; then
 	AM_PATH_PYTHON([$ac_python_version])
 	AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow])
 	AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
+	AC_SUBST([SWIG_PYTHON_LDFLAGS],[$PYTHON_LDFLAGS])
 fi
 ])
 

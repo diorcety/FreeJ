@@ -44,17 +44,17 @@ int console_param_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = consoleSelectedLayer;
+    LayerPtr lay = getSelectedLayer();
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstancePtr filt = consoleSelectedFilter;
+    FilterInstancePtr filt = getSelectedFilter();
 
     // find the values after the first blank space
     char *p;
@@ -112,17 +112,17 @@ int console_param_selection(ContextPtr env, char *cmd) {
 }
 
 int console_param_completion(ContextPtr env, char *cmd) {
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = consoleSelectedLayer;
+    LayerPtr lay = getSelectedLayer();
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
     }
-    FilterInstancePtr filt = consoleSelectedFilter;
+    FilterInstancePtr filt = getSelectedFilter();
 
     LinkList<ParameterInstance> *parameters;
     if(filt) parameters = &filt->getParameters();
@@ -196,12 +196,12 @@ int console_blit_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
     if(!strlen(cmd)) return 0;
 
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = consoleSelectedLayer;
+    LayerPtr lay = getSelectedLayer();
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -213,7 +213,7 @@ int console_blit_selection(ContextPtr env, char *cmd) {
 int console_blit_completion(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
@@ -266,12 +266,12 @@ int console_blit_completion(ContextPtr env, char *cmd) {
 int console_blit_param_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
 
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = consoleSelectedLayer;
+    LayerPtr lay = getSelectedLayer();
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -314,12 +314,12 @@ int console_blit_param_selection(ContextPtr env, char *cmd) {
 }
 
 int console_blit_param_completion(ContextPtr env, char *cmd) {
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = consoleSelectedLayer;
+    LayerPtr lay = getSelectedLayer();
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -408,12 +408,12 @@ int console_filter_selection(ContextPtr env, char *cmd) {
     }
     FilterPtr filt = *it;
 
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = consoleSelectedLayer;
+    LayerPtr lay = getSelectedLayer();
     if(!lay) {
         ::error("no layer selected for effect %s", filt->getName().c_str());
         return 0;
@@ -541,14 +541,14 @@ int console_open_layer(ContextPtr env, char *cmd) {
            } else {
          */
         //	  l->set_fps(env->fps_speed);
-        consoleSelectedScreen->add_layer(l);
         //    l->fps=env->fps_speed;
 
-        ViewPortPtr screen = consoleSelectedScreen;
+        ViewPortPtr screen = getSelectedScreen();
         if(!screen) {
             ::error("no screen currently selected");
             return 0;
         }
+        screen->add_layer(l);
         int len = LockedLinkList<Layer>(screen->getLayers()).size();
         notice("layer successfully created, now you have %i layers", len);
         return len;
@@ -560,12 +560,12 @@ int console_open_layer(ContextPtr env, char *cmd) {
 #if defined WITH_TEXTLAYER
 #include <text_layer.h>
 int console_print_text_layer(ContextPtr env, char *cmd) {
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    LayerPtr lay = consoleSelectedLayer;
+    LayerPtr lay = getSelectedLayer();
     if(!lay) {
         ::error("no layer currently selected");
         return 0;
@@ -575,22 +575,23 @@ int console_print_text_layer(ContextPtr env, char *cmd) {
 }
 
 int console_open_text_layer(ContextPtr env, char *cmd) {
+    ViewPortPtr screen = getSelectedScreen();
+    if(!screen) {
+        ::error("no screen currently selected");
+        return 0;
+    }
+
     TextLayerPtr txt = MakeShared<TextLayer>();
     if(!txt->init()) {
         error("can't initialize text layer");
         return 0;
     }
 
-
     txt->write(cmd);
-    consoleSelectedScreen->add_layer(txt);
+    screen->add_layer(txt);
 
     notice("layer successfully created with text: %s", cmd);
-    ViewPortPtr screen = consoleSelectedScreen;
-    if(!screen) {
-        ::error("no screen currently selected");
-        return 0;
-    }
+
     return LockedLinkList<Layer>(screen->getLayers()).size();
 }
 
@@ -776,12 +777,12 @@ int console_generator_selection(ContextPtr env, char *cmd) {
     GeneratorLayerPtr tmp = MakeShared<GeneratorLayer>();
     if(!tmp) return 0;
 
-    ViewPortPtr screen = consoleSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return 0;
     }
-    const Geometry &geo = consoleSelectedScreen->getGeometry();
+    const Geometry &geo = screen->getGeometry();
     if(!tmp->init(geo.w, geo.h, geo.bpp)) {
         error("can't initialize generator layer");
         return 0;
@@ -795,7 +796,7 @@ int console_generator_selection(ContextPtr env, char *cmd) {
         return 0;
     }
 
-    consoleSelectedScreen->add_layer(tmp);
+    screen->add_layer(tmp);
 
     notice("generator %s successfully created", tmp->getName().c_str());
     return 1;

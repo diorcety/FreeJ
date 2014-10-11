@@ -1,11 +1,6 @@
 %module(directors="1") freej
 #pragma SWIG nowarn=322
 
-%include <std_shared_ptr.i>
-%include <std_string.i>
-
-%include "freej_sharedptr.i"
-
 %{
 #include "context.h"
 #include "linklist.h"
@@ -43,10 +38,12 @@
 #ifdef WITH_AUDIO
 #include "audio_collector.h"
 #endif
-#include "console_ctrl.h"
-
-
 %}
+
+%include <std_shared_ptr.i>
+%include <std_string.i>
+
+%include "freej_sharedptr.i"
 
 //we need this for ifdefs in included headers
 %include <config.h>
@@ -57,7 +54,6 @@
 %import "inttypes.i"
 
 //ditch some of the defines we have that don't need to be exposed to the user
-%ignore JSyncThread;
 %ignore THREADSAFE;
 %ignore MAX_ERR_MSG;
 %ignore MAX_COMPLETION;
@@ -230,9 +226,6 @@ freej_entry_typemap_in(Encoder);
 
 %feature("director") VimoController;
 %include "vimo_ctrl.h"
-
-%feature("director") ConsoleController;
-%include "console_ctrl.h"
 
 /* Language specific extensions */
 #if defined(SWIGPYTHON)

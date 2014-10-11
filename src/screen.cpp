@@ -244,3 +244,7 @@ void ViewPort::resize(int w, int h) {
     resize_h = h;
     resizing = true;
 }
+
+LinkList<VideoEncoder>& ViewPort::getEncoders() {
+    return encoders;
+}

@@ -32,14 +32,15 @@
 #include <context.h>
 #include <layer.h>
 #include <blitter.h>
+#include <blit_instance.h>
 #include <video_encoder.h>
 
 #include <jutils.h>
 
 
-SlwTitle::SlwTitle()
+SlwTitle::SlwTitle(const ContextPtr &env)
     : SLangWidget() {
-    env = NULL;
+    this->env = env;
     name = "console title";
 }
 
@@ -78,10 +79,10 @@ bool SlwTitle::refresh() {
 
 
 
-SlwSelector::SlwSelector()
+SlwSelector::SlwSelector(const ContextPtr &env)
     : SLangWidget() {
 
-    env = NULL;
+    this->env = env;
     tmp = NULL;
     name = "layer & filter selector";
 }
@@ -99,27 +100,22 @@ bool SlwSelector::init() {
 bool SlwSelector::feed(int key) {
     bool res = false;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return false;
     }
 
-    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->layers);
-    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), screen->mSelectedLayer);
+    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
+    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), getSelectedLayer());
     if(!layerList.empty()) { // there are layers
 
         res = true;
 
-        // get the one selected
-        if(!screen->mSelectedLayer) {
-            screen->mSelectedLayer = layerList.front();
-        }
-        LayerPtr le = screen->mSelectedLayer;
+        LayerPtr le = getSelectedLayer();
 
-
-        LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(le->filters);
-        LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), le->mSelectedFilter);
+        LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(le->getFilters());
+        LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), getSelectedFilter());
 
         // switch over operations and perform
         switch(key) {
@@ -128,7 +124,7 @@ bool SlwSelector::feed(int key) {
             if(filterIt == filterList.begin()) {
                 break;  // no filter
             }
-            le->mSelectedFilter = *(--filterIt);
+            setSelectedFilter(*(--filterIt));
             break;
 
         case SL_KEY_DOWN:
@@ -139,7 +135,7 @@ bool SlwSelector::feed(int key) {
             if(filterIt == filterList.end()) {
                 break;
             }
-            le->mSelectedFilter = *filterIt;
+            setSelectedFilter(*filterIt);
             break;
 
         case SL_KEY_LEFT:
@@ -148,7 +144,7 @@ bool SlwSelector::feed(int key) {
                 if(layerIt == layerList.begin()) {
                     break;  // no filter
                 }
-                screen->mSelectedLayer = *(--layerIt);
+                setSelectedLayer(*(--layerIt));
             } else { // a filter is selected: move across filter parameters
 
                 // TODO
@@ -167,7 +163,7 @@ bool SlwSelector::feed(int key) {
                 if(layerIt == layerList.end()) {
                     break;
                 }
-                screen->mSelectedLayer = *layerIt;
+                setSelectedLayer(*layerIt);
 
             } else { // move across filter parameters
 
@@ -199,16 +195,16 @@ bool SlwSelector::feed(int key) {
             if(filterIt != filterList.end()) {
                 filterIt = filterList.erase(filterIt);
                 if(filterIt != filterList.end()) {
-                    le->mSelectedFilter = *filterIt;
+                    setSelectedFilter(*filterIt);
                 } else {
-                    le->mSelectedFilter = NULL;
+                    setSelectedFilter(NULL);
                 }
                 //fe->rem(); // WARN: instances are not freed
                 //	delete fe; // XXX this crashes
             } else {
                 //	le->rem();
                 //	((Layer*)le)->close();
-                env->rem_layer(DynamicPointerCast<Layer>(le));
+                screen->rem_layer(DynamicPointerCast<Layer>(le));
             }
             break;
 
@@ -231,7 +227,7 @@ bool SlwSelector::feed(int key) {
 bool SlwSelector::refresh() {
     int sellayercol = 0, layercol, pos;
 
-    ViewPortPtr screen = env->mSelectedScreen;
+    ViewPortPtr screen = getSelectedScreen();
     if(!screen) {
         ::error("no screen currently selected");
         return false;
@@ -242,7 +238,7 @@ bool SlwSelector::refresh() {
 
     // also put info from encoders, if active
     // so far supported only one encoder
-    LockedLinkList<VideoEncoder> encoderList = LockedLinkList<VideoEncoder>(screen->encoders);
+    LockedLinkList<VideoEncoder> encoderList = LockedLinkList<VideoEncoder>(screen->getEncoders());
     LockedLinkList<VideoEncoder>::iterator it = encoderList.begin();
     if(it != encoderList.end()) {
         VideoEncoderPtr enc = *it;
@@ -251,10 +247,10 @@ bool SlwSelector::refresh() {
         putnch(tmp, 1, 0, 0);
     }
 
-    layer = screen->mSelectedLayer;
+    layer = getSelectedLayer();
     if(layer) {
-        snprintf(tmp, w, "Layer: %s blit: %s [%.0f] geometry x%i y%i w%u h%u",
-                 layer->get_filename(), layer->current_blit->getName().c_str(), layer->current_blit->value,
+        snprintf(tmp, w, "Layer: %s blit: %s geometry x%i y%i w%u h%u",
+                 layer->get_filename(), layer->current_blit->getName().c_str(),
                  layer->geo.x, layer->geo.y, layer->geo.w, layer->geo.h);
         //    SLsmg_erase_eol();
     } else {
@@ -266,7 +262,7 @@ bool SlwSelector::refresh() {
     putnch(tmp, 1, 1, 0);
 
 
-    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->layers);
+    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
     if(!layerList.empty()) {
         //    int color;
         int tmpsize = 0;
@@ -278,7 +274,7 @@ bool SlwSelector::refresh() {
 
         /* take layer selected and first */
         if(layer) {
-            filter = layer->mSelectedFilter;
+            filter = getSelectedFilter();
             std::for_each(layerList.begin(), layerList.end(), [&](LayerPtr l) {
                               layercol += tmpsize + 4;
                               //      SLsmg_set_color(LAYERS_COLOR);
@@ -300,7 +296,7 @@ bool SlwSelector::refresh() {
 
 
     if(layer) {
-        filter = layer->mSelectedFilter;
+        filter = getSelectedFilter();
 
 //     SLsmg_gotorc(3,1);
 //     SLsmg_set_color(FILTERS_COLOR);
@@ -317,7 +313,7 @@ bool SlwSelector::refresh() {
         }
 
 
-        LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->filters);
+        LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
         pos = 4;
         std::for_each(filterList.begin(), filterList.end(), [&] (FilterInstancePtr f) {
                           //       SLsmg_set_color(PLAIN_COLOR);

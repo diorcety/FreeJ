@@ -31,7 +31,7 @@ FREEJ_FORWARD_PTR(FilterInstance)
 FREEJ_FORWARD_PTR(SlwTitle)
 class SlwTitle : public SLangWidget {
 public:
-    SlwTitle();
+    SlwTitle(const ContextPtr &env);
     ~SlwTitle();
 
     bool init();
@@ -49,7 +49,7 @@ FREEJ_FORWARD_PTR(SlwSelector)
 class SlwSelector : public SLangWidget {
 public:
 
-    SlwSelector();
+    SlwSelector(const ContextPtr &env);
     ~SlwSelector();
 
     bool init();

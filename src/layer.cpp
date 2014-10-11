@@ -33,6 +33,7 @@
 #include <config.h>
 
 #include <algorithm>
+#include <assert.h>
 
 #include <jutils.h>
 
@@ -347,4 +348,71 @@ LinkList<ParameterInstance>& Layer::getParameters() {
 
 LinkList<FilterInstance>& Layer::getFilters() {
     return filters;
+}
+
+Layer::Type Layer::getType() const {
+    return type;
+}
+
+bool Layer::up() {
+    auto screen = this->screen.lock();
+
+    if(!screen) {
+        error("Cannot up layer without a screen, add layer to a screen first");
+        return false;
+    }
+
+    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
+    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
+    assert(layerIt != layerList.end());
+    if(layerIt == layerList.begin()) {
+        error("Cannot up layer, it is already the first layer");
+        return false;
+    }
+    LockedLinkList<Layer>::iterator newLayerIt = layerIt--;
+    layerList.splice(newLayerIt, layerList, layerIt);
+    return true;
+}
+
+bool Layer::down() {
+    auto screen = this->screen.lock();
+
+    if(!screen) {
+        error("Cannot down layer without a screen, add layer to a screen first");
+        return false;
+    }
+
+    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
+    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
+    assert(layerIt != layerList.end());
+    LockedLinkList<Layer>::iterator newLayerIt = layerIt++;
+    if(newLayerIt == layerList.end()) {
+        error("Cannot down layer, it is already the last layer");
+        return false;
+    }
+    layerList.splice(newLayerIt, layerList, layerIt);
+    return true;
+}
+
+bool Layer::move(int pos) {
+    auto screen = this->screen.lock();
+
+    if(!screen) {
+        error("Cannot move layer without a screen, add layer to a screen first");
+        return false;
+    }
+
+    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
+    if(pos < 0 || (size_t)pos >= layerList.size()) {
+        error("Cannot move layer to an invalid position");
+    }
+
+    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
+    assert(layerIt != layerList.end());
+    LockedLinkList<Layer>::iterator newLayerIt = layerList.begin();
+    std::advance(newLayerIt, pos);
+
+    layerList.splice(newLayerIt, layerList, layerIt);
+
+    return true;
 }

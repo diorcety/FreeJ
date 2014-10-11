@@ -10,7 +10,7 @@ $(swig_source): $(SWIG_IFACE)
 lib_LTLIBRARIES = freej_js.la
 nodist_freej_js_la_SOURCES = $(swig_source)
 freej_js_la_CXXFLAGS = $(FREEJ_CFLAGS) $(SWIG_JAVASCRIPT_CPPFLAGS) -Wno-unused-but-set-variable
-freej_js_la_LDFLAGS = -module -avoid-version -no-undefined
-freej_js_la_LIBADD = $(top_builddir)/src/libfreej.la
+freej_js_la_LDFLAGS = -module -avoid-version -Wl,-no-undefined
+freej_js_la_LIBADD = $(top_builddir)/src/libfreej.la -lv8
 
 CLEANFILES = $(BUILT_SOURCES)

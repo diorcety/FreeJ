@@ -56,7 +56,7 @@ FREEJ_FORWARD_PTR(SlwConsole)
 class SlwConsole : public ConsoleController {
 public:
 
-    SlwConsole();
+    SlwConsole(const ContextPtr &env);
     ~SlwConsole();
 
     int poll();
@@ -75,13 +75,14 @@ public:
     void act(const char *msg);
     void func(const char *msg);
     void old_printlog(const char *msg);
-
+    void logmsg(LogLevel level, const char *msg);
 
     void refresh();
 
 private:
     bool active;
 
+    ContextPtr env;
     SLangConsolePtr slw;
     SlwSelectorPtr sel;
     SlwTitlePtr tit;

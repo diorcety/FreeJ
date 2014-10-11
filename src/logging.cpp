@@ -103,7 +103,6 @@ int Loggable::vlog(LogLevel level, const char *format, va_list arg) {
 LogLevel GlobalLogger::loglevel_ = INFO;
 LoggerPtr GlobalLogger::logger_;
 pthread_mutex_t GlobalLogger::logger_mutex_ = PTHREAD_MUTEX_INITIALIZER;
-ConsoleControllerPtr GlobalLogger::console_;
 char GlobalLogger::logbuf_[MAX_LOG_MSG + 1] = {0};
 
 LogLevel GlobalLogger::get_loglevel() {
@@ -112,10 +111,6 @@ LogLevel GlobalLogger::get_loglevel() {
 
 void GlobalLogger::set_loglevel(LogLevel level) {
     loglevel_ = level;
-}
-
-void GlobalLogger::set_console(ConsoleControllerPtr c) {
-    console_ = c;
 }
 
 bool GlobalLogger::register_logger(LoggerPtr l) {
@@ -160,32 +155,28 @@ int GlobalLogger::vprintlog(LogLevel level, const char *format, va_list arg) {
             rv = logger_->vprintlog(level, format, arg);
         } else {
             vsnprintf(logbuf_, MAX_LOG_MSG, format, arg);
-            if(console_) {  // Old console compatibility
-                console_->old_printlog(logbuf_);
-            } else {
-                const char *prefix = NULL;
-                switch(level) {
-                case ERROR:
-                    prefix = "[!]";
-                    break;
-                case WARNING:
-                    prefix = "[W]";
-                    break;
-                case NOTICE:
-                    prefix = "[*]";
-                    break;
-                case INFO:
-                    prefix = " . ";
-                    break;
-                case DEBUG:
-                    prefix = "[F]";
-                    break;
-                default:
-                    prefix = "[WTF?]";
-                    break;
-                }
-                fprintf(stderr, "%s %s\n", prefix, logbuf_);
+            const char *prefix = NULL;
+            switch(level) {
+            case ERROR:
+                prefix = "[!]";
+                break;
+            case WARNING:
+                prefix = "[W]";
+                break;
+            case NOTICE:
+                prefix = "[*]";
+                break;
+            case INFO:
+                prefix = " . ";
+                break;
+            case DEBUG:
+                prefix = "[F]";
+                break;
+            default:
+                prefix = "[WTF?]";
+                break;
             }
+            fprintf(stderr, "%s %s\n", prefix, logbuf_);
         }
         pthread_mutex_unlock(&logger_mutex_);
     }
@@ -250,10 +241,6 @@ int get_debug() {
     default:
         return 1;
     }
-}
-
-void set_console(ConsoleControllerPtr c) {
-    GlobalLogger::set_console(c);
 }
 
 void error(const char *format, ...) {

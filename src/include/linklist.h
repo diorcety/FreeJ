@@ -113,6 +113,10 @@ public:
     void insert(iterator position, size_type n, const value_type& val);
     template <class InputIterator>
     void insert(iterator position, InputIterator first, InputIterator last);
+
+    void splice(iterator position, LockedLinkList<T>& x);
+    void splice(iterator position, LockedLinkList<T>& x, iterator i);
+    void splice(iterator position, LockedLinkList<T>& x, iterator first, iterator last);
 };
 
 template <typename T>
@@ -265,6 +269,21 @@ template <typename T>
 template <class InputIterator>
 void LockedLinkList<T>::insert(typename LockedLinkList<T>::iterator position, InputIterator first, InputIterator last) {
     mList.insert(position, first, last);
+}
+
+template <typename T>
+void LockedLinkList<T>::splice(typename LockedLinkList<T>::iterator position, LockedLinkList<T>& x) {
+    mList.splice(position, x.mList);
+}
+
+template <typename T>
+void LockedLinkList<T>::splice(typename LockedLinkList<T>::iterator position, LockedLinkList<T>& x, typename LockedLinkList<T>::iterator i) {
+    mList.splice(position, x.mList, i);
+}
+
+template <typename T>
+void LockedLinkList<T>::splice(typename LockedLinkList<T>::iterator position, LockedLinkList<T>& x, typename LockedLinkList<T>::iterator first, typename LockedLinkList<T>::iterator last) {
+    mList.splice(position, x.mList, first, last);
 }
 
 #endif

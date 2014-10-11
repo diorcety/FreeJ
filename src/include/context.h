@@ -108,6 +108,7 @@ public:
     void cafudda(double secs); ///< run the engine for seconds or one single frame pass
 
     void start(); ///< start the engine and loop until quit is false
+    void stop();
     void start_threaded(); ///< start the engine in a thread, looping until quit is false
 
     bool register_controller(ControllerPtr ctrl);
@@ -140,6 +141,8 @@ public:
 
     LinkList<Filter>& getGenerators();
 
+    bool isClearAll() const;
+    void setClearAll(bool clear);
 
 private:
     LinkList<ViewPort> screens; ///< linked list of registered screens
@@ -153,7 +156,6 @@ private:
     Plugger plugger; ///< filter plugins host
 
     bool clear_all;
-    bool start_running;
 
     FPS fps;
     Timelapse timelapse;
@@ -177,18 +179,6 @@ public:
     char *screens_description; ///< string describing available screen types
 
     LayerPtr open(char *file, int w = 0, int h = 0); ///< creates a layer from a filename, detecting its type
-
-    inline bool isQuitting() const {
-        return quit;
-    }
-    
-    inline bool isStartRunning() const {
-        return start_running;
-    }
-    
-    inline void setStartRunning(bool state) {
-        start_running = state;
-    }
 };
 
 #endif

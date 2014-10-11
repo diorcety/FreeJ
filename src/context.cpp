@@ -106,7 +106,6 @@ Context::Context() {
     /* initialize fps counter */
     //  framecount      = 0;
     clear_all       = false;
-    start_running   = true;
     quit            = false;
     pause           = false;
     save_to_file    = false;
@@ -247,6 +246,10 @@ void Context::start() {
         cafudda(1.0);
     }
     running = false;
+}
+
+void Context::stop() {
+    quit = true;
 }
 
 void Context::start_threaded() {
@@ -615,3 +618,9 @@ LayerPtr Context::open(char *file, int w, int h) {
     return nlayer;
 }
 
+bool Context::isClearAll() const {
+    return clear_all;
+}
+void Context::setClearAll(bool clear) {
+    clear_all = clear;
+}

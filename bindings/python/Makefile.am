@@ -15,7 +15,7 @@ pkgpyexec_LTLIBRARIES = libfreej_py.la
 
 nodist_libfreej_py_la_SOURCES = $(swig_source)
 libfreej_py_la_CXXFLAGS = $(FREEJ_CFLAGS) $(SWIG_PYTHON_CPPFLAGS)
-libfreej_py_la_LDFLAGS = -module -avoid-version -no-undefined
+libfreej_py_la_LDFLAGS = -module -avoid-version -Wl,-no-undefined $(SWIG_PYTHON_LDFLAGS)
 libfreej_py_la_LIBADD = $(top_builddir)/src/libfreej.la
 
 CLEANFILES = $(BUILT_SOURCES) $(python_module)

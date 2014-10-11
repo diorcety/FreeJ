@@ -662,7 +662,7 @@ static inline unsigned long long int rdtsc() {
 void find_best_memcpy() {
     /* save library size on platforms without special memcpy impl. */
 
-    unsigned long long t;
+    unsigned long long int t;
     char *buf1, *buf2;
     int i, j, best = 0;
     __u32 config_flags = detect_mm_accel();
@@ -694,8 +694,7 @@ void find_best_memcpy() {
         t = rdtsc() - t;
         memcpy_method[i].time = t;
 
-        func("%s : time %2.2f",
-             memcpy_method[i].name, (float)((float) t / 1000000.0));
+        func("%s : time %llu", memcpy_method[i].name, t);
 
         if(best == 0 || t < memcpy_method[best].time)
             best = i;

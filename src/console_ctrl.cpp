@@ -49,7 +49,49 @@
 
 #include <generator_layer.h>
 
+static LayerPtr consoleSelectedLayer;
+static ViewPortPtr consoleSelectedScreen;
+static FilterInstancePtr consoleSelectedFilter;
 
+const ViewPortPtr& getSelectedScreen() {
+    return consoleSelectedScreen;
+}
+
+void setSelectedScreen(const ViewPortPtr& screen) {
+    consoleSelectedScreen = screen;
+    if(screen) {
+        LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->getLayers());
+        if(list.size() > 0) {
+            setSelectedLayer(list.front());
+        } else {
+            setSelectedLayer(NULL);
+        }
+    }
+}
+
+const LayerPtr& getSelectedLayer() {
+    return consoleSelectedLayer;
+}
+
+void setSelectedLayer(const LayerPtr& layer) {
+    consoleSelectedLayer = layer;
+    if(layer) {
+        LockedLinkList<FilterInstance> list = LockedLinkList<FilterInstance>(layer->getFilters());
+        if(list.size() > 0) {
+            setSelectedFilter(list.front());
+        } else {
+            setSelectedFilter(NULL);
+        }
+    }
+}
+
+const FilterInstancePtr& getSelectedFilter() {
+    return consoleSelectedFilter;
+}
+
+void setSelectedFilter(const FilterInstancePtr& filter) {
+    consoleSelectedFilter = filter;
+}
 
 static bool screen_size_changed;
 static void sigwinch_handler(int sig) {
@@ -93,7 +135,8 @@ int quit_proc(ContextPtr env, char *cmd) {
     return 0;
 }
 
-SlwConsole::SlwConsole() : ConsoleController() {
+SlwConsole::SlwConsole(const ContextPtr& env) : ConsoleController() {
+    this->env = env;
     active = false;
     paramsel = 1;
 
@@ -112,7 +155,6 @@ SlwConsole::SlwConsole() : ConsoleController() {
 }
 
 SlwConsole::~SlwConsole() {
-    set_console(NULL);
     SLtt_set_cursor_visibility(1);
 }
 
@@ -139,13 +181,13 @@ bool SlwConsole::slw_init() {
     SLtt_set_cursor_visibility(0);
 
     // title
-    tit = MakeShared<SlwTitle>();
+    tit = MakeShared<SlwTitle>(env);
     slw->place(tit, 0, 0, slw->w, 2);
     tit->init();
     /////////////////////////////////
 
     // layer and filter selector
-    sel = MakeShared<SlwSelector>();
+    sel = MakeShared<SlwSelector>(env);
     slw->place(sel, 0, 2, slw->w, 8);
     sel->init();
     ////////////////////////////
@@ -162,8 +204,6 @@ bool SlwConsole::slw_init() {
     slw->place(rdl, 0, slw->h - 1, slw->w, slw->h);
     rdl->init();
     ////////////////////////////
-
-    set_console(SharedFromThis(SlwConsole));
 
     refresh();
 
@@ -206,6 +246,7 @@ int SlwConsole::poll() {
 
     if(real_quit) {
         notice("QUIT requested from console! bye bye");
+        env->stop();
         real_quit = false;
         return 0;
     }
@@ -260,4 +301,9 @@ void SlwConsole::func(const char *msg) {
 void SlwConsole::old_printlog(const char *msg) {
     log->append(msg);
 }
+
+void SlwConsole::logmsg(LogLevel level, const char *msg) {
+    old_printlog(msg);
+}
+
 

@@ -34,6 +34,7 @@ FREEJ_FORWARD_PTR(FilterInstance)
 class FilterInstance : public Entry {
     friend class Filter;
     friend class GeneratorLayer;
+    friend class SlwSelector; //TODO remove
 
 public:
     FilterInstance();
@@ -41,14 +42,19 @@ public:
     virtual ~FilterInstance();
 
     virtual bool apply(LayerPtr lay);
-    virtual bool inuse();
-    virtual LayerPtr get_layer();
-    
+    virtual bool inuse() const;
+    virtual LayerPtr get_layer() const;
+    virtual bool isActive() const;
+    virtual void setActive(bool active);
+
     uint32_t *process(double time, uint32_t *inframe);
     LinkList<ParameterInstance> &getParameters();
     virtual const std::string &getDescription() const;
     virtual const std::string &getAuthor() const;
 
+    bool up();
+    bool down();
+    bool move(int pos);
 protected:
     virtual void init(FilterPtr fr);
     virtual uint32_t *_process(double time, uint32_t *inframe);

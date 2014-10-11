@@ -31,6 +31,17 @@ typedef int (cmd_complete_t)(ContextPtr env, char *cmd);
 
 FREEJ_FORWARD_PTR(Context)
 
+FREEJ_FORWARD_PTR(SlwHistory)
+class SlwHistory : public Entry {
+public:
+    SlwHistory(const std::string &line);
+    ~SlwHistory();
+
+    const std::string& getLine() const;
+private:
+    std::string line;
+};
+
 FREEJ_FORWARD_PTR(SlwReadline)
 class SlwReadline : public SLangWidget {
 public:
@@ -55,8 +66,8 @@ private:
 
     ContextPtr env;
 
-    LinkList<Entry> history;
-    EntryPtr mSelectedHistory;
+    LinkList<SlwHistory> history;
+    SlwHistoryPtr mSelectedHistory;
 
     /* input console command */
     bool commandline;

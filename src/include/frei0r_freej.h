@@ -49,8 +49,6 @@ public:
     virtual int type();
     int open(char *file);
     virtual FilterInstancePtr new_instance();
-    virtual const std::string &getDescription() const;
-    virtual const std::string &getAuthor() const;
     inline const f0r_plugin_info_t getInfo() const {
         return info;
     }

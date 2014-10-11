@@ -13,7 +13,7 @@ pkgjavaexec_LTLIBRARIES = libfreej_java.la
 
 nodist_libfreej_java_la_SOURCES = $(swig_source)
 libfreej_java_la_CXXFLAGS = $(FREEJ_CFLAGS) $(JAVA_CFLAGS) -Wno-strict-aliasing
-libfreej_java_la_LDFLAGS = $(JAVA_LDFLAGS)
+libfreej_java_la_LDFLAGS = $(JAVA_LDFLAGS) -Wl,-no-undefined
 libfreej_java_la_LIBADD = $(top_builddir)/src/libfreej.la
 
 CLEANFILES = $(BUILT_SOURCES)

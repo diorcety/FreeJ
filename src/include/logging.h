@@ -32,9 +32,6 @@
  * GlobalLogger is a static, catch-all logger. By default its output goes on a
  * filedescriptor, but it's possible to register a Logger on it.
  *
- * For backward compatibility old logging functions from jutils have been
- * reimplemented and a ConsoleController is allowed inside GlobalLogger.
- *
  */
 
 #ifndef __LOGGING_H__
@@ -54,8 +51,6 @@ enum LogLevel { // ordered by increasing verbosity
     WARNING,
     DEBUG
 };
-
-FREEJ_FORWARD_PTR(ConsoleController)
 
 // Base class to implement for providing a logging service
 FREEJ_FORWARD_PTR(Logger)
@@ -100,7 +95,7 @@ private:
     pthread_mutex_t logger_mutex_;
 };
 
-// Static log system. Allowing ConsoleController for backward compatibility.
+// Static log system.
 class GlobalLogger {
 public:
     static int printlog(LogLevel level, const char *format, ...);
@@ -109,12 +104,10 @@ public:
     static bool unregister_logger(LoggerPtr l);
     static LogLevel get_loglevel();
     static void set_loglevel(LogLevel level);
-    static void set_console(ConsoleControllerPtr c);
 private:
     static LogLevel loglevel_;
     static LoggerPtr logger_;
     static pthread_mutex_t logger_mutex_;
-    static ConsoleControllerPtr console_; // accessed under logger_mutex_
     static char logbuf_[];
 };
 
@@ -133,7 +126,7 @@ public:
 
     WrapperLogger();
     virtual ~WrapperLogger();
-    int vprintlog(LogLevel level, const char *format, va_list arg);
+    virtual int vprintlog(LogLevel level, const char *format, va_list arg);
     virtual void logmsg(LogLevel level, const char *msg);
 private:
     char *logbuf_;
@@ -144,7 +137,6 @@ private:
 #define MAX_ERR_MSG MAX_LOG_MSG
 void set_debug(int lev);
 int get_debug();
-void set_console(ConsoleControllerPtr c);
 void error(const char *format, ...);
 void warning(const char *format, ...);
 void notice(const char *format, ...);

@@ -84,6 +84,8 @@ class Layer : public Entry {
     friend class ViewPort;
     friend class SdlScreen; // TODO REMOVE
     friend class SoftScreen; // TODO REMOVE
+    friend class SlwReadline; // TODO REMOVE
+    friend class SlwSelector; // TODO REMOVE
 
 public:
     enum Type {
@@ -103,6 +105,10 @@ protected:
     Type type; ///< type of the layer
 
 public:
+    bool up();
+    bool down();
+    bool move(int pos);
+    virtual Type getType() const;
     /* these must be defined in layer implementations */
 
     /**
