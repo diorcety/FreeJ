@@ -27,7 +27,7 @@
 
 #include <inttypes.h>
 
-#include <convertvid.h>
+#include "convertvid.h"
 
 /***** convenience functions *****/
 

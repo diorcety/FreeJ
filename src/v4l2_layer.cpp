@@ -38,7 +38,7 @@
 
 #include <ccvt.h>
 
-#include <v4l2_layer.h>
+#include "v4l2_layer.h"
 
 #define ARRAY_RESOLUTION_SIZE 30
 

@@ -24,8 +24,8 @@
 
 #include <lo/lo.h>
 #include <stdlib.h>
-#include <controller.h>
-#include <factory.h>
+#include "controller.h"
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(OscCommand)
 class OscCommand : public Entry {

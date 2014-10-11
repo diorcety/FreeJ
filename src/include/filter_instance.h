@@ -23,10 +23,10 @@
 
 #include <config.h>
 
-#include <parameter_instance.h>
-#include <linklist.h>
+#include "parameter_instance.h"
+#include "linklist.h"
 #include <stdint.h>
-#include <factory.h>
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(Filter)
 

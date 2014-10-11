@@ -27,7 +27,7 @@ extern "C" {
 #include <goom.h>
 }
 
-#include <layer.h>
+#include "layer.h"
 
 FREEJ_FORWARD_PTR(GoomLayer)
 class GoomLayer : public Layer {

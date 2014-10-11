@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#include <tvfreq.h>
+#include "tvfreq.h"
 #include <config.h>
 
 /* --------------------------------------------------------------------- */

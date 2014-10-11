@@ -24,14 +24,14 @@
 
 
 #include <SDL_image.h>
-#include <context.h>
-#include <blitter.h>
+#include "context.h"
+#include "blitter.h"
 
-#include <image_layer.h>
+#include "image_layer.h"
 #include <config.h>
 
-#include <jutils.h>
-#include <factory.h>
+#include "jutils.h"
+#include "factory.h"
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Layer, ImageLayer, ImageLayer, sdl);

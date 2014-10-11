@@ -22,8 +22,8 @@
 #ifndef __BLITTER_H__
 #define __BLITTER_H__
 
-#include <blit.h>
-#include <linklist.h>
+#include "blit.h"
+#include "linklist.h"
 
 FREEJ_FORWARD_PTR(Layer)
 FREEJ_FORWARD_PTR(ViewPort)

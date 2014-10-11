@@ -27,18 +27,18 @@
 #include <errno.h>
 #include <algorithm>
 
-#include <console_calls_ctrl.h>
-#include <console_readline_ctrl.h>
-#include <console_ctrl.h>
-#include <parameter.h>
-#include <context.h>
-#include <blitter.h>
-#include <blit_instance.h>
-#include <layer.h>
+#include "console_calls_ctrl.h"
+#include "console_readline_ctrl.h"
+#include "console_ctrl.h"
+#include "parameter.h"
+#include "context.h"
+#include "blitter.h"
+#include "blit_instance.h"
+#include "layer.h"
 
-#include <generator_layer.h>
+#include "generator_layer.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
 int console_param_selection(ContextPtr env, char *cmd) {
     if(!cmd) return 0;
@@ -558,7 +558,7 @@ int console_open_layer(ContextPtr env, char *cmd) {
 }
 
 #if defined WITH_TEXTLAYER
-#include <text_layer.h>
+#include "text_layer.h"
 int console_print_text_layer(ContextPtr env, char *cmd) {
     ViewPortPtr screen = getSelectedScreen();
     if(!screen) {

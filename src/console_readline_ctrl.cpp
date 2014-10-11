@@ -21,14 +21,14 @@
 #include <config.h>
 
 
-#include <context.h>
-#include <layer.h>
-#include <jutils.h>
+#include "context.h"
+#include "layer.h"
+#include "jutils.h"
 #include <algorithm>
 
-#include <slang_console_ctrl.h>
-#include <console_calls_ctrl.h>
-#include <console_readline_ctrl.h>
+#include "slang_console_ctrl.h"
+#include "console_calls_ctrl.h"
+#include "console_readline_ctrl.h"
 
 #include <keycodes.h> // from lib/slw
 

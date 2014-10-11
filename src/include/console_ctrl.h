@@ -21,11 +21,11 @@
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
-#include <controller.h>
-#include <linklist.h>
-#include <screen.h>
-#include <layer.h>
-#include <filter_instance.h>
+#include "controller.h"
+#include "linklist.h"
+#include "screen.h"
+#include "layer.h"
+#include "filter_instance.h"
 
 FREEJ_FORWARD_PTR(ConsoleController)
 class ConsoleController : public Controller, public WrapperLogger {

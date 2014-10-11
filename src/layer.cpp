@@ -21,23 +21,23 @@
 
 #include <string.h>
 
-#include <layer.h>
-#include <blitter.h>
-#include <blit.h>
-#include <blit_instance.h>
-#include <filter.h>
-#include <iterator.h>
-#include <closure.h>
+#include "layer.h"
+#include "blitter.h"
+#include "blit.h"
+#include "blit_instance.h"
+#include "filter.h"
+#include "iterator.h"
+#include "closure.h"
 
-#include <context.h>
+#include "context.h"
 #include <config.h>
 
 #include <algorithm>
 #include <assert.h>
 
-#include <jutils.h>
+#include "jutils.h"
 
-//#include <fps.h>
+//#include "fps.h"
 
 Layer::Layer()
     : Entry() {

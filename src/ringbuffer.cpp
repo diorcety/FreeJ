@@ -27,9 +27,9 @@
 #ifdef USE_MLOCK
 #include <sys/mman.h>
 #endif /* USE_MLOCK */
-#include <ringbuffer.h>
+#include "ringbuffer.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
 /* Create a new ringbuffer to hold at least `sz' bytes of data. The
    actual buffer size is rounded up to the next power of two.  */

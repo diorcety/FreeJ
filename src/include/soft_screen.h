@@ -20,9 +20,9 @@
 #ifndef __SOFT_SCREEN_H__
 #define __SOFT_SCREEN_H__
 
-#include <screen.h>
+#include "screen.h"
 
-#include <factory.h>
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(SoftScreen)
 class SoftScreen : public ViewPort {

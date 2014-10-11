@@ -25,10 +25,10 @@
 #define BLIT static inline void
 
 #include <SDL.h>
-#include <geometry.h>
+#include "geometry.h"
 
-#include <screen.h>
-#include <parameter.h>
+#include "screen.h"
+#include "parameter.h"
 
 FREEJ_FORWARD_PTR(Layer)
 FREEJ_FORWARD_PTR(Blitter)

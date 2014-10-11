@@ -19,9 +19,9 @@
 #include <string>
 #include <iostream>
 #include <jack/jack.h>
-#include <ringbuffer.h>
+#include "ringbuffer.h"
 
-#include <ringbuffer.h>
+#include "ringbuffer.h"
 
 typedef jack_default_audio_sample_t sample_t;
 

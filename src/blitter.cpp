@@ -19,17 +19,17 @@
  */
 
 
-#include <layer.h>
-#include <blitter.h>
-#include <blit.h>
-#include <blit_instance.h>
-#include <context.h>
-#include <iterator.h>
-#include <linklist.h>
+#include "layer.h"
+#include "blitter.h"
+#include "blit.h"
+#include "blit_instance.h"
+#include "context.h"
+#include "iterator.h"
+#include "linklist.h"
 
-#include <sdl_screen.h>
+#include "sdl_screen.h"
 
-#include <jutils.h>
+#include "jutils.h"
 #include <config.h>
 
 Blitter::Blitter() {

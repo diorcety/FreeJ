@@ -26,10 +26,10 @@
 
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include <gl_screen.h>
-#include <screen.h>
+#include "gl_screen.h"
+#include "screen.h"
 
-#include <factory.h>
+#include "factory.h"
 
 /* struct Vertex */
 /* { */

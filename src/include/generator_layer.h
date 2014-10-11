@@ -20,8 +20,8 @@
 #ifndef __GENERATOR_LAYER_H__
 #define __GENERATOR_LAYER_H__
 
-#include <layer.h>
-#include <factory.h>
+#include "layer.h"
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(GeneratorLayer)
 class GeneratorLayer : public Layer {

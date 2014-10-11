@@ -37,7 +37,7 @@
 #ifndef __LOGGING_H__
 #define __LOGGING_H__
 
-#include <exceptions.h>
+#include "exceptions.h"
 #include <stdarg.h>
 #include "sharedptr.h"
 

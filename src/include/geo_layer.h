@@ -23,9 +23,9 @@
 #include <inttypes.h>
 #include <SDL_gfxPrimitives.h>
 
-#include <layer.h>
+#include "layer.h"
 
-#include <factory.h>
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(GeoLayer)
 class GeoLayer : public Layer {

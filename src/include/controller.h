@@ -30,7 +30,7 @@
 #include <config.h>
 #include <cstdarg> // va_list
 
-#include <linklist.h>
+#include "linklist.h"
 
 FREEJ_FORWARD_PTR(Context)
 

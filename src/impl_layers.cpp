@@ -23,16 +23,16 @@
 #include <string.h>
 #include <errno.h>
 
-#include <layer.h>
-#include <jutils.h>
+#include "layer.h"
+#include "jutils.h"
 #include <config.h>
 
 #ifdef WITH_GTK2
 #include <gtk/gtk.h>
 #endif
 
-#include <impl_layers.h>
-#include <context.h>
+#include "impl_layers.h"
+#include "context.h"
 
 
 

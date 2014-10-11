@@ -22,7 +22,7 @@
 
 #include <config.h>
 
-#include <context.h>
+#include "context.h"
 
 #include <linux/videodev2.h>
 

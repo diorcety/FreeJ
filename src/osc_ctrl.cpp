@@ -25,10 +25,10 @@
 
 #include <config.h>
 
-#include <osc_ctrl.h>
+#include "osc_ctrl.h"
 
-#include <context.h>
-#include <jutils.h>
+#include "context.h"
+#include "jutils.h"
 
 FACTORY_REGISTER_INSTANTIATOR(Controller, OscController, OscController, core);
 

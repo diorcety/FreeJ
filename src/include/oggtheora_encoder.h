@@ -24,12 +24,12 @@
 
 #include <math.h>
 #include <config.h>
-#include <linklist.h>
-#include <video_encoder.h>
+#include "linklist.h"
+#include "video_encoder.h"
 #include <fstream>
 #ifdef WITH_OGGTHEORA
 
-#include <theorautils.h>
+#include "theorautils.h"
 
 /*
    extern "C" {

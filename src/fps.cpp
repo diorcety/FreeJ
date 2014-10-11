@@ -29,8 +29,8 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include <fps.h>
-#include <jutils.h>
+#include "fps.h"
+#include "jutils.h"
 
 
 FPS::FPS() {

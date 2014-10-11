@@ -29,20 +29,20 @@
 
 #include <string.h>
 
-#include <screen.h>
-#include <context.h>
+#include "screen.h"
+#include "context.h"
 
 #ifdef WITH_AUDIO
 #include <samplerate.h>
 #include <jack/jack.h>
 #endif
 
-#include <ringbuffer.h>
-#include <video_layer.h>
+#include "ringbuffer.h"
+#include "video_layer.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
-#include <factory.h>
+#include "factory.h"
 
 extern "C" {
 #include "libavutil/time.h"

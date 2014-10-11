@@ -26,8 +26,8 @@
 #include <SDL_syswm.h>
 #include <SDL_opengl.h>
 
-#include <sdlgl_screen.h>
-#include <jutils.h>
+#include "sdlgl_screen.h"
+#include "jutils.h"
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, SdlGlScreen, Screen, sdlgl);

@@ -24,10 +24,10 @@
 
 #ifdef WITH_XGRAB
 #include <stdlib.h>
-#include <jutils.h>
-#include <xgrab_layer.h>
+#include "jutils.h"
+#include "xgrab_layer.h"
 
-#include <sdl_screen.h>
+#include "sdl_screen.h"
 #include <SDL.h>
 #include "SDL_rotozoom.h"
 

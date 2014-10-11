@@ -25,9 +25,9 @@
 #include <string.h>
 
 
-#include <gl_screen.h>
-#include <layer.h>
-#include <jutils.h>
+#include "gl_screen.h"
+#include "layer.h"
+#include "jutils.h"
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, GlScreen, Screen, gl);

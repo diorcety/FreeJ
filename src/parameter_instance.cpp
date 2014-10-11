@@ -21,11 +21,11 @@
  */
 
 #include <config.h>
-#include <parameter_instance.h>
+#include "parameter_instance.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <jutils.h>
+#include "jutils.h"
 
 ParameterInstance::ParameterInstance(ParameterPtr pp) {
     proto = pp;

@@ -19,16 +19,16 @@
 
 #include <config.h>
 
-#include <context.h>
-#include <screen.h>
-#include <layer.h>
-#include <video_encoder.h>
+#include "context.h"
+#include "screen.h"
+#include "layer.h"
+#include "video_encoder.h"
 #ifdef WITH_AUDIO
-#include <audio_jack.h>
+#include "audio_jack.h"
 #endif
-#include <ringbuffer.h>
+#include "ringbuffer.h"
 
-#include <video_layer.h>
+#include "video_layer.h"
 
 #ifdef WITH_GD
 #include <gd.h>

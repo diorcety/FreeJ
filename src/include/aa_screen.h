@@ -20,9 +20,9 @@
 #ifndef __AA_SCREEN_H__
 #define __AA_SCREEN_H__
 
-#include <screen.h>
+#include "screen.h"
 
-#include <factory.h>
+#include "factory.h"
 
 #include <aalib.h>
 

@@ -19,7 +19,7 @@
 
 #include <config.h>
 
-#include <color.h>
+#include "color.h"
 
 Color::Color() {
     // defaults to white

@@ -25,8 +25,8 @@
 
 #include <inttypes.h>
 
-#include <audio_jack.h>
-#include <ringbuffer.h>
+#include "audio_jack.h"
+#include "ringbuffer.h"
 
 //#define SAMPLERATE 44100
 //#define MAX_FRAMESPERBUFFER 1024*8

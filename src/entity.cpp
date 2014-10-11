@@ -23,9 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <jutils.h>
-#include <entity.h>
-#include <linklist.h>
+#include "jutils.h"
+#include "entity.h"
+#include "linklist.h"
 
 Entry::Entry(const std::string& name, const std::string& description) {
     this->name = name;

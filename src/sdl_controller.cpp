@@ -1,4 +1,4 @@
-#include <sdl_controller.h>
+#include "sdl_controller.h"
 #include <SDL/SDL.h>
 
 SdlController::SdlController()

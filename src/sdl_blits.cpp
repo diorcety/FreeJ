@@ -20,10 +20,10 @@
 #include <config.h>
 #include <stdlib.h>
 
-#include <jutils.h>
-#include <blitter.h>
-#include <blit.h>
-#include <parameter_instance.h>
+#include "jutils.h"
+#include "blitter.h"
+#include "blit.h"
+#include "parameter_instance.h"
 
 ///////////////////////////////////////////////////////////////////
 // SDL BLITS

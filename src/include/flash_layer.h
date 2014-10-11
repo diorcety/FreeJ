@@ -26,7 +26,7 @@
 #define __FLASH_LAYER_H__
 
 #include <stdio.h>
-#include <layer.h>
+#include "layer.h"
 #include <flash.h>
 
 FREEJ_FORWARD_PTR(FlashLayer)

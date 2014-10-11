@@ -26,7 +26,7 @@
 #include <sharedptr.h>
 #include <linklist.h>
 
-#include <keycodes.h>
+#include "keycodes.h"
 
 
 FREEJ_FORWARD_PTR(SLangConsole)

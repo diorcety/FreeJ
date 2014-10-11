@@ -24,12 +24,12 @@
 #include <config.h>
 
 #include <string.h>
-#include <context.h>
+#include "context.h"
 
-#include <video_encoder.h>
+#include "video_encoder.h"
 
 
-#include <convertvid.h>
+#include "convertvid.h"
 
 /* function below taken from ccvt_misc.c
    CCVT: ColourConVerT: simple library for converting colourspaces

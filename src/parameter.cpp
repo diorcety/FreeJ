@@ -21,11 +21,11 @@
  */
 
 #include <config.h>
-#include <parameter.h>
+#include "parameter.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <jutils.h>
+#include "jutils.h"
 
 Parameter::Parameter(Parameter::Type param_type, const std::string &name, const std::string &description, float multiplier)
     : Entry() {

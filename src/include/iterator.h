@@ -24,7 +24,7 @@
 
 
 #include <inttypes.h>
-#include <linklist.h>
+#include "linklist.h"
 
 #define ITERATOR_ENVELOPE_LINEAR 1
 #define ITERATOR_ENVELOPE_SIN 2

@@ -26,14 +26,14 @@
 #include <SDL.h>
 #include <config.h>
 
-#include <jsync.h>
-#include <jutils.h>
+#include "jsync.h"
+#include "jutils.h"
 
-#include <linklist.h>
+#include "linklist.h"
 
-#include <screen.h>
+#include "screen.h"
 
-#include <ringbuffer.h>
+#include "ringbuffer.h"
 
 #include <shout/shout.h>
 

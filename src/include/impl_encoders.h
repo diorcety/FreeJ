@@ -25,7 +25,7 @@
 #include <config.h>
 #include <encoder.h>
 
-#include <oggtheora_encoder.h>
+#include "oggtheora_encoder.h"
 
 
 Encoder *get_encoder(char *output_filename);

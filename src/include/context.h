@@ -36,18 +36,18 @@
 // it is here because of  SDL_PollEvent done in Context
 #include <SDL/SDL.h>
 
-//#include <linklist.h>
-#include <layer.h>
+//#include "linklist.h"
+#include "layer.h"
 // #include <osd.h>
-//#include <controller.h>
-#include <plugger.h>
-#include <screen.h>
-#include <shouter.h>
+//#include "controller.h"
+#include "plugger.h"
+#include "screen.h"
+#include "shouter.h"
 
-#include <factory.h>
+#include "factory.h"
 #include <config.h>
 #include <string>
-#include <timelapse.h>
+#include "timelapse.h"
 
 FREEJ_FORWARD_PTR(Controller)
 FREEJ_FORWARD_PTR(JsParser)

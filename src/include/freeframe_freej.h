@@ -20,10 +20,10 @@
 #ifndef __FREEFRAME_FREEJ_H__
 #define __FREEFRAME_FREEJ_H__
 
-#include <linklist.h>
-#include <freeframe.h>
-#include <filter.h>
-#include <factory.h>
+#include "linklist.h"
+#include "freeframe.h"
+#include "filter.h"
+#include "factory.h"
 
 class Filter;
 

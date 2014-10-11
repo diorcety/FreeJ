@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include <slw_prompt.h>
+#include "slw_prompt.h"
 
 
 SLW_Prompt::SLW_Prompt()

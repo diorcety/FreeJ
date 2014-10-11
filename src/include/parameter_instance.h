@@ -20,7 +20,7 @@
 #define __parameter_instance_h__
 
 
-#include <parameter.h>
+#include "parameter.h"
 
 FREEJ_FORWARD_PTR(ParameterInstance)
 class ParameterInstance: public Entry {

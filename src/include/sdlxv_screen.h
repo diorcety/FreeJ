@@ -23,7 +23,7 @@
 #define __SDLXV_SCREEN_H__
 
 #include <SDL.h>
-#include <screen.h>
+#include "screen.h"
 
 FREEJ_FORWARD_PTR(SdlXvScreen)
 class SdlXvScreen : public ViewPort {

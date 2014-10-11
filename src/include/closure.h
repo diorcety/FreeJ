@@ -24,8 +24,8 @@
 #include <cstring>
 #include <queue>
 
-#include <jutils.h>
-#include <exceptions.h>
+#include "jutils.h"
+#include "exceptions.h"
 
 class Closure;
 

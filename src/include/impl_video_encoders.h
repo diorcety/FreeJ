@@ -23,12 +23,12 @@
 #define __IMPL_VIDEO_ENCODERS_H__
 
 #include <config.h>
-#include <video_encoder.h>
+#include "video_encoder.h"
 #ifdef WITH_AVCODEC
 #include <ffmpeg_encoder.h>
 #endif
 #if defined(WITH_OGGTHEORA) && defined(WITH_AUDIO)
-#include <oggtheora_encoder.h>
+#include "oggtheora_encoder.h"
 #endif
 
 

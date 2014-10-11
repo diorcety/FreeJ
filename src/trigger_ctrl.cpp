@@ -23,12 +23,12 @@
 
 #include <string.h>
 
-#include <trigger_ctrl.h>
+#include "trigger_ctrl.h"
 
 #include <config.h>
 #include <algorithm>
-#include <context.h>
-#include <jutils.h>
+#include "context.h"
+#include "jutils.h"
 
 TriggerController::TriggerController()
     : Controller() {

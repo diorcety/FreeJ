@@ -23,8 +23,8 @@
 #ifndef __ViMoCONTROLLER_H__
 #define __ViMoCONTROLLER_H__
 
-#include <controller.h>
-#include <linklist.h>
+#include "controller.h"
+#include "linklist.h"
 
 union ViMoData;
 

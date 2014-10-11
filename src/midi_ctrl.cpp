@@ -23,15 +23,15 @@
 #include <config.h>
 
 #ifdef WITH_ALSA
-#include <midi_ctrl.h>
+#include "midi_ctrl.h"
 //#include <unistd.h>
 #include <alsa/asoundlib.h>
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <context.h>
-//#include <plugger.h>
-#include <jutils.h>
+#include "context.h"
+//#include "plugger.h"
+#include "jutils.h"
 
 MidiController::MidiController() : SdlController() {
     name = "Midi Controller";

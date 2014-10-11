@@ -18,8 +18,8 @@
  *
  */
 
-#include <blit.h>
-#include <blit_instance.h>
+#include "blit.h"
+#include "blit_instance.h"
 #include <algorithm>
 
 

@@ -23,10 +23,10 @@
  */
 
 #include <config.h>
-#include <layer.h>
-#include <filter.h>
+#include "layer.h"
+#include "filter.h"
 
-#include <jutils.h>
+#include "jutils.h"
 #include <algorithm>
 #include <assert.h>
 

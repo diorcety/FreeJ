@@ -23,10 +23,10 @@
 #include <config.h>
 #include <string.h>
 
-#include <context.h>
-#include <jutils.h>
+#include "context.h"
+#include "jutils.h"
 
-#include <mouse_ctrl.h>
+#include "mouse_ctrl.h"
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Controller, MouseController, MouseController, sdl);

@@ -21,12 +21,12 @@
 
 #include <stdlib.h>
 
-#include <layer.h>
-#include <blitter.h>
-#include <blit_instance.h>
+#include "layer.h"
+#include "blitter.h"
+#include "blit_instance.h"
 
-#include <jutils.h>
-#include <soft_screen.h>
+#include "jutils.h"
+#include "soft_screen.h"
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, SoftScreen, Screen, soft);

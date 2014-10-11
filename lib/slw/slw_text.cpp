@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include <slw_text.h>
+#include "slw_text.h"
 
 
 SLW_Text::SLW_Text()

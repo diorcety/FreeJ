@@ -19,13 +19,13 @@
  */
 
 
-#include <console_calls_ctrl.h>
+#include "console_calls_ctrl.h"
 
-#include <console_ctrl.h>
+#include "console_ctrl.h"
 
-#include <context.h>
-#include <layer.h>
-#include <jutils.h>
+#include "context.h"
+#include "layer.h"
+#include "jutils.h"
 
 #include <keycodes.h> // from lib/slw
 

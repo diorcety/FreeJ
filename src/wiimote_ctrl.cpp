@@ -28,10 +28,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <wiimote_ctrl.h>
+#include "wiimote_ctrl.h"
 
-#include <context.h>
-#include <jutils.h>
+#include "context.h"
+#include "jutils.h"
 
 #define WII_FLAGS CWIID_FLAG_MESG_IFC
 //| CWIID_FLAG_NONBLOCK

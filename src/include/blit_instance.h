@@ -23,7 +23,7 @@
 #define __BLIT_INSTANCE_H__
 
 #include <SDL.h>
-#include <blit.h>
+#include "blit.h"
 
 
 FREEJ_FORWARD_PTR(BlitInstance)

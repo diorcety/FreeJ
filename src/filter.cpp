@@ -21,16 +21,16 @@
  */
 
 #include <config.h>
-#include <layer.h>
-#include <filter.h>
+#include "layer.h"
+#include "filter.h"
 
-#include <frei0r_freej.h>
-#include <freeframe_freej.h>
+#include "frei0r_freej.h"
+#include "freeframe_freej.h"
 
 
 #include <algorithm>
 
-#include <jutils.h>
+#include "jutils.h"
 
 Filter::Filter()
     : Entry() {

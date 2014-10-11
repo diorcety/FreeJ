@@ -24,7 +24,7 @@
 #include <errno.h>
 
 // FIXME: Cheap way to get logging included everywhere
-#include <logging.h>
+#include "logging.h"
 
 extern void *(*jmemcpy)(void *to, const void *from, size_t len);
 

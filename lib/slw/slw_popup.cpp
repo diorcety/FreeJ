@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include <slw_popup.h>
+#include "slw_popup.h"
 
 SLW_Popup::SLW_Popup()
     : SLangWidget() {

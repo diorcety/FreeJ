@@ -31,7 +31,7 @@
 
 #include <linklist.h>
 
-#include <keycodes.h>
+#include "keycodes.h"
 
 #define ROWCHUNK 128
 

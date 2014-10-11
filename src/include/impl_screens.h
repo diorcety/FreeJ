@@ -22,16 +22,16 @@
 
 #include <config.h>
 
-#include <sdl_screen.h>
-#include <soft_screen.h>
+#include "sdl_screen.h"
+#include "soft_screen.h"
 
 #ifdef WITH_OPENGL
-#include <sdlgl_screen.h>
-#include <gl_screen.h>
+#include "sdlgl_screen.h"
+#include "gl_screen.h"
 #endif
 
 #ifdef WITH_AALIB
-#include <aa_screen.h>
+#include "aa_screen.h"
 #endif
 
 

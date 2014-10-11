@@ -17,12 +17,12 @@
  */
 
 #include <config.h>
-#include <kbd_ctrl.h>
+#include "kbd_ctrl.h"
 
-#include <context.h>
-#include <jutils.h>
+#include "context.h"
+#include "jutils.h"
 
-#include <factory.h>
+#include "factory.h"
 
 #define SDL_REPEAT_DELAY        200
 #define SDL_REPEAT_INTERVAL     20

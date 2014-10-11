@@ -24,9 +24,9 @@
 #include <string.h>
 #include <math.h>
 
-#include <audio_jack.h>
+#include "audio_jack.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
 JackClient*       JackClient::m_Singleton  = NULL;
 bool JackClient::m_Attached   = false;

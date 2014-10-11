@@ -28,9 +28,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <context.h>
-#include <sdl_screen.h>
-#include <audio_collector.h>
+#include "context.h"
+#include "sdl_screen.h"
+#include "audio_collector.h"
 
 #include <theora11_encoder.cpp>
 

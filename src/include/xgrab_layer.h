@@ -25,9 +25,9 @@
 #ifdef WITH_XGRAB
 
 #include <SDL.h>
-#include <layer.h>
+#include "layer.h"
 
-//#include <screen.h>
+//#include "screen.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 

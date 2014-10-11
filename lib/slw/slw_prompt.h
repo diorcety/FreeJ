@@ -21,9 +21,9 @@
 #ifndef __SLW_PROMPT_H__
 #define __SLW_PROMPT_H__
 
-#include <slw.h>
+#include "slw.h"
 
-#include <slw_text.h>
+#include "slw_text.h"
 
 FREEJ_FORWARD_PTR(SLW_Prompt)
 class SLW_Prompt : public SLangWidget {

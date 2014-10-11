@@ -36,11 +36,11 @@
 
 #include <config.h>
 
-#include <freeframe_freej.h>
-#include <freeframe_instance.h>
+#include "freeframe_freej.h"
+#include "freeframe_instance.h"
 
-#include <jutils.h>
-#include <layer.h>
+#include "jutils.h"
+#include "layer.h"
 
 FACTORY_REGISTER_INSTANTIATOR(FilterInstance, FreeframeInstance, FreeframeInstance, core);
 

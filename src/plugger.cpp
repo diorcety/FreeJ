@@ -27,14 +27,14 @@
 #include <dirent.h>
 
 #ifdef WITH_FREI0R
-#include <frei0r.h>
+#include "frei0r.h"
 #endif
 
-#include <plugger.h>
-#include <context.h>
-#include <jutils.h>
-#include <frei0r_freej.h>
-#include <freeframe_freej.h>
+#include "plugger.h"
+#include "context.h"
+#include "jutils.h"
+#include "frei0r_freej.h"
+#include "freeframe_freej.h"
 
 #ifdef HAVE_DARWIN
 #include <Carbon/Carbon.h>

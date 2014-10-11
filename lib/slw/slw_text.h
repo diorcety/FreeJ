@@ -21,8 +21,8 @@
 #ifndef __SLW_TEXT_H__
 #define __SLW_TEXT_H__
 
-#include <slw.h>
-#include <abs_text_console.h>
+#include "slw.h"
+#include "abs_text_console.h"
 
 
 FREEJ_FORWARD_PTR(SLW_TextConsole)

@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 
-#include <jutils.h>
-#include <blitter.h>
-#include <blit.h>
-#include <parameter_instance.h>
+#include "jutils.h"
+#include "blitter.h"
+#include "blit.h"
+#include "parameter_instance.h"
 
 #include <SDL_imageFilter.h>
 

@@ -25,10 +25,10 @@
 
 #include <vector>
 
-#include <linklist.h>
-#include <frei0r.h>
-#include <filter.h>
-#include <factory.h>
+#include "linklist.h"
+#include "frei0r.h"
+#include "filter.h"
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(FreiorInstance)
 class FreiorInstance : public FilterInstance {

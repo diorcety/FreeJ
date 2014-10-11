@@ -21,7 +21,7 @@
 
 
 #include <config.h>
-#include <jutils.h>
+#include "jutils.h"
 
 #include <termios.h>
 #include <fcntl.h>
@@ -36,7 +36,7 @@
 #include <unistd.h>
 
 
-#include <vimo_ctrl.h>
+#include "vimo_ctrl.h"
 
 /* buttons:
    btn_rev, 1,

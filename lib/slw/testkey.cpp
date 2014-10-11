@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <string.h>
 
-#include <slw.h>
-#include <slw_console.h>
+#include "slw.h"
+#include "slw_console.h"
 
 
 class TestKey : public SLangWidget {

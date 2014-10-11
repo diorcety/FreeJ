@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <algorithm>
-#include <slw_log.h>
+#include "slw_log.h"
 
 
 SLW_Log::SLW_Log()

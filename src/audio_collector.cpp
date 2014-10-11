@@ -20,10 +20,10 @@
 #include <stdlib.h>
 #include <iostream>
 //#include <sndfile.h>
-#include <audio_collector.h>
-#include <audio_jack.h>
+#include "audio_collector.h"
+#include "audio_jack.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
 static int XRanges[NUM_BARS + 1] = {0, 1, 2, 3, 5, 7, 10, 14, 20, 28, 40, 54, 74, 101, 137, 187, 255};
 

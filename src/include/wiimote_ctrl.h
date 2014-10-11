@@ -25,8 +25,8 @@
 #include <config.h>
 #ifdef WITH_CWIID
 
-#include <controller.h>
-#include <closure.h>
+#include "controller.h"
+#include "closure.h"
 
 extern "C" {
 #include <cwiid.h>

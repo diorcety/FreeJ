@@ -24,8 +24,8 @@
 #include <sys/time.h>
 #include <queue>
 
-#include <closure.h>
-#include <fps.h>
+#include "closure.h"
+#include "fps.h"
 
 class JSyncThread {
 private:

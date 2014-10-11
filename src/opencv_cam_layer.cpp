@@ -23,11 +23,11 @@
 #include <cv.h>
 #include <highgui.h>
 
-#include <opencv_cam_layer.h>
+#include "opencv_cam_layer.h"
 
 #include <ccvt.h>
 
-#include <jutils.h>
+#include "jutils.h"
 
 FACTORY_REGISTER_INSTANTIATOR(Layer, OpenCVCamLayer, CamLayer, opencv);
 

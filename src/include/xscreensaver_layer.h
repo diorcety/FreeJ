@@ -22,8 +22,8 @@
 #include <config.h>
 #ifdef WITH_XSCREENSAVER
 
-#include <layer.h>
-#include <vroot.h>
+#include "layer.h"
+#include "vroot.h"
 
 FREEJ_FORWARD_PTR(XScreenSaverLayer)
 class XScreenSaverLayer : public Layer {

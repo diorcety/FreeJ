@@ -11,7 +11,7 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
-#include <ffdec.h>
+#include "ffdec.h"
 
 int want_quiet =1;
 

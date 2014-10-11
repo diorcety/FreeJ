@@ -20,9 +20,9 @@
 #ifndef __TRIGGER_CTRL_H__
 #define __TRIGGER_CTRL_H__
 
-#include <controller.h>
-#include <factory.h>
-#include <linklist.h>
+#include "controller.h"
+#include "factory.h"
+#include "linklist.h"
 #include <SDL.h>
 
 FREEJ_FORWARD_PTR(TriggerController)

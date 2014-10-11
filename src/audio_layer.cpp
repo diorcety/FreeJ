@@ -19,12 +19,12 @@
 
 #include <config.h>
 
-#include <audio_layer.h>
+#include "audio_layer.h"
 
 
 //#include <sndfile.h>
-#include <audio_jack.h>
-//#include <jutils.h>
+#include "audio_jack.h"
+//#include "jutils.h"
 
 AudioLayer::AudioLayer()
     : Layer(),

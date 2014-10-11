@@ -9,12 +9,12 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <vroot.h>
+#include "vroot.h"
 
 
-#include <context.h>
-#include <jutils.h>
-#include <xscreensaver_layer.h>
+#include "context.h"
+#include "jutils.h"
+#include "xscreensaver_layer.h"
 
 
 XScreenSaverLayer::XScreenSaverLayer()

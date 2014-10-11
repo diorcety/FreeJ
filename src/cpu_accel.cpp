@@ -51,7 +51,7 @@
 #include <signal.h>
 #include <setjmp.h>
 
-#include <cpu_accel.h>
+#include "cpu_accel.h"
 
 #include <config.h>
 

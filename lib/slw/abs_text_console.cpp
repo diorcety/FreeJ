@@ -25,8 +25,8 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include <keycodes.h>
-#include <abs_text_console.h>
+#include "keycodes.h"
+#include "abs_text_console.h"
 
 #include <algorithm>
 

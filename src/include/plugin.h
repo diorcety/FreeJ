@@ -19,9 +19,9 @@
 #ifndef __DSO_PLUGIN_H__
 #define __DSO_PLUGIN_H__
 
-#include <geometry.h>
-#include <linklist.h>
-#include <jutils.h>
+#include "geometry.h"
+#include "linklist.h"
+#include "jutils.h"
 
 class Plugin {
     typedef int (t_init)(Geometry*);

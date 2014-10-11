@@ -40,16 +40,16 @@
 #endif
 %}
 
-%include <std_shared_ptr.i>
-%include <std_string.i>
+%include "std_shared_ptr.i"
+%include "std_string.i"
 
 %include "freej_sharedptr.i"
 
 //we need this for ifdefs in included headers
-%include <config.h>
+%include "config.h"
 
 //we need this for macro definitions appearing in included headers
-%include <factory.h>
+%include "factory.h"
 
 %import "inttypes.i"
 

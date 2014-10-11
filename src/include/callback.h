@@ -23,7 +23,7 @@
 #include <typeinfo>
 #include <pthread.h>
 
-#include <closure.h>
+#include "closure.h"
 
 #if 0
 /*

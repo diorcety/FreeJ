@@ -25,8 +25,8 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <context.h>
-#include <screen.h>
+#include "context.h"
+#include "screen.h"
 #include <font_pearl_8x8.h>
 #include <config.h>
 

@@ -18,8 +18,8 @@
  *
  */
  
-#include <blit.h>
-#include <blit_instance.h>
+#include "blit.h"
+#include "blit_instance.h"
 
 Blit::Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &parameters) : Entry() {
     this->type = type;

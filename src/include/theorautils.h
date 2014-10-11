@@ -31,7 +31,7 @@
 #endif
 #include <ogg/ogg.h>
 
-#include <ringbuffer.h>
+#include "ringbuffer.h"
 #include <time.h>
 
 //#define OGGMUX_DEBUG 1

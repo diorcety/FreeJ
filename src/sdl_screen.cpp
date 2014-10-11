@@ -25,17 +25,17 @@
 #include <string.h>
 #include <SDL_syswm.h>
 
-#include <layer.h>
-#include <blitter.h>
-#include <blit_instance.h>
-#include <linklist.h>
-#include <sdl_screen.h>
+#include "layer.h"
+#include "blitter.h"
+#include "blit_instance.h"
+#include "linklist.h"
+#include "sdl_screen.h"
 
 #include <SDL_imageFilter.h>
 #include <SDL_framerate.h>
 #include <SDL_rotozoom.h>
 
-#include <jutils.h>
+#include "jutils.h"
 
 #include <algorithm>
 

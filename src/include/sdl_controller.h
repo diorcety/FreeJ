@@ -1,7 +1,7 @@
 #ifndef __SDL_CONTROLLER_H__
 #define __SDL_CONTROLLER_H__
 
-#include <controller.h>
+#include "controller.h"
 #include <SDL.h>
 
 FREEJ_FORWARD_PTR(SdlController)

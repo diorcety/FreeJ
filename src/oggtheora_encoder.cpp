@@ -30,12 +30,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <context.h>
-#include <screen.h>
-#include <audio_jack.h>
-#include <audio_collector.h>
+#include "context.h"
+#include "screen.h"
+#include "audio_jack.h"
+#include "audio_collector.h"
 
-#include <oggtheora_encoder.h>
+#include "oggtheora_encoder.h"
 #include <iomanip>
 using namespace std;
 using std::setiosflags;

@@ -22,11 +22,11 @@
 
 #include <stdlib.h>
 
-#include <layer.h>
-#include <blitter.h>
+#include "layer.h"
+#include "blitter.h"
 
-#include <jutils.h>
-#include <aa_screen.h>
+#include "jutils.h"
+#include "aa_screen.h"
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, AaScreen, Screen, ascii);

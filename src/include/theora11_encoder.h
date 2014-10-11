@@ -22,8 +22,8 @@
 
 
 #include <config.h>
-#include <linklist.h>
-#include <video_encoder.h>
+#include "linklist.h"
+#include "video_encoder.h"
 
 #ifdef WITH_OGGTHEORA
 

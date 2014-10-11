@@ -20,10 +20,10 @@
 #ifndef __FREEFRAME_INSTANCE_H__
 #define __FREEFRAME_INSTANCE_H__
 
-#include <linklist.h>
-#include <freeframe.h>
-#include <filter.h>
-#include <factory.h>
+#include "linklist.h"
+#include "freeframe.h"
+#include "filter.h"
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(FreeframeInstance)
 class FreeframeInstance : public FilterInstance {

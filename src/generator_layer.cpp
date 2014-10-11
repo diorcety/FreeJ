@@ -21,13 +21,13 @@
 
 #include <config.h>
 
-#include <generator_layer.h>
-#include <frei0r_freej.h>
-#include <freeframe_freej.h>
-#include <fps.h>
+#include "generator_layer.h"
+#include "frei0r_freej.h"
+#include "freeframe_freej.h"
+#include "fps.h"
 
-#include <jutils.h>
-#include <context.h>
+#include "jutils.h"
+#include "context.h"
 #include <algorithm>
 
 // our objects are allowed to be created trough the factory engine

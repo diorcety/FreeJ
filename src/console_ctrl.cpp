@@ -32,22 +32,22 @@
 
 #include <slw_log.h>
 
-#include <slang_console_ctrl.h>
-#include <console_calls_ctrl.h>
-#include <console_widgets_ctrl.h>
-#include <console_readline_ctrl.h>
+#include "slang_console_ctrl.h"
+#include "console_calls_ctrl.h"
+#include "console_widgets_ctrl.h"
+#include "console_readline_ctrl.h"
 
 #include <slw_console.h>
 #include <keycodes.h>
 
-#include <context.h>
-#include <blitter.h>
+#include "context.h"
+#include "blitter.h"
 
-#include <fps.h>
+#include "fps.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
-#include <generator_layer.h>
+#include "generator_layer.h"
 
 static LayerPtr consoleSelectedLayer;
 static ViewPortPtr consoleSelectedScreen;

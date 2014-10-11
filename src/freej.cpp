@@ -28,19 +28,19 @@
 #include <assert.h>
 #include <errno.h>
 
-#include <context.h>
+#include "context.h"
 
 // #include <osd.h>
 #ifndef WITH_COCOA
-#include <slang_console_ctrl.h>
+#include "slang_console_ctrl.h"
 #endif
-#include <video_encoder.h>
-#include <plugger.h>
-#include <jutils.h>
+#include "video_encoder.h"
+#include "plugger.h"
+#include "jutils.h"
 
-#include <impl_layers.h>
-#include <impl_screens.h>
-#include <impl_video_encoders.h>
+#include "impl_layers.h"
+#include "impl_screens.h"
+#include "impl_video_encoders.h"
 
 //[of]cli options parser:commandline
 #define MAX_CLI_CHARS 4096

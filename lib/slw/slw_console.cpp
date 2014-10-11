@@ -26,7 +26,7 @@
 
 #include <algorithm>
 
-#include <slw_console.h>
+#include "slw_console.h"
 
 
 ///////////////////////////////////

@@ -25,8 +25,8 @@
 
 #include <string.h>
 
-#include <jutils.h>
-#include <filter.h>
+#include "jutils.h"
+#include "filter.h"
 
 FREEJ_FORWARD_PTR(Context)
 

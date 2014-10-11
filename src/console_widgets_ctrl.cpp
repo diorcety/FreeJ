@@ -24,18 +24,18 @@
 
 #include <slw.h>
 
-#include <slang_console_ctrl.h>
-#include <console_widgets_ctrl.h>
+#include "slang_console_ctrl.h"
+#include "console_widgets_ctrl.h"
 
 #include <algorithm>
 
-#include <context.h>
-#include <layer.h>
-#include <blitter.h>
-#include <blit_instance.h>
-#include <video_encoder.h>
+#include "context.h"
+#include "layer.h"
+#include "blitter.h"
+#include "blit_instance.h"
+#include "video_encoder.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
 
 SlwTitle::SlwTitle(const ContextPtr &env)

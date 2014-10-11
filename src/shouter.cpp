@@ -22,8 +22,8 @@
 #include <config.h>
 #ifdef WITH_OGGTHEORA
 
-#include <shouter.h>
-#include <jutils.h>
+#include "shouter.h"
+#include "jutils.h"
 
 extern bool got_sigpipe;
 

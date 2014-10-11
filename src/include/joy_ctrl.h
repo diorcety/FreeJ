@@ -20,7 +20,7 @@
 #ifndef __JOY_CTRL_H__
 #define __JOY_CTRL_H__
 
-#include <sdl_controller.h>
+#include "sdl_controller.h"
 
 #include <SDL.h>
 

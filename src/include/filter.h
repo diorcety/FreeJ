@@ -22,8 +22,8 @@
 
 #include <config.h>
 
-#include <parameter.h>
-#include <filter_instance.h>
+#include "parameter.h"
+#include "filter_instance.h"
 
 FREEJ_FORWARD_PTR(Layer)
 #ifdef WITH_FREI0R

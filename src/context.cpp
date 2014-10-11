@@ -23,30 +23,30 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <assert.h>
-#include <context.h>
-#include <blitter.h>
-#include <controller.h>
+#include "context.h"
+#include "blitter.h"
+#include "controller.h"
 
-#include <video_encoder.h>
-#include <audio_collector.h>
-#include <fps.h>
+#include "video_encoder.h"
+#include "audio_collector.h"
+#include "fps.h"
 
 #include <signal.h>
 #include <errno.h>
 
 #include <algorithm>
 
-#include <fastmemcpy.h>
+#include "fastmemcpy.h"
 
-#include <jutils.h>
+#include "jutils.h"
 
 #ifdef WITH_FFMPEG
-#include <video_layer.h>
+#include "video_layer.h"
 #endif
 
-#include <impl_layers.h>
-#include <impl_video_encoders.h>
-#include <factory.h>
+#include "impl_layers.h"
+#include "impl_video_encoders.h"
+#include "factory.h"
 
 void fsigpipe(int Sig);
 int got_sigpipe;

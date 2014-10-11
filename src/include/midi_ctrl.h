@@ -24,7 +24,7 @@
 
 //#include <unistd.h>
 #include <alsa/asoundlib.h>
-#include <sdl_controller.h>
+#include "sdl_controller.h"
 
 // #include <callbacks_js.h>
 #define CLIENT_NAME "freej MidiController"

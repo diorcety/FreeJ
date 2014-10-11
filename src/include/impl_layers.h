@@ -23,23 +23,23 @@
 #include <config.h>
 
 // controllers
-#include <kbd_ctrl.h>
+#include "kbd_ctrl.h"
 
 /* software layers which don't need special loaders */
-#include <generator_layer.h>
-#include <geo_layer.h>
-#include <image_layer.h> // statically included sdl_image
+#include "generator_layer.h"
+#include "geo_layer.h"
+#include "image_layer.h" // statically included sdl_image
 
-#include <goom_layer.h>
+#include "goom_layer.h"
 
 #ifdef WITH_FLASH
-#include <flash_layer.h> // statically included flash layer
+#include "flash_layer.h" // statically included flash layer
 // original libflash by Olivier Debon is now extremely old
 // should substitute it with GNASH ASAP
 #endif
 
 #ifdef WITH_V4L
-#include <v4l2_layer.h>
+#include "v4l2_layer.h"
 #endif
 
 #ifdef WITH_AVIFILE
@@ -47,23 +47,23 @@
 #endif
 
 #ifdef WITH_FFMPEG
-#include <video_layer.h>
+#include "video_layer.h"
 #endif
 
 #if defined WITH_TEXTLAYER
-#include <text_layer.h>
+#include "text_layer.h"
 #endif
 
 #ifdef WITH_XSCREENSAVER
-#include <xscreensaver_layer.h>
+#include "xscreensaver_layer.h"
 #endif
 
 #ifdef WITH_UNICAP
-#include <unicap_layer.h>
+#include "unicap_layer.h"
 #endif
 
 #ifdef WITH_OPENCV
-#include <opencv_cam_layer.h>
+#include "opencv_cam_layer.h"
 #endif
 
 #define IS_VIDEO_EXTENSION(end_file_ptr)                \

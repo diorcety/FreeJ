@@ -15,8 +15,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <callback.h>
-#include <jutils.h>
+#include "callback.h"
+#include "jutils.h"
 
 DumbCall::DumbCall() {
     pthread_mutexattr_init(&pendingattr_);

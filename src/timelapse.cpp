@@ -19,7 +19,7 @@
  *
  */
 
-#include <timelapse.h>
+#include "timelapse.h"
 #include <sys/time.h>
 #include <cmath>
 

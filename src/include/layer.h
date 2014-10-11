@@ -26,10 +26,10 @@
 #define __LAYER_H__
 
 #include <inttypes.h>
-#include <geometry.h>
-#include <filter.h>
-#include <screen.h>
-#include <jsync.h>
+#include "geometry.h"
+#include "filter.h"
+#include "screen.h"
+#include "jsync.h"
 
 
 FREEJ_FORWARD_PTR(Context)

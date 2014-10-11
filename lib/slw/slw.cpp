@@ -20,8 +20,8 @@
 
 #include <stdlib.h>
 
-#include <slw.h>
-#include <slw_console.h>
+#include "slw.h"
+#include "slw_console.h"
 
 SLangWidget::SLangWidget()
     : Entry() {

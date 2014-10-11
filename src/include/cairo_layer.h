@@ -22,7 +22,7 @@
 #include <config.h>
 #ifdef WITH_CAIRO
 
-#include <color.h>
+#include "color.h"
 
 #include <cairo.h>
 

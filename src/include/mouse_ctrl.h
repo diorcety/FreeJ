@@ -20,8 +20,8 @@
 #ifndef __MOUSE_CTRL_H__
 #define __MOUSE_CTRL_H__
 
-#include <sdl_controller.h>
-#include <factory.h>
+#include "sdl_controller.h"
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(MouseController)
 class MouseController : public SdlController {

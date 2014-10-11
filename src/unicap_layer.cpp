@@ -21,11 +21,11 @@
 
 #ifdef WITH_UNICAP
 
-#include <unicap_layer.h>
+#include "unicap_layer.h"
 
 #include <ccvt.h>
 
-#include <jutils.h>
+#include "jutils.h"
 
 FACTORY_REGISTER_INSTANTIATOR(Layer, UnicapLayer, CamLayer, unicap);
 

@@ -24,7 +24,7 @@
 /**    TORTIOUS ACTION, ARISING OUT OF OR IN  CONNECTION  WITH  THE  USE    **/
 /**    OR PERFORMANCE OF THIS SOFTWARE.                                     **/
 /*****************************************************************************/
-#include <vroot.h>
+#include "vroot.h"
 
 #if !defined(lint) && !defined(SABER)
 const char vroot_rcsid[] =

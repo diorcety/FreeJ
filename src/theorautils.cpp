@@ -36,10 +36,10 @@
 #include <kate/oggkate.h>
 #endif
 
-#include <theorautils.h>
+#include "theorautils.h"
 
 #include <config.h>
-#include <jutils.h>
+#include "jutils.h"
 
 static void write_audio_page(oggmux_info *);
 

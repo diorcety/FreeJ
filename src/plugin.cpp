@@ -1,7 +1,7 @@
 #include <string.h>
 #include <dlfcn.h>
 
-#include <plugin.h>
+#include "plugin.h"
 #include <config.h>
 #include <stdio.h>
 

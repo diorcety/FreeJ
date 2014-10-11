@@ -30,13 +30,13 @@
 #include <SDL.h>
 
 
-#include <closure.h>
-#include <sharedptr.h>
-#include <linklist.h>
-#include <ringbuffer.h>
+#include "closure.h"
+#include "sharedptr.h"
+#include "linklist.h"
+#include "ringbuffer.h"
 
-#include <layer.h>
-#include <blitter.h>
+#include "layer.h"
+#include "blitter.h"
 
 
 template <class T> class LinkList;

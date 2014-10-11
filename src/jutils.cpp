@@ -42,7 +42,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include <jutils.h>
+#include "jutils.h"
 #include <config.h>
 
 /*

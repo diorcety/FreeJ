@@ -19,8 +19,8 @@
 #ifndef __KBD_CTRL_H__
 #define __KBD_CTRL_H__
 
-#include <sdl_controller.h>
-#include <factory.h>
+#include "sdl_controller.h"
+#include "factory.h"
 
 #include <SDL.h>
 

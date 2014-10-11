@@ -21,9 +21,9 @@
 #ifndef __SLANG_CONSOLE_H__
 #define __SLANG_CONSOLE_H__
 
-#include <controller.h>
-#include <linklist.h>
-#include <console_ctrl.h>
+#include "controller.h"
+#include "linklist.h"
+#include "console_ctrl.h"
 #include <slang.h>
 
 

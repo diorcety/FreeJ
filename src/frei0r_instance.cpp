@@ -25,7 +25,7 @@
 
 #ifdef WITH_FREI0R
 
-#include <parameter_instance.h>
+#include "parameter_instance.h"
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <stdio.h> // for snprintf()
@@ -34,10 +34,10 @@
 #include <string>
 #include <algorithm>
 
-#include <frei0r_freej.h>
-#include <frei0r_instance.h>
-#include <layer.h>
-#include <jutils.h>
+#include "frei0r_freej.h"
+#include "frei0r_instance.h"
+#include "layer.h"
+#include "jutils.h"
 
 FACTORY_REGISTER_INSTANTIATOR(FilterInstance, FreiorInstance, FreiorInstance, core);
 

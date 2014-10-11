@@ -20,7 +20,7 @@
 #define __parameter_h__
 
 
-#include <linklist.h>
+#include "linklist.h"
 
 FREEJ_FORWARD_PTR(Layer)
 FREEJ_FORWARD_PTR(FilterInstance)

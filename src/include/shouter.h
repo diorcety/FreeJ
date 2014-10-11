@@ -25,11 +25,11 @@
 #include <shout/shout.h>
 
 
-#include <jsync.h>
-#include <jutils.h>
+#include "jsync.h"
+#include "jutils.h"
 
 #include <string.h>
-#include <linklist.h>
+#include "linklist.h"
 
 template <class T> class LinkList;
 

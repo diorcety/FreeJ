@@ -22,12 +22,12 @@
 
 #include <string.h>
 
-#include <joy_ctrl.h>
+#include "joy_ctrl.h"
 
 #include <config.h>
 
-#include <context.h>
-#include <jutils.h>
+#include "context.h"
+#include "jutils.h"
 
 
 JoyController::JoyController()

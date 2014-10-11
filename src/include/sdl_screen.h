@@ -23,9 +23,9 @@
 #define __SDL_SCREEN_H__
 
 #include <SDL.h>
-#include <screen.h>
+#include "screen.h"
 
-#include <factory.h>
+#include "factory.h"
 
 FREEJ_FORWARD_PTR(SdlScreen)
 class SdlScreen : public ViewPort {

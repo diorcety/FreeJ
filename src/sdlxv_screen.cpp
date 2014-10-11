@@ -23,9 +23,9 @@
 #include <string.h>
 #include <SDL_syswm.h>
 
-#include <sdlxv_screen.h>
+#include "sdlxv_screen.h"
 #include <ccvt.h>
-#include <jutils.h>
+#include "jutils.h"
 #include <config.h>
 
 SdlXvScreen::SdlXvScreen()

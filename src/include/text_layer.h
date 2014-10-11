@@ -27,7 +27,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <layer.h>
+#include "layer.h"
 
 FREEJ_FORWARD_PTR(TextLayer)
 class TextLayer : public Layer {

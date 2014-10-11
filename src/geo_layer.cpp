@@ -21,9 +21,9 @@
 
 #include <stdlib.h>
 
-#include <jutils.h>
-#include <context.h>
-#include <geo_layer.h>
+#include "jutils.h"
+#include "context.h"
+#include "geo_layer.h"
 
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(Layer, GeoLayer, GeometryLayer, basic);

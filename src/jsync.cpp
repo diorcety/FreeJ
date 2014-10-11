@@ -16,8 +16,8 @@
  * Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <jsync.h>
-#include <jutils.h>
+#include "jsync.h"
+#include "jutils.h"
 #include <config.h>
 
 JSyncThread::JSyncThread() {

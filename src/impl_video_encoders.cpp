@@ -22,9 +22,9 @@
 #include <config.h>
 #include <string.h>
 
-#include <jutils.h>
+#include "jutils.h"
 
-#include <impl_video_encoders.h>
+#include "impl_video_encoders.h"
 
 VideoEncoderPtr get_encoder(char *enctype) {
     VideoEncoderPtr e;

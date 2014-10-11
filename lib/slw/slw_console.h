@@ -22,7 +22,7 @@
 #define __SLW_CONSOLE_H__
 
 
-#include <slw.h>
+#include "slw.h"
 
 
 extern volatile int SLang_Error; // hack for old versions

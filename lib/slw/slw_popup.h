@@ -21,7 +21,7 @@
 #ifndef __SLW_POPUP_H__
 #define __SLW_POPUP_H__
 
-#include <slw.h>
+#include "slw.h"
 
 class SLW_Popup : public SLangWidget {
 
