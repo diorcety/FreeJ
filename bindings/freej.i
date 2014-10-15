@@ -54,6 +54,7 @@
 %import "inttypes.i"
 
 //ditch some of the defines we have that don't need to be exposed to the user
+%ignore JSyncThread;
 %ignore THREADSAFE;
 %ignore MAX_ERR_MSG;
 %ignore MAX_COMPLETION;
@@ -131,6 +132,7 @@ freej_entry_typemap_in(Encoder);
 %include "entity.h"
 %include "freej.h"
 %include "jutils.h"
+%include "jsync.h"
 %include "context.h"
 %include "screen.h"
 %template(ScreenFactory) Factory<ViewPort>;
@@ -156,6 +158,8 @@ freej_entry_typemap_in(Encoder);
 
 %include "parameter.h"
 %template(ParameterLinkList) LinkList<Parameter>;
+%include "parameter_instance.h"
+%template(ParameterInstanceLinkList) LinkList<ParameterInstance>;
 
 %include "filter.h"
 %template(FilterLinkList) LinkList<Filter>;

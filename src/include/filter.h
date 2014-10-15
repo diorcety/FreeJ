@@ -34,8 +34,6 @@ FREEJ_FORWARD_PTR(CVFilter)
 #endif
 FREEJ_FORWARD_PTR(Freeframe)
 
-template <class T> class LinkList;
-
 FREEJ_FORWARD_PTR(Filter)
 class Filter : public Entry {
     friend class FilterInstance;

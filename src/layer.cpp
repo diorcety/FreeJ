@@ -118,8 +118,8 @@ bool Layer::set_blit(const char *bname) {
     auto screen = this->screen.lock();
     if(screen) {
         auto blitter = screen->getBlitter();
-        LockedLinkList<Blit> list = LockedLinkList<Blit>(blitter->getBlits());
-        LockedLinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (BlitPtr &b) {
+        LinkList<Blit> &list = blitter->getBlits();
+        LinkList<Blit>::iterator it = std::find_if(list.begin(), list.end(), [&] (BlitPtr &b) {
                                                              return b->getName() == bname;
                                                          });
 
@@ -197,8 +197,7 @@ bool Layer::cafudda(double time) {
 }
 
 void *Layer::do_filters(double time, void *tmp_buf) {
-    LockedLinkList<FilterInstance> list = LockedLinkList<FilterInstance>(filters);
-    std::for_each(list.begin(), list.end(), [&](FilterInstancePtr filt) {
+    std::for_each(filters.begin(), filters.end(), [&](FilterInstancePtr filt) {
                       tmp_buf = (void*) filt->process(time, (uint32_t*)tmp_buf);
                   });
     return tmp_buf;
@@ -207,8 +206,8 @@ void *Layer::do_filters(double time, void *tmp_buf) {
 int Layer::do_iterators() {
 
     /* process thru iterators */
-    LockedLinkList<Iterator> list = LockedLinkList<Iterator>(iterators);
-    LockedLinkList<Iterator>::iterator it = list.begin();
+    LinkList<Iterator> &list = iterators;
+    LinkList<Iterator>::iterator it = list.begin();
     while(it != list.end()) {
         IteratorPtr iter = *it;
         int res = iter->cafudda(); // if cafudda returns -1...
@@ -362,14 +361,14 @@ bool Layer::up() {
         return false;
     }
 
-    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
-    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
+    LinkList<Layer> &layerList = screen->getLayers();
+    LinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
     assert(layerIt != layerList.end());
     if(layerIt == layerList.begin()) {
         error("Cannot up layer, it is already the first layer");
         return false;
     }
-    LockedLinkList<Layer>::iterator newLayerIt = layerIt--;
+    LinkList<Layer>::iterator newLayerIt = layerIt--;
     layerList.splice(newLayerIt, layerList, layerIt);
     return true;
 }
@@ -382,10 +381,10 @@ bool Layer::down() {
         return false;
     }
 
-    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
-    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
+    LinkList<Layer> &layerList = screen->getLayers();
+    LinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
     assert(layerIt != layerList.end());
-    LockedLinkList<Layer>::iterator newLayerIt = layerIt++;
+    LinkList<Layer>::iterator newLayerIt = layerIt++;
     if(newLayerIt == layerList.end()) {
         error("Cannot down layer, it is already the last layer");
         return false;
@@ -402,14 +401,14 @@ bool Layer::move(int pos) {
         return false;
     }
 
-    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
+    LinkList<Layer> &layerList = screen->getLayers();
     if(pos < 0 || (size_t)pos >= layerList.size()) {
         error("Cannot move layer to an invalid position");
     }
 
-    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
+    LinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), SharedFromThis(Layer));
     assert(layerIt != layerList.end());
-    LockedLinkList<Layer>::iterator newLayerIt = layerList.begin();
+    LinkList<Layer>::iterator newLayerIt = layerList.begin();
     std::advance(newLayerIt, pos);
 
     layerList.splice(newLayerIt, layerList, layerIt);

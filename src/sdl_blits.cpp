@@ -52,8 +52,7 @@ BLIT sdl_alpha(void *src, SDL_Rect *src_rect,
 
     unsigned int int_alpha;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        float alpha = *(float*)(list.front()->get()); // only one value
+        float alpha = *(float*)(params.front()->get()); // only one value
         int_alpha = (unsigned int) alpha;
     }
 
@@ -75,8 +74,7 @@ BLIT sdl_srcalpha(void *src, SDL_Rect *src_rect,
 
     unsigned int int_alpha;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        float alpha = *(float*)(list.front()->get()); // only one value
+        float alpha = *(float*)(params.front()->get()); // only one value
         int_alpha = (unsigned int) alpha;
     }
 
@@ -122,12 +120,10 @@ static bool init = false;
 
 LinkList<Blit> &get_sdl_blits() {
     if(!init) {
-        LockedLinkList<Blit> list = LockedLinkList<Blit>(blits);
-
         /////////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::SDL,
                 "SDL",
                 "RGB blit (SDL)",
@@ -139,15 +135,14 @@ LinkList<Blit> &get_sdl_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "alpha",
                 "level of transparency of alpha channel (0.0 - 1.0)",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::SDL,
                 "ALPHA",
                 "alpha blit (SDL)",
@@ -160,15 +155,14 @@ LinkList<Blit> &get_sdl_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "alpha",
                 "level of transparency of alpha channel (0.0 - 1.0)",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::SDL,
                 "SRCALPHA",
                 "source alpha blit (SDL)",

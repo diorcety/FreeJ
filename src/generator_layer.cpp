@@ -55,7 +55,7 @@ GeneratorLayer::~GeneratorLayer() {
 
 void GeneratorLayer::register_generators(LinkList<Filter> *gens) {
     generators = gens;
-    act("%u generators available", LockedLinkList<Filter>(*gens).size());
+    act("%u generators available", gens->size());
 }
 
 bool GeneratorLayer::open(const char *file) {
@@ -65,8 +65,8 @@ bool GeneratorLayer::open(const char *file) {
         return false;
     }
 
-    LockedLinkList<Filter> list = LockedLinkList<Filter>(*generators);
-    LockedLinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&] (FilterPtr &filter) {
+    LinkList<Filter> &list = *generators;
+    LinkList<Filter>::iterator it = std::find_if(list.begin(), list.end(), [&] (FilterPtr &filter) {
                                                            return filter->getName() == file;
                                                        });
     if(it != list.end()) {

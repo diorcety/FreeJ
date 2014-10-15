@@ -30,8 +30,6 @@
 
 FREEJ_FORWARD_PTR(Context)
 
-template <class T> class LinkList;
-
 /**
    This class implements the object storing all available filter
    instances and dispatching them for FreeJ operations.

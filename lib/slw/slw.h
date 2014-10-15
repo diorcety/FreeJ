@@ -26,6 +26,7 @@
 #include <sharedptr.h>
 #include <linklist.h>
 
+#include "logging.h"
 #include "keycodes.h"
 
 

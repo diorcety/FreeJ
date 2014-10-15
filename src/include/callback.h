@@ -24,6 +24,7 @@
 #include <pthread.h>
 
 #include "closure.h"
+#include "linklist.h"
 
 #if 0
 /*
@@ -109,7 +110,7 @@ public:
     }
 
     void notify(ThreadedClosureQueue *dispatcher) {
-        std::list<FunctionType>::iterator i;
+        LinkList<FunctionType>::iterator i;
         for(i = calls_.begin(); i != calls_.end(); i++)
             dispatcher->add_job(NewClosure(*i));
     }
@@ -117,14 +118,14 @@ public:
 private:
     FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
-        std::list<FunctionType>::iterator i;
+        LinkList<FunctionType>::iterator i;
         for(i = calls_.begin(); i != calls_.end(); i++)
             if(*i == call) fun = call;
         return fun;
     }
 
     FunctionType function_;
-    std::list<FunctionType> calls_;
+    LinkList<FunctionType> calls_;
 };
 
 template <typename Arg1>
@@ -167,7 +168,7 @@ public:
     }
 
     void notify(ThreadedClosureQueue *dispatcher, Arg1 arg1) {
-        typename std::list<FunctionType>::iterator i;
+        typename LinkList<FunctionType>::iterator i;
         for(i = calls_.begin(); i != calls_.end(); i++)
             dispatcher->add_job(NewClosure(*i, arg1));
     }
@@ -175,14 +176,14 @@ public:
 private:
     FunctionType get_fun_(FunctionType call) {
         FunctionType fun = NULL;
-        typename std::list<FunctionType>::iterator i;
+        typename LinkList<FunctionType>::iterator i;
         for(i = calls_.begin(); i != calls_.end(); i++)
             if(*i == call) fun = call;
         return fun;
     }
 
     FunctionType function_;
-    std::list<FunctionType> calls_;
+    LinkList<FunctionType> calls_;
 };
 
 }  // namespace callbacks
@@ -302,18 +303,21 @@ public:
 private:
     callbacks::CbackData *get_data_(const std::string& name) {
         callbacks::CbackData *c = NULL;
-        std::list<callbacks::CbackData*>::iterator i;
+        LinkList<callbacks::CbackData*>::iterator i;
         for(i = cbacks_.begin(); i != cbacks_.end(); i++)
             if((*i)->name() == name) c = *i;
         return c;
     }
 
-    std::list<callbacks::CbackData*> cbacks_;
+    LinkList<callbacks::CbackData*> cbacks_;
     ThreadedClosureQueue *dispatcher_;
 };
 #endif
 
 // TODO(shammash): quick hack to provide EOS callback immediately
+
+
+FREEJ_FORWARD_PTR(DumbCall)
 class DumbCall {
 public:
     DumbCall();
@@ -340,14 +344,14 @@ public:
     DumbCallback();
     ~DumbCallback();
 
-    bool add_call(DumbCall *call);
-    bool rem_call(DumbCall *call);
+    bool add_call(DumbCallPtr call);
+    bool rem_call(DumbCallPtr call);
     void notify();
 
 private:
-    DumbCall *get_call_(DumbCall *call);
+    DumbCallPtr get_call_(DumbCallPtr call);
 
-    std::list<DumbCall *> calls_;
+    LinkList<DumbCall> calls_;
     ThreadedClosureQueue *dispatcher_;
 
 };

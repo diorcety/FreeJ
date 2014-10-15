@@ -60,8 +60,7 @@ BLIT red_mask(void *src, void *dst, int bytes, LinkList<ParameterInstance> &para
 
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterBinarizeUsingThreshold((unsigned char*)dst, (unsigned char*)dst, bytes, v);
@@ -77,8 +76,7 @@ BLIT green_mask(void *src, void *dst, int bytes, LinkList<ParameterInstance> &pa
 
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterBinarizeUsingThreshold((unsigned char*)dst, (unsigned char*)dst, bytes, v);
@@ -94,8 +92,7 @@ BLIT blue_mask(void *src, void *dst, int bytes, LinkList<ParameterInstance> &par
 
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterBinarizeUsingThreshold((unsigned char*)dst, (unsigned char*)dst, bytes, v);
@@ -158,8 +155,7 @@ BLIT schiffler_neg(void *src, void *dst, int bytes, LinkList<ParameterInstance> 
 BLIT schiffler_addbyte(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterAddByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
@@ -168,8 +164,7 @@ BLIT schiffler_addbyte(void *src, void *dst, int bytes, LinkList<ParameterInstan
 BLIT schiffler_addbytetohalf(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterAddByteToHalf((unsigned char*)src, (unsigned char*)dst, bytes, v);
@@ -178,8 +173,7 @@ BLIT schiffler_addbytetohalf(void *src, void *dst, int bytes, LinkList<Parameter
 BLIT schiffler_subbyte(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterSubByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
@@ -188,8 +182,7 @@ BLIT schiffler_subbyte(void *src, void *dst, int bytes, LinkList<ParameterInstan
 BLIT schiffler_shl(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterShiftLeft((unsigned char*)src, (unsigned char*)dst, bytes, v);
@@ -198,8 +191,7 @@ BLIT schiffler_shl(void *src, void *dst, int bytes, LinkList<ParameterInstance> 
 BLIT schiffler_shlb(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterShiftLeftByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
@@ -208,8 +200,7 @@ BLIT schiffler_shlb(void *src, void *dst, int bytes, LinkList<ParameterInstance>
 BLIT schiffler_shr(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterShiftRight((unsigned char*)src, (unsigned char*)dst, bytes, v);
@@ -218,8 +209,7 @@ BLIT schiffler_shr(void *src, void *dst, int bytes, LinkList<ParameterInstance> 
 BLIT schiffler_mulbyte(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterMultByByte((unsigned char*)src, (unsigned char*)dst, bytes, v);
@@ -228,8 +218,7 @@ BLIT schiffler_mulbyte(void *src, void *dst, int bytes, LinkList<ParameterInstan
 BLIT schiffler_binarize(void *src, void *dst, int bytes, LinkList<ParameterInstance> &params) {
     unsigned char v;
     {
-        LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(params);
-        v = (unsigned int) *(float*)(list.front()->get());  // only one value
+        v = (unsigned int) *(float*)(params.front()->get());  // only one value
     }
 
     SDL_imageFilterBinarizeUsingThreshold
@@ -241,12 +230,11 @@ static bool init = false;
 
 LinkList<Blit> &get_linear_blits() {
     if(!init) {
-        LockedLinkList<Blit> list = LockedLinkList<Blit>(blits);
 
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "RGB",
                 "RGB blit (jmemcpy)",
@@ -257,7 +245,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "ADD",
                 "bytewise addition",
@@ -268,7 +256,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "SUB",
                 "bytewise subtraction",
@@ -279,7 +267,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "MEAN",
                 "bytewise mean",
@@ -290,7 +278,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "ABSDIFF",
                 "absolute difference",
@@ -301,7 +289,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "MULT",
                 "multiplication",
@@ -312,7 +300,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "MULTNOR",
                 "normalized multiplication",
@@ -323,7 +311,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "DIV",
                 "division",
@@ -334,7 +322,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "MULTDIV2",
                 "multiplication and division by 2",
@@ -345,7 +333,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "MULTDIV4",
                 "multiplication and division by 4",
@@ -356,7 +344,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "AND",
                 "bitwise and",
@@ -367,7 +355,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "OR",
                 "bitwise or",
@@ -378,7 +366,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "XOR",
                 "bitwise xor",
@@ -389,7 +377,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "RED",
                 "red channel only blit",
@@ -400,7 +388,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "GREEN",
                 "green channel only blit",
@@ -411,7 +399,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "BLUE",
                 "blue channel only blit",
@@ -423,15 +411,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "bit threshold",
                 "bitmask threshold to apply to the red channel",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "REDMASK",
                 "red channel threshold mask",
@@ -444,15 +431,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "bit threshold",
                 "bitmask threshold to apply to the green channel",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "GREENMASK",
                 "green channel threshold mask",
@@ -465,15 +451,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "bit threshold",
                 "bitmask threshold to apply to the blue channel",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "BLUEMASK",
                 "blue channel threshold mask",
@@ -485,7 +470,7 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "NEG",
                 "bitwise negation",
@@ -497,15 +482,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "byte increment",
                 "amount to sum to the byte",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "ADDB",
                 "add byte to bytes",
@@ -518,15 +502,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "half byte increment",
                 "amount to sum to the half byte",
                 127.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "ADDBH",
                 "add byte to half",
@@ -539,15 +522,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "byte decrement",
                 "amount to substract to the pixel bytes",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "SUBB",
                 "subtract byte to bytes",
@@ -560,15 +542,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "byte decrement",
                 "amount to substract to the pixel bytes",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "SHL",
                 "shift left bits",
@@ -581,15 +562,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "shift bits",
                 "amount of left bit shifts to apply on each pixel's byte",
                 8.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "SHLB",
                 "shift left byte",
@@ -602,15 +582,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "shift bits",
                 "amount of right bit shifts to apply on each pixel's byte",
                 8.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "SHR",
                 "shift right bits",
@@ -623,15 +602,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "byte multiplier",
                 "amount to multiply on each pixel's byte",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "MULB",
                 "multiply by byte",
@@ -644,15 +622,14 @@ LinkList<Blit> &get_linear_blits() {
 
         {
             LinkList<Parameter> parameters;
-            LockedLinkList<Parameter> p = LockedLinkList<Parameter>(parameters);
-            p.push_back(MakeShared<Parameter>(
+            parameters.push_back(MakeShared<Parameter>(
                 Parameter::NUMBER,
                 "threshold",
                 "binary threshold value",
                 255.0
             ));
 
-            list.push_back(MakeShared<Blit>(
+            blits.push_back(MakeShared<Blit>(
                 Blit::LINEAR,
                 "BIN",
                 "binarize using threshold",

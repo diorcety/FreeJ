@@ -40,14 +40,13 @@ bool Controller::init(ContextPtr freej) {
 }
 
 bool Controller::add_listener(ControllerListenerPtr listener) {
-    LockedLinkList<ControllerListener>(listeners).push_back(listener);
+    listeners.push_back(listener);
     return true;
 }
 
 void Controller::reset() {
     active = false;
-    LockedLinkList<ControllerListener> list = LockedLinkList<ControllerListener>(listeners);
-    list.clear();
+    listeners.clear();
 }
 
 ControllerListener::~ControllerListener() {

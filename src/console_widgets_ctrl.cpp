@@ -106,16 +106,16 @@ bool SlwSelector::feed(int key) {
         return false;
     }
 
-    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
-    LockedLinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), getSelectedLayer());
+    LinkList<Layer> &layerList = screen->getLayers();
+    LinkList<Layer>::iterator layerIt = std::find(layerList.begin(), layerList.end(), getSelectedLayer());
     if(!layerList.empty()) { // there are layers
 
         res = true;
 
         LayerPtr le = getSelectedLayer();
 
-        LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(le->getFilters());
-        LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), getSelectedFilter());
+        LinkList<FilterInstance> &filterList = le->getFilters();
+        LinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), getSelectedFilter());
 
         // switch over operations and perform
         switch(key) {
@@ -238,8 +238,8 @@ bool SlwSelector::refresh() {
 
     // also put info from encoders, if active
     // so far supported only one encoder
-    LockedLinkList<VideoEncoder> encoderList = LockedLinkList<VideoEncoder>(screen->getEncoders());
-    LockedLinkList<VideoEncoder>::iterator it = encoderList.begin();
+    LinkList<VideoEncoder> &encoderList = screen->getEncoders();
+    LinkList<VideoEncoder>::iterator it = encoderList.begin();
     if(it != encoderList.end()) {
         VideoEncoderPtr enc = *it;
         snprintf(tmp, w, "Stream: video %u kb/s : audio %u kb/s : encoded %u kb",
@@ -262,7 +262,7 @@ bool SlwSelector::refresh() {
     putnch(tmp, 1, 1, 0);
 
 
-    LockedLinkList<Layer> layerList = LockedLinkList<Layer>(screen->getLayers());
+    LinkList<Layer> &layerList = screen->getLayers();
     if(!layerList.empty()) {
         //    int color;
         int tmpsize = 0;
@@ -313,7 +313,7 @@ bool SlwSelector::refresh() {
         }
 
 
-        LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
+        LinkList<FilterInstance> &filterList = layer->getFilters();
         pos = 4;
         std::for_each(filterList.begin(), filterList.end(), [&] (FilterInstancePtr f) {
                           //       SLsmg_set_color(PLAIN_COLOR);

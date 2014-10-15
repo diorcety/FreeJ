@@ -108,8 +108,7 @@ LinkList<Filter> Plugger::getFilters() {
     int found;
     char *path = _getsearchpath();
 
-    LinkList<Filter> list;
-    LockedLinkList<Filter> filterList = LockedLinkList<Filter>(list);
+    LinkList<Filter> filterList;
 
 #ifdef WITH_COCOA
     CVFilter::listFilters(env->filters);
@@ -127,7 +126,7 @@ LinkList<Filter> Plugger::getFilters() {
             found = scandir(dir, &filelist, selector, alphasort);
             if(found < 0) {
                 error("Plugger::scandir");
-                return list;
+                return filterList;
             };
             /* .so files found, check if they are plugins */
 
@@ -185,11 +184,11 @@ LinkList<Filter> Plugger::getFilters() {
         } while((dir = strtok(NULL, ":")));
     } else {
         warning("can't find any valid plugger directory");
-        return list;
+        return filterList;
     }
     act("filters found: %u", filterList.size());
 
-    return list;
+    return filterList;
 }
 
 LinkList<Filter> Plugger::getGenerators() {
@@ -199,8 +198,7 @@ LinkList<Filter> Plugger::getGenerators() {
     int found;
     char *path = _getsearchpath();
 
-    LinkList<Filter> list;
-    LockedLinkList<Filter> generatorList = LockedLinkList<Filter>(list);
+    LinkList<Filter> generatorList;
 
 #ifdef WITH_COCOA
     CVFilter::listFilters(env->filters);
@@ -218,7 +216,7 @@ LinkList<Filter> Plugger::getGenerators() {
             found = scandir(dir, &filelist, selector, alphasort);
             if(found < 0) {
                 error("Plugger::scandir");
-                return list;
+                return generatorList;
             };
             /* .so files found, check if they are plugins */
 
@@ -276,11 +274,11 @@ LinkList<Filter> Plugger::getGenerators() {
         } while((dir = strtok(NULL, ":")));
     } else {
         warning("can't find any valid plugger directory");
-        return list;
+        return generatorList;
     }
     act("generators found: %u", generatorList.size());
 
-    return list;
+    return generatorList;
 }
 
 void Plugger::addsearchdir(const char *dir) {

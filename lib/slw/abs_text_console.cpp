@@ -26,6 +26,7 @@
 #include <errno.h>
 
 #include "keycodes.h"
+#include "logging.h"
 #include "abs_text_console.h"
 
 #include <algorithm>
@@ -36,7 +37,7 @@
 TextConsole::TextConsole() {
     // create the first row
     RowPtr row = MakeShared<Row>();
-    LockedLinkList<Row>(rows).push_back(row);
+    rows.push_back(row);
 
     cur_row = row;
     vis_row_in = row;
@@ -50,8 +51,8 @@ bool TextConsole::feed(int key) {
     // interprets a keycode and perform the action (or write a letter)
 
     RowPtr r;
-    LockedLinkList<Row> list = LockedLinkList<Row>(rows);
-    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), cur_row);
+    LinkList<Row> &list = rows;
+    LinkList<Row>::iterator it = std::find(list.begin(), list.end(), cur_row);
     switch(key) {
 
     case KEY_NEWLINE:
@@ -236,8 +237,8 @@ bool TextConsole::refresh() {
     if(!vis_row_in) return false;
     else r = vis_row_in;
 
-    LockedLinkList<Row> list = LockedLinkList<Row>(rows);
-    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
+    LinkList<Row> &list = rows;
+    LinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
 
     // tell the renderer to blank the surface for a refresh
     // this is a pure virtual function here
@@ -263,8 +264,8 @@ void TextConsole::refresh_current() {
     if(!vis_row_in) return;
     else r = vis_row_in;
 
-    LockedLinkList<Row> list = LockedLinkList<Row>(rows);
-    LockedLinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
+    LinkList<Row> &list = rows;
+    LinkList<Row>::iterator it = std::find(list.begin(), list.end(), vis_row_in);
 
     for( c = 0; c < h; c++ ) {
 

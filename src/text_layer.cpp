@@ -55,10 +55,9 @@ TextLayer::TextLayer()
     name = "TXT";
     surf = NULL;
 
-    LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(parameters);
     {
         // setup specific layer parameters
-        list.push_back(MakeShared<ParameterInstance>(MakeShared<Parameter>(Parameter::NUMBER, "size", "set the size of the font")));
+        parameters.push_back(MakeShared<ParameterInstance>(MakeShared<Parameter>(Parameter::NUMBER, "size", "set the size of the font")));
     }
 }
 

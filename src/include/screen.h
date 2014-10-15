@@ -39,8 +39,6 @@
 #include "blitter.h"
 
 
-template <class T> class LinkList;
-
 ///////////////////////
 // GLOBAL COLOR MASKING
 

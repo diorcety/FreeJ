@@ -55,8 +55,6 @@ FREEJ_FORWARD_PTR(AudioCollector)
 FREEJ_FORWARD_PTR(VideoEncoder)
 FREEJ_FORWARD_PTR(FreejDaemon)
 
-template <class T> class LinkList;
-
 /* maximum height & width supported by context */
 #define MAX_HEIGHT 1024
 #define MAX_WIDTH 768

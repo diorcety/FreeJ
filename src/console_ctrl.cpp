@@ -60,7 +60,7 @@ const ViewPortPtr& getSelectedScreen() {
 void setSelectedScreen(const ViewPortPtr& screen) {
     consoleSelectedScreen = screen;
     if(screen) {
-        LockedLinkList<Layer> list = LockedLinkList<Layer>(screen->getLayers());
+        LinkList<Layer> &list = screen->getLayers();
         if(list.size() > 0) {
             setSelectedLayer(list.front());
         } else {
@@ -76,7 +76,7 @@ const LayerPtr& getSelectedLayer() {
 void setSelectedLayer(const LayerPtr& layer) {
     consoleSelectedLayer = layer;
     if(layer) {
-        LockedLinkList<FilterInstance> list = LockedLinkList<FilterInstance>(layer->getFilters());
+        LinkList<FilterInstance> &list = layer->getFilters();
         if(list.size() > 0) {
             setSelectedFilter(list.front());
         } else {

@@ -26,9 +26,7 @@ Blit::Blit(BlitType type, const std::string &name, const std::string &descriptio
     this->name = name;
     this->description = description;
     this->fun = fun;
-    LockedLinkList<Parameter> a = LockedLinkList<Parameter>(this->parameters);
-    LockedLinkList<Parameter> b = LockedLinkList<Parameter>(parameters);
-    a.insert(a.end(), b.begin(), b.end());
+    this->parameters.insert(this->parameters.end(), parameters.begin(), parameters.end());
 }
 
 Blit::Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &&parameters) : Blit(type, name, description, fun, parameters) {

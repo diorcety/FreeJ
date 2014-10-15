@@ -59,7 +59,7 @@ protected:
     void print_info();
 
     bool opened;
-    std::list<FreiorParameterPtr> parameters;
+    LinkList<FreiorParameter> parameters;
 
     void (*f0r_set_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);
     void (*f0r_get_param_value)(f0r_instance_t instance, f0r_param_t param, int param_index);

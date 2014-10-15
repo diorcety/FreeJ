@@ -45,8 +45,7 @@ TriggerController::~TriggerController() {
 int TriggerController::poll() {
 
     if(javascript) {
-        LockedLinkList<ControllerListener> list = LockedLinkList<ControllerListener>(listeners);
-        std::for_each(list.begin(), list.end(), [&](ControllerListenerPtr listener){
+        std::for_each(listeners.begin(), listeners.end(), [&](ControllerListenerPtr listener){
                           listener->frame();
                       });
     }

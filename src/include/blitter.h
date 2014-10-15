@@ -28,8 +28,6 @@
 FREEJ_FORWARD_PTR(Layer)
 FREEJ_FORWARD_PTR(ViewPort)
 
-template <class T> class LinkList;
-
 FREEJ_FORWARD_PTR(Blit)
 
 FREEJ_FORWARD_PTR(Blitter)

@@ -67,7 +67,7 @@ DumbCallback::~DumbCallback() {
     calls_.clear();
 }
 
-bool DumbCallback::add_call(DumbCall *call) {
+bool DumbCallback::add_call(DumbCallPtr call) {
     if(get_call_(call)) {
         warning("%s, callback already present", __PRETTY_FUNCTION__);
         return false;
@@ -76,7 +76,7 @@ bool DumbCallback::add_call(DumbCall *call) {
     return true;
 }
 
-bool DumbCallback::rem_call(DumbCall *call) {
+bool DumbCallback::rem_call(DumbCallPtr call) {
     if(!get_call_(call)) {
         warning("%s, callback not present", __PRETTY_FUNCTION__);
         return false;
@@ -86,16 +86,16 @@ bool DumbCallback::rem_call(DumbCall *call) {
 }
 
 void DumbCallback::notify() {
-    std::list<DumbCall *>::iterator i;
+    LinkList<DumbCall>::iterator i;
     for(i = calls_.begin(); i != calls_.end(); i++) {
         (*i)->enqueue();
         dispatcher_->add_job(NewClosure(*i, &DumbCall::notify));
     }
 }
 
-DumbCall *DumbCallback::get_call_(DumbCall *call) {
-    DumbCall *fun = NULL;
-    std::list<DumbCall *>::iterator i;
+DumbCallPtr DumbCallback::get_call_(DumbCallPtr call) {
+    DumbCallPtr fun = NULL;
+    LinkList<DumbCall>::iterator i;
     for(i = calls_.begin(); i != calls_.end(); i++)
         if(*i == call) fun = call;
     return fun;

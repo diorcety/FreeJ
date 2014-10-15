@@ -86,11 +86,11 @@ public:
     void pause();
 
     // quick hack for EOS callback
-    bool add_eos_call(DumbCall *c) {
+    bool add_eos_call(DumbCallPtr c) {
         return eos->add_call(c);
     }
 
-    bool rem_eos_call(DumbCall *c) {
+    bool rem_eos_call(DumbCallPtr c) {
         return eos->rem_call(c);
     }
 

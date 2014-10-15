@@ -240,7 +240,7 @@ class MethodClosure0 : public Closure {
 public:
     typedef void (Class::*MethodType)();
 
-    MethodClosure0(Class* object, MethodType method, bool synchronized)
+    MethodClosure0(SharedPtr<Class> object, MethodType method, bool synchronized)
         : Closure(synchronized),
         object_(object), method_(method) {
     }
@@ -249,11 +249,11 @@ public:
     }
 
     void run_() {
-        (object_->*method_)();
+        (object_.get()->*method_)();
     }
 
 private:
-    Class* object_;
+    SharedPtr<Class> object_;
     MethodType method_;
 };
 
@@ -488,12 +488,12 @@ inline Closure* NewSyncClosure(void (*function)()) {
 }
 
 template <typename Class>
-inline Closure* NewClosure(Class* object, void (Class::*method)()) {
+inline Closure* NewClosure(SharedPtr<Class> object, void (Class::*method)()) {
     return new closures::MethodClosure0<Class>(object, method, false);
 }
 
 template <typename Class>
-inline Closure* NewSyncClosure(Class* object, void (Class::*method)()) {
+inline Closure* NewSyncClosure(SharedPtr<Class> object, void (Class::*method)()) {
     return new closures::MethodClosure0<Class>(object, method, true);
 }
 

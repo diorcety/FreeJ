@@ -24,7 +24,6 @@
 
 #include "slw.h"
 
-
 extern volatile int SLang_Error; // hack for old versions
 
 

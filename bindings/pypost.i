@@ -2,7 +2,7 @@
 {
    double getDouble()
    {
-      return *(double*)self->value;
+      return *(double*)self->get();
    }
    void setDouble(double val)
    {
@@ -10,7 +10,7 @@
    }
    bool getBool()
    {
-      return *(bool*)self->value;
+      return *(bool*)self->get();
    }
    void setBool(bool val)
    {

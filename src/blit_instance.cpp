@@ -35,8 +35,7 @@ void BlitInstance::init(BlitPtr fr) {
     name = proto->name;
     active = true;
     
-    LockedLinkList<Parameter> list = LockedLinkList<Parameter>(proto->parameters);
-    LockedLinkList<ParameterInstance> parameters = LockedLinkList<ParameterInstance>(this->parameters);
+    LinkList<Parameter> &list = proto->parameters;
     // Get the list of params.
     std::for_each(list.begin(), list.end(), [&] (ParameterPtr param) {
         parameters.push_back(MakeShared<ParameterInstance>(param));

@@ -31,8 +31,6 @@
 #include <string.h>
 #include "linklist.h"
 
-template <class T> class LinkList;
-
 #define ERRORMSG 128
 #define RETRY_DELAY 60 /* time to retry connect on broken icecasts, in seconds */
 #define MAX_VALUE_SIZE 512

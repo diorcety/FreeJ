@@ -179,8 +179,7 @@ bool Context::add_screen(ViewPortPtr scr) {
         error("use init( width, height, bits_per_pixel )");
         return false;
     }
-    LockedLinkList<ViewPort> list = LockedLinkList<ViewPort>(screens);
-    list.push_front(scr);
+    screens.push_front(scr);
     func("screen %s successfully added", scr->getName().c_str());
     act("screen %s now on top", scr->getName().c_str());
 
@@ -228,12 +227,10 @@ bool Context::init() {
     }
 
     // refresh the list of available plugins
-    auto filters = LockedLinkList<Filter>(this->filters);
-    auto new_filters = LockedLinkList<Filter>(plugger.getFilters());
+    LinkList<Filter> &&new_filters = plugger.getFilters();
     filters.insert(filters.end(), new_filters.begin(), new_filters.end());
 
-    auto generators = LockedLinkList<Filter>(this->generators);
-    auto new_generators = LockedLinkList<Filter>(plugger.getGenerators());
+    LinkList<Filter> &&new_generators = plugger.getGenerators();
     generators.insert(generators.end(), new_generators.begin(), new_generators.end());
 
     return true;
@@ -272,9 +269,8 @@ void Context::cafudda(double secs) {
     ///////////////////////////////
 
     /////////////////////////////
-    LockedLinkList<ViewPort> list = LockedLinkList<ViewPort>(screens);
     // blit layers on screens
-    std::for_each(list.begin(), list.end(), [&](ViewPortPtr scr) {
+    std::for_each(screens.begin(), screens.end(), [&](ViewPortPtr scr) {
                       if(clear_all) scr->clear();
 
                       // Change resolution if needed
@@ -320,8 +316,7 @@ void Context::handle_controllers() {
                     //if(res < 0) warning("SDL_PeepEvents error");
                 }
 
-    LockedLinkList<Controller> list = LockedLinkList<Controller>(controllers);
-    std::for_each(list.begin(), list.end(), [] (ControllerPtr ctrl) {
+    std::for_each(controllers.begin(), controllers.end(), [] (ControllerPtr ctrl) {
                       if(ctrl->active)
                           ctrl->poll();
                   });
@@ -353,7 +348,7 @@ bool Context::register_controller(ControllerPtr ctrl) {
 
     ctrl->active = true;
 
-    LockedLinkList<Controller>(controllers).push_back(ctrl);
+    controllers.push_back(ctrl);
 
     act("registered %s controller", ctrl->getName().c_str());
     return true;
@@ -369,7 +364,7 @@ bool Context::rem_controller(ControllerPtr ctrl) {
     //  if(js) js->gc(); // ?!
 
     ctrl->active = false;
-    LockedLinkList<Controller>(controllers).remove(ctrl);
+    controllers.remove(ctrl);
     act("removed controller %s", ctrl->getName().c_str());
 
     return true;
@@ -382,8 +377,8 @@ int Context::reset() {
 
 
     {
-        LockedLinkList<Controller> list = LockedLinkList<Controller>(controllers);
-        LockedLinkList<Controller>::iterator it = list.begin();
+        LinkList<Controller> &list = controllers;
+        LinkList<Controller>::iterator it = list.begin();
         func("deleting %u controllers", list.size());
         while(it != list.end()) {
             ControllerPtr ctrl = *it;
@@ -397,8 +392,8 @@ int Context::reset() {
     }
 
     {
-        LockedLinkList<ViewPort> list = LockedLinkList<ViewPort>(screens);
-        LockedLinkList<ViewPort>::iterator it = list.begin();
+        LinkList<ViewPort> &list = screens;
+        LinkList<ViewPort>::iterator it = list.begin();
         func("deleting %u screens", list.size());
         while(it != list.end()) {
             ViewPortPtr scr = *it;

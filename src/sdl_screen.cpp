@@ -68,8 +68,8 @@ SdlScreen::SdlScreen()
 
     switch_fullscreen = false;
 
-    LockedLinkList<Blit> blitterBlits = LockedLinkList<Blit>(blitter->getBlits());
-    LockedLinkList<Blit> sdlBlits = LockedLinkList<Blit>(get_sdl_blits());
+    LinkList<Blit> &blitterBlits = blitter->getBlits();
+    LinkList<Blit> &sdlBlits = get_sdl_blits();
     blitterBlits.insert(blitterBlits.end(), sdlBlits.begin(), sdlBlits.end());
     if(sdlBlits.size() > 0) {
         blitter->setDefaultBlit(sdlBlits.front());

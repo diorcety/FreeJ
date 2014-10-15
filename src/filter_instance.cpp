@@ -78,9 +78,7 @@ uint32_t *FilterInstance::process(double time, uint32_t *inframe) {
 }
 
 uint32_t *FilterInstance::_process(double time, uint32_t *inframe) {
-    LockedLinkList<ParameterInstance> list = LockedLinkList<ParameterInstance>(parameters);
-
-    std::for_each(list.begin(), list.end(), [&] (ParameterInstancePtr param) {
+    std::for_each(parameters.begin(), parameters.end(), [&] (ParameterInstancePtr param) {
         param->update();
     });
     return outframe;
@@ -125,14 +123,14 @@ bool FilterInstance::up() {
         return false;
     }
 
-    LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
-    LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
+    LinkList<FilterInstance> &filterList = layer->getFilters();
+    LinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
     assert(filterIt != filterList.end());
     if(filterIt == filterList.begin()) {
         error("Cannot up filter, it is already the first filter");
         return false;
     }
-    LockedLinkList<FilterInstance>::iterator newFilterInstanceIt = filterIt--;
+    LinkList<FilterInstance>::iterator newFilterInstanceIt = filterIt--;
     filterList.splice(newFilterInstanceIt, filterList, filterIt);
     return true;
 }
@@ -145,10 +143,10 @@ bool FilterInstance::down() {
         return false;
     }
 
-    LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
-    LockedLinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
+    LinkList<FilterInstance> &filterList = layer->getFilters();
+    LinkList<FilterInstance>::iterator filterIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
     assert(filterIt != filterList.end());
-    LockedLinkList<FilterInstance>::iterator newFilterInstanceIt = filterIt++;
+    LinkList<FilterInstance>::iterator newFilterInstanceIt = filterIt++;
     if(newFilterInstanceIt == filterList.end()) {
         error("Cannot down filter, it is already the last filter");
         return false;
@@ -165,14 +163,14 @@ bool FilterInstance::move(int pos) {
         return false;
     }
 
-    LockedLinkList<FilterInstance> filterList = LockedLinkList<FilterInstance>(layer->getFilters());
+    LinkList<FilterInstance> &filterList = layer->getFilters();
     if(pos < 0 || (size_t)pos >= filterList.size()) {
         error("Cannot move filter to an invalid position");
     }
 
-    LockedLinkList<FilterInstance>::iterator layerIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
+    LinkList<FilterInstance>::iterator layerIt = std::find(filterList.begin(), filterList.end(), SharedFromThis(FilterInstance));
     assert(layerIt != filterList.end());
-    LockedLinkList<FilterInstance>::iterator newFilterInstanceIt = filterList.begin();
+    LinkList<FilterInstance>::iterator newFilterInstanceIt = filterList.begin();
     std::advance(newFilterInstanceIt, pos);
 
     filterList.splice(newFilterInstanceIt, filterList, layerIt);

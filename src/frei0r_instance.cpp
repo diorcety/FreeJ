@@ -163,7 +163,6 @@ void FreiorInstance::init(FilterPtr fr) {
     FilterInstance::init(fr);
     auto freior = DynamicPointerCast<Freior>(fr);
     auto &list = freior->parameters;
-    LockedLinkList<ParameterInstance> parameters = LockedLinkList<ParameterInstance>(this->parameters);
     // Get the list of params.
     std::for_each(list.begin(), list.end(), [&] (FreiorParameterPtr param) {
         parameters.push_back(MakeShared<FreiorParameterInstance>(SharedFromThis(FreiorInstance), param));
