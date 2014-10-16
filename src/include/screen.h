@@ -95,7 +95,7 @@ public:
     ViewPort();
     virtual ~ViewPort();
 
-    bool init(int w = 0, int h = 0, int bpp = 0); ///< general initialization
+    bool init(int w = 640, int h = 480, int bpp = 32); ///< general initialization
 
 private:
     bool initialized;

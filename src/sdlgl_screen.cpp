@@ -187,7 +187,8 @@ void SdlGlScreen::check_opengl_error() {
 void SdlGlScreen::blit(LayerPtr lay) {
     // bind freej texture and copy it
     glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, lay->geo.w, lay->geo.h,
+    const Geometry &lay_geo = lay->getGeometry();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, lay_geo.w, lay_geo.h,
                  0, GL_RGBA, GL_UNSIGNED_BYTE, lay->buffer);
     check_opengl_error();
 

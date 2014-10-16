@@ -92,7 +92,7 @@ bool OpenCVCamLayer::_init() {
     return(true);
 }
 
-void *OpenCVCamLayer::feed() {
+void *OpenCVCamLayer::feed(double time) {
 
     frame = cvQueryFrame(capture);
 

@@ -97,9 +97,8 @@ bool GlScreen::check_opengl_error() {
 void GlScreen::blit(LayerPtr layer) {
     //glColor3f (0., 0., 0.);
     //glRasterPos2i (0,0);
-    layer->lock();
-    glDrawPixels(layer->geo.w, layer->geo.h, GL_BGRA, GL_UNSIGNED_BYTE, layer->buffer);
-    layer->unlock();
+    const Geometry &layer_geo = layer->getGeometry();
+    glDrawPixels(layer_geo.w, layer_geo.h, GL_BGRA, GL_UNSIGNED_BYTE, layer->buffer);
 }
 
 void GlScreen::show() {

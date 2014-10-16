@@ -83,9 +83,11 @@ class Layer : public Entry {
     friend class Context;
     friend class ViewPort;
     friend class SdlScreen; // TODO REMOVE
+    friend class SdlGlScreen; // TODO REMOVE
     friend class SoftScreen; // TODO REMOVE
     friend class SlwReadline; // TODO REMOVE
     friend class SlwSelector; // TODO REMOVE
+    friend class GlScreen; // TODO REMOVE
 
 public:
     enum Type {
