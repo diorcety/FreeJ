@@ -565,6 +565,10 @@ AC_ARG_ENABLE(console,
     [enable_console=yes])
 
 AM_CONDITIONAL([BUILD_CONSOLE], [test x$enable_console = xyes])
+if test x$enable_console = xyes; then
+    AC_DEFINE(WITH_CONSOLE,1,[define if console is enabled])
+fi
+
 
 dnl ==============================================================
 dnl Audio

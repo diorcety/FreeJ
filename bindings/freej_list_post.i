@@ -1,0 +1,90 @@
+/* Linklist */
+%include "std_list.i"
+%include "linklist.h"
+
+%define FREEJ_LIST_POST(TYPE)
+%template(TYPE ## StdList) std::list<SharedPtr<TYPE>>;
+%template(TYPE ## LinkList) LinkList<TYPE>;
+%enddef
+
+#if defined(WITH_AALIB)
+FREEJ_LIST_POST(AaScreen)
+#endif
+#if defined(WITH_AUDIO)
+FREEJ_LIST_POST(AudioCollector)
+FREEJ_LIST_POST(AudioLayer)
+#endif
+FREEJ_LIST_POST(Blit)
+FREEJ_LIST_POST(BlitInstance)
+FREEJ_LIST_POST(Blitter)
+FREEJ_LIST_POST(CairoLayer)
+FREEJ_LIST_POST(ConsoleController)
+FREEJ_LIST_POST(Context)
+FREEJ_LIST_POST(Controller)
+FREEJ_LIST_POST(ControllerListener)
+#if defined(WITH_COCOA)
+FREEJ_LIST_POST(CVFilter)
+#endif
+FREEJ_LIST_POST(Entry)
+FREEJ_LIST_POST(Filter)
+FREEJ_LIST_POST(FilterInstance)
+#if defined(WITH_FLASH)
+FREEJ_LIST_POST(FlashLayer)
+#endif
+FREEJ_LIST_POST(Freeframe)
+FREEJ_LIST_POST(FreeframeInstance)
+FREEJ_LIST_POST(FreeframeParameter)
+FREEJ_LIST_POST(FreeframeParameterInstance)
+FREEJ_LIST_POST(FreejDaemon)
+FREEJ_LIST_POST(Freior)
+FREEJ_LIST_POST(FreiorInstance)
+FREEJ_LIST_POST(FreiorParameter)
+FREEJ_LIST_POST(FreiorParameterInstance)
+FREEJ_LIST_POST(GeneratorLayer)
+FREEJ_LIST_POST(GeoLayer)
+FREEJ_LIST_POST(Geometry)
+FREEJ_LIST_POST(GlScreen)
+#if defined(WITH_GOOM)
+FREEJ_LIST_POST(GoomLayer)
+#endif
+FREEJ_LIST_POST(ImageLayer)
+FREEJ_LIST_POST(Iterator)
+FREEJ_LIST_POST(JackClient)
+FREEJ_LIST_POST(JoyController)
+FREEJ_LIST_POST(JSyncThread)
+FREEJ_LIST_POST(KbdController)
+FREEJ_LIST_POST(Layer)
+FREEJ_LIST_POST(Logger)
+FREEJ_LIST_POST(MidiController)
+FREEJ_LIST_POST(MouseController)
+#if defined(WITH_OGGTHEORA)
+FREEJ_LIST_POST(OggTheoraEncoder)
+#endif
+#if defined(WITH_OPENCV)
+FREEJ_LIST_POST(OpenCVCamLayer)
+#endif
+FREEJ_LIST_POST(OscCommand)
+FREEJ_LIST_POST(OscController)
+FREEJ_LIST_POST(Parameter)
+FREEJ_LIST_POST(ParameterInstance)
+FREEJ_LIST_POST(SdlController)
+FREEJ_LIST_POST(SdlGlScreen)
+FREEJ_LIST_POST(SdlScreen)
+FREEJ_LIST_POST(Shouter)
+FREEJ_LIST_POST(SoftScreen)
+FREEJ_LIST_POST(TextLayer)
+FREEJ_LIST_POST(TriggerController)
+#if defined(WITH_UNICAP)
+FREEJ_LIST_POST(UnicapLayer)
+#endif
+FREEJ_LIST_POST(V4L2CamLayer)
+FREEJ_LIST_POST(VideoEncoder)
+FREEJ_LIST_POST(VideoLayer)
+FREEJ_LIST_POST(ViewPort)
+FREEJ_LIST_POST(ViMoController)
+FREEJ_LIST_POST(WrapperLogger)
+FREEJ_LIST_POST(WiiController)
+#if defined(WITH_XGRAB)
+FREEJ_LIST_POST(XGrabLayer)
+#endif
+FREEJ_LIST_POST(XScreenSaverLayer)

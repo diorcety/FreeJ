@@ -44,6 +44,19 @@
 
 FACTORY_REGISTER_INSTANTIATOR(FilterInstance, FreeframeInstance, FreeframeInstance, core);
 
+FreeframeParameter::FreeframeParameter(Type param_type, const std::string &name, const std::string &description) : Parameter(param_type, name, description) {
+}
+
+FreeframeParameter::~FreeframeParameter() {
+}
+
+FreeframeParameterInstance::FreeframeParameterInstance(FreeframeInstancePtr freior, FreeframeParameterPtr parameter): ParameterInstance(parameter) {
+    this->freior = freior;
+}
+
+FreeframeParameterInstance::~FreeframeParameterInstance() {
+}
+
 FreeframeInstance::FreeframeInstance()
     : FilterInstance() {
     core = 0;

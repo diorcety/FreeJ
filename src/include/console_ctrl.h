@@ -52,11 +52,13 @@ public:
     virtual void refresh() = 0;
 };
 
+#ifndef SWIG
 const LayerPtr &getSelectedLayer();
 void setSelectedLayer(const LayerPtr &ptr);
 const ViewPortPtr &getSelectedScreen();
 void setSelectedScreen(const ViewPortPtr &ptr);
 const FilterInstancePtr &getSelectedFilter();
 void setSelectedFilter(const FilterInstancePtr &ptr);
+#endif
 
 #endif

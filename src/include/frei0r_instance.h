@@ -63,6 +63,8 @@ private:
 public:
     FreiorParameter(Type param_type, const std::string &name, const std::string &description, int index);
 
+    ~FreiorParameter();
+
     inline int getIndex() {
         return index;
     }

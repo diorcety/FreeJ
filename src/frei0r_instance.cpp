@@ -45,6 +45,9 @@ FreiorParameter::FreiorParameter(Type param_type, const std::string &name, const
     this->index = index;
 }
 
+FreiorParameter::~FreiorParameter() {
+}
+
 FreiorParameterInstance::FreiorParameterInstance(FreiorInstancePtr freior, FreiorParameterPtr parameter): ParameterInstance(parameter) {
     this->freior = freior;
 }

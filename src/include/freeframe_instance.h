@@ -51,15 +51,9 @@ private:
 
 FREEJ_FORWARD_PTR(FreeframeParameter)
 class FreeframeParameter: public Parameter {
-private:
-    int index;
-
 public:
-    FreeframeParameter(Type param_type, const std::string &name, const std::string &description, int index);
-
-    inline int getIndex() {
-        return index;
-    }
+    FreeframeParameter(Type param_type, const std::string &name, const std::string &description);
+    ~FreeframeParameter();
 };
 
 FREEJ_FORWARD_PTR(FreeframeParameterInstance)
@@ -72,9 +66,6 @@ public:
     FreeframeParameterInstance(FreeframeInstancePtr freior, FreeframeParameterPtr parameter);
 
     ~FreeframeParameterInstance();
-
-    virtual bool set(void *value);
-    virtual void* get();
 };
 
 #endif
