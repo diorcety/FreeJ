@@ -22,6 +22,7 @@
 #define __TIMELAPSE_H__
 
 #include <time.h>
+#include <sys/time.h>
 #include <inttypes.h>
 
 class Timelapse {

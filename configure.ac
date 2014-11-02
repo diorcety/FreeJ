@@ -5,7 +5,7 @@ dnl ==============================================================
 dnl require autoconf 2.62 (AS_ECHO/AS_ECHO_N)
 AC_PREREQ([2.62])
 
-AC_INIT([FreeJ],[1.0],[freej@lists.dyne.org],[freej],[http://freej.dyne.org])
+AC_INIT([FreeJ],[2.0],[freej@lists.dyne.org],[freej],[http://freej.dyne.org])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([.])
 
@@ -363,7 +363,7 @@ if test x$have_flash = xyes; then
     AC_MSG_RESULT(yes)
     AC_CHECK_FUNCS([sqrt])
     AC_DEFINE(WITH_FLASH,1,[define if compiling flash layer])
-    FLASH_LIBS="\$(top_builddir)/lib/flash/libflash.la"
+    FLASH_LIBS="\$(top_builddir)/lib/flash/libflash.la -lz"
     FLASH_CFLAGS="-I\$(top_srcdir)/lib/flash"
 else
     AC_MSG_RESULT(no)

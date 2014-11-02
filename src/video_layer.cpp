@@ -45,7 +45,9 @@
 #include "factory.h"
 
 extern "C" {
+#if LIBAVUTIL_VERSION_MAJOR >= 53
 #include "libavutil/time.h"
+#endif
 }
 #ifndef AVCODEC_MAX_AUDIO_FRAME_SIZE
 #define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000

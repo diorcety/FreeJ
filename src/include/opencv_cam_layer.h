@@ -22,6 +22,8 @@
 #include <config.h>
 #ifdef WITH_OPENCV
 
+#undef True
+#undef False
 #include <cv.h>
 #include <highgui.h>
 

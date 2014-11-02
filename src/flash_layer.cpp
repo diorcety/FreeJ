@@ -149,7 +149,7 @@ bool FlashLayer::open(const char *file) {
     return true;
 }
 
-void *FlashLayer::feed() {
+void *FlashLayer::feed(double time) {
     struct timeval wd;
     //  fe.type = FeRefresh;
 
