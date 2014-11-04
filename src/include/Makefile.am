@@ -8,7 +8,7 @@ freejinclude_HEADERS = freej.h freej_plugin.h \
 	frei0r_freej.h frei0r_instance.h generator_layer.h geo_layer.h gl_screen.h goom_layer.h image_layer.h \
 	impl_encoders.h impl_layers.h impl_screens.h impl_video_encoders.h iterator.h \
 	joy_ctrl.h jsync.h jutils.h kbd_ctrl.h layer.h \
-	linklist.h sharedptr.h midi_ctrl.h mm_accel.h mmx.h mouse_ctrl.h \
+	linklist.h sharedptr.h entity.h midi_ctrl.h mm_accel.h mmx.h mouse_ctrl.h \
 	oggtheora_encoder.h osc_ctrl.h parameter.h parameter_instance.h plugger.h plugin.h ringbuffer.h \
 	screen.h sdlgl_screen.h sdl_screen.h \
 	shouter.h soft_screen.h text_layer.h theorautils.h \
