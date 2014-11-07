@@ -24,7 +24,7 @@
 
 #include "joy_ctrl.h"
 
-#include <config.h>
+#include "config.h"
 
 #include "context.h"
 #include "jutils.h"

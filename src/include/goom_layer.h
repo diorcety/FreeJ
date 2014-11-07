@@ -20,7 +20,7 @@
 #ifndef __GOOM_LAYER_H__
 #define __GOOM_LAYER_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_GOOM
 
 extern "C" {
@@ -34,7 +34,7 @@ class GoomLayer : public Layer {
 
 public:
     GoomLayer();
-    ~GoomLayer();
+    virtual ~GoomLayer();
 
     bool init(Context *freej);
     bool init(Context *freej, int w, int h) {

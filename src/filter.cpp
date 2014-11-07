@@ -20,7 +20,7 @@
 
  */
 
-#include <config.h>
+#include "config.h"
 #include "layer.h"
 #include "filter.h"
 

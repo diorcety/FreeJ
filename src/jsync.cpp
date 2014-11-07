@@ -18,7 +18,7 @@
 
 #include "jsync.h"
 #include "jutils.h"
-#include <config.h>
+#include "config.h"
 
 JSyncThread::JSyncThread() {
 

@@ -27,7 +27,7 @@
 #ifndef __CONTROLLER_H__
 #define __CONTROLLER_H__
 
-#include <config.h>
+#include "config.h"
 #include <cstdarg> // va_list
 
 #include "linklist.h"
@@ -37,7 +37,7 @@ FREEJ_FORWARD_PTR(Context)
 FREEJ_FORWARD_PTR(ControllerListener)
 class ControllerListener : public Entry {
 public:
-    ~ControllerListener();
+    virtual ~ControllerListener();
     bool frame();
 private:
 };

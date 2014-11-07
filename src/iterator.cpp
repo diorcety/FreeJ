@@ -23,7 +23,7 @@
 #include <strings.h>
 #include "iterator.h"
 #include "jutils.h"
-#include <config.h>
+#include "config.h"
 
 /* here there was quite a lot of typecasting in order to
    support more iterators on different data types.

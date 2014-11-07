@@ -29,7 +29,7 @@ static const int NUM_BARS = 16;
 class FFT {
 public:
     FFT(int length);
-    ~FFT();
+    virtual ~FFT();
     void Impulse2Freq(float *imp, float *out);
 private:
 #ifndef __FFTWFLOAT__
@@ -50,7 +50,7 @@ class AudioCollector {
 public:
     AudioCollector(char *port, int BufferLength, unsigned int Samplerate, int FFTBuffers = 1);
     AudioCollector(int BufferLength, unsigned int Samplerate, JackClient *, int FFTBuffers = 1);
-    ~AudioCollector();
+    virtual ~AudioCollector();
 
     float *GetFFT();
     float *GetAudioBuffer() {

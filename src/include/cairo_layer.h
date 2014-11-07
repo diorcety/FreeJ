@@ -19,7 +19,7 @@
 #ifndef __FREEJ_CAIRO_H__
 #define __FREEJ_CAIRO_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_CAIRO
 
 #include "color.h"
@@ -30,7 +30,7 @@ class CairoColor : public Color {
 
 public:
     CairoColor(cairo_t *cai);
-    ~CairoColor();
+    virtual ~CairoColor();
 
 protected:
     void set();
@@ -45,7 +45,7 @@ class CairoLayer : public Layer {
 
 public:
     CairoLayer();
-    ~CairoLayer();
+    virtual ~CairoLayer();
 
     bool open(const char *file);
     void *feed(double time);

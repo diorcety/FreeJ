@@ -34,7 +34,7 @@
 #include <cstdlib>
 #include <string>
 
-#include <config.h>
+#include "config.h"
 
 #include "freeframe_freej.h"
 #include "freeframe_instance.h"

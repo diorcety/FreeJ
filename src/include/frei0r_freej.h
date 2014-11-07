@@ -20,7 +20,7 @@
 #ifndef __FREI0R_H__
 #define __FREI0R_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_FREI0R
 
 #include <vector>

@@ -45,7 +45,7 @@
 #include "shouter.h"
 
 #include "factory.h"
-#include <config.h>
+#include "config.h"
 #include <string>
 #include "timelapse.h"
 
@@ -98,7 +98,7 @@ private:
 public:
 
     Context();
-    ~Context();
+    virtual ~Context();
 
     bool init(); ///< initialise the engine
 
@@ -129,7 +129,7 @@ private:
 
 public:
     bool add_screen(ViewPortPtr scr); ///< add a new screen
-    //bool rem_screen(ViewPortPtr src); ///< remove a screen
+    bool rem_screen(ViewPortPtr src); ///< remove a screen
 
     LinkList<ViewPort>& getScreens();
 

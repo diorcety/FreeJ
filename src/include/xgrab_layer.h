@@ -21,7 +21,7 @@
 #ifndef __FREEJ_XGRAB_H__
 #define __FREEJ_XGRAB_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_XGRAB
 
 #include <SDL.h>
@@ -69,7 +69,7 @@ private:
 
 public:
     XGrabLayer();
-    ~XGrabLayer();
+    virtual ~XGrabLayer();
 
     bool open();
     bool open(uint32_t win_id);

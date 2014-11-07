@@ -19,7 +19,7 @@
 #ifndef __FREEJ_COLOR_H__
 #define __FREEJ_COLOR_H__
 
-#include <config.h>
+#include "config.h"
 
 #include <inttypes.h>
 

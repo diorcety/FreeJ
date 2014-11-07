@@ -20,7 +20,7 @@
  * some parts shameless stolen from avidemux GUI_xvDraw.cpp
  */
 
-#include <config.h>
+#include "config.h"
 
 #ifdef WITH_XGRAB
 #include <stdlib.h>

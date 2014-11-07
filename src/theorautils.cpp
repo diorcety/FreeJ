@@ -19,7 +19,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,7 +38,7 @@
 
 #include "theorautils.h"
 
-#include <config.h>
+#include "config.h"
 #include "jutils.h"
 
 static void write_audio_page(oggmux_info *);

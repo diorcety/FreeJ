@@ -18,7 +18,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_OPENGL
 
 #include <stdlib.h>

@@ -28,7 +28,7 @@
 class Timelapse {
 public:
     Timelapse();
-    ~Timelapse();
+    virtual ~Timelapse();
 
     double getRatio() const;
     void setRatio(double ratio);

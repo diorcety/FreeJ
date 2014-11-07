@@ -34,7 +34,7 @@ class FlashLayer : public Layer {
 
 public:
     FlashLayer();
-    ~FlashLayer();
+    virtual ~FlashLayer();
 
     bool open(const char *file);
     void *feed(double time);

@@ -39,7 +39,7 @@ class AudioInput {
 public:
 
     AudioInput();
-    ~AudioInput();
+    virtual ~AudioInput();
 
     bool init();
     bool start();

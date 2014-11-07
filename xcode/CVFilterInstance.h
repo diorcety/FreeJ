@@ -26,7 +26,7 @@
 #ifndef __CVFILTER_INSTANCE_H__
 #define __CVFILTER_INSTANCE_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_COCOA
 #include <filter_instance.h>
 #import <QuartzCore/CIFilter.h>

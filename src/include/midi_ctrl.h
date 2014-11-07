@@ -19,7 +19,7 @@
 #ifndef __MIDI_CTRL_H__
 #define __MIDI_CTRL_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_ALSA
 
 //#include <unistd.h>

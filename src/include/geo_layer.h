@@ -32,7 +32,7 @@ class GeoLayer : public Layer {
 
 public:
     GeoLayer();
-    ~GeoLayer();
+    virtual ~GeoLayer();
 
     bool open(const char *file);
     void *feed(double time);

@@ -35,7 +35,7 @@ FREEJ_FORWARD_PTR(SlwHistory)
 class SlwHistory : public Entry {
 public:
     SlwHistory(const std::string &line);
-    ~SlwHistory();
+    virtual ~SlwHistory();
 
     const std::string& getLine() const;
 private:
@@ -46,7 +46,7 @@ FREEJ_FORWARD_PTR(SlwReadline)
 class SlwReadline : public SLangWidget {
 public:
     SlwReadline();
-    ~SlwReadline();
+    virtual ~SlwReadline();
 
     bool init();
     bool feed(int key);

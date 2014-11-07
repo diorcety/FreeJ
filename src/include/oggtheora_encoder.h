@@ -23,7 +23,7 @@
 #define __OGGTHEORA_ENCODER_h__
 
 #include <math.h>
-#include <config.h>
+#include "config.h"
 #include "linklist.h"
 #include "video_encoder.h"
 #include <fstream>
@@ -60,7 +60,7 @@ class OggTheoraEncoder : public VideoEncoder {
 public:
 
     OggTheoraEncoder();
-    ~OggTheoraEncoder();
+    virtual ~OggTheoraEncoder();
 
     bool init(ViewPortPtr scr);
 

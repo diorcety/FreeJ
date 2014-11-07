@@ -79,7 +79,7 @@ public:
         : CbackData(name), function_(function) {
     }
 
-    ~CbackDataFun0() {
+    virtual ~CbackDataFun0() {
         calls_.clear();
     }
 
@@ -137,7 +137,7 @@ public:
         : CbackData(name), function_(function) {
     }
 
-    ~CbackDataFun1() {
+    virtual ~CbackDataFun1() {
         calls_.clear();
     }
 
@@ -195,7 +195,7 @@ public:
         dispatcher_ = new ThreadedClosureQueue();
     }
 
-    ~CallbackHandler() {
+    virtual ~CallbackHandler() {
         cbacks_.clear();
         delete dispatcher_;
     }
@@ -342,7 +342,7 @@ private:
 class DumbCallback {
 public:
     DumbCallback();
-    ~DumbCallback();
+    virtual ~DumbCallback();
 
     bool add_call(DumbCallPtr call);
     bool rem_call(DumbCallPtr call);

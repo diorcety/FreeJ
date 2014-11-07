@@ -1,5 +1,5 @@
 
-#include <config.h>
+#include "config.h"
 
 #include "jutils.h"
 #include "blitter.h"

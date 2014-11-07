@@ -31,7 +31,7 @@ FREEJ_FORWARD_PTR(SdlScreen)
 class SdlScreen : public ViewPort {
 public:
     SdlScreen();
-    ~SdlScreen();
+    virtual ~SdlScreen();
 
 
 protected:

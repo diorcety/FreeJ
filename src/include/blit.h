@@ -50,7 +50,7 @@ public:
 
     Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &parameters);
     Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &&parameters = LinkList<Parameter>());
-    ~Blit();
+    virtual ~Blit();
     
     BlitInstancePtr new_instance();
 

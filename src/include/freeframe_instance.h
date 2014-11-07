@@ -33,7 +33,7 @@ class FreeframeInstance : public FilterInstance {
 public:
     FreeframeInstance();
     FreeframeInstance(FreeframePtr fr);
-    ~FreeframeInstance();
+    virtual ~FreeframeInstance();
     virtual void init(FilterPtr fr);
     virtual bool apply(LayerPtr lay);
 
@@ -53,7 +53,7 @@ FREEJ_FORWARD_PTR(FreeframeParameter)
 class FreeframeParameter: public Parameter {
 public:
     FreeframeParameter(Type param_type, const std::string &name, const std::string &description);
-    ~FreeframeParameter();
+    virtual ~FreeframeParameter();
 };
 
 FREEJ_FORWARD_PTR(FreeframeParameterInstance)
@@ -65,7 +65,7 @@ private:
 public:
     FreeframeParameterInstance(FreeframeInstancePtr freior, FreeframeParameterPtr parameter);
 
-    ~FreeframeParameterInstance();
+    virtual ~FreeframeParameterInstance();
 };
 
 #endif

@@ -31,7 +31,7 @@ class AaScreen : public ViewPort {
 
 public:
     AaScreen();
-    ~AaScreen();
+    virtual ~AaScreen();
 
     fourcc get_pixel_format() {
         return RGBA32;

@@ -133,7 +133,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <config.h>
+#include "config.h"
 #include "jutils.h"
 #include "cpu_accel.h"
 #include "fastmemcpy.h"

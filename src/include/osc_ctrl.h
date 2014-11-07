@@ -40,7 +40,7 @@ class OscController : public Controller {
 
 public:
     OscController();
-    ~OscController();
+    virtual ~OscController();
 
     virtual int dispatch();
     int poll();

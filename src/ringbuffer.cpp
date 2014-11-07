@@ -20,7 +20,7 @@
    This is safe for the case of one read thread and one write thread.
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -72,7 +72,7 @@ private:
 
 public:
     Shouter();
-    ~Shouter();
+    virtual ~Shouter();
 
     /* ======= GUI SETTINGS HERE
        the following macros declare two functions for each variable:

@@ -19,7 +19,7 @@
 #ifndef __avcodec_h__
 #define __avcodec_h__
 
-#include <config.h>
+#include "config.h"
 #include <inttypes.h>
 
 #ifndef UINT64_C
@@ -68,7 +68,7 @@ class VideoLayer : public Layer, public JSyncThread {
    friend class ViewPort;
 public:
     VideoLayer();
-    ~VideoLayer();
+    virtual ~VideoLayer();
 
 
     bool open(const char *file);

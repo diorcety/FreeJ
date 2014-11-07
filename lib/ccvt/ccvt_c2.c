@@ -4,7 +4,7 @@
  * Code by Tony Hague (C) 2001.
  */
 
-#include <config.h>
+#include "config.h"
 
 #if !defined (HAVE_MMX) || defined (HAVE_64BIT)
 

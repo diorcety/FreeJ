@@ -2,7 +2,7 @@
 #include <sys/time.h>
 
 #include "tvfreq.h"
-#include <config.h>
+#include "config.h"
 
 /* --------------------------------------------------------------------- */
 

@@ -19,7 +19,7 @@
     reached at nemosoft@smcc.demon.nl.
 */
 
-#include <config.h>
+#include "config.h"
 
 /* non executable stack */
 #if defined(__linux__) && defined(__ELF__)

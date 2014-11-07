@@ -22,7 +22,7 @@
 #ifndef __TEXT_LAYER_H__
 #define __TEXT_LAYER_H__
 
-#include <config.h>
+#include "config.h"
 #if defined WITH_TEXTLAYER
 
 #include <SDL.h>
@@ -34,7 +34,7 @@ class TextLayer : public Layer {
 
 public:
     TextLayer();
-    ~TextLayer();
+    virtual ~TextLayer();
 
     bool open(const char *file);
     void *feed(double time);

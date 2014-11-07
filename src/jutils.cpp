@@ -43,7 +43,7 @@
 #include <string.h>
 
 #include "jutils.h"
-#include <config.h>
+#include "config.h"
 
 /*
  * Obsolete memory-aligned implementation

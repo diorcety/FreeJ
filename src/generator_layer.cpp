@@ -19,7 +19,7 @@
 
 #include <stdlib.h>
 
-#include <config.h>
+#include "config.h"
 
 #include "generator_layer.h"
 #include "frei0r_freej.h"

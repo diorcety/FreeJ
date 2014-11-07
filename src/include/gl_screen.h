@@ -17,7 +17,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 
 #ifndef __GL_SCREEN_H__
 #define __GL_SCREEN_H__
@@ -37,7 +37,7 @@ FREEJ_FORWARD_PTR(GlScreen)
 class GlScreen : public ViewPort {
 public:
     GlScreen();
-    ~GlScreen() {
+    virtual ~GlScreen() {
     };
 
 

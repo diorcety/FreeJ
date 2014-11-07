@@ -24,7 +24,7 @@
 #define __VIDEO_ENCODER_H__
 
 #include <SDL.h>
-#include <config.h>
+#include "config.h"
 
 #include "jsync.h"
 #include "jutils.h"

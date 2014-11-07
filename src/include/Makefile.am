@@ -16,6 +16,6 @@ freejinclude_HEADERS = freej.h freej_plugin.h \
 	video_layer.h vimo_ctrl.h vroot.h wiimote_ctrl.h xgrab_layer.h xscreensaver_layer.h \
 	opencv_cam_layer.h exceptions.h logging.h aa_screen.h factory.h \
 	sdl_controller.h audio_layer.h slang_console_ctrl.h cairo_layer.h geometry.h \
-	color.h
+	color.h ../../config.h
 
 EXTRA_DIST = jsfreej.msg

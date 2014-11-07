@@ -27,7 +27,7 @@ FREEJ_FORWARD_PTR(GeneratorLayer)
 class GeneratorLayer : public Layer {
 public:
     GeneratorLayer();
-    ~GeneratorLayer();
+    virtual ~GeneratorLayer();
 
     bool open(const char *file);
     void *feed(double time);

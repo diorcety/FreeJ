@@ -45,7 +45,7 @@
 #ifndef __CVFILTER_H__
 #define __CVFILTER_H__
 
-#include <config.h>
+#include "config.h"
 //#ifdef WITH_COCOA
 #include <filter.h>
 #include <factory.h>

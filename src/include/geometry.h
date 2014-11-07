@@ -34,7 +34,7 @@ class Geometry {
 public:
 
     Geometry();
-    ~Geometry();
+    virtual ~Geometry();
 
     void init(int nw, int nh, int nbpp);
 

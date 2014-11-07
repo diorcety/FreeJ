@@ -35,7 +35,7 @@ class UnicapLayer : public Layer {
 
 public:
     UnicapLayer();
-    ~UnicapLayer();
+    virtual ~UnicapLayer();
 
     bool open(const char *devfile);
 

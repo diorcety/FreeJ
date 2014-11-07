@@ -27,7 +27,7 @@
 class FPS {
 public:
     FPS();
-    ~FPS();
+    virtual ~FPS();
 
     void init(double rate);
 

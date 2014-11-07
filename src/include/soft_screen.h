@@ -29,9 +29,7 @@ class SoftScreen : public ViewPort {
 
 public:
     SoftScreen();
-    ~SoftScreen();
-
-
+    virtual ~SoftScreen();
 
     fourcc get_pixel_format() {
         return RGBA32;
@@ -47,15 +45,17 @@ public:
     void clear();
 
     void fullscreen();
+
 protected:
     void do_resize(int resize_w, int resize_h);
-private:
+
+protected:
     void *screen_buffer;
 
     uint32_t *pscr, *play;  // generic blit buffer pointers
 
 protected:
-    bool _init();
+    virtual bool _init();
 
 
     // allow to use Factory on this class

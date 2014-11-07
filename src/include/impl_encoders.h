@@ -22,7 +22,7 @@
 #ifndef __IMPL_ENCODERS_H__
 #define __IMPL_ENCODERS_H__
 
-#include <config.h>
+#include "config.h"
 #include <encoder.h>
 
 #include "oggtheora_encoder.h"

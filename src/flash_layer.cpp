@@ -22,7 +22,7 @@
 //
 // "$Id$"
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_FLASH
 
 #include <stdio.h>

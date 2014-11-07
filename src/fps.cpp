@@ -24,7 +24,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include <config.h>
+#include "config.h"
 
 #include <time.h>
 #include <sys/time.h>

@@ -20,7 +20,7 @@
 #ifndef _F2T_THEORAUTILS_H_
 #define _F2T_THEORAUTILS_H_
 
-#include <config.h>
+#include "config.h"
 #include <samplerate.h>
 #include <stdint.h>
 #include <theora/theora.h>

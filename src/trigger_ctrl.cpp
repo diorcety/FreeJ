@@ -25,7 +25,7 @@
 
 #include "trigger_ctrl.h"
 
-#include <config.h>
+#include "config.h"
 #include <algorithm>
 #include "context.h"
 #include "jutils.h"

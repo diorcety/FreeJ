@@ -19,7 +19,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_OGGTHEORA
 
 #include "shouter.h"

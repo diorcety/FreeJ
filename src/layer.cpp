@@ -30,7 +30,7 @@
 #include "closure.h"
 
 #include "context.h"
-#include <config.h>
+#include "config.h"
 
 #include <algorithm>
 #include <assert.h>

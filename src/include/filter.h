@@ -20,7 +20,7 @@
 #ifndef __filter_h__
 #define __filter_h__
 
-#include <config.h>
+#include "config.h"
 
 #include "parameter.h"
 #include "filter_instance.h"

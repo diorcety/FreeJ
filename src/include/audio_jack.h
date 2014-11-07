@@ -90,7 +90,7 @@ private:
 
 protected:
     JackClient();
-    ~JackClient();
+    virtual ~JackClient();
 
     static int  Process(jack_nframes_t nframes, void *o);
     static int  OnSRateChange(jack_nframes_t n, void *o);

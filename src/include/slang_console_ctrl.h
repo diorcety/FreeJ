@@ -57,7 +57,7 @@ class SlwConsole : public ConsoleController {
 public:
 
     SlwConsole(const ContextPtr &env);
-    ~SlwConsole();
+    virtual ~SlwConsole();
 
     int poll();
     int dispatch();

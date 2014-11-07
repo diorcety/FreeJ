@@ -19,7 +19,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 
 #ifndef __SDLGL_SCREEN_H__
 #define __SDLGL_SCREEN_H__
@@ -42,7 +42,7 @@ FREEJ_FORWARD_PTR(SdlGlScreen)
 class SdlGlScreen : public ViewPort {
 public:
     SdlGlScreen();
-    ~SdlGlScreen();
+    virtual ~SdlGlScreen();
 
     void show();
     void blit(LayerPtr lay);

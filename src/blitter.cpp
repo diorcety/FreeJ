@@ -30,7 +30,7 @@
 #include "sdl_screen.h"
 
 #include "jutils.h"
-#include <config.h>
+#include "config.h"
 
 Blitter::Blitter() {
     old_lay_x = 0;

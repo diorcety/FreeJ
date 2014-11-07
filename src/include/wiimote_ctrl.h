@@ -22,7 +22,7 @@
 #ifndef __WII_CTRL_H__
 #define __WII_CTRL_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_CWIID
 
 #include "controller.h"

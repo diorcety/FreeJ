@@ -36,7 +36,7 @@ FREEJ_FORWARD_PTR(Iterator)
 class Iterator : public Entry {
 public:
     Iterator(float *val);
-    ~Iterator();
+    virtual ~Iterator();
 
     int cafudda();
 

@@ -21,7 +21,7 @@
  *
  */
 #include <iostream>
-#include <config.h>
+#include "config.h"
 
 #ifdef WITH_FFMPEG
 

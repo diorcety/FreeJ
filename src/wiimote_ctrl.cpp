@@ -21,7 +21,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_CWIID
 
 #include <stdio.h>

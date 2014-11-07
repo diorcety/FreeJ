@@ -11,7 +11,7 @@ protected:
 
 public:
     SdlController();
-    ~SdlController();
+    virtual ~SdlController();
     void poll_sdlevents(Uint32 eventmask);
     ///< helper function to filter and redispatch unhandled SDL_Events
     ///< calls dispatch() foreach event in eventmask

@@ -20,7 +20,7 @@
  */
 
 
-#include <config.h>
+#include "config.h"
 
 #ifdef WITH_ALSA
 #include "midi_ctrl.h"

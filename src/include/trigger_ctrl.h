@@ -30,7 +30,7 @@ class TriggerController : public Controller {
 
 public:
     TriggerController();
-    ~TriggerController();
+    virtual ~TriggerController();
 
     int  poll();
     virtual int dispatch();

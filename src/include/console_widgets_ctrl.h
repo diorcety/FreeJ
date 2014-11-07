@@ -32,7 +32,7 @@ FREEJ_FORWARD_PTR(SlwTitle)
 class SlwTitle : public SLangWidget {
 public:
     SlwTitle(const ContextPtr &env);
-    ~SlwTitle();
+    virtual ~SlwTitle();
 
     bool init();
     bool feed(int key);
@@ -50,7 +50,7 @@ class SlwSelector : public SLangWidget {
 public:
 
     SlwSelector(const ContextPtr &env);
-    ~SlwSelector();
+    virtual ~SlwSelector();
 
     bool init();
     bool feed(int key);

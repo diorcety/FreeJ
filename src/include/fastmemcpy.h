@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <config.h>
+#include "config.h"
 
 void find_best_memcpy();
 

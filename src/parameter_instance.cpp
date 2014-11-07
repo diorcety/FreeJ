@@ -20,7 +20,7 @@
 
  */
 
-#include <config.h>
+#include "config.h"
 #include "parameter_instance.h"
 
 #include <stdio.h>

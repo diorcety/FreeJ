@@ -1,4 +1,4 @@
-#include <config.h>
+#include "config.h"
 #ifdef WITH_XSCREENSAVER
 
 #include <assert.h>

@@ -19,7 +19,7 @@
 #ifndef __XSCREENSAVER_LAYER_H__
 #define __XSCREENSAVER_LAYER_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_XSCREENSAVER
 
 #include "layer.h"
@@ -30,7 +30,7 @@ class XScreenSaverLayer : public Layer {
 
 public:
     XScreenSaverLayer();
-    ~XScreenSaverLayer();
+    virtual ~XScreenSaverLayer();
 
 
     bool open(const char *file);

@@ -19,7 +19,7 @@
 #ifndef __FREEJ_OPENCV_CAM_H__
 #define __FREEJ_OPENCV_CAM_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_OPENCV
 
 #undef True
@@ -34,7 +34,7 @@ class OpenCVCamLayer : public Layer {
 
 public:
     OpenCVCamLayer();
-    ~OpenCVCamLayer();
+    virtual ~OpenCVCamLayer();
 
     bool open(const char *devfile);
     void *feed(double time);

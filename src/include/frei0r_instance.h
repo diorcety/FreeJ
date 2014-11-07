@@ -20,7 +20,7 @@
 #ifndef __FREI0R_INSTANCE_H__
 #define __FREI0R_INSTANCE_H__
 
-#include <config.h>
+#include "config.h"
 #ifdef WITH_FREI0R
 
 #include <vector>
@@ -38,7 +38,7 @@ class FreiorInstance : public FilterInstance {
 public:
     FreiorInstance();
     FreiorInstance(FreiorPtr fr);
-    ~FreiorInstance();
+    virtual ~FreiorInstance();
     
     virtual void init(FilterPtr fr);
     virtual bool apply(LayerPtr lay);
@@ -63,7 +63,7 @@ private:
 public:
     FreiorParameter(Type param_type, const std::string &name, const std::string &description, int index);
 
-    ~FreiorParameter();
+    virtual ~FreiorParameter();
 
     inline int getIndex() {
         return index;
@@ -79,7 +79,7 @@ private:
 public:
     FreiorParameterInstance(FreiorInstancePtr freior, FreiorParameterPtr parameter);
 
-    ~FreiorParameterInstance();
+    virtual ~FreiorParameterInstance();
 
     virtual bool set(void *value);
     virtual void* get();

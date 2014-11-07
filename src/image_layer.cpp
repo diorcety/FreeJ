@@ -28,7 +28,7 @@
 #include "blitter.h"
 
 #include "image_layer.h"
-#include <config.h>
+#include "config.h"
 
 #include "jutils.h"
 #include "factory.h"

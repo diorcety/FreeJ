@@ -19,7 +19,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 #if defined WITH_TEXTLAYER
 
 #include <fontconfig/fontconfig.h>

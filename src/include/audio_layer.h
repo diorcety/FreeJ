@@ -28,7 +28,7 @@ class AudioLayer : public Layer {
 
 public:
     AudioLayer();
-    ~AudioLayer();
+    virtual ~AudioLayer();
 
     bool open(const char *devfile);
 

@@ -22,7 +22,7 @@
 #ifndef __IMPL_VIDEO_ENCODERS_H__
 #define __IMPL_VIDEO_ENCODERS_H__
 
-#include <config.h>
+#include "config.h"
 #include "video_encoder.h"
 #ifdef WITH_AVCODEC
 #include <ffmpeg_encoder.h>

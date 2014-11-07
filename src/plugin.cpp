@@ -2,7 +2,7 @@
 #include <dlfcn.h>
 
 #include "plugin.h"
-#include <config.h>
+#include "config.h"
 #include <stdio.h>
 
 typedef char* (getch)(void);

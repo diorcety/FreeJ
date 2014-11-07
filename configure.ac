@@ -417,7 +417,7 @@ AC_ARG_ENABLE(debug,
     [enable_debug=no])
 
 if test x$enable_debug = xyes; then
-    GLOBAL_CFLAGS="$GLOBAL_CFLAGS -Wall -g -ggdb"
+    GLOBAL_CFLAGS="$GLOBAL_CFLAGS -Wall -g -ggdb -O0"
 fi
 
 

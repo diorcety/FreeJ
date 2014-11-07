@@ -53,7 +53,7 @@
 
 #include "cpu_accel.h"
 
-#include <config.h>
+#include "config.h"
 
 #ifdef ARCH_X86
 static __u32 arch_accel(void) {

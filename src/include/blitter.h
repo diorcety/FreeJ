@@ -35,7 +35,7 @@ class Blitter : public EnableSharedFromThis<Blitter> {
     friend class ViewPort;
 public:
     Blitter();
-    ~Blitter();
+    virtual ~Blitter();
 
     /* ==== CROP */
     /** @param force crop even if nothing changed */

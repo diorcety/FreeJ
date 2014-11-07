@@ -19,7 +19,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <string.h>

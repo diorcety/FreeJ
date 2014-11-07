@@ -21,7 +21,7 @@
  */
 #include <iostream>
 
-#include <config.h>
+#include "config.h"
 
 #include <string.h>
 #include "context.h"

@@ -44,7 +44,7 @@ class Plugger {
     friend Context;
 public:
     Plugger(); ///< Plugger onstructor
-    ~Plugger(); ///< Plugger destructor
+    virtual ~Plugger(); ///< Plugger destructor
 
     LinkList<Filter> getFilters();
     LinkList<Filter> getGenerators();

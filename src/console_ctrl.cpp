@@ -26,7 +26,7 @@
 
 #include <signal.h>
 
-#include <config.h>
+#include "config.h"
 
 #include <slang.h>
 

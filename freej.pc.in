@@ -8,4 +8,5 @@ Description: FreeJ vision mixer library
 Version: @VERSION@
 Libs: -L${libdir} -lfreej
 Cflags: -I${includedir}
+Requires.private: sdl
 

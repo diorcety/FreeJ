@@ -25,7 +25,7 @@
 
 #include "layer.h"
 #include "jutils.h"
-#include <config.h>
+#include "config.h"
 
 #ifdef WITH_GTK2
 #include <gtk/gtk.h>

@@ -20,7 +20,7 @@
 #ifndef __FREEJ_V4L2_CAM_H__
 #define __FREEJ_V4L2_CAM_H__
 
-#include <config.h>
+#include "config.h"
 
 #include "context.h"
 
@@ -29,7 +29,7 @@
 class Res {
 public:
     Res(unsigned int sz);
-    ~Res();
+    virtual ~Res();
     bool addRes(unsigned int, unsigned int, int);
     unsigned int getNb();
     unsigned int getX(unsigned int);
@@ -46,7 +46,7 @@ FREEJ_FORWARD_PTR(V4L2CamLayer)
 class V4L2CamLayer :  public Layer, public JSyncThread {
 public:
     V4L2CamLayer();
-    ~V4L2CamLayer();
+    virtual ~V4L2CamLayer();
 
     bool open(const char *devfile);
     void *feed(double time);

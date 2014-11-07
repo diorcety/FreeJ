@@ -20,7 +20,7 @@
 #ifndef __IMPL_LAYERS_H__
 #define __IMPL_LAYERS_H__
 
-#include <config.h>
+#include "config.h"
 
 // controllers
 #include "kbd_ctrl.h"

@@ -30,7 +30,7 @@ class ImageLayer : public Layer {
 
 public:
     ImageLayer();
-    ~ImageLayer();
+    virtual ~ImageLayer();
 
     bool open(const char *file);
     void *feed(double time);

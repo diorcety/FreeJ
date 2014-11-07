@@ -21,7 +21,7 @@
 #ifndef __filter_instance_h__
 #define __filter_instance_h__
 
-#include <config.h>
+#include "config.h"
 
 #include "parameter_instance.h"
 #include "linklist.h"

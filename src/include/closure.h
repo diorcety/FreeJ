@@ -51,7 +51,7 @@ public:
     };
 
     ClosureQueue();
-    ~ClosureQueue();
+    virtual ~ClosureQueue();
 
     void add_job(Closure *job);
     void do_jobs();
@@ -82,7 +82,7 @@ public:
     };
 
     ThreadedClosureQueue();
-    ~ThreadedClosureQueue();
+    virtual ~ThreadedClosureQueue();
 
     void add_job(Closure *job);
 
@@ -224,7 +224,7 @@ public:
         function_(function) {
     }
 
-    ~FunctionClosure0();
+    virtual ~FunctionClosure0();
 
     void run_() {
         function_();
@@ -245,7 +245,7 @@ public:
         object_(object), method_(method) {
     }
 
-    ~MethodClosure0() {
+    virtual ~MethodClosure0() {
     }
 
     void run_() {
@@ -270,7 +270,7 @@ public:
         arg1_(arg1) {
     }
 
-    ~FunctionClosure1() {
+    virtual ~FunctionClosure1() {
     }
 
     void run_() {
@@ -295,7 +295,7 @@ public:
         arg1_(arg1) {
     }
 
-    ~MethodClosure1() {
+    virtual ~MethodClosure1() {
     }
 
     void run_() {
@@ -321,7 +321,7 @@ public:
         arg1_(arg1), arg2_(arg2) {
     }
 
-    ~FunctionClosure2() {
+    virtual ~FunctionClosure2() {
     }
 
     void run_() {
@@ -347,7 +347,7 @@ public:
         arg1_(arg1), arg2_(arg2) {
     }
 
-    ~MethodClosure2() {
+    virtual ~MethodClosure2() {
     }
 
     void run_() {
@@ -374,7 +374,7 @@ public:
         arg1_(arg1), arg2_(arg2), arg3_(arg3) {
     }
 
-    ~FunctionClosure3() {
+    virtual ~FunctionClosure3() {
     }
 
     void run_() {
@@ -401,7 +401,7 @@ public:
         arg1_(arg1), arg2_(arg2), arg3_(arg3) {
     }
 
-    ~MethodClosure3() {
+    virtual ~MethodClosure3() {
     }
 
     void run_() {
@@ -429,7 +429,7 @@ public:
         arg1_(arg1), arg2_(arg2), arg3_(arg3), arg4_(arg4) {
     }
 
-    ~FunctionClosure4() {
+    virtual ~FunctionClosure4() {
     }
 
     void run_() {
@@ -459,7 +459,7 @@ public:
         arg1_(arg1), arg2_(arg2), arg3_(arg3), arg4_(arg4) {
     }
 
-    ~MethodClosure4() {
+    virtual ~MethodClosure4() {
     }
 
     void run_() {

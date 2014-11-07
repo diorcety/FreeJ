@@ -17,7 +17,7 @@
  *
  */
 
-#include <config.h>
+#include "config.h"
 #include <inttypes.h>
 #include <string.h>
 #include <unistd.h>
@@ -173,7 +173,6 @@ Context::~Context() {
 //
 
 bool Context::add_screen(ViewPortPtr scr) {
-
     if(!scr->isInitialized()) {
         error("can't add screen %s - not initialized yet", scr->getName().c_str());
         error("use init( width, height, bits_per_pixel )");
@@ -182,6 +181,18 @@ bool Context::add_screen(ViewPortPtr scr) {
     screens.push_front(scr);
     func("screen %s successfully added", scr->getName().c_str());
     act("screen %s now on top", scr->getName().c_str());
+
+    return(true);
+}
+
+bool Context::rem_screen(ViewPortPtr scr) {
+    LinkList<ViewPort>::iterator screenIt = std::find(screens.begin(), screens.end(), scr);
+    if(screenIt == screens.end()) {
+        return false;
+    }
+
+    screens.erase(screenIt);
+    func("screen %s successfully removed", scr->getName().c_str());
 
     return(true);
 }

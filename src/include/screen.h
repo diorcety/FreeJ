@@ -26,7 +26,7 @@
 #define __SCREEN_H__
 
 #include <inttypes.h>
-#include <config.h>
+#include "config.h"
 #include <SDL.h>
 
 
@@ -114,7 +114,7 @@ public:
 
     virtual void blit(LayerPtr src) = 0; ///< operate the blit
 
-    void blit_layers();
+    virtual void blit_layers();
 
     virtual bool add_layer(LayerPtr lay); ///< add a new layer to the screen
     virtual void rem_layer(LayerPtr lay); ///< remove a layer from the screen

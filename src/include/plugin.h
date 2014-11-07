@@ -30,7 +30,7 @@ class Plugin {
     typedef int (t_kbdin)(int);
 public:
     Plugin();
-    ~Plugin();
+    virtual ~Plugin();
 
     bool open(const char *path);
     void *operator[](const char *);
