@@ -83,15 +83,6 @@ SdlGlScreen::~SdlGlScreen() {
 bool SdlGlScreen::_init() {
     char temp[120];
 
-    /* initialize SDL */
-
-    setenv("SDL_VIDEO_HWACCEL", "1", 1);
-
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_EVENTTHREAD) < 0) {
-        error("Can't initialize SDL: %s", SDL_GetError());
-        return(false);
-    }
-
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);   // Enable OpenGL Doublebuffering
 
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);            //Use at least 5 bits of Red

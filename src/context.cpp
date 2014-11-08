@@ -229,6 +229,13 @@ bool Context::init() {
     act("FFmpeg initialized all codec and format");
 #endif
 
+    /* initialize SDL */
+    setenv("SDL_VIDEO_HWACCEL", "1", 1);
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_EVENTTHREAD) < 0) {
+        error("Can't initialize SDL: %s", SDL_GetError());
+        return(false);
+    }
+    atexit(SDL_Quit);
 
     // register SIGPIPE signal handler (stream error)
     got_sigpipe = false;

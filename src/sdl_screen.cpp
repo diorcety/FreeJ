@@ -85,16 +85,6 @@ SdlScreen::~SdlScreen() {
 bool SdlScreen::_init() {
     char temp[120];
 
-    /* initialize SDL */
-
-    setenv("SDL_VIDEO_HWACCEL", "1", 1);
-
-
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
-        error("Can't initialize SDL: %s", SDL_GetError());
-        return(false);
-    }
-
     setres(geo.w, geo.h);
     sdl_screen = SDL_GetVideoSurface();
 
