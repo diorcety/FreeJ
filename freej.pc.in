@@ -7,6 +7,6 @@ Name: freej
 Description: FreeJ vision mixer library
 Version: @VERSION@
 Libs: -L${libdir} -lfreej
-Cflags: -I${includedir}
+Cflags: -I${includedir} -I${includedir}/freej/libs
 Requires.private: sdl
 

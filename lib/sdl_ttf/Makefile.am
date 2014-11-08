@@ -7,4 +7,5 @@ noinst_LTLIBRARIES = libsdl_ttf.la
 
 libsdl_ttf_la_SOURCES = SDL_ttf.c
 
-noinst_HEADERS = SDL_ttf.h
+libsdl_ttf_laincludedir = $(includedir)/freej/libs
+libsdl_ttf_lainclude_HEADERS = SDL_ttf.h
