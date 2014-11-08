@@ -85,7 +85,7 @@ bool ViewPort::init(int w, int h, int bpp) {
 
     geo.init(w, h, bpp);
     initialized = _init();
-    act("screen %s initialized with size %ux%u", name.c_str(), geo.w, geo.h);
+    func("screen %s initialized with size %ux%u", name.c_str(), geo.w, geo.h);
 
     return initialized;
 
@@ -142,7 +142,7 @@ void ViewPort::rem_layer(LayerPtr lay) {
 
     lay->screen.reset(); // symmetry
     layers.erase(it);
-    notice("removed layer %s (but still present as an instance)", lay->getName().c_str());
+    func("layer %s removed from screen %s", lay->getName().c_str(), name.c_str());
 }
 
 LinkList<Layer> &ViewPort::getLayers() {

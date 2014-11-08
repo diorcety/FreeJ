@@ -180,7 +180,7 @@ bool Context::add_screen(ViewPortPtr scr) {
     }
     screens.push_front(scr);
     func("screen %s successfully added", scr->getName().c_str());
-    act("screen %s now on top", scr->getName().c_str());
+    func("screen %s now on top", scr->getName().c_str());
 
     return(true);
 }
@@ -307,7 +307,7 @@ void Context::handle_controllers() {
 
     // peep if there are quit or fullscreen events
     res = SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_KEYEVENTMASK | SDL_QUITMASK);
-    if(res < 0) warning("SDL_PeepEvents error");
+    if(res < 0) warning("SDL_PeepEvents error: %s", SDL_GetError());
 
     // force quit when SDL does
     if(event.type == SDL_QUIT) {
