@@ -337,6 +337,14 @@ bool Layer::isActive() const {
     return active;
 }
 
+bool Layer::isVisible() const {
+    return !hidden;
+}
+
+void Layer::setVisible(bool visible) {
+    hidden = !visible;
+}
+
 BlitInstancePtr Layer::getCurrentBlit() const {
     return current_blit;
 }
