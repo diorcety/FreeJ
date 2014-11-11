@@ -48,6 +48,7 @@ SoftScreen::~SoftScreen() {
 
 bool SoftScreen::_init() {
     screen_buffer = malloc(geo.getByteSize());
+    memset(screen_buffer, 0, geo.getByteSize()); // Put in black
     return(true);
 }
 
