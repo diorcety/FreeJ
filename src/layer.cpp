@@ -337,6 +337,10 @@ bool Layer::isActive() const {
     return active;
 }
 
+bool Layer::isOpen() const {
+    return opened;
+}
+
 bool Layer::isVisible() const {
     return !hidden;
 }

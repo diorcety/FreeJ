@@ -204,7 +204,7 @@ void ViewPort::cafudda(double secs) {
 void ViewPort::blit_layers() {
     std::for_each(layers.rbegin(), layers.rend(), [&](LayerPtr &lay) {
                       if(lay->buffer) {
-                          if(lay->isActive() && lay->isVisible() && lay->opened) {
+                          if(lay->isActive() && lay->isVisible() && lay->isOpen()) {
                               blit(lay);
                           }
                       }

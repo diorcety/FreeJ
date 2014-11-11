@@ -194,9 +194,10 @@ private:
 public:
     ///< Iterator list of value modifiers
     int do_iterators(); ///< process all registered iterators
-    bool isActive() const;
-    bool isVisible() const;
-    void setVisible(bool visible);
+    virtual bool isActive() const;
+    virtual bool isOpen() const;
+    virtual bool isVisible() const;
+    virtual void setVisible(bool visible);
 
 protected:
     bool active; // is active? (read-only)
