@@ -51,6 +51,8 @@ ViewPort::ViewPort()
 
     indestructible = false;
 
+    active = true;
+
 #ifdef WITH_AUDIO
     audio = NULL;
     m_SampleRate = NULL;
@@ -89,6 +91,10 @@ bool ViewPort::init(int w, int h, int bpp) {
 
     return initialized;
 
+}
+
+bool ViewPort::isActive() const {
+    return active;
 }
 
 bool ViewPort::add_layer(LayerPtr lay) {

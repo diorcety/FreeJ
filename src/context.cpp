@@ -289,17 +289,18 @@ void Context::cafudda(double secs) {
     /////////////////////////////
     // blit layers on screens
     std::for_each(screens.begin(), screens.end(), [&](ViewPortPtr scr) {
-                      if(clear_all) scr->clear();
+                      if(scr->isActive()) {
+                          if(clear_all) scr->clear();
+                          // Change resolution if needed
+                          scr->handle_resize();
 
-                      // Change resolution if needed
-                      scr->handle_resize();
+                          scr->cafudda(timelapse.getTime());
 
-                      scr->cafudda(timelapse.getTime());
+                          scr->blit_layers();
 
-                      scr->blit_layers();
-
-                      // show the new painted screen
-                      scr->show();
+                          // show the new painted screen
+                          scr->show();
+                      }
                   });
 }
 

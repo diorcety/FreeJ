@@ -168,11 +168,13 @@ public:
     inline const Geometry& getGeometry() const {
         return geo;
     }
+    virtual bool isActive() const;
 
 protected:
     BlitterPtr blitter; ///< Blitter interface for this Layer
     Geometry geo;
 
+    bool active;
     bool resizing;
     int resize_w;
     int resize_h;
