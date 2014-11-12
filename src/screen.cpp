@@ -99,7 +99,7 @@ bool ViewPort::add_layer(LayerPtr lay) {
         return(false);
     }
 
-    if(!lay->opened) {
+    if(!lay->isOpen()) {
         error("layer %s is not yet opened, can't add it", lay->getName().c_str());
         return(false);
     }
