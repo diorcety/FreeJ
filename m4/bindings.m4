@@ -326,6 +326,21 @@ if test x"$enable_java" = x"yes"; then
 fi
 ])
 
+AC_DEFUN([ENABLE_SWIG_CSHARP],
+[
+AC_ARG_ENABLE(csharp,
+    AS_HELP_STRING([--enable-csharp],[enable C# bindings (no)]),
+	[enable_csharp=$enableval],
+	[enable_csharp=no])
+
+if test x"$enable_csharp" = x"yes"; then
+    AC_PATH_PROG([GMCS], [gmcs])
+    if test "x$GMCS" = "x" ; then
+            AC_MSG_ERROR([Could not found gmcs])
+    fi
+fi
+])
+
 AC_DEFUN([ENABLE_SWIG_RUBY],
 [
 AC_ARG_ENABLE(ruby,

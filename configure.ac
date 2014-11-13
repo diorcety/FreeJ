@@ -189,6 +189,7 @@ else
     ENABLE_SWIG_PYTHON
     ENABLE_SWIG_RUBY
     ENABLE_SWIG_JAVA
+    ENABLE_SWIG_CSHARP
     ENABLE_SWIG_PERL
     ENABLE_SWIG_JAVASCRIPT
 
@@ -201,6 +202,7 @@ fi
 AM_CONDITIONAL([BUILD_SWIG_PYTHON], [test x$enable_python = xyes])
 AM_CONDITIONAL([BUILD_SWIG_RUBY], [test x$enable_ruby = xyes])
 AM_CONDITIONAL([BUILD_SWIG_JAVA], [test x$enable_java = xyes])
+AM_CONDITIONAL([BUILD_SWIG_CSHARP], [test x$enable_csharp = xyes])
 AM_CONDITIONAL([BUILD_SWIG_PERL], [test x$enable_perl = xyes])
 AM_CONDITIONAL([BUILD_SWIG_JAVASCRIPT], [test x$enable_javascript = xyes])
 
@@ -1127,6 +1129,7 @@ Makefile
 freej.pc
 bindings/Makefile
 bindings/java/Makefile
+bindings/csharp/Makefile
 bindings/perl/Makefile
 bindings/python/Makefile
 bindings/ruby/Makefile
