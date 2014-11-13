@@ -1,6 +1,6 @@
 /* Linklist */
 %include "std_list.i"
-%include "linklist.h"
+%include FREEJ_INCLUDE(linklist.h)
 
 %define FREEJ_LIST_POST(TYPE)
 %template(TYPE ## StdList) std::list<SharedPtr<TYPE>>;

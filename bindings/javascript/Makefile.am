@@ -4,8 +4,10 @@ swig_header =
 
 BUILT_SOURCES = $(swig_source) $(swig_header)
 
+SWIG_CFLAGS = -DIN_FREEJ
+
 $(swig_source): $(SWIG_IFACE)
-		$(SWIG_COMMAND) $(SWIG_JAVASCRIPT_OPT) -o $(swig_source) $(SWIG_IFACE)
+		$(SWIG_COMMAND) $(SWIG_CFLAGS) $(SWIG_JAVASCRIPT_OPT) -o $(swig_source) $(SWIG_IFACE)
 
 lib_LTLIBRARIES = freej_js.la
 nodist_freej_js_la_SOURCES = $(swig_source)

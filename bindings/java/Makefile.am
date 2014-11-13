@@ -5,8 +5,10 @@ swig_header = freej_java.h
 
 BUILT_SOURCES = $(swig_source) $(swig_header)
 
+SWIG_CFLAGS = -DIN_FREEJ
+
 $(swig_source): $(SWIG_IFACE)
-	$(SWIG_COMMAND) -java -o $(swig_source) $(SWIG_IFACE)
+	$(SWIG_COMMAND) $(SWIG_CFLAGS) -java -o $(swig_source) $(SWIG_IFACE)
 
 pkgjavaexecdir = ${libdir}/jni
 pkgjavaexec_LTLIBRARIES = libfreej_java.la

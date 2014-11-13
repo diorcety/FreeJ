@@ -3,9 +3,10 @@ swig_source = freej_perl.cpp
 perl_module = freej.pm
 
 BUILT_SOURCES = $(swig_source) $(perl_module)
+SWIG_CFLAGS = -DIN_FREEJ
 
 $(swig_source): $(SWIG_IFACE)
-	$(SWIG_COMMAND) -perl -o $(swig_source) $(SWIG_IFACE)
+	$(SWIG_COMMAND) $(SWIG_CFLAGS) -perl -o $(swig_source) $(SWIG_IFACE)
 
 perllibdir = $(PERL_INSTALLLIB)
 perllib_DATA = $(perl_module)

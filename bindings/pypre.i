@@ -1,5 +1,5 @@
 
-%include "pydocstrings.i"
+//%include "pydocstrings.i"
 
 /*
 should probably be handled in some way..

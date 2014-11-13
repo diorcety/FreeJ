@@ -6,8 +6,10 @@ python_module = freej.py
 
 BUILT_SOURCES = $(swig_source) $(swig_header)
 
+SWIG_CFLAGS = -DIN_FREEJ
+
 $(swig_source): $(SWIG_IFACE)
-		$(SWIG_COMMAND) $(SWIG_PYTHON_OPT) -interface libfreej_py -threads -shadow -o $(swig_source) $(SWIG_IFACE)
+		$(SWIG_COMMAND) $(SWIG_CFLAGS) $(SWIG_PYTHON_OPT) -interface libfreej_py -threads -shadow -o $(swig_source) $(SWIG_IFACE)
 
 pkgpython_PYTHON = __init__.py
 nodist_pkgpython_PYTHON = $(python_module)

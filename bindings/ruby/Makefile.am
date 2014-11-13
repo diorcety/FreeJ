@@ -3,11 +3,12 @@ swig_source = freej_ruby.cpp
 swig_header = freej_ruby.h
 
 BUILT_SOURCES = $(swig_source) $(swig_header)
+SWIG_CFLAGS = -DIN_FREEJ
 
 EXTRA_DIST = list_classes.rb list_classes.sh
 
 $(swig_source): $(SWIG_IFACE) $(top_srcdir)/bindings/rbpre.i $(top_srcdir)/bindings/rbpost.i
-	$(SWIG_COMMAND) -ruby -initname Freej -o $(swig_source) $(SWIG_IFACE)
+	$(SWIG_COMMAND) $(SWIG_CFLAGS) -ruby -initname Freej -o $(swig_source) $(SWIG_IFACE)
 
 pkgrubydir = $(RUBY_SITE_LIB)
 dist_pkgruby_DATA = freej_extensions.rb

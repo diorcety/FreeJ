@@ -1,79 +1,13 @@
 %module(directors="1") freej
 #pragma SWIG nowarn=322
 
-%{
-#include "context.h"
-#include "linklist.h"
-#include "entity.h"
-#include "screen.h"
-#include "color.h"
-#include "video_encoder.h"
-#if defined(WITH_OGGTHEORA)
-#include "oggtheora_encoder.h"
+#ifdef IN_FREEJ
+%include "macros.i"
+#else
+%include <freej_swig/macros.i>
 #endif
 
-#include "layer.h"
-#include "blitter.h"
-#include "fps.h"
-#include "controller.h"
-#include "callback.h"
-#include "logging.h"
-#include "filter.h"
-#include "frei0r_freej.h"
-#include "freeframe_freej.h"
-#include "filter_instance.h"
-#include "frei0r_instance.h"
-#include "freeframe_instance.h"
-
-#if defined(WITH_AALIB)
-#include "aa_screen.h"
-#endif
-#include "sdl_screen.h"
-#include "soft_screen.h"
-#include "sdlgl_screen.h"
-#include "gl_screen.h"
-
-#include "cairo_layer.h"
-#include "generator_layer.h"
-#if defined(WITH_GOOM)
-#include "goom_layer.h"
-#endif
-#include "text_layer.h"
-#include "image_layer.h"
-#include "video_layer.h"
-#include "geo_layer.h"
-#if defined(WITH_OPENCV)
-#include "opencv_cam_layer.h"
-#endif
-#include "xscreensaver_layer.h"
-#if defined(WITH_UNICAP)
-#include "unicap_layer.h"
-#endif
-#include "v4l2_layer.h"
-#if defined(WITH_XGRAB)
-#include "xgrab_layer.h"
-#endif
-
-#include "sdl_controller.h"
-#include "kbd_ctrl.h"
-#include "trigger_ctrl.h"
-#include "midi_ctrl.h"
-#include "vimo_ctrl.h"
-#include "joy_ctrl.h"
-#include "mouse_ctrl.h"
-#include "wiimote_ctrl.h"
-#include "osc_ctrl.h"
-#if defined(WITH_AUDIO)
-#include "audio_collector.h"
-#include "audio_layer.h"
-#endif
-
-#if defined(WITH_CONSOLE)
-#include "console_ctrl.h"
-#endif
-%}
-
-///////// PRE
+%include FREEJ_SWIG_INCLUDE(headers.i)
 
 %apply unsigned long { uint16_t };
 
@@ -83,13 +17,15 @@
 
 /* Language specific typemaps */
 #if defined(SWIGPYTHON)
-  %include "pypre.i"
+  %include FREEJ_SWIG_INCLUDE(pypre.i)
 #elif defined(SWIGRUBY)
-  %include "rbpre.i"
+  %include FREEJ_SWIG_INCLUDE(rbpre.i)
 #elif defined(SWIGJAVA)
-  %include "javapre.i"
+  %include FREEJ_SWIG_INCLUDE(javapre.i)
+#elif defined(SWIGLUA)
+  %include FREEJ_SWIG_INCLUDE(javalua.i)
 #elif defined(SWIGPERL)
-  %include "perlpre.i"
+  %include FREEJ_SWIG_INCLUDE(perlpre.i)
 #endif
 
 %feature("director") DumbCall;
@@ -106,11 +42,9 @@
 %feature("director") VimoController;
 
 //we need this for ifdefs in included headers
-%include "config.h"
-
 %include "std_string.i"
-%include "freej_sharedptr_pre.i"
-%include "freej_list_pre.i"
+%include FREEJ_SWIG_INCLUDE(freej_sharedptr_pre.i)
+%include FREEJ_SWIG_INCLUDE(freej_list_pre.i)
 
 ////////// IGNORES
 
@@ -120,114 +54,118 @@
 ////////// MAIN
 
 //we need this for macro definitions appearing in included headers
-%include "factory.h"
+%include FREEJ_INCLUDE(factory.h)
 
 %import "inttypes.i"
 
 /* Now the freej headers.. */
-%include "entity.h"
-%include "freej.h"
-%include "jutils.h"
-%include "jsync.h"
-%include "context.h"
-%include "screen.h"
-%include "color.h"
-%include "video_encoder.h"
+%include FREEJ_INCLUDE(entity.h)
+%include FREEJ_INCLUDE(freej.h)
+%include FREEJ_INCLUDE(jutils.h)
+%include FREEJ_INCLUDE(jsync.h)
+%include FREEJ_INCLUDE(context.h)
+%include FREEJ_INCLUDE(screen.h)
+%include FREEJ_INCLUDE(color.h)
+%include FREEJ_INCLUDE(video_encoder.h)
 
 #if defined(WITH_AUDIO)
-%include "audio_collector.h"
+%include FREEJ_INCLUDE(audio_collector.h)
 #endif
 
-%include "callback.h"
-%include "logging.h"
-%include "entity.h"
-%include "linklist.h"
-%include "parameter.h"
-%include "parameter_instance.h"
-%include "filter.h"
-%include "frei0r_freej.h"
-%include "freeframe_freej.h"
-%include "filter_instance.h"
-%include "frei0r_instance.h"
-%include "freeframe_instance.h"
+%include FREEJ_INCLUDE(callback.h)
+%include FREEJ_INCLUDE(logging.h)
+%include FREEJ_INCLUDE(entity.h)
+%include FREEJ_INCLUDE(linklist.h)
+%include FREEJ_INCLUDE(parameter.h)
+%include FREEJ_INCLUDE(parameter_instance.h)
+%include FREEJ_INCLUDE(filter.h)
+%include FREEJ_INCLUDE(frei0r_freej.h)
+%include FREEJ_INCLUDE(freeframe_freej.h)
+%include FREEJ_INCLUDE(filter_instance.h)
+%include FREEJ_INCLUDE(frei0r_instance.h)
+%include FREEJ_INCLUDE(freeframe_instance.h)
 
-%include "blitter.h"
-%include "plugger.h"
-%include "fps.h"
+%include FREEJ_INCLUDE(blitter.h)
+%include FREEJ_INCLUDE(plugger.h)
+%include FREEJ_INCLUDE(fps.h)
 
 #if defined(WITH_OGGTHEORA)
-%include "oggtheora_encoder.h"
+%include FREEJ_INCLUDE(oggtheora_encoder.h)
 #endif
 
 // layers...
-%include "layer.h"
+%include FREEJ_INCLUDE(layer.h)
 #if defined(WITH_AUDIO)
-%include "audio_layer.h"
+%include FREEJ_INCLUDE(audio_layer.h)
 #endif
-%include "cairo_layer.h"
-%include "generator_layer.h"
+%include FREEJ_INCLUDE(cairo_layer.h)
+%include FREEJ_INCLUDE(generator_layer.h)
 #if defined(WITH_GOOM)
-%include "goom_layer.h"
+%include FREEJ_INCLUDE(goom_layer.h)
 #endif
-%include "text_layer.h"
-%include "image_layer.h"
-%include "video_layer.h"
-%include "geo_layer.h"
+%include FREEJ_INCLUDE(text_layer.h)
+%include FREEJ_INCLUDE(image_layer.h)
+%include FREEJ_INCLUDE(video_layer.h)
+%include FREEJ_INCLUDE(geo_layer.h)
 #if defined(WITH_OPENCV)
-%include "opencv_cam_layer.h"
+%include FREEJ_INCLUDE(opencv_cam_layer.h)
 #endif
-%include "xscreensaver_layer.h"
+%include FREEJ_INCLUDE(xscreensaver_layer.h)
 #if defined(WITH_UNICAP)
-%include "unicap_layer.h"
+%include FREEJ_INCLUDE(unicap_layer.h)
 #endif
-%include "v4l2_layer.h"
+%include FREEJ_INCLUDE(v4l2_layer.h)
 #if defined(WITH_XGRAB)
-%include "xgrab_layer.h"
+%include FREEJ_INCLUDE(xgrab_layer.h)
 #endif
 
 // screens...
-%include "screen.h"
+%include FREEJ_INCLUDE(screen.h)
 #if defined(WITH_AALIB)
-%include "aa_screen.h"
+%include FREEJ_INCLUDE(aa_screen.h)
 #endif
-%include "sdl_screen.h"
-%include "soft_screen.h"
+%include FREEJ_INCLUDE(sdl_screen.h)
+%include FREEJ_INCLUDE(soft_screen.h)
 #if defined(WITH_OPENGL)
-%include "sdlgl_screen.h"
-%include "gl_screen.h"
+%include FREEJ_INCLUDE(sdlgl_screen.h)
+%include FREEJ_INCLUDE(gl_screen.h)
 #endif
 #if defined(WITH_COCOA)
-%include "CVScreen.h"
+%include FREEJ_INCLUDE(CVScreen.h)
 #endif
 
 // controllers
-%include "controller.h"
-%include "sdl_controller.h"
-%include "kbd_ctrl.h"
-%include "trigger_ctrl.h"
-%include "joy_ctrl.h"
-%include "midi_ctrl.h"
-%include "mouse_ctrl.h"
-%include "wiimote_ctrl.h"
-%include "vimo_ctrl.h"
+%include FREEJ_INCLUDE(controller.h)
+%include FREEJ_INCLUDE(sdl_controller.h)
+%include FREEJ_INCLUDE(kbd_ctrl.h)
+%include FREEJ_INCLUDE(trigger_ctrl.h)
+%include FREEJ_INCLUDE(joy_ctrl.h)
+%include FREEJ_INCLUDE(midi_ctrl.h)
+%include FREEJ_INCLUDE(mouse_ctrl.h)
+%include FREEJ_INCLUDE(wiimote_ctrl.h)
+%include FREEJ_INCLUDE(vimo_ctrl.h)
 #if defined(WITH_CONSOLE)
-%include "console_ctrl.h"
+%include FREEJ_INCLUDE(console_ctrl.h)
 #endif
 
 //////////// POST
 
 %template(ScreenFactory) Factory<ViewPort>;
 
-%include "freej_list_post.i"
-%include "freej_sharedptr_post.i"
+%include FREEJ_SWIG_INCLUDE(freej_list_post.i)
+%include FREEJ_SWIG_INCLUDE(freej_sharedptr_post.i)
 
 /* Language specific extensions */
 #if defined(SWIGPYTHON)
-  %include "pypost.i"
+  %include FREEJ_SWIG_INCLUDE(pypost.i)
 #elif defined(SWIGRUBY)
-  %include "rbpost.i"
+  %include FREEJ_SWIG_INCLUDE(rbpost.i)
+#elif defined(SWIGJAVA)
+  %include FREEJ_SWIG_INCLUDE(javapost.i)
 #elif defined(SWIGLUA)
-  %include "luapost.i"
+  %include FREEJ_SWIG_INCLUDE(luapost.i)
+#elif defined(SWIGPERL)
+  %include FREEJ_SWIG_INCLUDE(luaperl.i)
 #endif
 
 // SWIGPERL5, SWIGRUBY, SWIGJAVA, SWIGLUA...

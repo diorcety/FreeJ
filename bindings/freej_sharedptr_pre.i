@@ -1,6 +1,6 @@
 /* Shared Pointer */
 %include "std_shared_ptr.i"
-%include "sharedptr.h"
+%include FREEJ_INCLUDE(sharedptr.h)
 
 %define FREEJ_SHARED_PTR_PRE(TYPE)
 %shared_ptr(TYPE)
