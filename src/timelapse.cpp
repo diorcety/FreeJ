@@ -67,6 +67,24 @@ double Timelapse::getTime() {
     return (double)elapsed_tv.tv_sec + (double)elapsed_tv.tv_usec/(double)1000000;
 }
 
+void Timelapse::shiftTime(double time) {
+    if(running) return;
+    timeval done;
+
+    double val = time;
+    if(val < 0) {
+        val = -val;
+    }
+    double fl_val = floor(val);
+    done.tv_sec = fl_val;
+    done.tv_usec = (val - fl_val) * (double)1000000;
+    if(time > 0) {
+        timeradd(&elapsed_tv, &done, &elapsed_tv);
+    } else {
+        timersub(&elapsed_tv, &done, &elapsed_tv);
+    }
+}
+
 void Timelapse::calc() {
     if(!running) return;
     timeval done, now_tv;
@@ -76,6 +94,7 @@ void Timelapse::calc() {
     start_tv = now_tv;
     if(ratio != 1.0) {
         double val = (double)done.tv_sec + (double)done.tv_usec/(double)1000000;
+        val *= ratio;
         double fl_val = floor(val);
         done.tv_sec = fl_val;
         done.tv_usec = (val - fl_val) * (double)1000000;

@@ -37,6 +37,7 @@ public:
     void reset();
     bool isRunning() const;
     double getTime();
+    void shiftTime(double time);
 
 private:
     void calc();

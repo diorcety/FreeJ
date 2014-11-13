@@ -103,8 +103,11 @@ public:
     bool init(); ///< initialise the engine
 
     //  void close();
-    void cafudda(double secs); ///< run the engine for seconds or one single frame pass
+private:
+    void cafudda(); ///< run the engine for seconds or one single frame pass
 
+public:
+    void cafudda(double secs); ///< run the engine for seconds or one single frame pass
     void start(); ///< start the engine and loop until quit is false
     void stop();
     void start_threaded(); ///< start the engine in a thread, looping until quit is false
@@ -165,6 +168,14 @@ public:
 
     inline void setFps(double fps) {
         this->fps.set(fps);
+    }
+
+    inline double getTimeRatio() {
+        return this->timelapse.getRatio();
+    }
+
+    inline void setTimeRatio(double ratio) {
+        this->timelapse.setRatio(ratio);
     }
 
     inline double getCurrentFps() {

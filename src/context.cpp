@@ -255,12 +255,15 @@ bool Context::init() {
 }
 
 void Context::start() {
+    timelapse.start();
     quit = false;
     running = true;
     while(!quit) {
-        cafudda(1.0);
+        cafudda();
+        fps.delay();
     }
     running = false;
+    timelapse.stop();
 }
 
 void Context::stop() {
@@ -276,9 +279,11 @@ void Context::start_threaded() {
  * Main loop called fps_speed times a second
  */
 void Context::cafudda(double secs) {
-    timelapse.setRatio(secs);
-    timelapse.start();
+    timelapse.shiftTime(secs);
+    cafudda();
+}
 
+void Context::cafudda() {
     ///////////////////////////////
     //// process controllers
     if(poll_events)
