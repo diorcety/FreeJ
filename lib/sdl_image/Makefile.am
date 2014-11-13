@@ -20,4 +20,5 @@ libsdl_image_la_SOURCES = \
 	IMG_xpm.c \
 	IMG_xxx.c
 
-noinst_HEADERS = SDL_image.h
+libsdl_image_laincludedir = $(includedir)/freej/libs
+libsdl_image_lainclude_HEADERS = SDL_image.h

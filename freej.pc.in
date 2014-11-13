@@ -8,5 +8,5 @@ Description: FreeJ vision mixer library
 Version: @VERSION@
 Libs: -L${libdir} -lfreej
 Cflags: -I${includedir} -I${includedir}/freej/libs
-Requires.private: sdl
+Requires.private: sdl cairo opencv
 
