@@ -254,20 +254,36 @@ bool Context::init() {
     return true;
 }
 
-void Context::start() {
+void Context::begin() {
     timelapse.start();
-    quit = false;
     running = true;
-    while(!quit) {
-        cafudda();
-        fps.delay();
-    }
+    quit = false;
+}
+
+void Context::end() {
     running = false;
     timelapse.stop();
 }
 
+void Context::start() {
+    begin();
+    while(!quit) {
+        cafudda();
+        delay();
+    }
+    end();
+}
+
+void Context::delay() {
+    fps.delay();
+}
+
 void Context::stop() {
     quit = true;
+}
+
+bool Context::isQuitting() const {
+    return quit;
 }
 
 void Context::start_threaded() {

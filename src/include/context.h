@@ -103,13 +103,15 @@ public:
     bool init(); ///< initialise the engine
 
     //  void close();
-private:
-    void cafudda(); ///< run the engine for seconds or one single frame pass
-
 public:
+    void cafudda(); ///< run the engine for seconds or one single frame pass
     void cafudda(double secs); ///< run the engine for seconds or one single frame pass
     void start(); ///< start the engine and loop until quit is false
     void stop();
+    void begin();
+    void end();
+    void delay();
+    bool isQuitting() const;
     void start_threaded(); ///< start the engine in a thread, looping until quit is false
 
     bool register_controller(ControllerPtr ctrl);
