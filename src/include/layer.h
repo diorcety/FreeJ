@@ -126,6 +126,9 @@ public:
 
     ///< Get Layer's filename
 
+    virtual void set_transformation(const Transformation &transformation);
+    virtual Transformation &get_transformation();
+    
     /**
        Move the layer to absolute position,
        coordinates refer to the upper left corner
@@ -151,14 +154,10 @@ public:
        @param angle from 0 to 360 degrees rotation
      */
     virtual void set_rotate(double angle); ///< Rotate a Layer
+    virtual double get_rotate() const;
     
 public:
     bool antialias;
-    bool zooming;
-    bool rotating;
-    double zoom_x;
-    double zoom_y;
-    double rotate;
 
 public:
     virtual void fit(bool maintain_aspect_ratio = true);
@@ -177,8 +176,6 @@ protected:
 public:
     Geometry geo;
     ///< Geometrical information about the Layer
-    Geometry geo_rotozoom;
-    ///< Geometrical information about the Rotozoom
 
 public:
     inline const Geometry& getGeometry() {

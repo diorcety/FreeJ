@@ -372,7 +372,7 @@ void *V4L2CamLayer::feed(double time) {
     }
 
     //multiply height by 2 seems to solve the upper half screen crop
-    ccvt_yuyv_bgr32(geo.w, geo.h * 2, buffers[buffer.index].start, frame);
+    ccvt_yuyv_bgr32(geo.getSize().x(), geo.getSize().y() * 2, buffers[buffer.index].start, frame);
 
 
 

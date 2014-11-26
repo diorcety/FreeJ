@@ -20,7 +20,19 @@
 #define __GEOMETRY_H__
 
 #include <inttypes.h>
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
+#include <Eigen/SVD>
 #include "sharedptr.h"
+
+typedef Eigen::Affine3d Transformation;
+typedef Eigen::Matrix3d Matrix;
+typedef Eigen::Vector3d Vector;
+typedef Eigen::Array3d Array;
+typedef Eigen::Translation3d Translation;
+typedef Eigen::AngleAxisd Rotation;
+typedef Eigen::AlignedScaling3d Scaling;
+typedef Eigen::Vector3i Size;
 
 /**
    This class is made to hold informations about the geometry of
@@ -38,24 +50,58 @@ public:
 
     void init(int nw, int nh, int nbpp);
 
-    int16_t x; ///< x axis position coordinate
-    int16_t y; ///< y axis position coordinate
-    uint16_t w; ///< width of frame in pixels
-    uint16_t h; ///< height of frame in pixels
+private:
+    Transformation transformation;
+    Size size;
     uint8_t bpp; ///< bits per pixel
 
-private:
     uint32_t pixelsize; ///< size of the whole frame in pixels
     uint32_t bytesize; ///< size of the whole frame in bytes
     uint16_t bytewidth; ///< width of frame in bytes (also called pitch or stride)
 
 public:
+    const Transformation &getTransformation() const;
+    Transformation &getTransformation();
+
+    const Size &getSize() const;
+    
+    uint8_t getBpp() const;
     uint32_t getPixelSize() const;
     uint32_t getByteSize() const;
     uint16_t getByteWidth() const;
 
 
 };
+
+#include <sstream>
+
+inline std::string printTransformation(const Transformation &transformation) {
+    std::stringstream ss;
+    Matrix rotation;
+    Matrix scaling;
+    transformation.computeRotationScaling(&rotation, &scaling);
+    Translation translation(transformation.translation());
+    ss << transformation.matrix() << std::endl;
+    ss << "................" << std::endl;
+    ss << translation*Vector(0,0,0) << std::endl;
+    ss << scaling << std::endl;
+    ss << rotation << std::endl;
+    return ss.str();
+}
+
+inline std::string printTransformation(Transformation &&transformation) {
+    std::stringstream ss;
+    Matrix rotation;
+    Matrix scaling;
+    transformation.computeRotationScaling(&rotation, &scaling);
+    Translation translation(transformation.translation());
+    ss << transformation.matrix() << std::endl;
+    ss << "................" << std::endl;
+    ss << translation*Vector(0,0,0) << std::endl;
+    ss << scaling << std::endl;
+    ss << rotation << std::endl;
+    return ss.str();
+}
 
 #endif /* __GEOMETRY_H__ */
 

@@ -178,7 +178,7 @@ bool FreiorInstance::apply(LayerPtr lay) {
     }
     auto freior = DynamicPointerCast<Freior>(proto);
     auto &geo = lay->getGeometry();
-    core = freior->f0r_construct(geo.w, geo.h);
+    core = freior->f0r_construct(geo.getSize().x(), geo.getSize().y());
     return core != NULL;
 }
 

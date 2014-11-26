@@ -98,7 +98,7 @@ void GlScreen::blit(LayerPtr layer) {
     //glColor3f (0., 0., 0.);
     //glRasterPos2i (0,0);
     const Geometry &layer_geo = layer->getGeometry();
-    glDrawPixels(layer_geo.w, layer_geo.h, GL_BGRA, GL_UNSIGNED_BYTE, layer->buffer);
+    glDrawPixels(layer_geo.getSize().x(), layer_geo.getSize().y(), GL_BGRA, GL_UNSIGNED_BYTE, layer->buffer);
 }
 
 void GlScreen::show() {

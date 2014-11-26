@@ -26,9 +26,6 @@
 BlitInstance::BlitInstance() {
 }
 
-BlitInstance::BlitInstance(BlitPtr proto) {
-}
-
 void BlitInstance::init(BlitPtr proto) {
     func("initializing instance for blit %s", proto->getName().c_str());
     name = proto->name;

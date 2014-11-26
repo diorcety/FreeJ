@@ -225,7 +225,7 @@ void TextLayer::write(const char *str) {
         return;
     }
     // newsurf will become next this->surf, we don't need to free
-    newsurf = SDL_DisplayFormat(tmp);
+    newsurf = SDL_DisplayFormatAlpha(tmp);
     if(!newsurf) {
         error("Error render text: %s", SDL_GetError());
         return;

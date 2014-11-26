@@ -90,7 +90,7 @@ bool ImageLayer::open(const char *file) {
 
     auto bytesize = geo.getByteSize();
     notice("ImageLayer opened %s :: w[%u] h[%u] (%u bytes)",
-           file, geo.w, geo.h, bytesize);
+           file, (unsigned int)geo.getSize().x(), (unsigned int)geo.getSize().y(), bytesize);
 
 
     /** allocate memory for the black image */

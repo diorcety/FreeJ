@@ -249,9 +249,13 @@ bool SlwSelector::refresh() {
 
     layer = getSelectedLayer();
     if(layer) {
-        snprintf(tmp, w, "Layer: %s blit: %s geometry x%i y%i w%u h%u",
+        const Geometry &geo = layer->getGeometry();
+        const Size &size = geo.getSize();
+        const Vector &position = geo.getTransformation() * Vector(0, 0, 0);
+        snprintf(tmp, w, "Layer: %s blit: %s geometry x%i y%i z%i w%u h%u",
                  layer->get_filename(), layer->current_blit->getName().c_str(),
-                 layer->geo.x, layer->geo.y, layer->geo.w, layer->geo.h);
+                 (int)position.x(), (int)position.y(), (int)position.z(),
+                 size.x(), size.y());
         //    SLsmg_erase_eol();
     } else {
         sprintf(tmp, "No Layer selected");

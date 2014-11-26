@@ -51,18 +51,6 @@ AaScreen::~AaScreen() {
 
 }
 
-void AaScreen::setup_blits(Layer *lay) {
-
-    Blitter *b = new Blitter();
-
-    setup_linear_blits(b);
-
-    lay->blitter = b;
-
-    lay->set_blit("RGB"); // default
-
-}
-
 bool AaScreen::_init() {
 
     /* width/height image setup */

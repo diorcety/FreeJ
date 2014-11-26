@@ -41,6 +41,7 @@ void AbstractLinearBlitInstance::operator()(LayerPtr layer) {
 }
 
 void AbstractLinearBlitInstance::crop(LayerPtr lay, ViewPortPtr scr) {
+    /*
     func("crop on layer %s x%i y%i w%i h%i for blit %s",
          lay->getName().c_str(), lay->geo.x, lay->geo.y,
          lay->geo.w, lay->geo.h, getName().c_str());
@@ -142,7 +143,7 @@ void AbstractLinearBlitInstance::crop(LayerPtr lay, ViewPortPtr scr) {
     lay_bytepitch = lay_pitch * 4;
 
     //lay->need_crop = false;
-    
+    */
 }
 
 void AbstractLinearBlitInstance::init(LinearBlitPtr blit) {

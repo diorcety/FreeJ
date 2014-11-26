@@ -48,7 +48,7 @@ GeoLayer::~GeoLayer() {
 bool GeoLayer::_init() {
 
     surf = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCALPHA,
-                                geo.w, geo.h, geo.bpp,
+                                geo.getSize().x(), geo.getSize().y(), geo.getBpp(),
                                 red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
     if(!surf) {
         error("can't allocate GeoLayer memory surface");

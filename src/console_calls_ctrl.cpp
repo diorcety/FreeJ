@@ -783,7 +783,7 @@ int console_generator_selection(ContextPtr env, char *cmd) {
         return 0;
     }
     const Geometry &geo = screen->getGeometry();
-    if(!tmp->init(geo.w, geo.h, geo.bpp)) {
+    if(!tmp->init(geo.getSize().x(), geo.getSize().y(), geo.getBpp())) {
         error("can't initialize generator layer");
         return 0;
     }

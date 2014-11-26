@@ -45,8 +45,9 @@ const std::string& SlwHistory::getLine() const {
 }
 
 
-SlwReadline::SlwReadline()
+SlwReadline::SlwReadline(const ContextPtr& env)
     : SLangWidget() {
+    this->env = env;
     name = "console readline";
     mSelectedHistory = NULL;
     movestep = 2;
@@ -378,6 +379,15 @@ bool SlwReadline::parser_movelayer(int key) {
         }
         const Geometry &screen_geo = screen->getGeometry();
         const Geometry &layer_geo = layer->getGeometry();
+        const Transformation &transformation = layer_geo.getTransformation();
+
+        Matrix rotationMatrix;
+        Matrix scalingMatrix;
+        transformation.computeRotationScaling(&rotationMatrix, &scalingMatrix);
+
+        const Vector &&translation =  transformation.translation();
+        const Vector &&rotationAngle = rotationMatrix.eulerAngles(0, 1, 2);
+        const Vector &&scalingVector = scalingMatrix.diagonal();
 
         switch(key) {
         // XXX(shammash): set zoom/rotate/position are closures so they don't get
@@ -386,12 +396,13 @@ bool SlwReadline::parser_movelayer(int key) {
 
         // zoom
         case KEY_PLUS:
-            layer->set_zoom(layer->zoom_x + 0.01,
-                            layer->zoom_y + 0.01);
+
+            layer->set_zoom(scalingVector.x() + 0.01,
+                            scalingVector.y() + 0.01);
             break;
         case KEY_MINUS:
-            layer->set_zoom(layer->zoom_x - 0.01,
-                            layer->zoom_y - 0.01);
+            layer->set_zoom(scalingVector.x() - 0.01,
+                            scalingVector.y() - 0.01);
             break;
         case '.':
             layer->set_zoom(1, 1);
@@ -399,10 +410,10 @@ bool SlwReadline::parser_movelayer(int key) {
 
         // rotation
         case '<':
-            layer->set_rotate(layer->rotate + 0.5);
+            layer->set_rotate(rotationAngle.z() * 180.0 / M_PI + 0.5);
             break;
         case '>':
-            layer->set_rotate(layer->rotate - 0.5);
+            layer->set_rotate(rotationAngle.z() * 180.0 / M_PI - 0.5);
             break;
         case ',':
             layer->set_rotate(0);
@@ -416,46 +427,46 @@ bool SlwReadline::parser_movelayer(int key) {
         case '8':
         case 'k':
         case SL_KEY_UP:
-            layer->set_position(layer_geo.x, layer_geo.y - movestep);
+            layer->set_position(translation.x(), translation.y() - movestep);
             break;
         case '2':
         case 'j':
         case SL_KEY_DOWN:
-            layer->set_position(layer_geo.x, layer_geo.y + movestep);
+            layer->set_position(translation.x(), translation.y() + movestep);
             break;
         case '4':
         case 'h':
         case SL_KEY_LEFT:
-            layer->set_position(layer_geo.x - movestep, layer_geo.y);
+            layer->set_position(translation.x() - movestep, translation.y());
             break;
         case '6':
         case 'l':
         case SL_KEY_RIGHT:
-            layer->set_position(layer_geo.x + movestep, layer_geo.y);
+            layer->set_position(translation.x() + movestep, translation.y());
             break;
         case '7':
         case 'y': // up+left
-            layer->set_position(layer_geo.x - movestep, layer_geo.y - movestep);
+            layer->set_position(translation.x() - movestep, translation.y() - movestep);
             break;
         case '9':
         case 'u': // up+right
-            layer->set_position(layer_geo.x + movestep, layer_geo.y - movestep);
+            layer->set_position(translation.x() + movestep, translation.y() - movestep);
             break;
         case '1':
         case 'b': // down+left
-            layer->set_position(layer_geo.x - movestep, layer_geo.y + movestep);
+            layer->set_position(translation.x() - movestep, translation.y() + movestep);
             break;
         case '3':
         case 'n': // down+right
-            layer->set_position(layer_geo.x + movestep, layer_geo.y + movestep);
+            layer->set_position(translation.x() + movestep, translation.y() + movestep);
             break;
 
         case '5':
         case KEY_SPACE:
             // place at the center
             layer->set_position
-                ((screen_geo.w - layer_geo.w) / 2,
-                (screen_geo.h - layer_geo.h) / 2);
+                ((screen_geo.getSize().x() - layer_geo.getSize().x()) / 2,
+                (screen_geo.getSize().y() - layer_geo.getSize().y()) / 2);
             break;
 
         case SL_KEY_ENTER:

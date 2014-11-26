@@ -81,7 +81,7 @@ bool ViewPort::init(int w, int h, int bpp) {
 
     geo.init(w, h, bpp);
     initialized = _init();
-    func("screen %s initialized with size %ux%u", name.c_str(), geo.w, geo.h);
+    func("screen %s initialized with size %ux%u", name.c_str(), geo.getSize().x(), geo.getSize().y());
 
     return initialized;
 

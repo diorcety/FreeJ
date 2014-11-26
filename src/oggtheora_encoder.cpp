@@ -124,8 +124,8 @@ bool OggTheoraEncoder::init(ViewPortPtr scr) {
 
     int theora_quality = (int)((video_quality * 63) / 100);
     auto & geo = scr->getGeometry();
-    int w                   = geo.w;
-    int h                   = geo.h;
+    const int w                   = geo.getSize().x();
+    const int h                   = geo.getSize().y();
     func("VideoEncoder: encoding theora to quality %u", theora_quality);
     /* Theora has a divisible-by-sixteen restriction for the encoded video size */
     /* scale the frame size up to the nearest /16 and calculate offsets */
@@ -143,8 +143,8 @@ bool OggTheoraEncoder::init(ViewPortPtr scr) {
 
     oggmux.ti.width                        = video_x;
     oggmux.ti.height                       = video_y;
-    oggmux.ti.frame_width                  = geo.w;
-    oggmux.ti.frame_height                 = geo.h;
+    oggmux.ti.frame_width                  = w;
+    oggmux.ti.frame_height                 = h;
     oggmux.ti.offset_x                     = frame_x_offset;
     oggmux.ti.offset_y                     = frame_y_offset;
     oggmux.ti.fps_numerator                = 25; // env->fps.fps;
@@ -172,9 +172,9 @@ bool OggTheoraEncoder::init(ViewPortPtr scr) {
 
     oggmux_init(&oggmux);
 
-    enc_y     = malloc(geo.w * geo.h);
-    enc_u     = malloc((geo.w * geo.h) / 2);
-    enc_v     = malloc((geo.w * geo.h) / 2);
+    enc_y     = malloc(w * h);
+    enc_u     = malloc((w * h) / 2);
+    enc_v     = malloc((w * h) / 2);
     enc_yuyv   = (uint8_t*)malloc(geo.getByteSize());
 
     act("initialization successful");

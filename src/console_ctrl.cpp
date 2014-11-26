@@ -200,7 +200,7 @@ bool SlwConsole::slw_init() {
 
 
     // status line
-    rdl = MakeShared<SlwReadline>();
+    rdl = MakeShared<SlwReadline>(env);
     slw->place(rdl, 0, slw->h - 1, slw->w, slw->h);
     rdl->init();
     ////////////////////////////

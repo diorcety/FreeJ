@@ -31,7 +31,6 @@ class BlitInstance : public Entry {
 
 public:
     BlitInstance();
-    BlitInstance(BlitPtr proto);
     virtual ~BlitInstance();
 
     virtual void init(BlitPtr proto);

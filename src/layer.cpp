@@ -20,6 +20,7 @@
  */
 
 #include <string.h>
+#include <algorithm>
 
 #include "layer.h"
 #include "blitter.h"
@@ -56,14 +57,8 @@ Layer::Layer()
     buffer = NULL;
     is_native_sdl_surface = false;
 
-    zoom_x = 1.0;
-    zoom_y = 1.0;
-    rotate = 0.0;
-    zooming = false;
-    rotating = false;
-
     antialias = false;
-    
+
     current_blit = NULL;
 
     null_feeds = 0;
@@ -90,7 +85,7 @@ bool Layer::init(int wdt, int hgt, int bpp) {
 
     geo.init(wdt, hgt, bpp);
 
-    func("initialized %s layer %ix%i", getName().c_str(), geo.w, geo.h);
+    func("initialized %s layer %ix%i", getName().c_str(), wdt, hgt);
 
     if(!geo.getByteSize()) {
         // if  the   size  is  still  unknown   at  init  then   it  is  the
@@ -230,56 +225,76 @@ void Layer::set_filename(const char *f) {
     strncpy(filename, p + 1, 256);
 }
 
+void Layer::set_transformation(const Transformation &transformation) {
+    geo.getTransformation() = transformation;
+}
+
+Transformation &Layer::get_transformation() {
+    return geo.getTransformation();
+}
+
 void Layer::set_position(int x, int y) {
-    geo.x = x;
-    geo.y = y;
+    Transformation &transformation = geo.getTransformation();
+    Vector &&translation = transformation.translation();
+    translation.x() = x;
+    translation.y() = y;
+    transformation.translation() = translation;
 }
 
 int Layer::get_x_position() const {
-    return geo.x;
+    const Transformation &transformation = geo.getTransformation();
+    const Vector &translation = transformation.translation();
+    return translation.x();
 }
 
 void Layer::set_x_position(int x) {
-    set_position(x, geo.y);
+    Transformation &transformation = geo.getTransformation();
+    Vector &&translation = transformation.translation();
+    translation.x() = x;
+    transformation.translation() = translation;
 }
 
 int Layer::get_y_position() const {
-    return geo.y;
+    const Transformation &transformation = geo.getTransformation();
+    const Vector &translation = transformation.translation();
+    return translation.y();
 }
 
 void Layer::set_y_position(int y) {
-    set_position(geo.x, y);
+    Transformation &transformation = geo.getTransformation();
+    Vector &&translation = transformation.translation();
+    translation.y() = y;
+    transformation.translation() = translation;
 }
 
 void Layer::set_zoom(double x, double y) {
-    if((x == 1) && (y == 1)) {
-        zooming = false;
-        zoom_x = zoom_y = 1.0;
-        act("%s layer %s zoom deactivated", name.c_str(), filename);
-    } else {
-        zoom_x = x;
-        zoom_y = y;
-        zooming = true;
-        func("%s layer %s zoom set to x%.2f y%.2f", name.c_str(), filename, zoom_x, zoom_y);
-    }
+    Transformation &transformation = geo.getTransformation();
+    Matrix rotation;
+    Matrix scaling;
+    transformation.computeRotationScaling(&rotation, &scaling);
+    Translation translation(transformation.translation());
+    transformation = translation * Rotation(rotation) * Scaling(x, y , 0);
 }
 
 void Layer::set_rotate(double angle) {
-    if(!angle) {
-        rotating = false;
-        rotate = 0;
-        act("%s layer %s rotation deactivated", name.c_str(), filename);
-    } else {
-        rotate = angle;
-        rotating = true;
-        func("%s layer %s rotation set to %.2f", name.c_str(), filename, rotate);
-    }
+    Transformation &transformation = geo.getTransformation();
+    Matrix rotation;
+    Matrix scaling;
+    transformation.computeRotationScaling(&rotation, &scaling);
+    Translation translation(transformation.translation());
+    transformation = translation * Rotation(angle * M_PI/ 180.0, Vector::UnitZ()) * Scaling(scaling.diagonal());
+}
+
+double Layer::get_rotate() const {
+    const Transformation &transformation = geo.getTransformation();
+    Matrix rotation;
+    Matrix scaling;
+    transformation.computeRotationScaling(&rotation, &scaling);
+    const Vector &rotationAngle = rotation.eulerAngles(0, 1, 2);
+    return rotationAngle.z() * 180.0 / M_PI;
 }
 
 void Layer::fit(bool maintain_aspect_ratio) {
-    double width_zoom, height_zoom;
-    int new_x = 0;
-    int new_y = 0;
     auto screen = this->screen.lock();
 
     if(!screen) {
@@ -287,27 +302,19 @@ void Layer::fit(bool maintain_aspect_ratio) {
         return;
     }
 
+    // Compute the scaling
     const Geometry &screen_geo = screen->getGeometry();
-    width_zoom = (double)screen_geo.w / geo.w;
-    height_zoom = (double)screen_geo.h / geo.h;
+    auto screen_geo_size = screen_geo.getSize().array().cast<double>();
+    auto geo_size = geo.getSize().array().cast<double>();
+    Array scale = screen_geo_size / geo_size;
     if(maintain_aspect_ratio) {
-        //to maintain the aspect ratio we simply zoom to the smaller of the
-        //two zoom values
-        if(width_zoom > height_zoom) {
-            width_zoom = height_zoom;
-        } else {
-            height_zoom = width_zoom;
-        }
+        scale[0] = scale[1] = std::min(scale[0], scale[1]);
     }
-    set_zoom(width_zoom, height_zoom);
-    // reposition layer upper corner
-    new_x = ((double)(width_zoom * geo.w - geo.w) / 2.0);
-    new_y = ((double)(height_zoom * geo.h - geo.h) / 2.0);
 
-    // center layer
-    new_x += ((double)(screen_geo.w - width_zoom * geo.w) / 2.0);
-    new_y += ((double)(screen_geo.h - height_zoom * geo.h) / 2.0);
-    set_position(new_x, new_y);
+    // reposition layer upper corner
+    auto new_position = (geo_size * scale - screen_geo_size) / 2;
+    auto &transformation = geo.getTransformation();
+    transformation = Translation(new_position) * Scaling(scale.matrix());
 }
 
 bool Layer::_init() {

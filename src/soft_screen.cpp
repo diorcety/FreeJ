@@ -74,13 +74,18 @@ public:
     }
 
     virtual BlitInstancePtr new_instance(BlitPtr blit) {
+        BlitInstancePtr ret = BlitInstancePtr();
         LinearBlitPtr linearBlitPtr = DynamicPointerCast<LinearBlit>(blit);
         if(linearBlitPtr) {
-            return MakeShared<SoftScreenLinearBlitInstance>(screen, linearBlitPtr);
+            ret = MakeShared<SoftScreenLinearBlitInstance>(screen, linearBlitPtr);
         }
 
-        error("No valid blit instance found");
-        return BlitInstancePtr();
+        if(!ret) {
+            error("No valid blit instance found");
+        } else {
+            ret->init(blit);
+        }
+        return ret;
     }
 };
 

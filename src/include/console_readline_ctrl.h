@@ -45,7 +45,7 @@ private:
 FREEJ_FORWARD_PTR(SlwReadline)
 class SlwReadline : public SLangWidget {
 public:
-    SlwReadline();
+    SlwReadline(const ContextPtr& env);
     virtual ~SlwReadline();
 
     bool init();

@@ -25,6 +25,7 @@
 #include <string.h>
 #include <SDL_syswm.h>
 
+#undef Success
 #include "layer.h"
 #include "blitter.h"
 #include "blit_instance.h"
@@ -117,18 +118,23 @@ public:
     }
 
     virtual BlitInstancePtr new_instance(BlitPtr blit) {
+        BlitInstancePtr ret = BlitInstancePtr();
         SdlBlitPtr sdlBlitPtr = DynamicPointerCast<SdlBlit>(blit);
         if(sdlBlitPtr) {
-            return MakeShared<SdlScreenSdlBlitInstance>(screen, sdlBlitPtr);
+            ret = MakeShared<SdlScreenSdlBlitInstance>(screen, sdlBlitPtr);
         } else {
             LinearBlitPtr linearBlitPtr = DynamicPointerCast<LinearBlit>(blit);
             if(linearBlitPtr) {
-                return MakeShared<SdlScreenLinearBlitInstance>(screen, linearBlitPtr);
+                ret = MakeShared<SdlScreenLinearBlitInstance>(screen, linearBlitPtr);
             }
         }
 
-        error("No valid blit instance found");
-        return BlitInstancePtr();
+        if(!ret) {
+            error("No valid blit instance found");
+        } else {
+            ret->init(blit);
+        }
+        return ret;
     }
 };
 
@@ -170,13 +176,13 @@ bool SdlScreen::_init() {
 
     char temp[120];
 
-    setres(geo.w, geo.h);
+    setres(geo.getSize().x(), geo.getSize().y());
     sdl_screen = SDL_GetVideoSurface();
 
     SDL_VideoDriverName(temp, 120);
 
-    notice("SDL Viewport is %s %ix%i %ibpp",
-           temp, geo.w, geo.h, geo.bpp);
+    notice("SDL Viewport is %s %ux%u %ibpp",
+           temp, (unsigned int)geo.getSize().x(), (unsigned int)geo.getSize().y(), geo.getBpp());
 
     /* be nice with the window manager */
     sprintf(temp, "%s %s", PACKAGE, VERSION);

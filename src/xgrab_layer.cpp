@@ -155,12 +155,13 @@ void XGrabLayer::resize() {
     xright = (dw - rx - wa.border_width * 2 - wa.width);
     ybelow = (dh - ry - wa.border_width * 2 - wa.height);
 
+    auto &&translation = crop.getTransformation().translation();
     uint32_t wn, hn; // new width, height
-    wn = wa.width - (rx < 0 ? -rx : 0) - (xright < 0 ? -xright : 0) - crop.x;
+    wn = wa.width - (rx < 0 ? -rx : 0) - (xright < 0 ? -xright : 0) - translation.x();
 //if (crop.w > 0)
-    hn = wa.height - (ry < 0 ? -ry : 0) - (ybelow < 0 ? -ybelow : 0) - crop.y;
-    crop.x = (rx < 0 ? -rx : 0);
-    crop.y = (ry < 0 ? -ry : 0);
+    hn = wa.height - (ry < 0 ? -ry : 0) - (ybelow < 0 ? -ybelow : 0) - translation.y();
+    translation.x() = (rx < 0 ? -rx : 0);
+    translation.y() = (ry < 0 ? -ry : 0);
 
     //lock();
     geo.init((wn > 0 ? wn : 0), (hn > 0 ? hn : 0), 32);
@@ -246,10 +247,10 @@ return false;
 
 bool XGrabLayer::_init() {
     autosize = false;
-    crop.x = 0;
-    crop.y = 0;
-    crop.w = geo.w;
-    crop.h = geo.h;
+    crop.init(geo.getSize().x(), geo.getSize().y(), geo.getBpp());
+    Vector &&translation = crop.getTransformation().translation();
+    translation.x() = 0;
+    translation.y() = 0;
     return true;
 }
 
@@ -257,6 +258,7 @@ bool XGrabLayer::_init() {
 //XImage *XGetSubImage(Display *display, Drawable d, int x, int y, unsigned int width, unsigned int height, unsigned long plane_mask, int format, XImage *dest_image, int dest_x, dest_y);
 
 void *XGrabLayer::feed(double time) {
+    Vector &&translation = crop.getTransformation().translation();
     //func("%u:%s:%s (%p)",__LINE__,__FILE__,__FUNCTION__, this);
     //return surf->pixels;
     //
@@ -311,7 +313,7 @@ void *XGrabLayer::feed(double time) {
         XDestroyImage(ximage);
     if(win) {
         //ximage = XGetImage(display, win, 0, 0, geo.w, geo.h, AllPlanes, ZPixmap);
-        ximage = XGetImage(display, win, crop.x, crop.y, geo.w, geo.h, AllPlanes, ZPixmap);
+        ximage = XGetImage(display, win, translation.x(), translation.y(), geo.getSize().x(), geo.getSize().y(), AllPlanes, ZPixmap);
         if(ximage)
             ret = ximage->data;
     }

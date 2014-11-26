@@ -276,6 +276,11 @@ dnl ==============================================================
 PKG_CHECK_MODULES(SDL, sdl > 1.2, :,
   AC_MSG_ERROR([*** SDL development files not found!]))
 
+dnl ==============================================================
+dnl Check for EIGEN
+dnl ==============================================================
+PKG_CHECK_MODULES(EIGEN, eigen3, :,
+  AC_MSG_ERROR([*** Eigen development files not found!]))
 
 dnl ==============================================================
 dnl FFMPEG DYNAMIC
@@ -1056,6 +1061,7 @@ AC_SUBST(FREEJ_STATIC_CFLAGS)
 FREEJ_CFLAGS="\$(FREEJ_STATIC_CFLAGS) \
     \$(AA_CFLAGS)       \
     \$(CWIID_CFLAGS)    \
+    \$(EIGEN_CFLAGS)    \
     \$(FC_CFLAGS)       \
     \$(FFMPEG_CFLAGS)   \
     \$(FT2_CFLAGS)      \
@@ -1089,6 +1095,7 @@ FREEJ_LIBS="-lpthread -lm -lrt $DL_LIBS \
     \$(ALSA_LIBS)       \
     \$(BLUEZ_LIBS)      \
     \$(CWIID_LIBS)      \
+    \$(EIGEN_LIBS)      \
     \$(FC_LIBS)         \
     \$(FFMPEG_LIBS)     \
     \$(FFTW_LIBS)       \

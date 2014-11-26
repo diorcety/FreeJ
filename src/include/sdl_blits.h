@@ -52,22 +52,7 @@ protected:
 
 private:
     SdlBlitPtr proto;
-    void crop(LayerPtr lay, ViewPortPtr scr);
-
-    int32_t scr_stride_dx;
-    int32_t scr_stride_sx;
-    int32_t scr_stride_up;
-    int32_t scr_stride;
-    uint32_t scr_offset;
-
-    int32_t lay_pitch;
-    int32_t lay_bytepitch;
-    int32_t lay_stride;
-    int32_t lay_stride_sx;
-    int32_t lay_stride_dx;
-    int32_t lay_stride_up;
-    int32_t lay_height;
-    uint32_t lay_offset;
+    void crop(LayerPtr lay, ViewPortPtr scr, SDL_Surface * sdl);
 
     SDL_Rect sdl_rect;
 };

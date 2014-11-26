@@ -319,7 +319,7 @@ bool VideoLayer::open(const char *file) {
     full_filename = strdup(file);
 
     geo.init(video_codec_ctx->width, video_codec_ctx->height, 32);
-    func("VideoLayer :: w[%u] h[%u] size[%u]", geo.w, geo.h, geo.getByteSize());
+    func("VideoLayer :: w[%u] h[%u] size[%u]", geo.getSize().x(), geo.getSize().y(), geo.getByteSize());
     func("VideoLayer :: frame_rate[%f]", frame_rate);
 
     // initialize picture
@@ -330,7 +330,7 @@ bool VideoLayer::open(const char *file) {
 
 #ifdef WITH_SWSCALE
     img_convert_ctx =
-        sws_getContext(geo.w, geo.h, video_codec_ctx->pix_fmt, geo.w, geo.h,
+        sws_getContext(geo.getSize().x(), geo.getSize().y(), video_codec_ctx->pix_fmt, geo.getSize().x(), geo.getSize().y(),
                        PIX_FMT_RGB32, SWS_BICUBIC,
                        NULL, NULL, NULL);
 #endif

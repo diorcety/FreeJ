@@ -75,9 +75,6 @@ private:
     // opengl stuff
     void blit(LayerPtr layer);
     Vertex g_quadVertices[4];
-    void setup_blits(LayerPtr lay) {
-    };
-
 
     //  bool lock();
     //  bool unlock();

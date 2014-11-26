@@ -20,20 +20,34 @@
 
 Geometry::Geometry() {
     init(0, 0, 0);
+    transformation.setIdentity();
 }
 
 Geometry::~Geometry() {
 }
 
 void Geometry::init(int nw, int nh, int nbpp) {
-    x = 0;
-    y = 0;
-    w = nw;
-    h = nh;
+    size = Size(nw, nh, 0);
     bpp = nbpp;
-    pixelsize = w * h;
-    bytesize  = w * h * (bpp / 8);
-    bytewidth = w * (bpp / 8);
+    pixelsize = nw * nh;
+    bytesize  = nw * nh * (bpp / 8);
+    bytewidth = nw * (bpp / 8);
+}
+
+const Transformation &Geometry::getTransformation() const {
+    return transformation;
+}
+
+Transformation &Geometry::getTransformation() {
+    return transformation;
+}
+
+uint8_t Geometry::getBpp() const {
+    return bpp;
+}
+
+const Size &Geometry::getSize() const {
+   return size;
 }
 
 uint32_t Geometry::getPixelSize() const {

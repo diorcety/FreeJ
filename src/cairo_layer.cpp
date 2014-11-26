@@ -75,10 +75,10 @@ CairoLayer::~CairoLayer() {
 bool CairoLayer::_init() {
     // create the surface
     stride = cairo_format_stride_for_width
-                 (CAIRO_FORMAT_ARGB32, geo.w);
-    pixels = malloc(stride * geo.h);
+                 (CAIRO_FORMAT_ARGB32, geo.getSize().x());
+    pixels = malloc(stride * geo.getSize().y());
     surf = cairo_image_surface_create_for_data
-               ((unsigned char*)pixels, CAIRO_FORMAT_ARGB32, geo.w, geo.h, stride);
+               ((unsigned char*)pixels, CAIRO_FORMAT_ARGB32, geo.getSize().x(), geo.getSize().y(), stride);
     // create the drawing context
     cairo = cairo_create(surf);
     // This  function references  target,  so you  can immediately  call

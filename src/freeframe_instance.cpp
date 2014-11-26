@@ -84,8 +84,8 @@ bool FreeframeInstance::apply(LayerPtr lay) {
     auto freeframe = DynamicPointerCast<Freeframe>(proto);
     auto &geo = lay->getGeometry();
     VideoInfoStruct vidinfo;
-    vidinfo.frameWidth = geo.w;
-    vidinfo.frameHeight = geo.h;
+    vidinfo.frameWidth = geo.getSize().x();
+    vidinfo.frameHeight = geo.getSize().y();
     vidinfo.orientation = 1;
     vidinfo.bitDepth = FF_CAP_32BITVIDEO;
     core = freeframe->plugmain(FF_INSTANTIATE, &vidinfo, 0).ivalue;

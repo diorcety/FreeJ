@@ -35,84 +35,66 @@ void AbstractSdlBlitInstance::operator()(LayerPtr layer) {
     void *offset;
     SDL_Surface *pre_rotozoom = NULL;
     SDL_Surface *rotozoom = NULL; ///< pointer to blittable surface (rotated and zoomed if necessary)
-
     ViewPortPtr scr = getScreen();
 
-    if(layer->rotating | layer->zooming) {
+    Geometry geo = layer->getGeometry();
+    const auto &transformation = geo.getTransformation();
+    Matrix rotationMatrix;
+    Matrix scalingMatrix;
+    transformation.computeRotationScaling(&rotationMatrix, &scalingMatrix);
 
-        // if we have to rotate or scale,
-        // create a sdl surface from current pixel buffer
+    const Vector &&rotationAngle = rotationMatrix.eulerAngles(0, 1, 2);
+    const Vector &&scalingVector = scalingMatrix.diagonal();
+    if(scalingVector.sum() != 3.0 || rotationAngle.z() != 0.0) {
         pre_rotozoom = SDL_CreateRGBSurfaceFrom
-                           (layer->buffer,
-                           layer->geo.w, layer->geo.h, layer->geo.bpp,
-                           layer->geo.getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
+               (layer->buffer,
+               geo.getSize().x(), geo.getSize().y(), geo.getBpp(),
+               geo.getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
-        if(layer->rotating) {
-
-            rotozoom =
-                rotozoomSurface(pre_rotozoom, layer->rotate, layer->zoom_x, (int)layer->antialias);
-
-        } else if(layer->zooming) {
-
-            rotozoom =
-                zoomSurface(pre_rotozoom, layer->zoom_x, layer->zoom_y, (int)layer->antialias);
-
-        }
-
+        rotozoom = rotozoomSurfaceXY(pre_rotozoom, rotationAngle.z() / M_PI * 180.0, scalingVector.x(), scalingVector.y(), (int)layer->antialias);
         offset = rotozoom->pixels;
-        // free the temporary surface (needed again in sdl blits)
-        layer->geo_rotozoom.init(rotozoom->w, rotozoom->h, layer->geo.bpp);
-
-
-    } else offset = layer->buffer;
-
-
-
-    //if(lay->need_crop)
-    crop(layer, scr);
-
-    this->proto->fct(offset, &sdl_rect, getSdlSurface(), NULL, &layer->geo, parameters);
-
-    // free rotozooming temporary surface
-    if(rotozoom) {
-        SDL_FreeSurface(pre_rotozoom);
-        pre_rotozoom = NULL;
-        SDL_FreeSurface(rotozoom);
-        rotozoom = NULL;
+        geo.init(rotozoom->w, rotozoom->h, 32);
+    } else {
+        offset = layer->buffer;
     }
 
+    //if(lay->need_crop)
+    crop(layer, scr, rotozoom);
+
+    this->proto->fct(offset, &sdl_rect, getSdlSurface(), NULL, &geo, parameters);
+
+    // free rotozooming temporary surface
+    if(pre_rotozoom != NULL) {
+        SDL_FreeSurface(pre_rotozoom);
+    }
+    if(rotozoom != NULL) {
+        SDL_FreeSurface(rotozoom);
+    }
 }
 
-void AbstractSdlBlitInstance::crop(LayerPtr lay, ViewPortPtr scr) {
-    func("crop on layer %s x%i y%i w%i h%i for blit %s",
-         lay->getName().c_str(), lay->geo.x, lay->geo.y,
-         lay->geo.w, lay->geo.h, getName().c_str());
-
-    // assign the right pointer to the *geo used in crop
-    // we use the normal geometry if not roto|zoom
-    // otherwise the layer::geo_rotozoom
-    Geometry *geo;
+void AbstractSdlBlitInstance::crop(LayerPtr lay, ViewPortPtr scr, SDL_Surface *sdl) {
+    const Geometry &lay_geo = lay->getGeometry();
     const Geometry &scr_geo = scr->getGeometry();
-    if(lay->rotating | lay->zooming) {
-        geo = &lay->geo_rotozoom;
+    Vector position = lay_geo.getTransformation() * Vector(0.0, 0.0, 0.0);
+    Vector size = Vector(scr_geo.getSize().x(), scr_geo.getSize().y(), 0.0);
+    func("crop on layer %s x%i y%i w%u h%u for blit %s",
+         lay->getName().c_str(), (int)position.x(), (int)position.y(),
+         (unsigned int)lay_geo.getSize().x(), (unsigned int)lay_geo.getSize().y(), getName().c_str());
 
-        // shift up/left to center rotation
-        geo->x = lay->geo.x - (geo->w - lay->geo.w) / 2;
-        geo->y = lay->geo.y - (geo->h - lay->geo.h) / 2;
-
-    } else {
-        geo = &lay->geo;
+    if(sdl != NULL) {
+        position = Vector(
+            position.x() - (sdl->w - lay_geo.getSize().x()) / 2.0,
+            position.y() - (sdl->h - lay_geo.getSize().y()) / 2.0,
+            0.0
+        );
     }
 
     //////////////////////
 
-    sdl_rect.x = -(geo->x);
-    sdl_rect.y = -(geo->y);
-    sdl_rect.w = scr_geo.w;
-    sdl_rect.h = scr_geo.h;
-
-    // calculate bytes per row
-    lay_bytepitch = lay_pitch * 4;
+    sdl_rect.x = -(position.x());
+    sdl_rect.y = -(position.y());
+    sdl_rect.w = size.x();
+    sdl_rect.h = size.y();
 
     //lay->need_crop = false;
 }
@@ -147,7 +129,7 @@ BLIT sdl_rgb(void *src, SDL_Rect *src_rect,
              Geometry *geo, LinkList<ParameterInstance> &param) {
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-                   (src, geo->w, geo->h, geo->bpp,
+                   (src, geo->getSize().x(), geo->getSize().y(), geo->getBpp(),
                    geo->getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, 0x0);
 
     SDL_BlitSurface(sdl_surf, src_rect, dst, dst_rect);
@@ -167,7 +149,7 @@ BLIT sdl_alpha(void *src, SDL_Rect *src_rect,
     }
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-                   (src, geo->w, geo->h, geo->bpp,
+                   (src, geo->getSize().x(), geo->getSize().y(), geo->getBpp(),
                    geo->getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, 0x0);
 
     SDL_SetAlpha(sdl_surf, SDL_SRCALPHA | SDL_RLEACCEL, int_alpha);
@@ -189,7 +171,7 @@ BLIT sdl_srcalpha(void *src, SDL_Rect *src_rect,
     }
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-                   (src, geo->w, geo->h, geo->bpp,
+                   (src, geo->getSize().x(), geo->getSize().y(), geo->getBpp(),
                    geo->getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
     SDL_SetAlpha(sdl_surf, SDL_SRCALPHA | SDL_RLEACCEL, int_alpha);
@@ -208,7 +190,7 @@ BLIT sdl_chromakey(void *src, SDL_Rect *src_rect,
     // TODO color
 
     sdl_surf = SDL_CreateRGBSurfaceFrom
-                   (src, geo->w, geo->h, geo->bpp,
+                   (src, geo->getSize().x(), geo->getSize().y(), geo->getBpp(),
                    geo->getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
 
     // TODO

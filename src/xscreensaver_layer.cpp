@@ -11,7 +11,7 @@
 #include <X11/Xutil.h>
 #include "vroot.h"
 
-
+#undef Success
 #include "context.h"
 #include "jutils.h"
 #include "xscreensaver_layer.h"
@@ -148,7 +148,7 @@ void *XScreenSaverLayer::feed(double feed) {
     // XSync(dpy, true);
     // XFreePixmap(dpy, img);
     // img = XGetImage(dpy, back_win, 0, 0, geo.w, geo.h, 32, XYBitmap);
-    img = XGetImage(dpy, back_win, 0, 0, geo.w, geo.h, ~0L, ZPixmap);
+    img = XGetImage(dpy, back_win, 0, 0, geo.getSize().x(), geo.getSize().y(), ~0L, ZPixmap);
     // buffer=img->data;
     memcpy(output, img->data, geo.getByteSize());
     // buffer=*(&img->data);

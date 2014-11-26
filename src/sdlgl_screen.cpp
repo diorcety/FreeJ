@@ -26,6 +26,7 @@
 #include <SDL_syswm.h>
 #include <SDL_opengl.h>
 
+#undef Success
 #include "sdlgl_screen.h"
 #include "jutils.h"
 
@@ -90,7 +91,7 @@ bool SdlGlScreen::_init() {
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);           //Use at least 5 bits of Blue
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16); //Use at least 16 bits for the depth buffer
 
-    setres(geo.w, geo.h);
+    setres(geo.getSize().x(), geo.getSize().y());
 
     // init open GL
     {
@@ -131,10 +132,10 @@ bool SdlGlScreen::_init() {
 
     SDL_VideoDriverName(temp, 120);
 
-    notice("SDLGL Viewport is %s %ix%i %ibpp",
-           temp, geo.w, geo.h, surface->format->BytesPerPixel << 3);
+    notice("SDLGL Viewport is %s %ux%u %ibpp",
+           temp, (unsigned int)geo.getSize().x(), (unsigned int)geo.getSize().y(), surface->format->BytesPerPixel << 3);
 
-    screen = SDL_CreateRGBSurface(sdl_flags, geo.w, geo.h, geo.bpp,
+    screen = SDL_CreateRGBSurface(sdl_flags, geo.getSize().x(), geo.getSize().y(), geo.getBpp(),
                                   blue_bitmask, green_bitmask, red_bitmask, alpha_bitmask);
     /* be nice with the window manager */
     sprintf(temp, "%s %s", PACKAGE, VERSION);
@@ -179,7 +180,7 @@ void SdlGlScreen::blit(LayerPtr lay) {
     // bind freej texture and copy it
     glBindTexture(GL_TEXTURE_2D, textureID);
     const Geometry &lay_geo = lay->getGeometry();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, lay_geo.w, lay_geo.h,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, lay_geo.getSize().x(), lay_geo.getSize().y(),
                  0, GL_RGBA, GL_UNSIGNED_BYTE, lay->buffer);
     check_opengl_error();
 

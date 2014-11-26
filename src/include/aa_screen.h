@@ -39,8 +39,6 @@ public:
 
     void *get_surface();
 
-    void setup_blits(Layer *);
-
     void blit(Layer *src);
 
     void *coords(int x, int y);

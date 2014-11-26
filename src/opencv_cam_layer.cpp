@@ -66,8 +66,8 @@ bool OpenCVCamLayer::open(const char *devfile) {
     }
 
     // set size
-    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, geo.w);
-    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, geo.h);
+    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, geo.getSize().x());
+    cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, geo.getSize().y());
 
 
     frame = cvQueryFrame(capture);
@@ -96,7 +96,7 @@ void *OpenCVCamLayer::feed(double time) {
 
     frame = cvQueryFrame(capture);
 
-    ccvt_bgr24_bgr32(geo.w, geo.h, frame->imageData, rgba);
+    ccvt_bgr24_bgr32(geo.getSize().x(), geo.getSize().y(), frame->imageData, rgba);
 
     return(rgba);
 
