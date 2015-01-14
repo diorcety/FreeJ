@@ -79,15 +79,10 @@ FREEJ_FORWARD_PTR(JSContext)
  */
 FREEJ_FORWARD_PTR(Layer)
 class Layer : public Entry {
-    friend class Blitter;
     friend class Context;
     friend class ViewPort;
-    friend class SdlScreen; // TODO REMOVE
-    friend class SdlGlScreen; // TODO REMOVE
-    friend class SoftScreen; // TODO REMOVE
     friend class SlwReadline; // TODO REMOVE
     friend class SlwSelector; // TODO REMOVE
-    friend class GlScreen; // TODO REMOVE
 
 public:
     enum Type {
@@ -157,7 +152,7 @@ public:
      */
     virtual void set_rotate(double angle); ///< Rotate a Layer
     
-private:
+public:
     bool antialias;
     bool zooming;
     bool rotating;
@@ -179,6 +174,7 @@ protected:
     ///< Filter list of effects applied on the Layer
     virtual void *do_filters(double time, void *tmp_buf); ///< process all filters on a buffer
 
+public:
     Geometry geo;
     ///< Geometrical information about the Layer
     Geometry geo_rotozoom;
@@ -205,7 +201,6 @@ protected:
     bool fade; // layer is deactivated at the end of current iterations (read-write internal)
     bool use_audio; // layer makes use of audio input
     bool opened; // set by the layer (ex: image file has been opened)
-    bool need_crop; // tell the screen that the layer need a crop (r/w internal)
     int bgcolor; // matte background color
     int null_feeds; // counter of how many sequencial feed() returned null
     int max_null_feeds; // maximum null feeds tolerated
@@ -235,9 +230,10 @@ protected:
     AudioCollector *audio; //< registered audio collector
 #endif
 
+public:
     /** physical buffers */
     void *buffer; ///< RGBA pixel buffer returned by the layer
-
+private:
     unsigned int textureID; ///< opengl texture id
 
 protected:

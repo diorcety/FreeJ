@@ -52,4 +52,10 @@ using EnableSharedFromThis = std::enable_shared_from_this<T>;
     typedef ConstSharedPtr<x> x ## ConstPtr; \
     typedef ConstWeakPtr<x> x ## ConstWeakPtr;
 
+/*#define FREEJ_FORWARD_PTR_T(x) template <typename T> class x; \
+    template <typename T> using x ## Ptr = SharedPtr<x <T> >; \
+    template <typename T> using x ## WeakPtr = WeakPtr<x <T> >; \
+    template <typename T> using x ## ConstPtr = ConstSharedPtr<x <T> >; \
+    template <typename T> using x ## ConstWeakPtr = ConstWeakPtr<x <T> >;*/
+
 #endif //__shared_ptr_h__

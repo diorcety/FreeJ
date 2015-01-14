@@ -21,24 +21,24 @@
 #include "blit.h"
 #include "blit_instance.h"
 
-Blit::Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &parameters) : Entry() {
-    this->type = type;
+Blit::Blit(const std::string &name, const std::string &description, LinkList<Parameter> &parameters) : Entry() {
     this->name = name;
     this->description = description;
-    this->fun = fun;
     this->parameters.insert(this->parameters.end(), parameters.begin(), parameters.end());
 }
 
-Blit::Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &&parameters) : Blit(type, name, description, fun, parameters) {
+Blit::Blit(const std::string &name, const std::string &description, LinkList<Parameter> &&parameters) : Blit(name, description, parameters) {
 }
 
 Blit::~Blit() {
 }
 
+/*
 BlitInstancePtr Blit::new_instance() {
     BlitInstancePtr instance = MakeShared<BlitInstance>();
     if(instance)
         instance->init(SharedFromThis(Blit));
     return instance;
 }
+*/
 

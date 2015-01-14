@@ -189,7 +189,7 @@ void cmdline(int argc, char **argv) {
             if(!fd) {
                 error("can't open JS file '%s': %s", optarg, strerror(errno));
                 error("missing script, fatal error.");
-                exit(0);
+                exit(1);
             } else {
                 snprintf(javascript, 512, "%s", optarg);
                 fclose(fd);

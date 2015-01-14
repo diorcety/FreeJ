@@ -46,7 +46,6 @@ Layer::Layer()
     hidden = false;
     fade = false;
     use_audio = false;
-    need_crop = true;
 #ifdef WITH_AUDIO
     audio = NULL;
 #endif
@@ -131,9 +130,7 @@ bool Layer::set_blit(const char *bname) {
 
         func("blit for layer %s set to %s", name.c_str(), b->getName().c_str());
 
-        current_blit = b->new_instance(); // start using
-        need_crop = true;
-        blitter->crop(SharedFromThis(Layer), screen);
+        current_blit = blitter->new_instance(b); // start using
         act("blit %s set for layer %s", current_blit->getName().c_str(), name.c_str());
     } else {
         warning("can't set blit for layer %s: not added on any screen yet", name.c_str());
@@ -236,7 +233,6 @@ void Layer::set_filename(const char *f) {
 void Layer::set_position(int x, int y) {
     geo.x = x;
     geo.y = y;
-    need_crop = true;
 }
 
 int Layer::get_x_position() const {
@@ -266,7 +262,6 @@ void Layer::set_zoom(double x, double y) {
         zooming = true;
         func("%s layer %s zoom set to x%.2f y%.2f", name.c_str(), filename, zoom_x, zoom_y);
     }
-    need_crop = true;
 }
 
 void Layer::set_rotate(double angle) {
@@ -279,7 +274,6 @@ void Layer::set_rotate(double angle) {
         rotating = true;
         func("%s layer %s rotation set to %.2f", name.c_str(), filename, rotate);
     }
-    need_crop = true;
 }
 
 void Layer::fit(bool maintain_aspect_ratio) {

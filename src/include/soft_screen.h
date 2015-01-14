@@ -26,7 +26,7 @@
 
 FREEJ_FORWARD_PTR(SoftScreen)
 class SoftScreen : public ViewPort {
-
+    friend class SoftScreenLinearBlitInstance;
 public:
     SoftScreen();
     virtual ~SoftScreen();
@@ -36,8 +36,6 @@ public:
     };
 
     void *get_surface();
-
-    void blit(LayerPtr src);
 
     void set_buffer(void *buf);
     void *coords(int x, int y);
@@ -51,8 +49,6 @@ protected:
 
 protected:
     void *screen_buffer;
-
-    uint32_t *pscr, *play;  // generic blit buffer pointers
 
 protected:
     virtual bool _init();

@@ -7,9 +7,160 @@
 #include "blitter.h"
 #include "blit.h"
 #include "parameter_instance.h"
+#include "linear_blits.h"
 
 #include <SDL_imageFilter.h>
 
+AbstractLinearBlitInstance::AbstractLinearBlitInstance(LinearBlitPtr proto) : proto(proto) {
+    
+}
+
+void AbstractLinearBlitInstance::operator()(LayerPtr layer) {
+    ViewPortPtr scr = getScreen();
+    //if(layer->need_crop)
+    crop(layer, scr);
+
+    uint32_t *pscr, *play;  // generic blit buffer pointers
+
+    pscr = (uint32_t*) getSurface() + scr_offset;
+    play = (uint32_t*) layer->buffer   + lay_offset;
+
+    // iterates the blit on each horizontal line
+    for(int16_t c = lay_height; c > 0; c--) {
+
+        proto->fct
+            ((void*)play, (void*)pscr,
+            lay_bytepitch, // * src->geo.bpp>>3,
+           getParameters());
+
+        // strides down to the next line
+        pscr += scr_stride + lay_pitch;
+        play += lay_stride + lay_pitch;
+
+    }
+}
+
+void AbstractLinearBlitInstance::crop(LayerPtr lay, ViewPortPtr scr) {
+    func("crop on layer %s x%i y%i w%i h%i for blit %s",
+         lay->getName().c_str(), lay->geo.x, lay->geo.y,
+         lay->geo.w, lay->geo.h, getName().c_str());
+
+    // assign the right pointer to the *geo used in crop
+    // we use the normal geometry if not roto|zoom
+    // otherwise the layer::geo_rotozoom
+    Geometry *geo;
+    const Geometry &scr_geo = scr->getGeometry();
+    if(lay->rotating | lay->zooming) {
+        geo = &lay->geo_rotozoom;
+
+        // shift up/left to center rotation
+        geo->x = lay->geo.x - (geo->w - lay->geo.w) / 2;
+        geo->y = lay->geo.y - (geo->h - lay->geo.h) / 2;
+
+    } else {
+        geo = &lay->geo;
+    }
+
+    //////////////////////
+
+    lay_pitch =  geo->w; // how many pixels to copy each row
+    lay_height = geo->h; // how many rows we should copy
+
+    scr_stride_up = 0; // rows to jump before starting to blit on screen
+    scr_stride_sx = 0; // screen pixels stride on the left of each row
+    scr_stride_dx = 0; // screen pixels stride on the right of each row
+
+    lay_stride_up = 0; // rows to jump before starting to blit layer
+    lay_stride_sx = 0; // how many pixels stride on the left of each row
+    lay_stride_dx = 0; // how many pixels stride on the right of each row
+
+    // BOTTOM
+    if(geo->y + geo->h > scr_geo.h) {
+        if(geo->y > scr_geo.h) {   // out of screen
+            geo->y = scr_geo.h + 1; // don't go far
+            //TODO ? lay->hidden = true;
+            return;
+        } else { // partially out
+            lay_height -= (geo->y + geo->h) - scr_geo.h;
+        }
+    }
+
+    // LEFT
+    if(geo->x < 0) {
+        if(geo->x + geo->w < 0) {   // out of screen
+            geo->x = -(geo->w + 1);   // don't go far
+            //TODO ? lay->hidden = true;
+            return;
+        } else { // partially out
+            lay_stride_sx += -geo->x;
+            lay_pitch -= -geo->x;
+        }
+    } else { // inside
+        scr_stride_sx += geo->x;
+    }
+
+    // UP
+    if(geo->y < 0) {
+        if(geo->y + geo->h < 0) {  // out of screen
+            geo->y = -(geo->h + 1);   // don't go far
+            //TODO ? lay->hidden = true;
+            return;
+        } else { // partially out
+            lay_stride_up += -geo->y;
+            lay_height -= -geo->y;
+        }
+    } else { // inside
+        scr_stride_up += geo->y;
+    }
+
+    // RIGHT
+    if(geo->x + geo->w > scr_geo.w) {
+        if(geo->x > scr_geo.w) {   // out of screen
+            geo->x = scr_geo.w + 1; // don't go far
+            //TODO ? lay->hidden = true;
+            return;
+        } else { // partially out
+            lay_pitch -= (geo->x + geo->w) - scr_geo.w;
+            lay_stride_dx += (geo->x + geo->w) - scr_geo.w;
+        }
+    } else { // inside
+        scr_stride_dx += scr_geo.w - (geo->x + geo->w);
+    }
+
+    //TODO ? lay->hidden = false;
+
+    lay_stride = lay_stride_dx + lay_stride_sx; // sum strides
+    // precalculate upper left starting offset for layer
+    lay_offset = (lay_stride_sx +
+                     (lay_stride_up * geo->w));
+
+    scr_stride = scr_stride_dx + scr_stride_sx; // sum strides
+    // precalculate upper left starting offset for screen
+    scr_offset = (scr_stride_sx +
+                     (scr_stride_up * scr_geo.w));
+    // calculate bytes per row
+    lay_bytepitch = lay_pitch * 4;
+
+    //lay->need_crop = false;
+    
+}
+
+void AbstractLinearBlitInstance::init(LinearBlitPtr blit) {
+    this->proto = blit;
+    BlitInstance::init(blit);
+}
+
+LinearBlit::LinearBlit(const std::string &name, const std::string &description, linear_fct fct, LinkList<Parameter> &parameters) : Blit(name, description, parameters) {
+    this->fct = fct;
+}
+
+LinearBlit::LinearBlit(const std::string &name, const std::string &description, linear_fct fct, LinkList<Parameter> &&parameters): LinearBlit(name, description, fct, parameters) {
+
+}
+
+LinearBlit::~LinearBlit() {
+
+}
 
 
 // Linear transparent blits
@@ -234,176 +385,160 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "RGB",
                 "RGB blit (jmemcpy)",
-                (void*)rgb_jmemcpy
+                rgb_jmemcpy
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "ADD",
                 "bytewise addition",
-                (void*)schiffler_add
+                schiffler_add
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "SUB",
                 "bytewise subtraction",
-                (void*)schiffler_sub
+                schiffler_sub
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "MEAN",
                 "bytewise mean",
-                (void*)schiffler_add
+                schiffler_add
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "ABSDIFF",
                 "absolute difference",
-                (void*)schiffler_absdiff
+                schiffler_absdiff
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "MULT",
                 "multiplication",
-                (void*)schiffler_mult
+                schiffler_mult
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "MULTNOR",
                 "normalized multiplication",
-                (void*)schiffler_multnor
+                schiffler_multnor
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "DIV",
                 "division",
-                (void*)schiffler_div
+                schiffler_div
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "MULTDIV2",
                 "multiplication and division by 2",
-                (void*)schiffler_multdiv2
+                schiffler_multdiv2
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "MULTDIV4",
                 "multiplication and division by 4",
-                (void*)schiffler_multdiv4
+                schiffler_multdiv4
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "AND",
                 "bitwise and",
-                (void*)schiffler_and
+                schiffler_and
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "OR",
                 "bitwise or",
-                (void*)schiffler_or
+                schiffler_or
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "XOR",
                 "bitwise xor",
-                (void*)blit_xor
+                blit_xor
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "RED",
                 "red channel only blit",
-                (void*)red_channel
+                red_channel
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "GREEN",
                 "green channel only blit",
-                (void*)green_channel
+                green_channel
             ));
         }
 
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "BLUE",
                 "blue channel only blit",
-                (void*)blue_channel
+                blue_channel
             ));
         }
 
@@ -418,11 +553,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "REDMASK",
                 "red channel threshold mask",
-                (void*)red_mask,
+                red_mask,
                 parameters
             ));
         }
@@ -438,11 +572,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "GREENMASK",
                 "green channel threshold mask",
-                (void*)green_mask,
+                green_mask,
                 parameters
             ));
         }
@@ -458,11 +591,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "BLUEMASK",
                 "blue channel threshold mask",
-                (void*)blue_mask,
+                blue_mask,
                 parameters
             ));
         }
@@ -470,11 +602,10 @@ LinkList<Blit> &get_linear_blits() {
         /////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "NEG",
                 "bitwise negation",
-                (void*)schiffler_neg
+                schiffler_neg
             ));
         }
 
@@ -489,11 +620,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "ADDB",
                 "add byte to bytes",
-                (void*)schiffler_addbyte,
+                schiffler_addbyte,
                 parameters
             ));
         }
@@ -509,11 +639,10 @@ LinkList<Blit> &get_linear_blits() {
                 127.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "ADDBH",
                 "add byte to half",
-                (void*)schiffler_addbytetohalf,
+                schiffler_addbytetohalf,
                 parameters
             ));
         }
@@ -529,11 +658,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "SUBB",
                 "subtract byte to bytes",
-                (void*)schiffler_subbyte,
+                schiffler_subbyte,
                 parameters
             ));
         }
@@ -549,11 +677,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "SHL",
                 "shift left bits",
-                (void*)schiffler_shl,
+                schiffler_shl,
                 parameters
             ));
         }
@@ -569,11 +696,10 @@ LinkList<Blit> &get_linear_blits() {
                 8.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "SHLB",
                 "shift left byte",
-                (void*)schiffler_shlb,
+                schiffler_shlb,
                 parameters
             ));
         }
@@ -589,11 +715,10 @@ LinkList<Blit> &get_linear_blits() {
                 8.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "SHR",
                 "shift right bits",
-                (void*)schiffler_shr,
+                schiffler_shr,
                 parameters
             ));
         }
@@ -609,11 +734,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "MULB",
                 "multiply by byte",
-                (void*)schiffler_mulbyte,
+                schiffler_mulbyte,
                 parameters
             ));
         }
@@ -629,11 +753,10 @@ LinkList<Blit> &get_linear_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::LINEAR,
+            blits.push_back(MakeShared<LinearBlit>(
                 "BIN",
                 "binarize using threshold",
-                (void*)schiffler_binarize,
+                schiffler_binarize,
                 parameters
             ));
         }

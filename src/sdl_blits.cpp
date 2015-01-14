@@ -24,6 +24,116 @@
 #include "blitter.h"
 #include "blit.h"
 #include "parameter_instance.h"
+#include "sdl_blits.h"
+#include <SDL_rotozoom.h>
+
+AbstractSdlBlitInstance::AbstractSdlBlitInstance(SdlBlitPtr proto) : proto(proto) {
+
+}
+
+void AbstractSdlBlitInstance::operator()(LayerPtr layer) {
+    void *offset;
+    SDL_Surface *pre_rotozoom = NULL;
+    SDL_Surface *rotozoom = NULL; ///< pointer to blittable surface (rotated and zoomed if necessary)
+
+    ViewPortPtr scr = getScreen();
+
+    if(layer->rotating | layer->zooming) {
+
+        // if we have to rotate or scale,
+        // create a sdl surface from current pixel buffer
+        pre_rotozoom = SDL_CreateRGBSurfaceFrom
+                           (layer->buffer,
+                           layer->geo.w, layer->geo.h, layer->geo.bpp,
+                           layer->geo.getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
+
+        if(layer->rotating) {
+
+            rotozoom =
+                rotozoomSurface(pre_rotozoom, layer->rotate, layer->zoom_x, (int)layer->antialias);
+
+        } else if(layer->zooming) {
+
+            rotozoom =
+                zoomSurface(pre_rotozoom, layer->zoom_x, layer->zoom_y, (int)layer->antialias);
+
+        }
+
+        offset = rotozoom->pixels;
+        // free the temporary surface (needed again in sdl blits)
+        layer->geo_rotozoom.init(rotozoom->w, rotozoom->h, layer->geo.bpp);
+
+
+    } else offset = layer->buffer;
+
+
+
+    //if(lay->need_crop)
+    crop(layer, scr);
+
+    this->proto->fct(offset, &sdl_rect, getSdlSurface(), NULL, &layer->geo, parameters);
+
+    // free rotozooming temporary surface
+    if(rotozoom) {
+        SDL_FreeSurface(pre_rotozoom);
+        pre_rotozoom = NULL;
+        SDL_FreeSurface(rotozoom);
+        rotozoom = NULL;
+    }
+
+}
+
+void AbstractSdlBlitInstance::crop(LayerPtr lay, ViewPortPtr scr) {
+    func("crop on layer %s x%i y%i w%i h%i for blit %s",
+         lay->getName().c_str(), lay->geo.x, lay->geo.y,
+         lay->geo.w, lay->geo.h, getName().c_str());
+
+    // assign the right pointer to the *geo used in crop
+    // we use the normal geometry if not roto|zoom
+    // otherwise the layer::geo_rotozoom
+    Geometry *geo;
+    const Geometry &scr_geo = scr->getGeometry();
+    if(lay->rotating | lay->zooming) {
+        geo = &lay->geo_rotozoom;
+
+        // shift up/left to center rotation
+        geo->x = lay->geo.x - (geo->w - lay->geo.w) / 2;
+        geo->y = lay->geo.y - (geo->h - lay->geo.h) / 2;
+
+    } else {
+        geo = &lay->geo;
+    }
+
+    //////////////////////
+
+    sdl_rect.x = -(geo->x);
+    sdl_rect.y = -(geo->y);
+    sdl_rect.w = scr_geo.w;
+    sdl_rect.h = scr_geo.h;
+
+    // calculate bytes per row
+    lay_bytepitch = lay_pitch * 4;
+
+    //lay->need_crop = false;
+}
+
+void AbstractSdlBlitInstance::init(SdlBlitPtr blit) {
+    this->proto = blit;
+    BlitInstance::init(blit);
+}
+
+
+SdlBlit::SdlBlit(const std::string &name, const std::string &description, blit_fct fct, LinkList<Parameter> &parameters) : Blit(name, description, parameters) {
+    this->fct = fct;
+}
+
+SdlBlit::SdlBlit(const std::string &name, const std::string &description, blit_fct fct, LinkList<Parameter> &&parameters): SdlBlit(name, description, fct, parameters) {
+
+}
+
+SdlBlit::~SdlBlit() {
+
+}
 
 ///////////////////////////////////////////////////////////////////
 // SDL BLITS
@@ -123,11 +233,10 @@ LinkList<Blit> &get_sdl_blits() {
         /////////////
 
         {
-            blits.push_back(MakeShared<Blit>(
-                Blit::SDL,
+            blits.push_back(MakeShared<SdlBlit>(
                 "SDL",
                 "RGB blit (SDL)",
-                (void*) sdl_rgb
+                sdl_rgb
             ));
         }
 
@@ -142,11 +251,10 @@ LinkList<Blit> &get_sdl_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::SDL,
+            blits.push_back(MakeShared<SdlBlit>(
                 "ALPHA",
                 "alpha blit (SDL)",
-                (void*)sdl_alpha,
+                sdl_alpha,
                 parameters
             ));
         }
@@ -162,11 +270,10 @@ LinkList<Blit> &get_sdl_blits() {
                 255.0
             ));
 
-            blits.push_back(MakeShared<Blit>(
-                Blit::SDL,
+            blits.push_back(MakeShared<SdlBlit>(
                 "SRCALPHA",
                 "source alpha blit (SDL)",
-                (void*)sdl_srcalpha,
+                sdl_srcalpha,
                 parameters
             ));
         }

@@ -29,6 +29,8 @@
 
 FREEJ_FORWARD_PTR(SdlScreen)
 class SdlScreen : public ViewPort {
+    friend class SdlScreenSdlBlitInstance;
+    friend class SdlScreenLinearBlitInstance;
 public:
     SdlScreen();
     virtual ~SdlScreen();
@@ -38,9 +40,6 @@ protected:
     void do_resize(int resize_w, int resize_h);
 
 public:
-    void blit(LayerPtr src);
-
-
     void show();
     void clear();
 
@@ -70,12 +69,6 @@ private:
     bool switch_fullscreen;
     bool dbl;
     uint32_t sdl_flags;
-
-    SDL_Surface *pre_rotozoom;
-    SDL_Surface *rotozoom; ///< pointer to blittable surface (rotated and zoomed if necessary)
-
-    // small vars used in blits
-    uint32_t *pscr, *play;  // generic blit buffer pointers
 
     // allow to use Factory on this class
     FACTORY_ALLOWED;

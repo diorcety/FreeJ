@@ -8,7 +8,7 @@ SUBDIRS = include
 
 SOURCES = \
 	context.cpp		layer.cpp	\
-	fps.cpp		timelapse.cpp	blitter.cpp	\
+	blitter.cpp	fps.cpp		timelapse.cpp	\
 	blit.cpp		blit_instance.cpp \
 	sdl_blits.cpp		linear_blits.cpp \
 	iterator.cpp		entity.cpp	\

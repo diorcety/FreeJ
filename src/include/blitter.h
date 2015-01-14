@@ -37,10 +37,7 @@ public:
     Blitter();
     virtual ~Blitter();
 
-    /* ==== CROP */
-    /** @param force crop even if nothing changed */
-    void crop(LayerPtr lay, ViewPortPtr scr);
-    ///< crop to fit in the ViewPort
+    virtual BlitInstancePtr new_instance(BlitPtr) = 0;
 
     virtual LinkList<Blit>& getBlits();
     virtual BlitPtr getDefaultBlit();

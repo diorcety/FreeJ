@@ -112,7 +112,7 @@ public:
     virtual void *coords(int x, int y) = 0;
     ///< returns pointer to pixel (slow! use it once and then move around)
 
-    virtual void blit(LayerPtr src) = 0; ///< operate the blit
+    virtual void blit(LayerPtr src); ///< operate the blit
 
     virtual void blit_layers();
 

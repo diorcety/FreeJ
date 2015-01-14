@@ -25,14 +25,69 @@
 #include "blitter.h"
 #include "blit_instance.h"
 
+#include "linear_blits.h"
+
 #include "jutils.h"
 #include "soft_screen.h"
 
+class SoftScreenLinearBlitInstance: public AbstractLinearBlitInstance {
+private:
+    SoftScreenWeakPtr screen;
+
+public:
+    SoftScreenLinearBlitInstance(SoftScreenWeakPtr screen, LinearBlitPtr proto);
+
+protected:
+    virtual void* getSurface();
+    virtual ViewPortPtr getScreen();
+};
+
+SoftScreenLinearBlitInstance::SoftScreenLinearBlitInstance(SoftScreenWeakPtr screen, LinearBlitPtr proto) : AbstractLinearBlitInstance(proto), screen(screen) {
+}
+
+void* SoftScreenLinearBlitInstance::getSurface() {
+    SoftScreenPtr screen = this->screen.lock();
+    if(!screen) {
+        error("No valid screen found");
+        return NULL;
+    }
+    return screen->screen_buffer;
+}
+
+ViewPortPtr SoftScreenLinearBlitInstance::getScreen() {
+    SoftScreenPtr screen = this->screen.lock();
+    if(!screen) {
+        error("No valid screen found");
+        return ViewPortPtr();
+    }
+    return screen;
+}
+
+
+class SoftScreenBlitter: public Blitter {
+private:
+    SoftScreenWeakPtr screen;
+
+public:
+    SoftScreenBlitter(SoftScreenPtr screen) {
+        this->screen = screen;
+    }
+
+    virtual BlitInstancePtr new_instance(BlitPtr blit) {
+        LinearBlitPtr linearBlitPtr = DynamicPointerCast<LinearBlit>(blit);
+        if(linearBlitPtr) {
+            return MakeShared<SoftScreenLinearBlitInstance>(screen, linearBlitPtr);
+        }
+
+        error("No valid blit instance found");
+        return BlitInstancePtr();
+    }
+};
+
+
+
 // our objects are allowed to be created trough the factory engine
 FACTORY_REGISTER_INSTANTIATOR(ViewPort, SoftScreen, Screen, soft);
-
-typedef void (blit_f)(void *src, void *dst, int len, LinkList<ParameterInstance> &params);
-
 
 SoftScreen::SoftScreen()
     : ViewPort() {
@@ -47,42 +102,17 @@ SoftScreen::~SoftScreen() {
 }
 
 bool SoftScreen::_init() {
+    blitter = MakeShared<SoftScreenBlitter>(SharedFromThis(SoftScreen));
+    LinkList<Blit> &blitterBlits = blitter->getBlits();
+    LinkList<Blit> &linearBlits = get_linear_blits();
+    blitterBlits.insert(blitterBlits.end(), linearBlits.begin(), linearBlits.end());
+    if(blitterBlits.size() > 0) {
+        blitter->setDefaultBlit(blitterBlits.front());
+    }
+
     screen_buffer = malloc(geo.getByteSize());
     clear();
     return(true);
-}
-
-void SoftScreen::blit(LayerPtr src) {
-    int16_t c;
-
-    if(src->screen.lock() != SharedFromThis(SoftScreen)) {
-        error("%s: blit called on a layer not belonging to screen",
-              __PRETTY_FUNCTION__);
-        return;
-    }
-
-    if(src->need_crop)
-        blitter->crop(src, SharedFromThis(SoftScreen));
-
-    BlitInstancePtr b = src->current_blit;
-
-    pscr = (uint32_t*) get_surface() + b->scr_offset;
-    play = (uint32_t*) src->buffer   + b->lay_offset;
-
-    // iterates the blit on each horizontal line
-    for(c = b->lay_height; c > 0; c--) {
-
-        ((blit_f*)b->getFun())
-            ((void*)play, (void*)pscr,
-            b->lay_bytepitch, // * src->geo.bpp>>3,
-           b->getParameters());
-
-        // strides down to the next line
-        pscr += b->scr_stride + b->lay_pitch;
-        play += b->lay_stride + b->lay_pitch;
-
-    }
-
 }
 
 void SoftScreen::set_buffer(void *buf) {

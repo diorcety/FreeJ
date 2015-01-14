@@ -29,7 +29,7 @@
 
 #include "sdl_screen.h"
 #include <SDL.h>
-#include "SDL_rotozoom.h"
+#include <SDL_rotozoom.h>
 
 XGrabLayer::XGrabLayer()
     : Layer() {

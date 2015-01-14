@@ -41,31 +41,15 @@ class Blit : public Entry {
     friend class BlitInstance;
     friend class ViewPort;
 public:
-    enum BlitType {
-        NONE = 0,
-        LINEAR = 1,
-        SDL = 2,
-        PAST = 3
-    };
 
-    Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &parameters);
-    Blit(BlitType type, const std::string &name, const std::string &description, void *fun, LinkList<Parameter> &&parameters = LinkList<Parameter>());
+    Blit(const std::string &name, const std::string &description, LinkList<Parameter> &parameters);
+    Blit(const std::string &name, const std::string &description, LinkList<Parameter> &&parameters = LinkList<Parameter>());
     virtual ~Blit();
     
-    BlitInstancePtr new_instance();
+    //BlitInstancePtr new_instance();
 
 private:
     LinkList<Parameter> parameters; ///< linklist of blit parameters
-    BlitType type; ///< LINEAR|SDL|PAST type
-    void *fun; ///< pointer to blit function
-
-public:
-    inline BlitType getType() const {
-        return type;
-    }
-    inline void * getFun() const {
-        return fun;
-    }
 };
 
 #endif

@@ -31,49 +31,21 @@ class BlitInstance : public Entry {
 
 public:
     BlitInstance();
-    BlitInstance(BlitPtr fr);
+    BlitInstance(BlitPtr proto);
     virtual ~BlitInstance();
 
-    virtual void init(BlitPtr fr);
+    virtual void init(BlitPtr proto);
 
-    inline Blit::BlitType getType() const {
-        return proto->type;
-    }
-    
-    inline void * getFun() const {
-        return proto->fun;
-    }
-
-private:
+protected:
     LinkList<ParameterInstance> parameters; ///< linklist of blit parameters
-    BlitPtr proto;
     bool active;
 
 public:
+    virtual void operator()(LayerPtr layer) = 0;
+    
     inline LinkList<ParameterInstance> &getParameters() {
         return parameters;
     }
-//TODOprivate:
-
-    int32_t scr_stride_dx;
-    int32_t scr_stride_sx;
-    int32_t scr_stride_up;
-    int32_t scr_stride;
-    uint32_t scr_offset;
-
-    int32_t lay_pitch;
-    int32_t lay_bytepitch;
-    int32_t lay_stride;
-    int32_t lay_stride_sx;
-    int32_t lay_stride_dx;
-    int32_t lay_stride_up;
-    int32_t lay_height;
-    uint32_t lay_offset;
-
-    SDL_Rect sdl_rect; // sdl crop rectangle
-
-    // past blit buffer
-    void *past_frame;
     
     FACTORY_ALLOWED
 };

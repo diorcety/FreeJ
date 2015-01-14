@@ -31,6 +31,9 @@
 #include "linklist.h"
 #include "sdl_screen.h"
 
+#include "linear_blits.h"
+#include "sdl_blits.h"
+
 #include <SDL_imageFilter.h>
 #include <SDL_framerate.h>
 #include <SDL_rotozoom.h>
@@ -39,14 +42,95 @@
 
 #include <algorithm>
 
+class SdlScreenSdlBlitInstance: public AbstractSdlBlitInstance {
+private:
+    SdlScreenWeakPtr screen;
 
-LinkList<Blit> &get_sdl_blits();
+public:
+    SdlScreenSdlBlitInstance(SdlScreenWeakPtr screen, SdlBlitPtr proto);
 
-typedef void (blit_f)(void *src, void *dst, int len, LinkList<ParameterInstance> &params);
+protected:
+    virtual SDL_Surface* getSdlSurface();
+    virtual ViewPortPtr getScreen();
+};
 
-typedef void (blit_sdl_f)(void *src, SDL_Rect *src_rect,
-                          SDL_Surface *dst, SDL_Rect *dst_rect,
-                          Geometry *geo, LinkList<ParameterInstance> &params);
+SdlScreenSdlBlitInstance::SdlScreenSdlBlitInstance(SdlScreenWeakPtr screen, SdlBlitPtr proto) : AbstractSdlBlitInstance(proto), screen(screen) {
+}
+
+SDL_Surface* SdlScreenSdlBlitInstance::getSdlSurface() {
+    SdlScreenPtr screen = this->screen.lock();
+    if(!screen) {
+        error("No valid screen found");
+        return NULL;
+    }
+    return screen->sdl_screen;
+}
+
+ViewPortPtr SdlScreenSdlBlitInstance::getScreen() {
+    SdlScreenPtr screen = this->screen.lock();
+    if(!screen) {
+        error("No valid screen found");
+        return ViewPortPtr();
+    }
+    return screen;
+}
+
+class SdlScreenLinearBlitInstance: public AbstractLinearBlitInstance {
+private:
+    SdlScreenWeakPtr screen;
+
+public:
+    SdlScreenLinearBlitInstance(SdlScreenWeakPtr screen, LinearBlitPtr proto);
+
+protected:
+    virtual void* getSurface();
+    virtual ViewPortPtr getScreen();
+};
+
+SdlScreenLinearBlitInstance::SdlScreenLinearBlitInstance(SdlScreenWeakPtr screen, LinearBlitPtr proto) : AbstractLinearBlitInstance(proto), screen(screen) {
+}
+
+void* SdlScreenLinearBlitInstance::getSurface() {
+    SdlScreenPtr screen = this->screen.lock();
+    if(!screen) {
+        return NULL;
+    }
+    return screen->sdl_screen->pixels;
+}
+
+ViewPortPtr SdlScreenLinearBlitInstance::getScreen() {
+    SdlScreenPtr screen = this->screen.lock();
+    if(!screen) {
+        return ViewPortPtr();
+    }
+    return screen;
+}
+
+
+class SdlScreenBlitter: public Blitter {
+private:
+    SdlScreenWeakPtr screen;
+
+public:
+    SdlScreenBlitter(SdlScreenPtr screen) {
+        this->screen = screen;
+    }
+
+    virtual BlitInstancePtr new_instance(BlitPtr blit) {
+        SdlBlitPtr sdlBlitPtr = DynamicPointerCast<SdlBlit>(blit);
+        if(sdlBlitPtr) {
+            return MakeShared<SdlScreenSdlBlitInstance>(screen, sdlBlitPtr);
+        } else {
+            LinearBlitPtr linearBlitPtr = DynamicPointerCast<LinearBlit>(blit);
+            if(linearBlitPtr) {
+                return MakeShared<SdlScreenLinearBlitInstance>(screen, linearBlitPtr);
+            }
+        }
+
+        error("No valid blit instance found");
+        return BlitInstancePtr();
+    }
+};
 
 
 // our objects are allowed to be created trough the factory engine
@@ -58,22 +142,12 @@ SdlScreen::SdlScreen()
     sdl_screen = NULL;
     emuscr = NULL;
 
-    rotozoom = NULL;
-    pre_rotozoom = NULL;
-
     dbl = false;
     sdl_flags = (SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWACCEL);
     //| SDL_DOUBLEBUF | SDL_HWACCEL | SDL_RESIZABLE);
     // add above | SDL_FULLSCREEN to go fullscreen from the start
 
     switch_fullscreen = false;
-
-    LinkList<Blit> &blitterBlits = blitter->getBlits();
-    LinkList<Blit> &sdlBlits = get_sdl_blits();
-    blitterBlits.insert(blitterBlits.end(), sdlBlits.begin(), sdlBlits.end());
-    if(sdlBlits.size() > 0) {
-        blitter->setDefaultBlit(sdlBlits.front());
-    }
 
     name = "SDL";
 }
@@ -83,6 +157,17 @@ SdlScreen::~SdlScreen() {
 }
 
 bool SdlScreen::_init() {
+    blitter = MakeShared<SdlScreenBlitter>(SharedFromThis(SdlScreen));
+    LinkList<Blit> &blitterBlits = blitter->getBlits();
+    LinkList<Blit> &sdlBlits = get_sdl_blits();
+    blitterBlits.insert(blitterBlits.end(), sdlBlits.begin(), sdlBlits.end());
+    LinkList<Blit> &linearBlits = get_linear_blits();
+    blitterBlits.insert(blitterBlits.end(), linearBlits.begin(), linearBlits.end());
+    if(blitterBlits.size() > 0) {
+        blitter->setDefaultBlit(blitterBlits.front());
+    }
+
+
     char temp[120];
 
     setres(geo.w, geo.h);
@@ -105,113 +190,6 @@ bool SdlScreen::_init() {
         act("SDL using MMX accelerated blit");
 
     return(true);
-}
-
-void SdlScreen::blit(LayerPtr lay) {
-    register int16_t c;
-    void *offset;
-
-    if(lay->rotating | lay->zooming) {
-
-        // if we have to rotate or scale,
-        // create a sdl surface from current pixel buffer
-        pre_rotozoom = SDL_CreateRGBSurfaceFrom
-                           (lay->buffer,
-                           lay->geo.w, lay->geo.h, lay->geo.bpp,
-                           lay->geo.getByteWidth(), red_bitmask, green_bitmask, blue_bitmask, alpha_bitmask);
-
-        if(lay->rotating) {
-
-            rotozoom =
-                rotozoomSurface(pre_rotozoom, lay->rotate, lay->zoom_x, (int)lay->antialias);
-
-        } else if(lay->zooming) {
-
-            rotozoom =
-                zoomSurface(pre_rotozoom, lay->zoom_x, lay->zoom_y, (int)lay->antialias);
-
-        }
-
-        offset = rotozoom->pixels;
-        // free the temporary surface (needed again in sdl blits)
-        lay->geo_rotozoom.init(rotozoom->w, rotozoom->h, lay->geo.bpp);
-
-
-    } else offset = lay->buffer;
-
-
-
-    if(lay->need_crop)
-        blitter->crop(lay, SharedFromThis(SdlScreen));
-
-    BlitInstancePtr b = lay->current_blit;
-
-//   if(!b) {
-//     error("%s: blit is NULL",__PRETTY_FUNCTION__);
-//     return;
-//   }
-
-    // executes LINEAR blit
-    if(b->getType() == Blit::LINEAR) {
-
-        pscr = (uint32_t*) get_surface() + b->scr_offset;
-        play = (uint32_t*) offset        + b->lay_offset;
-
-        // iterates the blit on each horizontal line
-        for(c = b->lay_height; c > 0; c--) {
-
-            ((blit_f*)b->getFun())
-                ((void*)play, (void*)pscr,
-                b->lay_bytepitch, // * lay->geo.bpp>>3,
-                b->getParameters());
-
-            // strides down to the next line
-            pscr += b->scr_stride + b->lay_pitch;
-            play += b->lay_stride + b->lay_pitch;
-        }
-
-        // executes SDL blit
-    } else if(b->getType() == Blit::SDL) {
-        ((blit_sdl_f*)b->getFun())
-            (offset, &b->sdl_rect, sdl_screen,
-            NULL, &lay->geo, b->getParameters());
-    }
-
-//  else if (b->type == Blit::PAST) {
-//     // this is a linear blit which operates
-//     // line by line on the previous frame
-
-//     // setup crop variables
-//     pscr  = (uint32_t*)get_surface() + b->scr_offset;
-//     play  = (uint32_t*)offset        + b->lay_offset;
-//     ppast = (uint32_t*)b->past_frame + b->lay_offset;
-
-//     // iterates the blit on each horizontal line
-//     for(c = b->lay_height; c>0; c--) {
-
-//       (*b->past_fun)
-//      ((void*)play, (void*)ppast, (void*)pscr,
-//       b->lay_bytepitch);
-
-//       // copy the present to the past
-//       jmemcpy(ppast, play, geo->pitch);
-
-//       // strides down to the next line
-//       pscr  += b->scr_stride + b->lay_pitch;
-//       play  += b->lay_stride + b->lay_pitch;
-//       ppast += b->lay_stride + b->lay_pitch;
-
-//     }
-//   }
-
-    // free rotozooming temporary surface
-    if(rotozoom) {
-        SDL_FreeSurface(pre_rotozoom);
-        pre_rotozoom = NULL;
-        SDL_FreeSurface(rotozoom);
-        rotozoom = NULL;
-    }
-
 }
 
 void SdlScreen::do_resize(int resize_w, int resize_h) {

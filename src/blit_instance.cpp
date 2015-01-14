@@ -26,12 +26,11 @@
 BlitInstance::BlitInstance() {
 }
 
-BlitInstance::BlitInstance(BlitPtr fr) {
+BlitInstance::BlitInstance(BlitPtr proto) {
 }
 
-void BlitInstance::init(BlitPtr fr) {
-    func("initializing instance for blit %s", fr->getName().c_str());
-    proto = fr;
+void BlitInstance::init(BlitPtr proto) {
+    func("initializing instance for blit %s", proto->getName().c_str());
     name = proto->name;
     active = true;
     

@@ -21,6 +21,7 @@
 
 #include "context.h"
 #include "screen.h"
+#include "blit_instance.h"
 #include "layer.h"
 #include "video_encoder.h"
 #ifdef WITH_AUDIO
@@ -40,8 +41,7 @@ LinkList<Blit> &get_linear_blits();
 
 ViewPort::ViewPort()
     : Entry() {
-
-    blitter = MakeShared<Blitter>();
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
 
     opengl = false;
 
@@ -61,16 +61,10 @@ ViewPort::ViewPort()
 //   audio = ringbuffer_create(1024 * 512);
     audio = ringbuffer_create(4096 * 512 * 8);
 #endif
-
-    LinkList<Blit> &blitterBlits = blitter->getBlits();
-    LinkList<Blit> &linearBlits = get_linear_blits();
-    blitterBlits.insert(blitterBlits.end(), linearBlits.begin(), linearBlits.end());
-    if(linearBlits.size() > 0) {
-        blitter->setDefaultBlit(linearBlits.front());
-    }
 }
 
 ViewPort::~ViewPort() {
+    func("%s this=%p", __PRETTY_FUNCTION__, this);
 #ifdef WITH_AUDIO
     if(audio) ringbuffer_free(audio);
 #endif
@@ -111,7 +105,7 @@ bool ViewPort::add_layer(LayerPtr lay) {
     }
 
     lay->screen = SharedFromThis(ViewPort);
-    lay->current_blit = blitter->default_blit->new_instance();
+    lay->current_blit = blitter->new_instance(blitter->default_blit);
     
     // center the position
     //lay->geo.x = (screen->w - lay->geo.w)/2;
@@ -207,6 +201,18 @@ void ViewPort::cafudda(double secs) {
                   });
 }
 
+void ViewPort::blit(LayerPtr src) {
+    if(src->screen.lock() != SharedFromThis(ViewPort)) {
+        error("%s: blit called on a layer not belonging to screen",
+              __PRETTY_FUNCTION__);
+        return;
+    }
+
+    BlitInstancePtr b = src->current_blit;
+
+    (*b)(src);
+}
+
 void ViewPort::blit_layers() {
     std::for_each(layers.rbegin(), layers.rend(), [&](LayerPtr &lay) {
                       if(lay->buffer) {
@@ -225,14 +231,7 @@ void ViewPort::handle_resize() {
         do_resize(resize_w, resize_h);
     }
     unlock();
-
-    if(resizing) {
-        /* crop all layers to new screen size */
-        std::for_each(layers.begin(), layers.end(), [&](LayerPtr &lay) {
-                          blitter->crop(lay, SharedFromThis(ViewPort));
-                      });
-       resizing = false;
-   }
+    resizing = false;
 }
 
 void ViewPort::resize(int w, int h) {
