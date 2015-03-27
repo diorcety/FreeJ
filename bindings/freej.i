@@ -10,6 +10,9 @@
 %include FREEJ_SWIG_INCLUDE(headers.i)
 
 %apply unsigned long { uint16_t };
+%typemap(out) Geometry &, const Geometry & {
+  $result = SWIG_NewPointerObj ($1, $descriptor, $owner);
+}
 
 /* Macros that can be redefined for other languages */
 /* freej_entry_typemap_in: to be able to map an Entry* to TypeName* */
@@ -60,6 +63,7 @@
 
 /* Now the freej headers.. */
 %include FREEJ_INCLUDE(entity.h)
+%include FREEJ_INCLUDE(geometry.h)
 %include FREEJ_INCLUDE(freej.h)
 %include FREEJ_INCLUDE(jutils.h)
 %include FREEJ_INCLUDE(jsync.h)

@@ -41,6 +41,7 @@ typedef Eigen::Vector3i Size;
 
    @brief Collects geometrical information about Layer, Screen and other components
  */
+FREEJ_FORWARD_PTR(Geometry)
 class Geometry {
 
 public:
