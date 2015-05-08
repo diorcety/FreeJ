@@ -82,11 +82,12 @@ void AbstractSdlBlitInstance::crop(LayerPtr lay, ViewPortPtr scr, SDL_Surface *s
          (unsigned int)lay_geo.getSize().x(), (unsigned int)lay_geo.getSize().y(), getName().c_str());
 
     if(sdl != NULL) {
+        /* Remove this comment il change the position following the zoom
         position = Vector(
             position.x() - (sdl->w - lay_geo.getSize().x()) / 2.0,
             position.y() - (sdl->h - lay_geo.getSize().y()) / 2.0,
             0.0
-        );
+        );**/
     }
 
     //////////////////////
